@@ -191,9 +191,6 @@ const local: App.I18n.Schema = {
     },
     home: {
       greeting: 'Good morning, {userName}, today is another day full of vitality!',
-      friendlySponsorship: 'Friendly sponsorship',
-      cupOfCoffee: 'Can you treat me to a cup of coffee?',
-      thankYou: 'Thank you for your sponsorship',
       userCount: 'User Count',
       deviceCount: 'Device Count',
       onlineCount: 'Online Count',

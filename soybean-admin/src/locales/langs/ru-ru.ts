@@ -191,9 +191,6 @@ const local: App.I18n.Schema = {
     },
     home: {
       greeting: 'Доброго утра, {userName}, сегодня еще один день, полный приключений!',
-      friendlySponsorship: 'Дружеское спонсорство',
-      cupOfCoffee: 'Как насчет чашечки кофе для меня?',
-      thankYou: 'Спасибо за твоё спонсорство!',
       userCount: 'Пользователей',
       deviceCount: 'Устройств',
       onlineCount: 'Сейчас онлайн',

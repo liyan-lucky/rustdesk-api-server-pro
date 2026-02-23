@@ -137,11 +137,12 @@ func (service *UserService) Login(loginForm api.LoginForm) iris.Map {
 		"access_token": token,
 		"type":         model.LOGIN_ACCESS_TOKEN,
 		"user": iris.Map{
-			"name":     user.Name,
-			"email":    user.Email,
-			"note":     user.Note,
-			"status":   user.Status,
-			"is_admin": false,
+			"name":         user.Name,
+			"display_name": user.Name,
+			"email":        user.Email,
+			"note":         user.Note,
+			"status":       user.Status,
+			"is_admin":     false,
 		},
 	}
 
@@ -221,11 +222,12 @@ func (service *UserService) LoginVerifyByEmailCode(loginForm api.LoginForm) iris
 		"access_token": token,
 		"type":         model.LOGIN_ACCESS_TOKEN,
 		"user": iris.Map{
-			"name":     user.Name,
-			"email":    user.Email,
-			"note":     user.Note,
-			"status":   user.Status,
-			"is_admin": false,
+			"name":         user.Name,
+			"display_name": user.Name,
+			"email":        user.Email,
+			"note":         user.Note,
+			"status":       user.Status,
+			"is_admin":     false,
 		},
 	}
 }
@@ -275,11 +277,12 @@ func (service *UserService) LoginVerifyBy2FACode(loginForm api.LoginForm) iris.M
 		"access_token": token,
 		"type":         model.LOGIN_ACCESS_TOKEN,
 		"user": iris.Map{
-			"name":     user.Name,
-			"email":    user.Email,
-			"note":     user.Note,
-			"status":   user.Status,
-			"is_admin": false,
+			"name":         user.Name,
+			"display_name": user.Name,
+			"email":        user.Email,
+			"note":         user.Note,
+			"status":       user.Status,
+			"is_admin":     false,
 		},
 	}
 }

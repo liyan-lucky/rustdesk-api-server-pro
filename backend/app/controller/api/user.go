@@ -22,18 +22,20 @@ func (c *UserController) HandleCurrentUser() mvc.Result {
 	user := c.GetUser()
 	return mvc.Response{
 		Object: iris.Map{
-			"name":     user.Name,
-			"email":    user.Email,
-			"note":     user.Note,
-			"status":   user.Status,
-			"is_admin": user.IsAdmin,
+			"name":         user.Name,
+			"display_name": user.Name,
+			"email":        user.Email,
+			"note":         user.Note,
+			"status":       user.Status,
+			"is_admin":     user.IsAdmin,
 		},
 	}
 }
 
 func (c *UserController) GetUsers() mvc.Result {
 	user := c.GetUser()
-	if !user.IsAdmin {
+	hasAccessibleParam := c.Ctx.Request().URL.Query().Has("accessible")
+	if !user.IsAdmin && !hasAccessibleParam {
 		return mvc.Response{
 			Object: iris.Map{
 				"error": "Admin required!",
@@ -46,6 +48,9 @@ func (c *UserController) GetUsers() mvc.Result {
 
 	query := func() *xorm.Session {
 		q := c.Db.Table(&model.User{}).Where("status = ?", status)
+		if hasAccessibleParam && !user.IsAdmin {
+			q.Where("id = ?", user.Id)
+		}
 		return q.Desc("id")
 	}
 
@@ -62,11 +67,12 @@ func (c *UserController) GetUsers() mvc.Result {
 	data := make([]iris.Map, 0)
 	for _, u := range userList {
 		data = append(data, iris.Map{
-			"name":     u.Name,
-			"email":    u.Email,
-			"note":     u.Note,
-			"status":   u.Status,
-			"is_admin": u.IsAdmin,
+			"name":         u.Name,
+			"display_name": u.Name,
+			"email":        u.Email,
+			"note":         u.Note,
+			"status":       u.Status,
+			"is_admin":     u.IsAdmin,
 		})
 	}
 	return mvc.Response{

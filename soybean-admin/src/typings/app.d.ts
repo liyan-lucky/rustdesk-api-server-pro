@@ -420,9 +420,6 @@ declare namespace App {
         };
         home: {
           greeting: string;
-          friendlySponsorship: string;
-          cupOfCoffee: string;
-          thankYou: string;
           userCount: string;
           deviceCount: string;
           onlineCount: string;
