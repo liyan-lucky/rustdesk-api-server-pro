@@ -158,11 +158,11 @@ Sub 生成考勤清单()
                         End If
                     End If
                     
-                    ' 处理这个员工的打卡记录（从第7行开始是打卡数据）
+                    ' ???????????????1/2??????16?????
                     '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
                     Dim startRow As Long, endRow As Long
                     startRow = i + 7  ' 打卡数据开始行
-                    endRow = i + 16   ' 打卡数据结束行（共10行）
+                    endRow = i + 23   ' ??????????16?????
                     
                     If startRow <= cardDataLastRow And endRow <= cardDataLastRow Then
                         Dim dayRow As Long
@@ -187,31 +187,9 @@ Sub 生成考勤清单()
                             Dim dateValid As Boolean
                             dateValid = False
                             
-                            ' 方法1: 直接解析
-                            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
-                            On Error Resume Next
-                            If IsDate(dateStr) Then
-                                recordDate = CDate(dateStr)
-                                If Err.Number = 0 Then
-                                    dateValid = True
-                                End If
-                            End If
-                            On Error GoTo 0
-                            
-                            ' 方法2: 如果日期格式是"01.01"这种格式
-                            '' 解释：说明该行处理日期时间规则与边界。
-                            If Not dateValid Then
-                                If Len(dateStr) = 5 And InStr(dateStr, ".") > 0 Then
-                                    On Error Resume Next
-                                    ' 尝试解析为"2026-01-01"格式
-                                    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
-                                    recordDate = CDate("2026-" & Replace(dateStr, ".", "-"))
-                                    If Err.Number = 0 Then
-                                        dateValid = True
-                                    End If
-                                    On Error GoTo 0
-                                End If
-                            End If
+                            ' ?????????????? MM.DD ???
+                            '' ???????????????????
+                            dateValid = TryParseCardDateByRange(dateStr, startDate, endDate, recordDate)
                             
                             If dateValid Then
                                 ' 检查日期是否在指定范围内
@@ -263,31 +241,9 @@ NextDayRow:
                             '' 解释：说明该行处理日期时间规则与边界。
                             dateValid = False
                             
-                            ' 方法1: 直接解析
-                            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
-                            On Error Resume Next
-                            If IsDate(dateStr) Then
-                                recordDate = CDate(dateStr)
-                                If Err.Number = 0 Then
-                                    dateValid = True
-                                End If
-                            End If
-                            On Error GoTo 0
-                            
-                            ' 方法2: 如果日期格式是"01.01"这种格式
-                            '' 解释：说明该行处理日期时间规则与边界。
-                            If Not dateValid Then
-                                If Len(dateStr) = 5 And InStr(dateStr, ".") > 0 Then
-                                    On Error Resume Next
-                                    ' 尝试解析为"2026-01-01"格式
-                                    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
-                                    recordDate = CDate("2026-" & Replace(dateStr, ".", "-"))
-                                    If Err.Number = 0 Then
-                                        dateValid = True
-                                    End If
-                                    On Error GoTo 0
-                                End If
-                            End If
+                            ' ?????????????? MM.DD ???
+                            '' ???????????????????
+                            dateValid = TryParseCardDateByRange(dateStr, startDate, endDate, recordDate)
                             
                             If dateValid Then
                                 ' 检查日期是否在指定范围内
@@ -791,6 +747,62 @@ ErrorHandler:
     UpdateStatus "错误：" & Err.Number & " - " & Err.Description
 End Sub
 
+Private Function TryParseCardDateByRange(ByVal dateText As String, ByVal startDate As Date, _
+    ByVal endDate As Date, ByRef parsedDate As Date) As Boolean
+    Dim txt As String
+    txt = Trim(dateText & "")
+    If txt = "" Then Exit Function
+    ' ????? Excel/????????
+    '' ???????????????????
+    On Error Resume Next
+    If IsDate(txt) Then
+        parsedDate = CDate(txt)
+        If Err.Number = 0 Then
+            TryParseCardDateByRange = True
+            On Error GoTo 0
+            Exit Function
+        End If
+    End If
+    Err.Clear
+    On Error GoTo 0
+    ' ???????? "MM.DD" ??????????????????
+    '' ???????????????????
+    If Len(txt) <> 5 Or InStr(txt, ".") = 0 Then Exit Function
+    Dim mdText As String
+    mdText = Replace(txt, ".", "-")
+    Dim y1 As Long, y2 As Long, y As Variant
+    y1 = Year(startDate)
+    y2 = Year(endDate)
+    Dim yearsToTry As Collection
+    Set yearsToTry = New Collection
+    On Error Resume Next
+    yearsToTry.Add y1, CStr(y1)
+    yearsToTry.Add y2, CStr(y2)
+    yearsToTry.Add y1 - 1, CStr(y1 - 1)
+    yearsToTry.Add y2 + 1, CStr(y2 + 1)
+    On Error GoTo 0
+    Dim candidate As Date
+    For Each y In yearsToTry
+        On Error Resume Next
+        candidate = CDate(CStr(y) & "-" & mdText)
+        If Err.Number = 0 Then
+            If candidate >= startDate And candidate <= endDate Then
+                parsedDate = candidate
+                TryParseCardDateByRange = True
+                On Error GoTo 0
+                Exit Function
+            End If
+        End If
+        Err.Clear
+        On Error GoTo 0
+    Next y
+    ' ??????????????????????????
+    '' ???????????????????
+    On Error Resume Next
+    parsedDate = CDate(CStr(y1) & "-" & mdText)
+    If Err.Number = 0 Then TryParseCardDateByRange = True
+    On Error GoTo 0
+End Function
 Private Function FindLastEmployeeRowByKey(ByVal ws As Worksheet, ByVal empKey As String, ByVal lastRow As Long) As Long
     Dim r As Long
     For r = lastRow To 2 Step -1
@@ -1007,6 +1019,7 @@ Function FormatExcelTime(excelTime As Variant) As String
         FormatExcelTime = ""
     End If
 End Function
+
 
 
 
