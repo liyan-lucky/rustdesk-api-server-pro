@@ -1,0 +1,349 @@
+# yaml-language-server: $schema=https://aka.ms/teams-toolkit/1.0.0/yaml.schema.json
+# Visit https://aka.ms/teamsfx-v5.0-guide for details on this file
+# Visit https://aka.ms/teamsfx-actions for details on actions
+version: 1.0.0
+
+{{#config.provision}}
+provision:
+  {{#registerApp}}
+  {{#if aad}}
+  # Creates a new Microsoft Entra app to authenticate users if
+  # the environment variable that stores clientId is empty
+  - uses: aadApp/create
+    with:
+      # Note: when you run aadApp/update, the Microsoft Entra app name will be updated
+      # based on the definition in manifest. If you don't want to change the
+      # name, make sure the name in Microsoft Entra manifest is the same with the name
+      # defined here.
+      name: $\{{CONFIG__MANIFEST__APPNAME__SHORT}}-aad
+      # If the value is false, the action will not generate client secret for you
+      generateClientSecret: true
+      # Authenticate users with a Microsoft work or school account in your
+      # organization's Microsoft Entra tenant (for example, single tenant).
+      signInAudience: "AzureADMyOrg"
+    # Write the information of created resources into environment file for the
+    # specified environment variable(s).
+    writeToEnvironmentFile:
+      clientId: AAD_APP_CLIENT_ID
+      # Environment variable that starts with `SECRET_` will be stored to the
+      # .env.{envName}.user environment file
+      clientSecret: SECRET_AAD_APP_CLIENT_SECRET
+      objectId: AAD_APP_OBJECT_ID
+      tenantId: AAD_APP_TENANT_ID
+      authority: AAD_APP_OAUTH_AUTHORITY
+      authorityHost: AAD_APP_OAUTH_AUTHORITY_HOST
+
+  {{/if}}
+  {{#if teamsApp}}
+  # Creates a Teams app
+  - uses: teamsApp/create
+    with:
+      # Teams app name
+      name: $\{{CONFIG__MANIFEST__APPNAME__SHORT}}
+    # Write the information of created resources into environment file for
+    # the specified environment variable(s).
+    writeToEnvironmentFile:
+      teamsAppId: TEAMS_APP_ID
+  {{/if}}
+
+  {{/registerApp}}
+  {{#bot}}
+  # Create or reuse an existing Microsoft Entra application for bot.
+  - uses: botAadApp/create
+    with:
+      # The Microsoft Entra application's display name
+      name: $\{{CONFIG__MANIFEST__APPNAME__SHORT}}-bot
+    writeToEnvironmentFile:
+      # The Microsoft Entra application's client id created for bot.
+      botId: BOT_ID
+      # The Microsoft Entra application's client secret created for bot.
+      botPassword: SECRET_BOT_PASSWORD
+
+  # Create or update the bot registration on dev.botframework.com
+  - uses: botFramework/create
+    with:
+      botId: $\{{BOT_ID}}
+      name: $\{{CONFIG__MANIFEST__APPNAME__SHORT}}-bot
+      messagingEndpoint: {{messagingEndpoint}}
+      description: ""
+      channels:
+        - name: msteams
+        {{#if isM365}}
+        - name: m365extensions
+        {{/if}}
+
+  {{/bot}}
+  {{#configureApp}}
+  {{#tab}}
+  - uses: script # Set env for local launch
+    with:
+      run:
+        echo "::set-teamsfx-env {{../../../placeholderMappings.tabDomain}}={{domain}}";
+        echo "::set-teamsfx-env {{../../../placeholderMappings.tabEndpoint}}={{endpoint}}";
+        echo "::set-teamsfx-env {{../../../placeholderMappings.tabIndexPath}}=/index.html#";
+
+  {{/tab}}
+  {{#if aad}}
+  # Apply the Microsoft Entra manifest to an existing Microsoft Entra app. Will use the object id in
+  # manifest file to determine which Microsoft Entra app to update.
+  - uses: aadApp/update
+    with:
+      # Relative path to this file. Environment variables in manifest will
+      # be replaced before apply to Microsoft Entra app
+      manifestPath: ./aad.manifest.json
+      outputFilePath : ./build/aad.manifest.$\{{TEAMSFX_ENV}}.json
+
+  {{/if}}
+  {{#teamsApp}}
+  {{#if appPackagePath}}
+  - uses: teamsApp/update
+    with:
+      appPackagePath: {{appPackagePath}}
+  {{else}}
+  # Validate using manifest schema
+  - uses: teamsApp/validateManifest
+    with:
+      # Path to manifest template
+      manifestPath: ./appPackage/manifest.json
+
+  # Build Teams app package with latest env value
+  - uses: teamsApp/zipAppPackage
+    with:
+      # Path to manifest template
+      manifestPath: ./appPackage/manifest.json
+      outputZipPath: ./build/appPackage/appPackage.$\{{TEAMSFX_ENV}}.zip
+      outputJsonPath: ./build/appPackage/manifest.$\{{TEAMSFX_ENV}}.json
+
+  # Validate app package using validation rules
+  - uses: teamsApp/validateAppPackage
+    with:
+      # Relative path to this file. This is the path for built zip file.
+      appPackagePath: ./build/appPackage/appPackage.$\{{TEAMSFX_ENV}}.zip
+
+  # Apply the Teams app manifest to an existing Teams app in
+  # Teams Developer Portal.
+  # Will use the app id in manifest file to determine which Teams app to update.
+  - uses: teamsApp/update
+    with:
+      # Relative path to this file. This is the path for built zip file.
+      appPackagePath: ./build/appPackage/appPackage.$\{{TEAMSFX_ENV}}.zip
+  {{/if}}
+
+  {{/teamsApp}}
+  {{#if isM365}}
+  # Extend your Teams app to Outlook and the Microsoft 365 app
+  - uses: teamsApp/extendToM365
+    with:
+      # Relative path to the build app package.
+      appPackagePath: ./build/appPackage/appPackage.$\{{TEAMSFX_ENV}}.zip
+    # Write the information of created resources into environment file for
+    # the specified environment variable(s).
+    writeToEnvironmentFile:
+      titleId: M365_TITLE_ID
+      appId: M365_APP_ID
+
+  {{/if}}
+  {{/configureApp}}
+{{/config.provision}}
+{{#config.deploy}}
+deploy:
+  {{#tools}}
+  # Install development tool(s)
+  - uses: devTool/install
+    with:
+      {{#devCert}}
+      devCert:
+        trust: {{trust}}
+      {{/devCert}}
+      {{#func}}
+      func:
+        version: {{version}}
+        symlinkDir: {{symlinkDir}}
+      {{/func}}
+      {{#dotnet}}
+      dotnet: true
+      {{/dotnet}}
+    # Write the information of installed development tool(s) into environment
+    # file for the specified environment variable(s).
+    writeToEnvironmentFile:
+      {{#devCert}}
+      sslCertFile: SSL_CRT_FILE
+      sslKeyFile: SSL_KEY_FILE
+      {{/devCert}}
+      {{#func}}
+      funcPath: FUNC_PATH
+      {{/func}}
+      {{#dotnet}}
+      dotnetPath: DOTNET_PATH
+      {{/dotnet}}
+
+  {{/tools}}
+  {{#dotnetCommand}}
+  - uses: cli/runDotnetCommand
+    with:
+      args: {{args}}
+      workingDirectory: {{workingDirectory}}
+      {{#if execPath}}
+      execPath: {{execPath}}
+      {{/if}}
+
+  {{/dotnetCommand}}
+  {{#tab}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./tabs/.env.teamsfx.local
+      envs:
+        BROWSER: none
+        HTTPS: true
+        PORT: {{port}}
+        SSL_CRT_FILE: $\{{SSL_CRT_FILE}}
+        SSL_KEY_FILE: $\{{SSL_KEY_FILE}}
+
+  {{/tab}}
+  {{#if bot}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./bot/.env.teamsfx.local
+      envs:
+        BOT_ID: $\{{BOT_ID}}
+        BOT_PASSWORD: $\{{SECRET_BOT_PASSWORD}}
+
+  {{/if}}
+  {{#ssoTab}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./tabs/.env.teamsfx.local
+      envs:
+        REACT_APP_START_LOGIN_PAGE_URL: $\{{ {{~../../placeholderMappings.tabEndpoint~}} }}/auth-start.html
+        REACT_APP_CLIENT_ID: $\{{AAD_APP_CLIENT_ID}}
+        {{#if functionName}}
+        REACT_APP_FUNC_ENDPOINT: http://localhost:7071
+        REACT_APP_FUNC_NAME: {{functionName}}
+        {{/if}}
+
+  {{/ssoTab}}
+  {{#if ssoBot}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./bot/.env.teamsfx.local
+      envs:
+        M365_CLIENT_ID: $\{{AAD_APP_CLIENT_ID}}
+        M365_CLIENT_SECRET: $\{{SECRET_AAD_APP_CLIENT_SECRET}}
+        M365_TENANT_ID: $\{{AAD_APP_TENANT_ID}}
+        M365_AUTHORITY_HOST: $\{{AAD_APP_OAUTH_AUTHORITY_HOST}}
+        INITIATE_LOGIN_ENDPOINT: $\{{ {{~../placeholderMappings.botEndpoint~}} }}/auth-start.html
+        {{#if ssoTab}}
+        M365_APPLICATION_ID_URI: api://$\{{ {{~../placeholderMappings.tabEndpoint~}} }}/botid-$\{{BOT_ID}}
+        {{else}}
+        M365_APPLICATION_ID_URI: api://botid-$\{{BOT_ID}}
+        {{/if}}
+        {{#if ssoFunction}}
+        API_ENDPOINT: http://localhost:7071
+        {{/if}}
+
+  {{/if}}
+  {{#if ssoFunction}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./api/.env.teamsfx.local
+      envs:
+        M365_CLIENT_ID: $\{{AAD_APP_CLIENT_ID}}
+        M365_CLIENT_SECRET: $\{{SECRET_AAD_APP_CLIENT_SECRET}}
+        M365_TENANT_ID: $\{{AAD_APP_TENANT_ID}}
+        M365_AUTHORITY_HOST: $\{{AAD_APP_OAUTH_AUTHORITY_HOST}}
+        ALLOWED_APP_IDS: 1fec8e78-bce4-4aaf-ab1b-5451cc387264;5e3ce6c0-2b1f-4285-8d4b-75ee78787346;0ec893e0-5785-4de6-99da-4ed124e5296c;4345a7b9-9a63-4910-a426-35363201d503;4765445b-32c6-49b0-83e6-1d93765276ca;d3590ed6-52b3-4102-aeff-aad2292ab01c;00000002-0000-0ff1-ce00-000000000000;bc59ab01-8403-45c6-8796-ac3ef710b3e3;27922004-5251-4030-b22d-91ecd9a37ea4
+
+  {{/if}}
+  {{#npmCommands}}
+  # Run npm command
+  - uses: cli/runNpmCommand
+    with:
+      args: {{args}}
+      {{#if workingDirectory}}
+      workingDirectory: {{workingDirectory}}
+      {{/if}}
+
+  {{/npmCommands}}
+  {{#frontendStart}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./tabs/.localConfigs
+      envs:
+        BROWSER: none
+        HTTPS: true
+        PORT: 53000
+        SSL_CRT_FILE: $\{{SSL_CRT_FILE}}
+        SSL_KEY_FILE: $\{{SSL_KEY_FILE}}
+        {{#if sso}}
+        REACT_APP_CLIENT_ID: $\{{AAD_APP_CLIENT_ID}}
+        REACT_APP_START_LOGIN_PAGE_URL: $\{{ {{~../../placeholderMappings.tabEndpoint~}} }}/auth-start.html
+        REACT_APP_TEAMSFX_ENDPOINT: http://localhost:55000
+        {{/if}}
+        {{#if functionName}}
+        REACT_APP_FUNC_ENDPOINT: http://localhost:7071
+        REACT_APP_FUNC_NAME: {{functionName}}
+        {{/if}}
+
+  {{/frontendStart}}
+  {{#authStart}}
+  # Generate runtime appsettings to JSON file
+  - uses: file/createOrUpdateJsonFile
+    with:
+      target: {{appsettingsPath}}
+      appsettings:
+        CLIENT_ID: $\{{AAD_APP_CLIENT_ID}}
+        CLIENT_SECRET: $\{{SECRET_AAD_APP_CLIENT_SECRET}}
+        IDENTIFIER_URI: api://$\{{ {{~../../placeholderMappings.tabDomain~}} }}/$\{{AAD_APP_CLIENT_ID}}
+        AAD_METADATA_ADDRESS: $\{{AAD_APP_OAUTH_AUTHORITY}}/v2.0/.well-known/openid-configuration
+        OAUTH_AUTHORITY: $\{{AAD_APP_OAUTH_AUTHORITY}}
+        TAB_APP_ENDPOINT: $\{{ {{~../../placeholderMappings.tabEndpoint~}} }}
+        ALLOWED_APP_IDS: 1fec8e78-bce4-4aaf-ab1b-5451cc387264;5e3ce6c0-2b1f-4285-8d4b-75ee78787346;0ec893e0-5785-4de6-99da-4ed124e5296c;4345a7b9-9a63-4910-a426-35363201d503;4765445b-32c6-49b0-83e6-1d93765276ca;d3590ed6-52b3-4102-aeff-aad2292ab01c;00000002-0000-0ff1-ce00-000000000000;bc59ab01-8403-45c6-8796-ac3ef710b3e3;27922004-5251-4030-b22d-91ecd9a37ea4
+        URLS: http://localhost:55000
+
+  {{/authStart}}
+  {{#botStart}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./bot/.localConfigs
+      envs:
+        BOT_ID: $\{{BOT_ID}}
+        BOT_PASSWORD: $\{{SECRET_BOT_PASSWORD}}
+        {{#if sso}}
+        M365_CLIENT_ID: $\{{AAD_APP_CLIENT_ID}}
+        M365_CLIENT_SECRET: $\{{SECRET_AAD_APP_CLIENT_SECRET}}
+        M365_TENANT_ID: $\{{AAD_APP_TENANT_ID}}
+        M365_AUTHORITY_HOST: $\{{AAD_APP_OAUTH_AUTHORITY_HOST}}
+        INITIATE_LOGIN_ENDPOINT: $\{{ {{~../../placeholderMappings.botEndpoint~}} }}/auth-start.html
+        {{#if tab}}
+        M365_APPLICATION_ID_URI: api://$\{{ {{~../../placeholderMappings.tabDomain~}} }}/botid-$\{{BOT_ID}}
+        {{else}}
+        M365_APPLICATION_ID_URI: api://botid-$\{{BOT_ID}}
+        {{/if}}
+        {{/if}}
+        {{#if function}}
+        API_ENDPOINT: http://localhost:7071
+        {{/if}}
+
+  {{/botStart}}
+  {{#if backendStart}}
+  # Generate runtime environment variables
+  - uses: file/createOrUpdateEnvironmentFile
+    with:
+      target: ./api/.localConfigs
+      envs:
+        FUNCTIONS_WORKER_RUNTIME: node
+        M365_CLIENT_ID: $\{{AAD_APP_CLIENT_ID}}
+        M365_CLIENT_SECRET: $\{{SECRET_AAD_APP_CLIENT_SECRET}}
+        M365_TENANT_ID: $\{{AAD_APP_TENANT_ID}}
+        M365_AUTHORITY_HOST: $\{{AAD_APP_OAUTH_AUTHORITY_HOST}}
+        ALLOWED_APP_IDS: 1fec8e78-bce4-4aaf-ab1b-5451cc387264;5e3ce6c0-2b1f-4285-8d4b-75ee78787346;0ec893e0-5785-4de6-99da-4ed124e5296c;4345a7b9-9a63-4910-a426-35363201d503;4765445b-32c6-49b0-83e6-1d93765276ca;d3590ed6-52b3-4102-aeff-aad2292ab01c;00000002-0000-0ff1-ce00-000000000000;bc59ab01-8403-45c6-8796-ac3ef710b3e3;27922004-5251-4030-b22d-91ecd9a37ea4
+
+  {{/if}}
+{{/config.deploy}}

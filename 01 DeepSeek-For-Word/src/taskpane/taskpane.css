@@ -1,0 +1,441 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    font-size: 14px;
+}
+
+#content {
+    max-width: 400px;
+}
+
+.settings-section {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+}
+
+/* 设置头部样式 */
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.settings-header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.key-status {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.status-valid {
+    color: #28a745 !important;
+    background: #d4edda !important;
+    border-color: #c3e6cb !important;
+}
+
+.status-not-set {
+    color: #6c757d !important;
+    background: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+}
+
+.api-key-container {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+#api-key-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#api-key-input:focus {
+    border-color: #0078d4;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+    outline: none;
+}
+
+.icon-btn {
+    padding: 8px 12px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    min-width: 44px;
+}
+
+.icon-btn:hover {
+    background: #e0e0e0;
+}
+
+/* 密钥操作按钮容器 */
+.key-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.key-actions button {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+#save-key-btn {
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#save-key-btn:hover:not(:disabled) {
+    background-color: #106ebe;
+}
+
+#save-key-btn:disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+}
+
+.secondary-btn {
+    padding: 8px 12px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.secondary-btn:hover:not(:disabled) {
+    background: #5a6268;
+}
+
+.secondary-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* 翻译选项样式 - 修改后 */
+.translation-options {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.translation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+    gap: 10px;
+}
+
+.translation-header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 180px; /* 与功能按钮保持一致 */
+}
+
+#target-language {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 36px; /* 与按钮高度保持一致 */
+}
+
+#target-language:focus {
+    border-color: #0078d4;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+}
+
+h2 {
+    color: #333;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    text-align: center;
+}
+
+.input-section {
+    margin-bottom: 15px;
+}
+
+#prompt-input {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+#prompt-input:focus {
+    border-color: #0078d4;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+    outline: none;
+}
+
+/* 生成内容行 - 等宽布局 */
+.generate-row {
+    display: flex;
+    gap: 8px;
+}
+
+#generate-btn {
+    flex: 1;
+    padding: 12px 15px;
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#generate-btn:hover:not(:disabled) {
+    background-color: #106ebe;
+}
+
+#generate-btn:disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    border: 1px solid #bbbbbb !important;
+}
+
+#preview-format-btn {
+    flex: 1;
+    padding: 12px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#preview-format-btn:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+#preview-format-btn:disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    border: 1px solid #bbbbbb !important;
+}
+
+/* 功能按钮区域 - 2列布局 */
+.actions {
+    margin-bottom: 15px;
+}
+
+.actions-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.actions-row:last-child {
+    margin-bottom: 0;
+}
+
+.actions-row button {
+    flex: 1;
+    padding: 12px 8px;
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.actions-row button:hover:not(:disabled) {
+    background-color: #106ebe;
+}
+
+.actions-row button:disabled {
+    background-color: #cccccc !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    border: 1px solid #bbbbbb !important;
+}
+
+.format-preview {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #856404;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.format-preview h4 {
+    margin: 0 0 8px 0;
+    color: #856404;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.format-preview pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: 'Consolas', 'Monaco', monospace;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 8px;
+    border-radius: 3px;
+    border: 1px solid #ffeaa7;
+    box-sizing: border-box;
+}
+
+.result-area {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    min-height: 100px;
+    white-space: pre-wrap;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: " (加载中...)";
+    color: #0078d4;
+    font-style: italic;
+}
+
+.success-message {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.error-message {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* 进度条样式 */
+.progress-container {
+    margin: 10px 0;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 6px;
+    box-sizing: border-box;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #0078d4;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 5px;
+}
+
+/* 批量操作状态 */
+.batch-operation {
+    background: #e7f3ff !important;
+    border: 1px solid #0078d4 !important;
+}
+
+.batch-operation:disabled {
+    background: #cce5ff !important;
+    color: #0066cc !important;
+}

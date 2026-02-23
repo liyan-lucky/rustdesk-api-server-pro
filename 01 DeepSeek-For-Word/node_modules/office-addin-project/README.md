@@ -1,0 +1,40 @@
+# Office-Addin-Project
+
+This package provides the ability to do project wide commands for Office Add-ins, such as conversion.
+
+For more information, see the [documentation](https://learn.microsoft.com/office/dev/add-ins/develop/add-in-manifests).
+
+## Command-Line Interface
+
+* [convert](#info)
+
+#
+
+### convert
+
+Converts the Office Add-in Code from an XML to JSON-based manifest.
+
+Syntax:
+
+`office-addin-project convert [options]`
+
+Options:
+
+`-m <manifest-path>`<br>
+`--manifest <manifest-path>`
+
+`manifest-path`: Specify the location of the manifest file. If the path is not provided, `./manifest.xml` is used.
+
+`-b <backup-path>`<br>
+`--backup <backup-path>`
+
+`backup-path`: Specify the location of the backup file. If the path is not provided, `./backup.zip` is used.
+
+`-p, --project <project-path>`<br>
+`--project <project-path>`<br>
+
+`project-path`: Specify the location of the root directory of the project.  If the path is not provided, the directory of the manifest file is used.
+
+`--confirm`
+
+Confirm the operation without being prompted
