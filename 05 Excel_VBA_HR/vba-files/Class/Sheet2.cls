@@ -97,8 +97,8 @@ Attribute VB_Exposed = True
 '     vy1 = rng.Cells(1, 1).Top
 '     vy2 = rng.Cells(rng.Rows.Count, 1).Top + rng.Cells(rng.Rows.Count, 1).Height
 
-'     ' 画两条矩形“框线”（上+下表示横框，左+右表示竖框）
-'     ' 用两条线更接近“外框”，且不会出现一格一格
+'     ' 画两条矩形"框线"（上+下表示横框，左+右表示竖框）
+'     ' 用两条线更接近"外框"，且不会出现一格一格
 
 '     ' 横框：上边+下边
 '     UpsertLine HLINE_NAME & "_T", x1, y1, x2, y1
@@ -149,7 +149,6 @@ Attribute VB_Exposed = True
 '     On Error GoTo 0
 ' End Sub
 
-
 ' 下面的代码是之前的版本，注释掉了。现在改成了只画行列的外框，去掉了单元格内的边框。
 '   Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 '     Cells.Borders.LineStyle = xlNone
@@ -158,7 +157,6 @@ Attribute VB_Exposed = True
 '     Target.EntireColumn.Borders(xlEdgeLeft).LineStyle = xlContinuous
 ' End Sub
 ' ' 下面的代码是之前的版本，注释掉了。现在改成了只画行列的外框，去掉了单元格内的边框。
-
 
 ' Private Const H_NAME As String = "__cross_h"
 ' Private Const V_NAME As String = "__cross_v"

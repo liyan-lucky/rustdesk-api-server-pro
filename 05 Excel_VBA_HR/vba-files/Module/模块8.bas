@@ -2,17 +2,11 @@ Attribute VB_Name = "模块8"
 Option Explicit
 
 ' =======================================================
-'' 解释：分隔线注释，用于视觉分区。
-' 功能：根据“职员”表补全“考勤清单”中的工号(C列)与部门(E列)
-'' 解释：说明该过程或函数的核心业务目标。
+' 功能：根据"职员"表补全"考勤清单"中的工号(C列)与部门(E列)
 ' 规则：
-'' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
 ' 1) 通过姓名(F列)匹配职员表B列，回填工号到C列
-'' 解释：说明表格列位与业务字段的映射关系。
 ' 2) 通过工号(C列)匹配职员表A列，回填部门到E列
-'' 解释：说明表格列位与业务字段的映射关系。
 ' =======================================================
-'' 解释：分隔线注释，用于视觉分区。
 Public Sub 获取工号和部门信息()
     On Error GoTo ErrorHandler
 
@@ -68,7 +62,6 @@ Public Sub 获取工号和部门信息()
     End If
 
     ' 职员表：A=工号，B=姓名，C=部门
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     Dim staffData As Variant
     staffData = wsStaff.Range("A2:C" & staffLastRow).Value
 
@@ -101,7 +94,7 @@ Public Sub 获取工号和部门信息()
         Dim nameArr As Variant
     Dim idArr As Variant
     Dim deptArr As Variant
-    
+
     nameArr = wsAttend.Range("F2:F" & lastRow).Value
     idArr = wsAttend.Range("C2:C" & lastRow).Value
     deptArr = wsAttend.Range("E2:E" & lastRow).Value
@@ -119,14 +112,12 @@ Public Sub 获取工号和部门信息()
         dept = Trim(CStr(deptArr(i, 1) & ""))
 
         ' 续接模式：C/E都已有值则跳过
-        '' 解释：说明满足条件时会跳过当前分支处理。
         If empID <> "" And dept <> "" Then
             skippedCompletedCount = skippedCompletedCount + 1
             GoTo NextRow
         End If
 
         ' C列为空时按姓名补工号
-        '' 解释：说明表格列位与业务字段的映射关系。
         If empID = "" And empName <> "" Then
             If dictNameToID.Exists(empName) Then
                 empID = CStr(dictNameToID(empName))
@@ -136,7 +127,6 @@ Public Sub 获取工号和部门信息()
         End If
 
         ' E列为空时按工号补部门
-        '' 解释：说明表格列位与业务字段的映射关系。
         If dept = "" And empID <> "" Then
             If dictIDToDept.Exists(empID) Then
                 dept = CStr(dictIDToDept(empID))
@@ -149,17 +139,19 @@ NextRow:
     Next i
 
     ' 批量写入，避免逐单元格写入
-    '' 解释：说明该行是关键数据流或文件流操作。
     wsAttend.Range("C2:C" & lastRow).NumberFormatLocal = "@"
     wsAttend.Range("C2:C" & lastRow).Value = idArr
     wsAttend.Range("E2:E" & lastRow).Value = deptArr
+    With Union(wsAttend.Range("C2:C" & lastRow), wsAttend.Range("E2:E" & lastRow)).Font
+        .Name = "宋体"
+        .Size = 10
+    End With
 
     Dim elapsed As Double
     elapsed = Timer - startTime
 
     UpdateStatus "完成：工号补全 " & matchedIDCount & " 条，部门补全 " & matchedDeptCount & " 条，跳过已完整 " & skippedCompletedCount & " 条，耗时 " & Format(elapsed, "0.0") & " 秒", False
     shouldResetStatusBar = True  ' 成功完成后允许5秒后自动恢复状态栏
-
 
 CleanUp:
     If shouldResetStatusBar Then ScheduleStatusBarReset
@@ -176,6 +168,7 @@ ErrorHandler:
     Resume CleanUp
 End Sub
 
+' 函数说明：GetAttendSheet
 Private Function GetAttendSheet(ByVal wb As Workbook) As Worksheet
     On Error Resume Next
     Set GetAttendSheet = wb.Sheets("考勤清单")
@@ -185,6 +178,7 @@ Private Function GetAttendSheet(ByVal wb As Workbook) As Worksheet
     On Error GoTo 0
 End Function
 
+' 过程说明：UpdateStatus
 Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boolean = True)
     Static lastMsg As String
     Static lastTick As Double
@@ -205,13 +199,7 @@ Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boo
     If doEventsFlag Then DoEvents
 End Sub
 
-
-
-
-
-
-
-
+' 过程说明：ScheduleStatusBarReset
 Private Sub ScheduleStatusBarReset()
     On Error Resume Next
     Application.onTime _
@@ -219,3 +207,4 @@ Private Sub ScheduleStatusBarReset()
         Procedure:="恢复状态栏"
     On Error GoTo 0
 End Sub
+

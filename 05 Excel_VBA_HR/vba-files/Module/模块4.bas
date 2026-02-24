@@ -2,19 +2,12 @@ Attribute VB_Name = "模块4"
 Option Explicit
 
 ' =======================================================
-'' 解释：分隔线注释，用于视觉分区。
 ' 功能：导入企业微信记录
-'' 解释：说明该过程或函数的核心业务目标。
 ' 1) 选择需要打开的Excel文件
-'' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
-' 2) 删除当前文件中名为“企业微信”的Sheet（若存在）
-'' 解释：说明该行是关键数据流或文件流操作。
+' 2) 删除当前文件中名为"企业微信"的Sheet（若存在）
 ' 3) 复制外部文件的第一个工作表到当前文件
-'' 解释：说明该行是关键数据流或文件流操作。
-' 4) 将复制后的工作表命名为“企业微信”
-'' 解释：说明该行是关键数据流或文件流操作。
+' 4) 将复制后的工作表命名为"企业微信"
 ' =======================================================
-'' 解释：分隔线注释，用于视觉分区。
 Sub 导入企业微信记录()
     On Error GoTo ErrorHandler
 
@@ -67,8 +60,7 @@ Sub 导入企业微信记录()
         GoTo CleanExit
     End If
 
-    ' 删除当前文件中已有的“企业微信”工作表
-    '' 解释：说明该行是关键数据流或文件流操作。
+    ' 删除当前文件中已有的"企业微信"工作表
     UpdateStatus "正在删除旧的企业微信表..."
     Dim wsOld As Worksheet
     On Error Resume Next
@@ -79,14 +71,12 @@ Sub 导入企业微信记录()
     End If
 
     ' 复制外部文件的第一个工作表到当前文件
-    '' 解释：说明该行是关键数据流或文件流操作。
     UpdateStatus "正在复制工作表..."
     Dim wsSource As Worksheet
     Set wsSource = wbSource.Worksheets(1)
     wsSource.Copy After:=wbTarget.Worksheets(wbTarget.Worksheets.count)
 
-    ' 修改新复制的工作表名称为“企业微信”
-    '' 解释：说明该行是关键数据流或文件流操作。
+    ' 修改新复制的工作表名称为"企业微信"
     Dim wsNew As Worksheet
     Set wsNew = wbTarget.Worksheets(wbTarget.Worksheets.count)
     wsNew.Name = "企业微信"
@@ -118,7 +108,7 @@ ErrorHandler:
     Resume CleanExit
 End Sub
 
-
+' 过程说明：ScheduleStatusBarReset
 Private Sub ScheduleStatusBarReset()
     On Error Resume Next
     Application.onTime _
@@ -126,3 +116,4 @@ Private Sub ScheduleStatusBarReset()
         Procedure:="恢复状态栏"
     On Error GoTo 0
 End Sub
+

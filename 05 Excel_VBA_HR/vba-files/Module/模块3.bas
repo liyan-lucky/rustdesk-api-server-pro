@@ -2,104 +2,85 @@ Attribute VB_Name = "模块3"
 Option Explicit
 
 ' =======================================================
-'' 解释：分隔线注释，用于视觉分区。
 ' 功能：从考勤卡数据生成考勤清单（横排样式）
-'' 解释：说明该过程或函数的核心业务目标。
 ' 输入：考勤卡数据表、人员信息表
-'' 解释：说明运行前依赖的数据来源。
 ' 输出：考勤清单表（横排格式，每日一行，数据从第2行开始）
-'' 解释：说明执行后应产出的结果。
 ' 注意：考勤清单表必须已存在，且表头在第1行
-'' 解释：说明使用前提或限制条件。
 ' =======================================================
-'' 解释：分隔线注释，用于视觉分区。
 
 Sub 生成考勤清单()
     ' 错误处理
-    '' 解释：说明异常捕获与处理路径。
     On Error GoTo ErrorHandler
-    
+
     ' 初始化设置
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     初始化设置
-    
+
     Dim startTime As Double
     startTime = Timer
-    
+
     ' ================= 工作表对象定义 =================
-    '' 解释：分隔线注释，用于视觉分区。
     Dim wsStaff As Worksheet        ' 人员信息表
     Dim wsCard As Worksheet         ' 考勤卡数据表
     Dim wsOutput As Worksheet       ' 考勤清单输出表
     Dim shouldResetStatusBar As Boolean  ' 仅正常完成时自动清空状态栏
-    
+
     ' 获取工作表
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     Set wsStaff = ThisWorkbook.Sheets("人员信息")
     Set wsCard = ThisWorkbook.Sheets("考勤卡")
     Set wsOutput = ThisWorkbook.Sheets("考勤清单")
     shouldResetStatusBar = False
-    
+
     ' ================= 检查表中现有数据（支持续接） =================
-    '' 解释：分隔线注释，用于视觉分区。
     Dim lastDataRow As Long
     lastDataRow = wsOutput.Cells(wsOutput.rows.count, "F").End(xlUp).Row
-    
+
     ' ================= 日期范围验证 =================
-    '' 解释：分隔线注释，用于视觉分区。
     Dim startDate As Date, endDate As Date
     startDate = CDate(wsStaff.Range("B2").value)
     endDate = CDate(wsStaff.Range("C2").value)
-    
+
     ' ================= 从人员信息表获取时间参数（包括格式） =================
-    '' 解释：分隔线注释，用于视觉分区。
     Dim STANDARD_START As Variant, STANDARD_END As Variant, MEAL_TIME As Variant
     Dim OVERTIME_START As Variant, NIGHT_MEAL_TIME As Variant
-    
+
     ' 获取时间参数值和格式
-    '' 解释：说明函数参数的含义与用途。
     STANDARD_START = wsStaff.Range("F2").value
     STANDARD_END = wsStaff.Range("G2").value
     MEAL_TIME = wsStaff.Range("H2").value
     OVERTIME_START = wsStaff.Range("I2").value
     NIGHT_MEAL_TIME = wsStaff.Range("J2").value
-    
+
     ' 验证时间参数是否为空
-    '' 解释：说明函数参数的含义与用途。
     If IsEmpty(STANDARD_START) Or IsEmpty(STANDARD_END) Or IsEmpty(MEAL_TIME) Or _
        IsEmpty(OVERTIME_START) Or IsEmpty(NIGHT_MEAL_TIME) Then
         UpdateStatus "时间参数错误，请检查人员信息表F2-J2单元格是否填写"
         GoTo CleanExit
     End If
-    
+
     ' ================= 读取考勤卡数据 =================
-    '' 解释：分隔线注释，用于视觉分区。
     UpdateStatus "读取考勤卡数据..."
     DoEvents  ' 允许用户操作
-    
+
     Dim cardLastRow As Long
     cardLastRow = wsCard.Cells(wsCard.rows.count, "A").End(xlUp).Row
-    
+
     If cardLastRow < 5 Then
         UpdateStatus "考勤卡表中没有数据"
         GoTo CleanExit
     End If
-    
+
     ' 一次性读取考勤卡数据到数组
-    '' 解释：说明该行是关键数据流或文件流操作。
     Dim cardData As Variant
     cardData = wsCard.Range("A1:P" & cardLastRow).value
-    
+
     ' 创建字典存储员工考勤数据
-    '' 解释：说明这里使用内存结构进行索引、去重或汇总。
     Dim cardDict As Object
     Set cardDict = CreateObject("Scripting.Dictionary")
-    
+
     ' 存储员工基础信息（姓名 -> 工号、部门）
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     Dim empInfoDict As Object
     Set empInfoDict = CreateObject("Scripting.Dictionary")
-    
+
     Dim cardDataLastRow As Long
     cardDataLastRow = UBound(cardData, 1)
 
@@ -109,111 +90,94 @@ Sub 生成考勤清单()
     employeeCount = 0
     Dim totalRecords As Long
     totalRecords = 0
-    
+
     ' 遍历考勤卡数据，每25行处理一个员工
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     Do While i <= cardDataLastRow
         ' 检查是否到达员工信息行（第4行开始是第一个员工的信息）
-        '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
         If i + 3 <= cardDataLastRow Then
             Dim unitCell As String, nameCell As String, empNoCell As String
             unitCell = Trim(cardData(i + 3, 1) & "")       ' A列：单位
             nameCell = Trim(cardData(i + 3, 5) & "")      ' E列：姓名
             empNoCell = Trim(cardData(i + 3, 8) & "")     ' H列：工号
-            
+
             ' 检查是否是员工信息行（包含"姓名："）
-            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
             If InStr(nameCell, "姓名：") > 0 Then
                 employeeCount = employeeCount + 1
-                
+
                 ' 提取员工信息
-                '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
                 Dim employeeName As String
                 Dim cardEmployeeKey As String
                 employeeName = Trim(Replace(nameCell, "姓名：", ""))
                 cardEmployeeKey = NormalizeName(employeeName)
-                
+
                 If employeeName <> "" Then
                     ' 提取部门信息
-                    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
                     Dim department As String
                     If InStr(unitCell, "单位：") > 0 Then
                         department = Trim(Replace(unitCell, "单位：", ""))
                     Else
                         department = ""
                     End If
-                    
+
                     ' 提取工号
-                    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
                     Dim employeeNo As String
                     If InStr(empNoCell, "工号：") > 0 Then
                         employeeNo = Trim(Replace(empNoCell, "工号：", ""))
                     Else
                         employeeNo = ""
                     End If
-                    
+
                     If cardEmployeeKey <> "" Then
                         If Not empInfoDict.Exists(cardEmployeeKey) Then
                             empInfoDict(cardEmployeeKey) = Array(employeeNo, department)
                         End If
                     End If
-                    
-                    ' ???????????????1/2??????16?????
-                    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
+
+                    ' 每个员工数据块分左右两栏处理（每半栏含标题共17行，实际16天数据）
                     Dim startRow As Long, endRow As Long
                     startRow = i + 7  ' 打卡数据开始行
-                    endRow = i + 23   ' ??????????16?????
-                    
+                    endRow = i + 23   ' 半栏结束行（扣除标题行后对应16天数据）
+
                     If startRow <= cardDataLastRow And endRow <= cardDataLastRow Then
                         Dim dayRow As Long
-                        
+
                         ' 处理左半部分数据（A到H列）
-                        '' 解释：说明表格列位与业务字段的映射关系。
                         For dayRow = startRow To endRow
                             ' 获取日期（A列）
-                            '' 解释：说明该行处理日期时间规则与边界。
                             Dim dateStr As String
                             dateStr = Trim(cardData(dayRow, 1) & "")  ' A列：日期
-                            
+
                             ' 跳过"日期"标题行
-                            '' 解释：说明满足条件时会跳过当前分支处理。
                             If dateStr = "日期" Then
                                 GoTo NextDayRow
                             End If
-                            
+
                             ' 尝试解析日期
-                            '' 解释：说明该行处理日期时间规则与边界。
                             Dim recordDate As Date
                             Dim dateValid As Boolean
                             dateValid = False
-                            
-                            ' ?????????????? MM.DD ???
-                            '' ???????????????????
+
+                            ' 尝试解析日期（兼容 MM.DD 格式）
                             dateValid = TryParseCardDateByRange(dateStr, startDate, endDate, recordDate)
-                            
+
                             If dateValid Then
                                 ' 检查日期是否在指定范围内
-                                '' 解释：说明该行处理日期时间规则与边界。
                                 If recordDate >= startDate And recordDate <= endDate Then
                                     Dim dateKey As String
                                     dateKey = Format(recordDate, "yyyy-mm-dd")
-                                    
+
                                     ' 获取打卡时间（处理数字格式）
-                                    '' 解释：说明该行处理日期时间规则与边界。
                                     Dim workStart As String, workEnd As String
                                     ' C列是上午上班时间（作为上班时间）
-                                    '' 解释：说明该行处理日期时间规则与边界。
                                     workStart = FormatExcelTime(cardData(dayRow, 3))
                                     ' H列是加班下班时间（作为下班时间）
-                                    '' 解释：说明该行处理日期时间规则与边界。
                                     workEnd = FormatExcelTime(cardData(dayRow, 8))
-                                    
+
                                     If workStart <> "" Or workEnd <> "" Then
                                         ' 存储到字典
-                                        '' 解释：说明这里使用内存结构进行索引、去重或汇总。
                                         Dim dictKey As String
                                         dictKey = cardEmployeeKey & "|" & dateKey
-                                        
+
                                         If Not cardDict.Exists(dictKey) Then
                                             cardDict(dictKey) = Array(workStart, workEnd, 1, employeeNo, department)
                                             totalRecords = totalRecords + 1
@@ -223,73 +187,60 @@ Sub 生成考勤清单()
                             End If
 NextDayRow:
                         Next dayRow
-                        
+
                         ' 处理右半部分数据（I到P列）
-                        '' 解释：说明表格列位与业务字段的映射关系。
                         For dayRow = startRow To endRow
                             ' 获取日期（I列）
-                            '' 解释：说明该行处理日期时间规则与边界。
                             dateStr = Trim(cardData(dayRow, 9) & "")  ' I列：日期
-                            
+
                             ' 跳过"日期"标题行
-                            '' 解释：说明满足条件时会跳过当前分支处理。
                             If dateStr = "日期" Then
                                 GoTo NextDayRow2
                             End If
-                            
+
                             ' 尝试解析日期
-                            '' 解释：说明该行处理日期时间规则与边界。
                             dateValid = False
-                            
-                            ' ?????????????? MM.DD ???
-                            '' ???????????????????
+
+                            ' 尝试解析日期（兼容 MM.DD 格式）
                             dateValid = TryParseCardDateByRange(dateStr, startDate, endDate, recordDate)
-                            
+
                             If dateValid Then
                                 ' 检查日期是否在指定范围内
-                                '' 解释：说明该行处理日期时间规则与边界。
                                 If recordDate >= startDate And recordDate <= endDate Then
                                     dateKey = Format(recordDate, "yyyy-mm-dd")
-                                    
+
                                     ' 获取打卡时间（处理数字格式）
-                                    '' 解释：说明该行处理日期时间规则与边界。
                                     ' K列是上午上班时间（作为上班时间）
-                                    '' 解释：说明该行处理日期时间规则与边界。
                                     workStart = FormatExcelTime(cardData(dayRow, 11))
                                     ' P列是加班下班时间（作为下班时间）
-                                    '' 解释：说明该行处理日期时间规则与边界。
                                     workEnd = FormatExcelTime(cardData(dayRow, 16))
-                                    
+
                                     If workStart <> "" Or workEnd <> "" Then
                                         ' 存储到字典
-                                        '' 解释：说明这里使用内存结构进行索引、去重或汇总。
                                         dictKey = cardEmployeeKey & "|" & dateKey
-                                        
+
                                         If cardDict.Exists(dictKey) Then
                                             ' 合并同一日期的时间
-                                            '' 解释：说明该行处理日期时间规则与边界。
                                             Dim existingData As Variant
                                             existingData = cardDict(dictKey)
                                             Dim existingStart As String, existingEnd As String
                                             existingStart = existingData(0)
                                             existingEnd = existingData(1)
-                                            
+
                                             ' 取更早的上班时间
-                                            '' 解释：说明该行处理日期时间规则与边界。
                                             If workStart <> "" Then
                                                 If existingStart = "" Or workStart < existingStart Then
                                                     existingStart = workStart
                                                 End If
                                             End If
-                                            
+
                                             ' 取更晚的下班时间
-                                            '' 解释：说明该行处理日期时间规则与边界。
                                             If workEnd <> "" Then
                                                 If existingEnd = "" Or workEnd > existingEnd Then
                                                     existingEnd = workEnd
                                                 End If
                                             End If
-                                            
+
                                             cardDict(dictKey) = Array(existingStart, existingEnd, existingData(2) + 1, employeeNo, department)
                                         Else
                                             cardDict(dictKey) = Array(workStart, workEnd, 1, employeeNo, department)
@@ -304,48 +255,42 @@ NextDayRow2:
                 End If
             End If
         End If
-        
+
         i = i + 25  ' 每个员工占25行
-        
+
         ' 更新状态
-        '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
         If i Mod 250 = 0 Then  ' 每处理10个员工更新一次状态
             UpdateStatus "正在读取考勤卡数据，已处理 " & i & " 行"
             DoEvents  ' 允许用户操作
         End If
     Loop
-    
+
     ' ================= 读取员工信息 =================
-    '' 解释：分隔线注释，用于视觉分区。
     Dim staffLastRow As Long
     staffLastRow = wsStaff.Cells(wsStaff.rows.count, "B").End(xlUp).Row
-    
+
     If staffLastRow < 5 Then
         UpdateStatus "人员信息表中无员工数据"
         GoTo CleanExit
     End If
-    
+
     ' 读取员工信息到数组
-    '' 解释：说明该行是关键数据流或文件流操作。
     Dim staffData As Variant
     staffData = wsStaff.Range("B5:D" & staffLastRow).value
-    
+
     ' ================= 批量写入数据 =================
-    '' 解释：分隔线注释，用于视觉分区。
     ' 使用Collection代替ArrayList
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     Dim outputCollection As Collection
     Set outputCollection = New Collection
-    
+
     ' 已存在记录去重（姓名+日期）
-    '' 解释：说明该行处理日期时间规则与边界。
     Dim existingRecordDict As Object
     Set existingRecordDict = CreateObject("Scripting.Dictionary")
-    
+
     If lastDataRow > 1 Then
         Dim existingArr As Variant
         existingArr = wsOutput.Range("F2:G" & lastDataRow).value
-        
+
         Dim er As Long
         For er = 1 To UBound(existingArr, 1)
             Dim exNameKey As String
@@ -355,17 +300,16 @@ NextDayRow2:
             End If
         Next er
     End If
-    
+
     Dim totalEmployees As Long
     totalEmployees = staffLastRow - 4
     Dim processedCount As Long
     processedCount = 0
-    
+
     UpdateStatus "生成考勤数据..."
     DoEvents  ' 允许用户操作
-    
+
     ' 定义变量
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     Dim j As Long
     Dim matchCount As Long
     Dim addedCount As Long
@@ -373,12 +317,11 @@ NextDayRow2:
     matchCount = 0
     addedCount = 0
     skippedExistingCount = 0
-    
+
     ' 检查是否有标记为布尔True的员工（D列）
-    '' 解释：说明表格列位与业务字段的映射关系。
     Dim hasValidEmployees As Boolean
     hasValidEmployees = False
-    
+
     For j = 1 To UBound(staffData, 1)
         Dim statusMark As Variant
         statusMark = staffData(j, 3)
@@ -387,36 +330,34 @@ NextDayRow2:
             Exit For
         End If
     Next j
-    
+
     If Not hasValidEmployees Then
         UpdateStatus "没有标记为布尔True的员工（D列）"
         GoTo CleanExit
     End If
-    
+
     For j = 1 To UBound(staffData, 1)
         processedCount = processedCount + 1
         If processedCount Mod 20 = 0 Then
             UpdateStatus "处理进度：" & processedCount & "/" & totalEmployees
             DoEvents  ' 允许用户操作
         End If
-        
+
         employeeName = Trim(staffData(j, 1) & "")
         Dim employeeKey As String
         employeeKey = NormalizeName(employeeName)
-        
+
         If employeeName = "" Then
             GoTo NextEmployee
         End If
-        
+
         ' 检查员工状态
-        '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
         statusMark = staffData(j, 3)
         If Not IsMarkedAsTrue(statusMark) Then
             GoTo NextEmployee
         End If
-        
+
                 ' 获取员工基础信息（工号/部门）
-                '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
         Dim defaultEmployeeNo As String, defaultDepartment As String
         If empInfoDict.Exists(employeeKey) Then
             Dim empInfo As Variant
@@ -425,29 +366,26 @@ NextDayRow2:
             defaultDepartment = empInfo(1)
         Else
             ' 考勤卡中不存在该员工，不生成清单
-            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
             GoTo NextEmployee
         End If
-        
+
         ' 为每个日期生成记录
-        '' 解释：说明该行处理日期时间规则与边界。
         Dim currentDate As Date
         For currentDate = startDate To endDate
             Dim dateKey2 As String
             dateKey2 = Format(currentDate, "yyyy-mm-dd")
-            
+
             ' 查找打卡记录
-            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
             Dim searchKey As String
             searchKey = employeeKey & "|" & dateKey2
             If existingRecordDict.Exists(searchKey) Then
                 skippedExistingCount = skippedExistingCount + 1
                 GoTo NextCurrentDate
             End If
-            
+
             Dim workIn As String, workOut As String
             Dim foundEmployeeNo As String, foundDepartment As String
-            
+
             If cardDict.Exists(searchKey) Then
                 matchCount = matchCount + 1
                 Dim record As Variant
@@ -464,40 +402,33 @@ NextDayRow2:
                 foundEmployeeNo = defaultEmployeeNo
                 foundDepartment = defaultDepartment
             End If
-            
+
             ' 创建一行数据数组
-            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
             Dim rowData() As Variant
             ReDim rowData(1 To 19)
-            
+
             ' 填充行数据
-            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
             rowData(1) = ""  ' A列：项目编号
             rowData(2) = ""  ' B列：项目名称
             rowData(3) = ""  ' C列：公司工号
-            
+
             ' D列：考勤机卡号（写入工号）
-            '' 解释：说明该行是关键数据流或文件流操作。
             rowData(4) = defaultEmployeeNo
-            
+
             ' E列：部门
-            '' 解释：说明表格列位与业务字段的映射关系。
             If foundDepartment <> "" Then
                 rowData(5) = foundDepartment
             Else
                 rowData(5) = ""
             End If
-            
+
             ' F列：姓名
-            '' 解释：说明表格列位与业务字段的映射关系。
             rowData(6) = employeeName
-            
+
             ' G列：日期
-            '' 解释：说明该行处理日期时间规则与边界。
             rowData(7) = currentDate
-            
+
             ' H列：上班时间 - 如果考勤卡中上班时间为空，则考勤清单中也保持为空
-            '' 解释：说明该行处理日期时间规则与边界。
             If workIn <> "" Then
                 On Error Resume Next
                 Dim timeParts() As String
@@ -506,94 +437,79 @@ NextDayRow2:
                     Dim hh As Integer, mm As Integer
                     hh = CInt(timeParts(0))
                     mm = CInt(timeParts(1))
-                    
+
                     ' 创建时间值
-                    '' 解释：说明该行处理日期时间规则与边界。
                     Dim timeIn As Date
                     timeIn = TimeSerial(hh, mm, 0)
-                    
+
                     ' 上班时间：日期+时间
-                    '' 解释：说明该行处理日期时间规则与边界。
                     rowData(8) = currentDate + timeIn
                 Else
                     ' 时间格式不正确，留空
-                    '' 解释：说明该行处理日期时间规则与边界。
                     rowData(8) = ""
                 End If
                 On Error GoTo 0
             Else
                 ' 考勤卡中上班时间为空，考勤清单中也保持为空
-                '' 解释：说明该行处理日期时间规则与边界。
                 rowData(8) = ""
             End If
-            
+
             ' I列：下班时间 - 如果考勤卡中下班时间为空，则考勤清单中也保持为空
-            '' 解释：说明该行处理日期时间规则与边界。
             If workOut <> "" Then
                 On Error Resume Next
                 timeParts = Split(workOut, ":")
                 If UBound(timeParts) >= 1 Then
                     hh = CInt(timeParts(0))
                     mm = CInt(timeParts(1))
-                    
+
                     Dim timeOut As Date
                     timeOut = TimeSerial(hh, mm, 0)
-                    
+
                     Dim outTime As Date
-                    
+
                     ' 检查是否需要跨天：如果下班时间小于上班时间
-                    '' 解释：说明该行处理日期时间规则与边界。
                     If rowData(8) <> "" And IsDate(rowData(8)) Then
                         ' 有上班时间，需要比较
-                        '' 解释：说明该行处理日期时间规则与边界。
                         Dim checkInTime As Date
                         checkInTime = CDate(rowData(8))
-                        
+
                         If timeOut < timeValue(checkInTime) Then
                             ' 下班时间小于上班时间，说明跨天了
-                            '' 解释：说明该行处理日期时间规则与边界。
                             outTime = currentDate + 1 + timeOut
                         Else
                             ' 同一天
-                            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
                             outTime = currentDate + timeOut
                         End If
                     Else
                         ' 没有上班时间，只保存下班时间（同一天）
-                        '' 解释：说明该行处理日期时间规则与边界。
                         outTime = currentDate + timeOut
                     End If
-                    
+
                     rowData(9) = outTime
                 Else
                     ' 时间格式不正确，留空
-                    '' 解释：说明该行处理日期时间规则与边界。
                     rowData(9) = ""
                 End If
                 On Error GoTo 0
             Else
                 ' 考勤卡中下班时间为空，考勤清单中也保持为空
-                '' 解释：说明该行处理日期时间规则与边界。
                 rowData(9) = ""
             End If
-            
+
             ' J到N列：基准时间（直接使用原始值，包括格式）
-            '' 解释：说明该行处理日期时间规则与边界。
             rowData(10) = STANDARD_START
             rowData(11) = STANDARD_END
             rowData(12) = MEAL_TIME
             rowData(13) = OVERTIME_START
             rowData(14) = NIGHT_MEAL_TIME
-            
+
             ' O到S列：公式（将在写入后设置）
-            '' 解释：说明该行是关键数据流或文件流操作。
             Dim k As Long
             For k = 15 To 19
                 rowData(k) = ""
             Next k
-            
+
             ' 添加到集合
-            '' 解释：说明这里使用内存结构进行索引、去重或汇总。
             outputCollection.Add rowData
             existingRecordDict(searchKey) = True
             addedCount = addedCount + 1
@@ -602,14 +518,13 @@ NextCurrentDate:
 
 NextEmployee:
     Next j
-    
+
         ' ================= 将集合转换为数组 =================
-        '' 解释：分隔线注释，用于视觉分区。
     If outputCollection.count = 0 Then
         UpdateStatus "没有可续接的新增记录（跳过已存在 " & skippedExistingCount & " 条）", False
         GoTo CleanExit
     End If
-    
+
         If outputCollection.count > 0 Then
         UpdateStatus "写入数据到工作表..."
         DoEvents
@@ -618,7 +533,6 @@ NextEmployee:
         writeLastRow = lastDataRow
 
         ' 先构建员工顺序（按本次生成顺序）
-        '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
         Dim empOrder As Collection
         Set empOrder = New Collection
         Dim empSeen As Object
@@ -651,7 +565,6 @@ NextEmployee:
             currentEmpKey = CStr(empOrder(oi))
 
             ' 收集该员工本次新增行（预分组，避免重复扫描）
-            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
             Dim empRows As Collection
             Set empRows = empRowsDict(currentEmpKey)
 
@@ -689,7 +602,6 @@ NextEmployee:
         Next oi
 
         ' 显示完成消息
-        '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
         Dim elapsedTime As Double
         elapsedTime = Timer - startTime
 
@@ -702,22 +614,20 @@ NextEmployee:
 
 CleanExit:
     ' ================= 清理和恢复设置 =================
-    '' 解释：分隔线注释，用于视觉分区。
     恢复设置
-    
+
     ' 清理对象 - 只在对象存在时才清理
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     If Not cardDict Is Nothing Then
         Set cardDict = Nothing
     End If
     If Not empInfoDict Is Nothing Then
         Set empInfoDict = Nothing
     End If
-    
+
     If Not outputCollection Is Nothing Then
         Set outputCollection = Nothing
     End If
-    
+
     If shouldResetStatusBar Then
         Application.onTime _
             EarliestTime:=Now + timeValue("00:00:05"), _
@@ -728,32 +638,30 @@ CleanExit:
 
 ErrorHandler:
     ' ================= 错误处理 =================
-    '' 解释：分隔线注释，用于视觉分区。
     恢复设置
-    
+
     ' 清理对象 - 只在对象存在时才清理
-    '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
     If Not cardDict Is Nothing Then
         Set cardDict = Nothing
     End If
     If Not empInfoDict Is Nothing Then
         Set empInfoDict = Nothing
     End If
-    
+
     If Not outputCollection Is Nothing Then
         Set outputCollection = Nothing
     End If
-    
+
     UpdateStatus "错误：" & Err.Number & " - " & Err.Description
 End Sub
 
+' 函数说明：TryParseCardDateByRange
 Private Function TryParseCardDateByRange(ByVal dateText As String, ByVal startDate As Date, _
     ByVal endDate As Date, ByRef parsedDate As Date) As Boolean
     Dim txt As String
     txt = Trim(dateText & "")
     If txt = "" Then Exit Function
-    ' ????? Excel/????????
-    '' ???????????????????
+    ' 优先使用 Excel/系统内置日期解析
     On Error Resume Next
     If IsDate(txt) Then
         parsedDate = CDate(txt)
@@ -765,8 +673,7 @@ Private Function TryParseCardDateByRange(ByVal dateText As String, ByVal startDa
     End If
     Err.Clear
     On Error GoTo 0
-    ' ???????? "MM.DD" ??????????????????
-    '' ???????????????????
+    ' 若内置解析失败，再按 "MM.DD" 格式结合查询区间年份补全年份
     If Len(txt) <> 5 Or InStr(txt, ".") = 0 Then Exit Function
     Dim mdText As String
     mdText = Replace(txt, ".", "-")
@@ -796,13 +703,13 @@ Private Function TryParseCardDateByRange(ByVal dateText As String, ByVal startDa
         Err.Clear
         On Error GoTo 0
     Next y
-    ' ??????????????????????????
-    '' ???????????????????
+    ' 兜底处理：未命中区间时按起始年份尝试一次解析
     On Error Resume Next
     parsedDate = CDate(CStr(y1) & "-" & mdText)
     If Err.Number = 0 Then TryParseCardDateByRange = True
     On Error GoTo 0
 End Function
+' 函数说明：FindLastEmployeeRowByKey
 Private Function FindLastEmployeeRowByKey(ByVal ws As Worksheet, ByVal empKey As String, ByVal lastRow As Long) As Long
     Dim r As Long
     For r = lastRow To 2 Step -1
@@ -813,6 +720,7 @@ Private Function FindLastEmployeeRowByKey(ByVal ws As Worksheet, ByVal empKey As
     Next r
 End Function
 
+' 过程说明：ApplyOutputBlockFormat
 Private Sub ApplyOutputBlockFormat(ByVal wsOutput As Worksheet, ByVal wsStaff As Worksheet, _
     ByVal targetRange As Range, ByVal startRow As Long, ByVal lastRow As Long, ByVal deptSearchArrayLiteral As String)
 
@@ -826,6 +734,8 @@ Private Sub ApplyOutputBlockFormat(ByVal wsOutput As Worksheet, ByVal wsStaff As
     formatNightMealTime = wsStaff.Range("J2").NumberFormat
 
     With targetRange
+        .Font.Name = "宋体"
+        .Font.Size = 10
         .Columns(10).NumberFormat = formatStandardStart
         .Columns(11).NumberFormat = formatStandardEnd
         .Columns(12).NumberFormat = formatMealTime
@@ -861,30 +771,31 @@ Private Sub ApplyOutputBlockFormat(ByVal wsOutput As Worksheet, ByVal wsStaff As
         "=IF(O" & startRow & "="""","""",INT(O" & startRow & ")+IF((O" & startRow & "-INT(O" & startRow & "))>=0.5,0.5,0))"
 
     wsOutput.Range("R" & startRow & ":R" & lastRow).Formula = _
-        "=IF(OR(P" & startRow & "="""",ISNUMBER(SEARCH(" & deptSearchArrayLiteral & ",E" & startRow & ")),E" & startRow & "=""""),"""",MROUND(P" & startRow & ",0.5))"
-
+        "=IF(OR(P" & startRow & "="""",ISNUMBER(SEARCH({""设计"",""工艺"",""项目"",""电气"",""上海""},E" & startRow & ")),E" & startRow & "=""""),"""",MROUND(P" & startRow & ",0.5))"
+        ' "=IF(OR(P" & startRow & "="""",ISNUMBER(SEARCH(" & deptSearchArrayLiteral & ",E" & startRow & ")),E" & startRow & "=""""),"""",MROUND(P" & startRow & ",0.5))"
     wsOutput.Range("S" & startRow & ":S" & lastRow).Formula = _
         "=IF(OR(H" & startRow & "="""",J" & startRow & "=""""),"""",MAX((H" & startRow & "-(G" & startRow & "+J" & startRow & "))*24*60,0))"
 
     wsOutput.Range("O" & startRow & ":S" & lastRow).Calculate
 End Sub
+' 函数说明：BuildDeptPrefixArrayLiteral
 Private Function BuildDeptPrefixArrayLiteral() As String
     On Error GoTo Fallback
-    
+
     Dim wsEmp As Worksheet
     Set wsEmp = ThisWorkbook.Sheets("职员")
-    
+
     Dim lastRow As Long
     lastRow = wsEmp.Cells(wsEmp.Rows.Count, "C").End(xlUp).Row
     If lastRow < 2 Then GoTo Fallback
-    
+
     Dim arr As Variant
     arr = wsEmp.Range("C2:C" & lastRow).Value
-    
+
     Dim dict As Object
     Set dict = CreateObject("Scripting.Dictionary")
     dict.CompareMode = vbTextCompare
-    
+
     Dim i As Long
     For i = 1 To UBound(arr, 1)
         Dim deptText As String
@@ -901,34 +812,31 @@ Private Function BuildDeptPrefixArrayLiteral() As String
             End If
         End If
     Next i
-    
+
     If dict.Count = 0 Then GoTo Fallback
-    
+
     Dim q As String
     q = Chr(34)
-    
+
     Dim result As String
     result = "{"
-    
+
     Dim k As Variant
     For Each k In dict.Keys
         If result <> "{" Then result = result & ","
         result = result & q & CStr(k) & q
     Next k
-    
+
     result = result & "}"
     BuildDeptPrefixArrayLiteral = result
     Exit Function
-    
+
 Fallback:
     BuildDeptPrefixArrayLiteral = "{""__""}"
 End Function
 ' ================= 辅助函数 =================
-'' 解释：分隔线注释，用于视觉分区。
 ' 初始化Excel应用程序设置（优化性能）
-'' 解释：说明该段用于提升执行速度与稳定性。
 ' 更新状态栏并保持界面响应
-'' 解释：说明该段用于状态提示或状态栏恢复策略。
 Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boolean = True)
     Static lastMsg As String
     Static lastTick As Double
@@ -948,6 +856,7 @@ Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boo
 
     If doEventsFlag Then DoEvents
 End Sub
+' 过程说明：初始化设置
 Private Sub 初始化设置()
     Application.ScreenUpdating = False  ' 关闭屏幕更新，加快执行速度
     Application.Calculation = xlCalculationManual  ' 手动计算模式，避免自动计算影响性能
@@ -955,7 +864,6 @@ Private Sub 初始化设置()
 End Sub
 
 ' 恢复Excel应用程序设置
-'' 解释：说明该段用于恢复 Excel 全局状态。
 Private Sub 恢复设置()
     Application.ScreenUpdating = True   ' 恢复屏幕更新
     Application.Calculation = xlCalculationAutomatic  ' 恢复自动计算
@@ -963,47 +871,41 @@ Private Sub 恢复设置()
 End Sub
 
 ' 检查状态标记是否为真
-'' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
 Function IsMarkedAsTrue(mark As Variant) As Boolean
     IsMarkedAsTrue = (VarType(mark) = vbBoolean And mark = True)
 End Function
 
 ' 规范化姓名键（去空格）
-'' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
 Function NormalizeName(ByVal nm As String) As String
     NormalizeName = Replace(Trim(nm & ""), " ", "")
 End Function
 
 ' 将Excel时间数值转换为"HH:MM"字符串
-'' 解释：说明该行处理日期时间规则与边界。
 
 Function FormatExcelTime(excelTime As Variant) As String
     If IsNumeric(excelTime) And excelTime <> 0 Then
         Dim timeValue As Double
         timeValue = CDbl(excelTime)
-        
+
         ' 确保是合法的时间值（0到1之间）
-        '' 解释：说明该行处理日期时间规则与边界。
         If timeValue >= 0 And timeValue < 1 Then
             Dim totalMinutes As Long
             totalMinutes = CLng(timeValue * 24 * 60)
-            
+
             Dim h As Long, m As Long
             h = totalMinutes \ 60
             m = totalMinutes Mod 60
-            
+
             FormatExcelTime = Format(h, "00") & ":" & Format(m, "00")
         Else
             FormatExcelTime = ""
         End If
     ElseIf VarType(excelTime) = vbString Then
         ' 如果是字符串格式的时间，直接返回
-        '' 解释：说明该行处理日期时间规则与边界。
         Dim timeStr As String
         timeStr = Trim(CStr(excelTime))
         If Len(timeStr) = 5 And Mid(timeStr, 3, 1) = ":" Then
             ' 检查是否是有效的HH:MM格式
-            '' 解释：该注释用于解释紧邻代码的业务意图或实现原因。
             Dim hh As Long, mm As Long
             hh = Val(Left(timeStr, 2))
             mm = Val(Right(timeStr, 2))
@@ -1019,42 +921,4 @@ Function FormatExcelTime(excelTime As Variant) As String
         FormatExcelTime = ""
     End If
 End Function
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
