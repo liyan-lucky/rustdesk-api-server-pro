@@ -1,8 +1,8 @@
 const local: App.I18n.Schema = {
   system: {
     title: 'Server API Rustdesk',
-    updateTitle: 'Notifica aggiornamento versione di sistema',
-    updateContent: 'È stata rilevata una nuova versione del sistema. Vuoi aggiornare subito la pagina?',
+    updateTitle: 'Version Update Notice (ChatGPT-Generated)',
+    updateContent: 'This update content was generated/assembled by ChatGPT and may contain mistakes. Review and test carefully before using it, especially in production. Refresh now?',
     updateConfirm: 'Aggiorna subito',
     updateCancel: 'Più tardi'
   },
@@ -217,6 +217,9 @@ const local: App.I18n.Schema = {
       },
       audit: {
         logsSearchPlaceholder: 'Nome utente\\Azione\\RustdeskID\\IP'
+      },
+      devices: {
+        logsSearchPlaceholder: 'Nome utente\\Nome computer\\RustdeskID'
       }
     },
     system: {

@@ -16,7 +16,7 @@ const emit = defineEmits<Emits>();
 
 const { formRef } = useNaiveForm();
 
-const model = defineModel<Api.Audit.AuditLogSearchParams>('model', { required: true });
+const model = defineModel<Api.Devices.DeviceSearchParams>('model', { required: true });
 
 async function reset() {
   emit('reset');

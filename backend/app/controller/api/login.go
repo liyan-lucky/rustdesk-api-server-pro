@@ -72,5 +72,7 @@ func (c *LoginController) HandleLoginOptions() mvc.Result {
 	//return mvc.Response{
 	//	Object: oidc,
 	//}
-	return mvc.Response{}
+	return mvc.Response{
+		Object: []string{},
+	}
 }

@@ -1,8 +1,9 @@
 const local: App.I18n.Schema = {
   system: {
     title: 'Rustdesk Api Server',
-    updateTitle: 'System Version Update Notification',
-    updateContent: 'A new version of the system has been detected. Do you want to refresh the page immediately?',
+    updateTitle: 'Version Update Notice (ChatGPT-Generated)',
+    updateContent:
+      'This update content was generated/assembled by ChatGPT and may contain mistakes. Review and test carefully before using it, especially in production. Refresh now?',
     updateConfirm: 'Refresh immediately',
     updateCancel: 'Later'
   },
@@ -219,6 +220,9 @@ const local: App.I18n.Schema = {
       },
       audit: {
         logsSearchPlaceholder: 'Username\\Action\\RustdeskID\\IP'
+      },
+      devices: {
+        logsSearchPlaceholder: 'Username\\Hostname\\RustdeskID'
       }
     },
     system: {

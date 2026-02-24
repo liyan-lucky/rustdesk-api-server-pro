@@ -70,7 +70,7 @@ const {
       align: 'center'
     },
     {
-      key: 'uumemoryid',
+      key: 'memory',
       title: $t('dataMap.device.memory'),
       align: 'center'
     },

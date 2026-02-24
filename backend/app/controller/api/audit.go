@@ -2,6 +2,7 @@ package api
 
 import (
 	"io"
+	"strconv"
 	"rustdesk-api-server-pro/app/model"
 	"time"
 
@@ -12,6 +13,10 @@ import (
 
 type AuditController struct {
 	basicController
+}
+
+func (c *AuditController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("PUT", "audit", "HandleAuditUpdate")
 }
 
 func (c *AuditController) PostAuditConn() mvc.Result {
@@ -123,4 +128,51 @@ func (c *AuditController) PostAuditAlarm() mvc.Result {
 			"error": "11",
 		},
 	}
+}
+
+func (c *AuditController) HandleAuditUpdate() mvc.Result {
+	body, err := io.ReadAll(c.Ctx.Request().Body)
+	if err != nil {
+		return mvc.Response{
+			Object: iris.Map{
+				"error": err.Error(),
+			},
+		}
+	}
+
+	guid := gjson.GetBytes(body, "guid").String()
+	note := gjson.GetBytes(body, "note").String()
+	if guid == "" {
+		return mvc.Response{
+			Object: iris.Map{
+				"error": "guid required",
+			},
+		}
+	}
+
+	// Newer clients send an "audit guid". In practice this is often the session id string.
+	affected, err := c.Db.Where("session_id = ?", guid).Cols("note").Update(&model.Audit{Note: note})
+	if err != nil {
+		return mvc.Response{
+			Object: iris.Map{
+				"error": err.Error(),
+			},
+		}
+	}
+
+	// Fallback: if guid is numeric, treat it as local audit row id.
+	if affected == 0 {
+		if id, convErr := strconv.Atoi(guid); convErr == nil {
+			_, err = c.Db.Where("id = ?", id).Cols("note").Update(&model.Audit{Note: note})
+			if err != nil {
+				return mvc.Response{
+					Object: iris.Map{
+						"error": err.Error(),
+					},
+				}
+			}
+		}
+	}
+
+	return mvc.Response{}
 }

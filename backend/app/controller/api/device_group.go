@@ -18,9 +18,10 @@ func (c *DeviceGroupController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *DeviceGroupController) HandleAccessible() mvc.Result {
 	return mvc.Response{
 		Object: iris.Map{
-			"total": 0,
-			"data":  []iris.Map{},
+			"total":    0,
+			"current":  1,
+			"pageSize": 100,
+			"data":     []iris.Map{},
 		},
 	}
 }
-

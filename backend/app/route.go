@@ -15,6 +15,11 @@ func SetRoute(app *iris.Application) {
 	apiMvc.Handle(new(api.SystemController))
 	apiMvc.Handle(new(api.LoginController))
 	apiMvc.Handle(new(api.AuditController))
+	apiMvc.Handle(new(api.CompatPublicController))
+
+	licWebApiParty := app.Party("/lic/web/api")
+	licWebApiMvc := mvc.New(licWebApiParty)
+	licWebApiMvc.Handle(new(api.CompatLicController))
 
 	apiWithAuthParty := app.Party("/api")
 	apiWithAuthParty.Use(middleware.ApiAuth(app))
@@ -22,6 +27,7 @@ func SetRoute(app *iris.Application) {
 		apiWithAuthMvc := mvc.New(apiWithAuthParty)
 		apiWithAuthMvc.Handle(new(api.UserController))
 		apiWithAuthMvc.Handle(new(api.PeerController))
+		apiWithAuthMvc.Handle(new(api.CompatAuthController))
 		apiWithAuthMvc.Handle(new(api.DeviceGroupController))
 		apiWithAuthMvc.Handle(new(api.AddressBookController))
 		apiWithAuthMvc.Handle(new(api.AddressBookPeerController))

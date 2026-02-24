@@ -1,263 +1,102 @@
-## This project will be rewrite
-See https://github.com/lantongxue/rustdesk-api-server-pro/issues/30
+# Rustdesk Api Server Pro
 
-Rustdesk Api Server Pro
-============
+[简体中文](./README.md) | [English](./README_EN.md)
 
-[English](https://github.com/rustdesk/rustdesk) | [简体中文](https://github.com/lantongxue/rustdesk-api-server-pro/blob/master/README_CN.md)
+基于开源 [RustDesk](https://github.com/rustdesk/rustdesk) 客户端的 API 服务端实现，并提供配套 Web 管理后台（`soybean-admin`）。
 
-This is an open source Api server based on the open source [RustDesk](https://github.com/rustdesk/rustdesk) client, the implementation of the client all Api interfaces, and provides a Web-UI for the management of data.
+> 警告：本分支部分兼容性更新由 ChatGPT 生成/辅助完成。请在使用前自行审查代码并充分测试，生产环境务必谨慎。
 
 ![Dashboard](./img/1.jpeg "Dashboard")
 
-> We strive to achieve functionality with the simplest possible code and structure!
+## 当前状态
 
-## Special Sponsor
+- 当前分支定位为“兼容增强版”，重点提升对新版 RustDesk 客户端 API 的兼容性
+- 已移除赞助/收款码相关界面与文案
+- 仓库默认 README 已改为中文显示（顶部可切换英文）
+- 项目后续仍计划重写，进度见：<https://github.com/lantongxue/rustdesk-api-server-pro/issues/30>
 
-CDN acceleration and security protection for his project are sponsored by Tencent EdgeOne.
+## 项目定位（详细说明）
 
-<a href="https://edgeone.ai/?from=github" target="_blank">Best Asian CDN, Edge, and Secure Solutions - Tencent EdgeOne</a>
+本项目是面向 RustDesk 客户端生态的第三方 API 服务端实现，目标是在尽量保持轻量化部署体验的前提下，为客户端提供可用的 API 接口与基础管理后台能力。
 
-<a href="https://edgeone.ai/?from=github" target="_blank">![edgeone](https://edgeone.ai/media/34fe3a45-492d-4ea4-ae5d-ea1087ca7b4b.png)</a>
+与官方服务端/官方 Pro 服务端相比，本项目当前更偏向：
 
-## Features
+- 兼容优先：优先保证客户端请求不报错、主流程可用
+- 轻量优先：默认 sqlite、单机部署成本低
+- 可维护优先：通过兼容层逐步补齐新版客户端调用点
 
-- Synchronized RuskDesk version (Currently adapted client: 1.2.7)
-- Pure Go implementation of all interfaces
-- Visual management interface
-  - Internationalization support
-  - Statistics panel
-  - User Management
-  - 2FA & Email Verify Code
-  - Session Management
-  - Log Audit
-- Lightweight & Cross Platform
-  - Minimal sqlite
-  - Support for major operating systems and architectures
+这意味着它适合用于：
 
-## Deploying with Docker(recommend)
+- 私有化自建环境的 API 对接与管理后台
+- 学习/研究 RustDesk 客户端 API 调用方式
+- 在官方 Pro 能力之外，做定制化接口扩展
 
-1. pull image
- ```shell
- docker pull ghcr.io/lantongxue/rustdesk-api-server-pro:latest
- ```
+同时也意味着在某些高级能力上（例如完整 OIDC、官方插件签名、完整分组权限模型）仍与官方 Pro 存在差异。
 
-2. create config
-```shell
-cat > /your/path/server.yaml <<EOF
-signKey: "sercrethatmaycontainch@r$32chars" # this is the token signing key. change this before start server
-debugMode: true # debug mode
-db:
-  driver: "sqlite"
-  dsn: "./server.db"
-  timeZone: "Asia/Shanghai" # setting the time zone fixes the database creation time problem
-  showSql: false
-  # driver: "mysql"
-  # dsn: "root:123@tcp(localhost:3306)/test?charset=utf8mb4"
-httpConfig:
-  printRequestLog: true
-  staticdir: "/app/dist"
-  port: ":12345" # api server port
+## 兼容性说明（基于当前代码状态）
 
-smtpConfig:
-  host: "127.0.0.1"
-  port: 1025
-  username: "test"
-  password: "test"
-  encryption: "none" # none ssl/tls starttls
-  from: "test@localhost.com"
+- 已兼容新版客户端常用 API 流程：
+  - 登录 / 登出 / 当前用户 / 登录选项
+  - 地址簿（新旧接口）与地址簿备注字段
+  - 设备列表 / 用户列表 / 分组面板基础请求
+  - 心跳 / sysinfo / 审计上报与审计备注更新
+  - `devices/cli` 最小可用更新能力
+  - `record` 最小上传落盘协议（`new/part/tail/remove`）
+- 新增兼容端点（避免 404）：
+  - `/api/oidc/auth`
+  - `/api/oidc/auth-query`
+  - `/lic/web/api/plugin-sign`
 
-jobsConfig:
-  deviceCheckJob:
-  duration: 30
-EOF
+### 已补齐的关键兼容点（相对老版本第三方实现）
 
-```
+- 地址簿 `note` 字段读写与同步
+- 新版地址簿增量更新字段（如 `username`、`hostname`、`platform`）
+- 分组面板相关请求兼容（`device-group/accessible`、`users/peers accessible`）
+- `devices/cli` 最小写入能力（设备/地址簿部分字段回写）
+- `record` 上传协议最小落盘实现（用于避免新版客户端录制上传时报错）
+- `sysinfo_ver` 稳定返回，减少客户端重复上传 `sysinfo`
+- 审计备注更新接口兼容（`PUT /api/audit`）
 
-3. run image
-```shell
-docker run \
-  --name rustdesk-api-server-pro \
-  -d \
-  -e ADMIN_USER=admin \ #Administrator account (optional)
-  -e ADMIN_PASS=yourpassword \ #Administrator password (optional)
-  -e TZ=Asia/Shanghai \ #must match the 'timeZone' setting in server.yaml
-  -p 8080:8080 \
-  -v /your/path:/app/data \
-  ghcr.io/lantongxue/rustdesk-api-server-pro:latest
-```
+## 非完整实现（发布前请知悉）
 
-4. add your admin account(This step can be ignored if an environment variable is set to initialize the administrator account password, but I still recommend that you create the administrator account this way instead of initializing it with an environment variable)
-   
-```shell
-docker exec rustdesk-api-server-pro rustdesk-api-server-pro user add admin yourpassword --admin
-```
+- `OIDC` 仍为兼容返回（未实现完整登录流程）
+- `plugin-sign` 为兼容占位实现（非官方签名服务）
+- `device-group/accessible`、`users?accessible=`、`peers?accessible=` 为兼容模型，不等同官方 Pro 权限逻辑
 
-> The container image listens on port `8080` by default.
+### 对发布决策的影响（建议）
 
-> Default configuration file path `/app/data/server.yaml`, you can specify your own configuration file with `-v`.
+- 如果你的目标是“新版客户端主流程可用”：当前版本可以发布
+- 如果你的目标是“完整替代官方 Pro 的高级能力”：建议继续补齐 OIDC、插件签名、完整权限模型后再发布
 
-### Docker compose
+## 技术栈
 
-```yaml
-services:
-  rustdesk-api-server-pro:
-    container_name: rustdesk-api-server-pro
-    image: ghcr.io/lantongxue/rustdesk-api-server-pro:latest
-    environment:
-      - "ADMIN_USER=youruser"
-      - "ADMIN_PASS=yourpassword"
-      - "TZ=Asia/Shanghai"
-    volumes:
-      - ./server.yaml:/app/data/server.yaml
-    network_mode: host
-    restart: unless-stopped
-```
+- 后端：Go（Iris）
+- 前端：Vue 3 + Vite + Naive UI（`soybean-admin`）
+- 数据库：SQLite（默认）/ MySQL（可选）
 
-### Environment variables
+## 项目结构
 
-| Variables  | Default Values | Description                                                    |
-|:----------:|:--------------:|:--------------------------------------------------------------:|
-| ADMIN_USER | -              | Default administrator account                                  |
-| ADMIN_PASS | -              | Default administrator password                                 |
-| TZ         | -              | Container OS timezone; must match the app setting in YAML file |
+- `backend/`：Go 后端 API 服务
+- `soybean-admin/`：管理后台前端
+- `docker/`：容器相关配置
+- `img/`：README 图片资源
 
-## Build from source
+## 发布前建议（最小流程）
 
-### Required
+1. 执行数据库结构同步：`rustdesk-api-server-pro.exe sync`
+2. 重启服务
+3. 用最新版客户端做冒烟测试（登录、地址簿、分组面板、设备列表、审计）
 
-- Golang >= 1.21.4
-- NodeJs ~= latest(recommend LTS)version
-- pnpm ~= latest
+### 推荐冒烟测试项（更详细）
 
-### Build
+- 账号登录/退出、`currentUser` 返回正常
+- 地址簿新增/编辑/删除、备注字段保存与回显
+- 分组面板加载不报错（即使无真实分组数据）
+- 设备列表可加载，字段显示正常
+- 审计日志可记录，审计备注可修改
+- 如启用录制：确认 `record_uploads/` 目录可写
 
-1. Get source code
+## 说明
 
-```shell
-git clone https://github.com/lantongxue/rustdesk-api-server-pro.git
-```
-
-2. Build the api-server
-
-```shell
-cd backend && go build
-```
-
-3. Build the frontend
-   
-```shell
-cd soybean-admin && pnpm i && pnpm build
-```
-
-### Run
-
-#### api-server
-
-Assuming the compiled binary file is called `rustdesk-api-server-pro.exe`.
-
-1. Synchronize the database table structure
-   
-```shell
-rustdesk-api-server-pro.exe sync
-```
-
-2. Add your first user
-   
-```shell
-rustdesk-api-server-pro.exe user add admin yourpassword --admin
-```
-
-> --admin is optional, when enabled the added user is an administrator user, otherwise it is a regular user
-
-3. Start the server
-   
-```shell
-rustdesk-api-server-pro.exe start
-```
-
-> Listening on port `8080` by default
-
-#### Web Management Interface
-
-For this step you need a web server software (e.g. nginx, apache, etc.), by copying the packaged product to the web root directory.
-
-Typically, the packaged product is in the `soybean-admin/dist` directory.
-
-Reverse Proxy Configuration, you need to configure reverse proxy in `nginx` or other WEB servers, through the reverse proxy server can access the interface address correctly.
-
-Here's my backend reverse proxy configuration for you to refer to:
-
-```nginx
-#PROXY-START /api for rustdesk client
-location ^~ /api
-{
-    proxy_pass http://127.0.0.1:8080;
-    proxy_set_header Host 127.0.0.1;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header REMOTE-HOST $remote_addr;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection $connection_upgrade;
-    proxy_http_version 1.1;
-    # proxy_hide_header Upgrade;
-
-    add_header X-Cache $upstream_cache_status;
-}
-#PROXY-END/
-
-#PROXY-START /admin for web-ui
-location ^~ /admin
-{
-    proxy_pass http://127.0.0.1:8080/admin;
-    proxy_set_header Host 127.0.0.1;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header REMOTE-HOST $remote_addr;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection $connection_upgrade;
-    proxy_http_version 1.1;
-    # proxy_hide_header Upgrade;
-
-    add_header X-Cache $upstream_cache_status;
-}
-#PROXY-END/
-```
-
-## CLI help
-
-```shell
-Usage:
-  rustdesk-api-server-pro [command]
-
-Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  help        Help about any command
-  rustdesk    About rustdesk-server command
-  start       Start the api-server
-  sync        The api-server database synchronization
-  user        User management
-
-Flags:
-  -h, --help   help for rustdesk-api-server-pro
-
-Use "rustdesk-api-server-pro [command] --help" for more information about a command.
-```
-
-## Follow-up plan
-
-We will continue to follow up the RustDesk client and implement the corresponding interfaces, which will be a long-term plan.
-
-## Sponsorship
-
-If you found this project helpful, why not buy the developers a cup of coffee :)
-
-![Sponsorship](./soybean-admin/src/assets/imgs/sponsorships.png "Sponsorship")
-
-**Thank you for your sponsorship**
-
-## License
-
-> You can view the full license [here](https://github.com/lantongxue/rustdesk-api-server-pro/blob/master/LICENSE)
-
-This project is under the terms of the **MIT** license.
+- GitHub 页面按钮/标签语言（如 `README`、`Commits`）由 GitHub/浏览器语言决定，仓库无法直接修改。
+- 本 README 仅用于说明当前分支状态与兼容范围，详细开发/部署细节可按需补充到独立文档。
