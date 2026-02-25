@@ -1,12 +1,9 @@
 package api
 
 import (
-	"rustdesk-api-server-pro/app/model"
-	"rustdesk-api-server-pro/db"
-
-	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
-	"xorm.io/xorm"
+	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/transport/httpdto"
 )
 
 type PeerController struct {
@@ -19,42 +16,17 @@ func (c *PeerController) GetPeers() mvc.Result {
 	status := c.Ctx.URLParamIntDefault("status", 1)
 
 	user := c.GetUser()
-
-	query := func() *xorm.Session {
-		q := c.Db.Table(&model.Peer{}).Where("user_id = ?", user.Id)
-		return q.Desc("id")
-	}
-
-	pagination := db.NewPagination(current, pageSize)
-	peerList := make([]model.Peer, 0)
-	err := pagination.Paginate(query, &model.Peer{}, &peerList)
+	result, err := c.peerService().ListPeers(core.PeerListQuery{
+		UserID:   user.Id,
+		Username: user.Username,
+		Current:  current,
+		PageSize: pageSize,
+		Status:   status,
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
-	}
-	data := make([]iris.Map, 0)
-	for _, p := range peerList {
-		data = append(data, iris.Map{
-			"id": p.RustdeskId,
-			"info": iris.Map{
-				"username":    p.Username,
-				"os":          p.Platform,
-				"device_name": p.Hostname,
-			},
-			"status":    status,
-			"user":      user.Username,
-			"user_name": p.LoginName,
-			"device_group_name": "",
-			"note":      p.Note,
-		})
+		return c.fail(err)
 	}
 	return mvc.Response{
-		Object: iris.Map{
-			"total": pagination.TotalCount,
-			"data":  data,
-		},
+		Object: httpdto.NewPeerListResponse(result, status, user.Username),
 	}
 }

@@ -8,6 +8,12 @@ An API server implementation based on the open-source [RustDesk](https://github.
 
 ![Dashboard](./img/1.jpeg "Dashboard")
 
+## Docs (Chinese-first, shown on repository homepage)
+
+- [Usage Guide (Chinese)](./docs/USAGE.md)
+- [Ports & Paths Guide (Chinese)](./docs/PORTS.md)
+- [Troubleshooting Manual (Chinese)](./docs/TROUBLESHOOTING.md)
+
 ## Current Status
 
 - This branch is positioned as a compatibility-enhanced edition focused on newer RustDesk client API behavior

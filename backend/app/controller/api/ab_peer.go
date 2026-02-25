@@ -1,16 +1,14 @@
 package api
 
 import (
-	"encoding/json"
 	"io"
-	"rustdesk-api-server-pro/app/form/api"
-	"rustdesk-api-server-pro/app/model"
-	"rustdesk-api-server-pro/db"
 
-	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"github.com/tidwall/gjson"
-	"xorm.io/xorm"
+
+	abform "rustdesk-api-server-pro/app/form/api"
+	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/transport/httpdto"
 )
 
 type AddressBookPeerController struct {
@@ -29,160 +27,64 @@ func (c *AddressBookPeerController) PostAbPeers() mvc.Result {
 	abGuid := c.Ctx.URLParamDefault("ab", "")
 
 	user := c.GetUser()
-
-	var ab model.AddressBook
-	_, err := c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	result, err := c.addressBookService().ListPeers(core.AddressBookPeerListQuery{
+		UserID:   user.Id,
+		AbGuid:   abGuid,
+		Current:  current,
+		PageSize: pageSize,
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-	query := func() *xorm.Session {
-		q := c.Db.Table(&model.Peer{}).Where("user_id = ? and ab_id = ?", user.Id, ab.Id)
-		return q
-	}
-
-	pagination := db.NewPagination(current, pageSize)
-	peerList := make([]model.Peer, 0)
-	err = pagination.Paginate(query, &model.Peer{}, &peerList)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
-	}
-	data := make([]iris.Map, 0)
-	for _, peer := range peerList {
-		forceAlwaysRelay := "false"
-		if peer.ForceAlwaysRelay {
-			forceAlwaysRelay = "true"
-		}
-
-		var peerTags []string
-		err := json.Unmarshal([]byte(peer.Tags), &peerTags)
-		if err != nil {
-			continue
-		}
-
-		data = append(data, iris.Map{
-			"id":               peer.RustdeskId,
-			"hash":             peer.Hash,
-			"password":         peer.Password,
-			"username":         peer.Username,
-			"hostname":         peer.Hostname,
-			"platform":         peer.Platform,
-			"alias":            peer.Alias,
-			"tags":             peerTags,
-			"note":             peer.Note,
-			"forceAlwaysRelay": forceAlwaysRelay,
-			"rdpPort":          peer.RdpPort,
-			"rdpUsername":      peer.RdpUsername,
-			"loginName":        peer.LoginName,
-			"same_server":      peer.SameServer,
-		})
-	}
-
-	return mvc.Response{
-		Object: iris.Map{
-			"total": pagination.TotalCount,
-			"data":  data,
-		},
-	}
+	return mvc.Response{Object: httpdto.NewAddressBookPeerListResponse(result)}
 }
 
 func (c *AddressBookPeerController) HandleAbPeerAdd() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
-	var form api.AbPeer
-	err := c.Ctx.ReadJSON(&form)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+	var form abform.AbPeer
+	if err := c.Ctx.ReadJSON(&form); err != nil {
+		return c.fail(err)
 	}
 
 	user := c.GetUser()
-	var ab model.AddressBook
-	_, err = c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
-	totalPeers, err := c.Db.Where("user_id = ? and ab_id = ?", user.Id, ab.Id).Count(&model.Peer{})
+	totalPeers, err := c.addressBookService().CountPeers(user.Id, ab.Id)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-
-	// 限制单个地址簿最大Peer数量
 	if ab.MaxPeer > 0 && totalPeers >= int64(ab.MaxPeer) {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": "exceed_max_devices",
-			},
-		}
+		return c.failMsg("exceed_max_devices")
 	}
 
-	peerTags := ""
-	b, err := json.Marshal(form.Tags)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+	forceAlwaysRelay := form.ForceAlwaysRelay == "true"
+	sameServerPresent := form.SameServer != ""
+
+	if err := c.addressBookService().AddPeer(core.AddressBookPeerCreateCommand{
+		UserID:            user.Id,
+		AbID:              ab.Id,
+		RustdeskID:        form.Id,
+		Hash:              form.Hash,
+		Username:          form.Username,
+		Password:          form.Password,
+		Hostname:          form.Hostname,
+		Platform:          form.Platform,
+		Alias:             form.Alias,
+		Tags:              form.Tags,
+		Note:              form.Note,
+		ForceAlwaysRelay:  forceAlwaysRelay,
+		RdpPort:           form.RdpPort,
+		RdpUsername:       form.RdpUsername,
+		LoginName:         form.LoginName,
+		SameServerPresent: sameServerPresent,
+	}); err != nil {
+		return c.fail(err)
 	}
-	peerTags = string(b)
-	if peerTags == "null" {
-		peerTags = "[]"
-	}
-	forceAlwaysRelay := false
-	if form.ForceAlwaysRelay == "true" {
-		forceAlwaysRelay = true
-	}
-	sameServer := false
-	if form.SameServer != "" {
-		sameServer = true
-	}
-	peer := model.Peer{
-		UserId:           user.Id,
-		AbId:             ab.Id,
-		RustdeskId:       form.Id,
-		Username:         form.Username,
-		Hostname:         form.Hostname,
-		Platform:         form.Platform,
-		Alias:            form.Alias,
-		Tags:             peerTags,
-		Note:             form.Note,
-		ForceAlwaysRelay: forceAlwaysRelay,
-		RdpPort:          form.RdpPort,
-		RdpUsername:      form.RdpUsername,
-		LoginName:        form.LoginName,
-		SameServer:       sameServer,
-	}
-	_, err = c.Db.Insert(&peer)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
-	}
-	return mvc.Response{
-		Text: "",
-	}
+	return c.okText("")
 }
 
 func (c *AddressBookPeerController) HandleAbPeerUpdate() mvc.Result {
@@ -190,142 +92,94 @@ func (c *AddressBookPeerController) HandleAbPeerUpdate() mvc.Result {
 
 	body, err := io.ReadAll(c.Ctx.Request().Body)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	user := c.GetUser()
-	var ab model.AddressBook
-	_, err = c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
-	rustdeskId := gjson.GetBytes(body, "id").String()
+	cmd := parseAddressBookPeerUpdate(body)
+	cmd.UserID = user.Id
+	cmd.AbID = ab.Id
 
-	var peer model.Peer
-	has, err := c.Db.Where("user_id = ? and ab_id = ? and rustdesk_id = ?", user.Id, ab.Id, rustdeskId).Get(&peer)
+	has, err := c.addressBookService().UpdatePeer(cmd)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 	if !has {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": "peer not found",
-			},
-		}
+		return c.failMsg("peer not found")
 	}
-
-	// 下面的更新逻辑有点复杂，每次请求只会带上要更新的字段，要考虑和其他字段更新的兼容性
-	updateCols := make([]string, 0, 8)
-
-	tagsResult := gjson.GetBytes(body, "tags")
-	if tagsResult.Exists() {
-		peerTags := tagsResult.String()
-		if peerTags == "null" {
-			peerTags = "[]"
-		}
-		peer.Tags = peerTags
-		updateCols = append(updateCols, "tags")
-	}
-
-	aliasResult := gjson.GetBytes(body, "alias")
-	if aliasResult.Exists() {
-		peer.Alias = aliasResult.String()
-		updateCols = append(updateCols, "alias")
-	}
-
-	hashResult := gjson.GetBytes(body, "hash")
-	if hashResult.Exists() {
-		peer.Hash = hashResult.String()
-		updateCols = append(updateCols, "hash")
-	}
-
-	passwordResult := gjson.GetBytes(body, "password")
-	if passwordResult.Exists() {
-		peer.Password = passwordResult.String()
-		updateCols = append(updateCols, "password")
-	}
-
-	noteResult := gjson.GetBytes(body, "note")
-	if noteResult.Exists() {
-		peer.Note = noteResult.String()
-		updateCols = append(updateCols, "note")
-	}
-
-	usernameResult := gjson.GetBytes(body, "username")
-	if usernameResult.Exists() {
-		peer.Username = usernameResult.String()
-		updateCols = append(updateCols, "username")
-	}
-
-	hostnameResult := gjson.GetBytes(body, "hostname")
-	if hostnameResult.Exists() {
-		peer.Hostname = hostnameResult.String()
-		updateCols = append(updateCols, "hostname")
-	}
-
-	platformResult := gjson.GetBytes(body, "platform")
-	if platformResult.Exists() {
-		peer.Platform = platformResult.String()
-		updateCols = append(updateCols, "platform")
-	}
-
-	if len(updateCols) == 0 {
-		return mvc.Response{
-			Text: "",
-		}
-	}
-
-	_, err = c.Db.Where("id = ?", peer.Id).Cols(updateCols...).Update(&peer)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
-	}
-	return mvc.Response{
-		Text: "",
-	}
+	return c.okText("")
 }
 
 func (c *AddressBookPeerController) HandleAbPeerDelete() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
 	var ids []string
-	err := c.Ctx.ReadBody(&ids)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+	if err := c.Ctx.ReadBody(&ids); err != nil {
+		return c.fail(err)
 	}
 
 	user := c.GetUser()
-	var ab model.AddressBook
-	_, err = c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
-	c.Db.Where("user_id = ? and ab_id = ?", user.Id, ab.Id).In("rustdesk_id", ids).Delete(&model.Peer{})
+	if err := c.addressBookService().DeletePeers(core.AddressBookPeerDeleteCommand{
+		UserID: user.Id,
+		AbID:   ab.Id,
+		IDs:    ids,
+	}); err != nil {
+		return c.fail(err)
+	}
 
-	return mvc.Response{}
+	return c.ok()
+}
+
+func parseAddressBookPeerUpdate(body []byte) core.AddressBookPeerUpdateCommand {
+	cmd := core.AddressBookPeerUpdateCommand{
+		RustdeskID: gjson.GetBytes(body, "id").String(),
+	}
+
+	if v := gjson.GetBytes(body, "tags"); v.Exists() {
+		tags := v.String()
+		if tags == "null" {
+			tags = "[]"
+		}
+		cmd.Tags = &tags
+	}
+	if v := gjson.GetBytes(body, "alias"); v.Exists() {
+		value := v.String()
+		cmd.Alias = &value
+	}
+	if v := gjson.GetBytes(body, "hash"); v.Exists() {
+		value := v.String()
+		cmd.Hash = &value
+	}
+	if v := gjson.GetBytes(body, "password"); v.Exists() {
+		value := v.String()
+		cmd.Password = &value
+	}
+	if v := gjson.GetBytes(body, "note"); v.Exists() {
+		value := v.String()
+		cmd.Note = &value
+	}
+	if v := gjson.GetBytes(body, "username"); v.Exists() {
+		value := v.String()
+		cmd.Username = &value
+	}
+	if v := gjson.GetBytes(body, "hostname"); v.Exists() {
+		value := v.String()
+		cmd.Hostname = &value
+	}
+	if v := gjson.GetBytes(body, "platform"); v.Exists() {
+		value := v.String()
+		cmd.Platform = &value
+	}
+
+	return cmd
 }

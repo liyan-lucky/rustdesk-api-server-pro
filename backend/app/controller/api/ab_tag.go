@@ -1,11 +1,10 @@
 package api
 
 import (
-	"rustdesk-api-server-pro/app/form/api"
-	"rustdesk-api-server-pro/app/model"
-
-	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
+	"rustdesk-api-server-pro/app/form/api"
+	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/transport/httpdto"
 )
 
 type AddressBookTagController struct {
@@ -24,37 +23,15 @@ func (c *AddressBookTagController) HandleAbTags() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
 	user := c.GetUser()
-
-	var ab model.AddressBook
-	_, err := c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	tags, err := c.addressBookService().ListTags(core.AddressBookTagListQuery{
+		UserID: user.Id,
+		AbGuid: abGuid,
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-
-	tags := make([]model.AddressBookTag, 0)
-	err = c.Db.Where("user_id = ? and ab_id = ?", user.Id, ab.Id).Find(&tags)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
-	}
-
-	data := make([]iris.Map, 0)
-	for _, tag := range tags {
-		data = append(data, iris.Map{
-			"name":  tag.Name,
-			"color": tag.Color,
-		})
-	}
-
 	return mvc.Response{
-		Object: data,
+		Object: httpdto.NewAddressBookTagListResponse(tags),
 	}
 }
 
@@ -64,42 +41,24 @@ func (c *AddressBookTagController) HandleAbTagAdd() mvc.Result {
 	var form api.AbTagForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	user := c.GetUser()
-
-	var ab model.AddressBook
-	_, err = c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-
-	abTag := model.AddressBookTag{
-		UserId: user.Id,
-		AbId:   ab.Id,
+	err = c.addressBookService().AddTag(core.AddressBookTagAddCommand{
+		UserID: user.Id,
+		AbID:   ab.Id,
 		Name:   form.Name,
 		Color:  form.Color,
-	}
-	_, err = c.Db.Insert(&abTag)
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-	return mvc.Response{
-		Text: "",
-	}
+	return c.okText("")
 }
 
 func (c *AddressBookTagController) HandleAbTagUpdate() mvc.Result {
@@ -108,37 +67,24 @@ func (c *AddressBookTagController) HandleAbTagUpdate() mvc.Result {
 	var form api.AbTagForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	user := c.GetUser()
-	var ab model.AddressBook
-	_, err = c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-
-	_, err = c.Db.Where("user_id = ? and ab_id = ? and name = ?", user.Id, ab.Id, form.Name).Update(&model.AddressBookTag{
-		Color: form.Color,
+	err = c.addressBookService().UpdateTagColor(core.AddressBookTagUpdateColorCommand{
+		UserID: user.Id,
+		AbID:   ab.Id,
+		Name:   form.Name,
+		Color:  form.Color,
 	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-	return mvc.Response{
-		Text: "",
-	}
+	return c.okText("")
 }
 
 func (c *AddressBookTagController) HandleAbTagRename() mvc.Result {
@@ -147,37 +93,24 @@ func (c *AddressBookTagController) HandleAbTagRename() mvc.Result {
 	var form api.AbTagRenameForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	user := c.GetUser()
-	var ab model.AddressBook
-	_, err = c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-
-	_, err = c.Db.Where("user_id = ? and ab_id = ? and name = ?", user.Id, ab.Id, form.Old).Update(&model.AddressBookTag{
-		Name: form.New,
+	err = c.addressBookService().RenameTag(core.AddressBookTagRenameCommand{
+		UserID: user.Id,
+		AbID:   ab.Id,
+		Old:    form.Old,
+		New:    form.New,
 	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-	return mvc.Response{
-		Text: "",
-	}
+	return c.okText("")
 }
 
 func (c *AddressBookTagController) HandleAbTagDelete() mvc.Result {
@@ -186,25 +119,21 @@ func (c *AddressBookTagController) HandleAbTagDelete() mvc.Result {
 	var names []string
 	err := c.Ctx.ReadBody(&names)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	user := c.GetUser()
-	var ab model.AddressBook
-	_, err = c.Db.Where("user_id = ? and guid = ?", user.Id, abGuid).Get(&ab)
+	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
+	}
+	if err := c.addressBookService().DeleteTags(core.AddressBookTagDeleteCommand{
+		UserID: user.Id,
+		AbID:   ab.Id,
+		Names:  names,
+	}); err != nil {
+		return c.fail(err)
 	}
 
-	c.Db.Where("user_id = ? and ab_id = ?", user.Id, ab.Id).In("name", names).Delete(&model.AddressBookTag{})
-
-	return mvc.Response{}
+	return c.ok()
 }

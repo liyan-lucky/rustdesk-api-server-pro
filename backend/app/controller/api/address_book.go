@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"rustdesk-api-server-pro/app/form/api"
 	"rustdesk-api-server-pro/app/model"
-	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/transport/httpdto"
 	"strconv"
 
 	"github.com/beevik/guid"
@@ -22,11 +23,7 @@ func (c *AddressBookController) GetAb() mvc.Result {
 	tagList := make([]model.Tags, 0)
 	err := c.Db.Where("user_id = ?", user.Id).Find(&tagList)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 	tags := make([]string, 0)
 	tagColors := make(map[string]int64)
@@ -42,11 +39,7 @@ func (c *AddressBookController) GetAb() mvc.Result {
 	peerList := make([]model.Peer, 0)
 	err = c.Db.Where("user_id = ?", user.Id).Find(&peerList)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 	peers := make([]iris.Map, 0)
 	for _, peer := range peerList {
@@ -69,11 +62,7 @@ func (c *AddressBookController) GetAb() mvc.Result {
 
 	tagColorsJson, err := json.Marshal(tagColors)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	dataJson, err := json.Marshal(iris.Map{
@@ -82,11 +71,7 @@ func (c *AddressBookController) GetAb() mvc.Result {
 		"tag_colors": string(tagColorsJson),
 	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	return mvc.Response{
@@ -101,130 +86,77 @@ func (c *AddressBookController) PostAb() mvc.Result {
 	var abForm api.AbForm
 	err := c.Ctx.ReadJSON(&abForm)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 	var abData api.AbData
 	err = json.Unmarshal([]byte(abForm.Data), &abData)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 	var tagColors map[string]int64
 	err = json.Unmarshal([]byte(abData.TagColors), &tagColors)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
-	session := c.Db.NewSession()
-	defer session.Close()
-	err = session.Begin()
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
-	}
 	user := c.GetUser()
 	if user.LicensedDevices > 0 && len(abData.Peers) > user.LicensedDevices {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": "Number of equipment in excess of licenses",
-			},
-		}
-	}
-	_, err = session.Where("user_id = ?", user.Id).Delete(&model.Tags{})
-	if err != nil {
-		_ = session.Rollback()
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.failMsg("Number of equipment in excess of licenses")
 	}
 
-	_, err = session.Where("user_id = ?", user.Id).Delete(&model.Peer{})
-	if err != nil {
-		_ = session.Rollback()
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
+	err = c.withTx(func(session *xorm.Session) error {
+		if _, err := session.Where("user_id = ?", user.Id).Delete(&model.Tags{}); err != nil {
+			return err
 		}
-	}
+		if _, err := session.Where("user_id = ?", user.Id).Delete(&model.Peer{}); err != nil {
+			return err
+		}
 
-	tags := make([]*model.Tags, 0)
-	for _, tag := range abData.Tags {
-		tags = append(tags, &model.Tags{
-			UserId: user.Id,
-			Tag:    tag,
-			Color:  strconv.FormatInt(tagColors[tag], 10),
-		})
-	}
-	if len(tags) > 0 {
-		_, err = session.Insert(tags)
-		if err != nil {
-			_ = session.Rollback()
-			return mvc.Response{
-				Object: iris.Map{
-					"error": err.Error(),
-				},
+		tags := make([]*model.Tags, 0)
+		for _, tag := range abData.Tags {
+			tags = append(tags, &model.Tags{
+				UserId: user.Id,
+				Tag:    tag,
+				Color:  strconv.FormatInt(tagColors[tag], 10),
+			})
+		}
+		if len(tags) > 0 {
+			if _, err := session.Insert(tags); err != nil {
+				return err
 			}
 		}
-	}
 
-	peers := make([]*model.Peer, 0)
-	for _, peer := range abData.Peers {
-		peerTags := ""
-		b, err := json.Marshal(peer.Tags)
-		if err == nil {
-			peerTags = string(b)
+		peers := make([]*model.Peer, 0)
+		for _, peer := range abData.Peers {
+			peerTags := ""
+			b, err := json.Marshal(peer.Tags)
+			if err == nil {
+				peerTags = string(b)
+			}
+			peers = append(peers, &model.Peer{
+				UserId:     user.Id,
+				RustdeskId: peer.Id,
+				Hash:       peer.Hash,
+				Username:   peer.Username,
+				Hostname:   peer.Hostname,
+				Platform:   peer.Platform,
+				Alias:      peer.Alias,
+				Tags:       peerTags,
+				Note:       peer.Note,
+			})
 		}
-		peers = append(peers, &model.Peer{
-			UserId:     user.Id,
-			RustdeskId: peer.Id,
-			Hash:       peer.Hash,
-			Username:   peer.Username,
-			Hostname:   peer.Hostname,
-			Platform:   peer.Platform,
-			Alias:      peer.Alias,
-			Tags:       peerTags,
-			Note:       peer.Note,
-		})
-	}
-	if len(peers) > 0 {
-		_, err = session.Insert(peers)
-		if err != nil {
-			_ = session.Rollback()
-			return mvc.Response{
-				Object: iris.Map{
-					"error": err.Error(),
-				},
+		if len(peers) > 0 {
+			if _, err := session.Insert(peers); err != nil {
+				return err
 			}
 		}
-	}
-
-	err = session.Commit()
+		return nil
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
-	return mvc.Response{}
+	return c.ok()
 }
 
 func (c *AddressBookController) PostAbPersonal() mvc.Result {
@@ -232,11 +164,7 @@ func (c *AddressBookController) PostAbPersonal() mvc.Result {
 	var ab model.AddressBook
 	has, err := c.Db.Where("user_id = ?", user.Id).Get(&ab)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	if !has {
@@ -272,37 +200,14 @@ func (c *AddressBookController) PostAbSettings() mvc.Result {
 func (c *AddressBookController) PostAbSharedProfiles() mvc.Result {
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 10)
-
-	query := func() *xorm.Session {
-		q := c.Db.Table(&model.AddressBook{}).Where("shared = 1")
-		return q
-	}
-
-	pagination := db.NewPagination(current, pageSize)
-	sharedAbList := make([]model.AddressBook, 0)
-	err := pagination.Paginate(query, &model.AddressBook{}, &sharedAbList)
+	result, err := c.addressBookService().ListSharedProfiles(core.SharedAddressBookListQuery{
+		Current:  current,
+		PageSize: pageSize,
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-	data := make([]iris.Map, 0)
-	for _, ab := range sharedAbList {
-		data = append(data, iris.Map{
-			"guid":  ab.Guid,
-			"name":  ab.Name,
-			"owner": ab.Owner,
-			"note":  ab.Note,
-			"rule":  ab.Rule,
-		})
-	}
-
 	return mvc.Response{
-		Object: iris.Map{
-			"total": pagination.TotalCount,
-			"data":  data,
-		},
+		Object: httpdto.NewSharedAddressBookProfileListResponse(result),
 	}
 }

@@ -2,12 +2,11 @@ package api
 
 import (
 	"rustdesk-api-server-pro/app/form/api"
-	"rustdesk-api-server-pro/app/model"
-	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/core"
+	v2service "rustdesk-api-server-pro/internal/service"
+	"rustdesk-api-server-pro/internal/transport/httpdto"
 
-	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
-	"xorm.io/xorm"
 )
 
 type UserController struct {
@@ -21,65 +20,33 @@ func (c *UserController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *UserController) HandleCurrentUser() mvc.Result {
 	user := c.GetUser()
 	return mvc.Response{
-		Object: iris.Map{
-			"name":         user.Name,
-			"display_name": user.Name,
-			"email":        user.Email,
-			"note":         user.Note,
-			"status":       user.Status,
-			"is_admin":     user.IsAdmin,
-		},
+		Object: httpdto.NewUserResponse(c.userService().CurrentUserView(user.Name, user.Email, user.Note, user.Status, user.IsAdmin)),
 	}
 }
 
 func (c *UserController) GetUsers() mvc.Result {
 	user := c.GetUser()
 	hasAccessibleParam := c.Ctx.Request().URL.Query().Has("accessible")
-	if !user.IsAdmin && !hasAccessibleParam {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": "Admin required!",
-			},
-		}
-	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 10)
 	status := c.Ctx.URLParamIntDefault("status", 1)
 
-	query := func() *xorm.Session {
-		q := c.Db.Table(&model.User{}).Where("status = ?", status)
-		if hasAccessibleParam && !user.IsAdmin {
-			q.Where("id = ?", user.Id)
-		}
-		return q.Desc("id")
-	}
-
-	pagination := db.NewPagination(current, pageSize)
-	userList := make([]model.User, 0)
-	err := pagination.Paginate(query, &model.User{}, &userList)
+	result, err := c.userService().ListUsers(core.UserListQuery{
+		RequestUserID:      user.Id,
+		RequestUserIsAdmin: user.IsAdmin,
+		HasAccessibleParam: hasAccessibleParam,
+		Current:            current,
+		PageSize:           pageSize,
+		Status:             status,
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
+		if err == v2service.ErrAdminRequired {
+			return c.failMsg("Admin required!")
 		}
-	}
-	data := make([]iris.Map, 0)
-	for _, u := range userList {
-		data = append(data, iris.Map{
-			"name":         u.Name,
-			"display_name": u.Name,
-			"email":        u.Email,
-			"note":         u.Note,
-			"status":       u.Status,
-			"is_admin":     u.IsAdmin,
-		})
+		return c.fail(err)
 	}
 	return mvc.Response{
-		Object: iris.Map{
-			"total": pagination.TotalCount,
-			"data":  data,
-		},
+		Object: httpdto.NewUserListResponse(result),
 	}
 }
 
@@ -87,23 +54,11 @@ func (c *UserController) PostLogout() mvc.Result {
 	var f api.LoginForm
 	err := c.Ctx.ReadJSON(&f)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-	_, err = c.Db.Where("rustdesk_id = ?", f.RustdeskId).Cols("status").Update(&model.AuthToken{
-		Status: 0,
-	})
+	err = c.userService().LogoutByRustdeskID(f.RustdeskId)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-	return mvc.Response{
-		Text: "ok",
-	}
+	return c.okText("ok")
 }

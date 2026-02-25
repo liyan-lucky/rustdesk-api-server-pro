@@ -1,72 +1,105 @@
-# Rustdesk Api Server Pro
+# RustDesk API Server Pro（兼容增强版）
 
-[简体中文](./README.md) | [English](./README_EN.md)
+[简体中文（默认）](./README.md) | [English](./README_EN.md)
 
-基于开源 [RustDesk](https://github.com/rustdesk/rustdesk) 客户端的 API 服务端实现，并提供配套 Web 管理后台（`soybean-admin`）。
+基于开源 [RustDesk](https://github.com/rustdesk/rustdesk) 客户端调用行为的第三方 API 服务端实现，并提供 Web 管理后台（`soybean-admin`）。
 
 > 警告：本分支部分兼容性更新由 ChatGPT 生成/辅助完成。请在使用前自行审查代码并充分测试，生产环境务必谨慎。
 
 ![Dashboard](./img/1.jpeg "Dashboard")
 
-## 当前状态
+## 文档中心（上线建议放这里）
 
-- 当前分支定位为“兼容增强版”，重点提升对新版 RustDesk 客户端 API 的兼容性
-- 已移除赞助/收款码相关界面与文案
-- 仓库默认 README 已改为中文显示（顶部可切换英文）
-- 项目后续仍计划重写，进度见：<https://github.com/lantongxue/rustdesk-api-server-pro/issues/30>
+- [使用说明（部署、初始化、升级、验证）](./docs/USAGE.md)
+- [端口与访问路径说明（HTTP/API/Admin/SMTP）](./docs/PORTS.md)
+- [问题排查手册（常见问题与日志定位）](./docs/TROUBLESHOOTING.md)
+- [发版说明模板（GitHub Release 可直接复用）](./RELEASE_NOTES.md)
+
+## 当前状态（可发布兼容版）
+
+- 当前分支定位为“兼容增强版”，目标是尽量贴近最新版 RustDesk 客户端的常用 API 调用流程
+- 已完成新版客户端常见接口兼容补齐（地址簿、设备列表、分组面板基础请求、审计、sysinfo、devices/cli、record 等）
+- 前端管理后台已移除赞助/收款码相关界面与文案
+- 仓库主页默认语言为中文（可通过顶部链接切换英文说明）
+- 项目仍保留后续重构计划（见 issue #30），但当前版本可以作为“可上线兼容版”使用
 
 ## 项目定位（详细说明）
 
-本项目是面向 RustDesk 客户端生态的第三方 API 服务端实现，目标是在尽量保持轻量化部署体验的前提下，为客户端提供可用的 API 接口与基础管理后台能力。
+本项目不是官方 Pro 服务端，也不追求在短期内完全复刻官方全部高级能力。当前版本的设计目标是：
 
-与官方服务端/官方 Pro 服务端相比，本项目当前更偏向：
+- 兼容优先：优先保证新版客户端主流程不报错、不 404、关键字段能正确读写
+- 轻量优先：支持单机部署，默认 SQLite，适合私有化自建或中小规模场景
+- 迭代优先：通过兼容层持续补齐官方客户端 API 变化，降低升级成本
 
-- 兼容优先：优先保证客户端请求不报错、主流程可用
-- 轻量优先：默认 sqlite、单机部署成本低
-- 可维护优先：通过兼容层逐步补齐新版客户端调用点
+适用场景：
 
-这意味着它适合用于：
+- 自建 RustDesk API 服务端 + 管理后台
+- 内网/私有环境的设备管理与基础审计
+- 研究 RustDesk 客户端 API 调用逻辑并做二次开发
 
-- 私有化自建环境的 API 对接与管理后台
-- 学习/研究 RustDesk 客户端 API 调用方式
-- 在官方 Pro 能力之外，做定制化接口扩展
+不适用或需谨慎评估的场景：
 
-同时也意味着在某些高级能力上（例如完整 OIDC、官方插件签名、完整分组权限模型）仍与官方 Pro 存在差异。
+- 强依赖官方 Pro 的完整 OIDC 登录流程
+- 强依赖官方插件签名服务（`plugin-sign`）的生产校验链路
+- 强依赖官方完整分组权限模型（`device-group/accessible`、`users/peers?accessible=` 的细粒度权限）
 
-## 兼容性说明（基于当前代码状态）
+## 与新版客户端兼容范围（当前代码状态）
 
-- 已兼容新版客户端常用 API 流程：
-  - 登录 / 登出 / 当前用户 / 登录选项
-  - 地址簿（新旧接口）与地址簿备注字段
-  - 设备列表 / 用户列表 / 分组面板基础请求
-  - 心跳 / sysinfo / 审计上报与审计备注更新
-  - `devices/cli` 最小可用更新能力
-  - `record` 最小上传落盘协议（`new/part/tail/remove`）
-- 新增兼容端点（避免 404）：
-  - `/api/oidc/auth`
-  - `/api/oidc/auth-query`
-  - `/lic/web/api/plugin-sign`
+已覆盖或兼容处理的主要接口与流程：
 
-### 已补齐的关键兼容点（相对老版本第三方实现）
+- 账号相关：`/api/login`、`/api/logout`、`/api/currentUser`、`/api/login-options`
+- 地址簿（新旧接口并存）：
+  - `/api/ab`
+  - `/api/ab/settings`
+  - `/api/ab/personal`
+  - `/api/ab/shared/profiles`
+  - `/api/ab/peers`
+  - `/api/ab/tags/{guid}`
+  - `/api/ab/peer/*`
+  - `/api/ab/tag/*`
+- 分组/设备面板基础请求：
+  - `/api/device-group/accessible`
+  - `/api/users?accessible=...`
+  - `/api/peers?accessible=...`
+- 同步与状态：
+  - `/api/heartbeat`
+  - `/api/sysinfo`
+  - `/api/sysinfo_ver`
+- 审计：
+  - `/api/audit/conn`
+  - `/api/audit/file`
+  - `/api/audit/alarm`
+  - `PUT /api/audit`（备注更新兼容）
+- 客户端附加兼容端点：
+  - `POST /api/devices/cli`（最小可用写入）
+  - `POST /api/record`（最小落盘协议：`new/part/tail/remove`）
+  - `POST /api/oidc/auth`（兼容返回）
+  - `GET /api/oidc/auth-query`（兼容返回）
+  - `POST /lic/web/api/plugin-sign`（兼容占位返回）
 
-- 地址簿 `note` 字段读写与同步
-- 新版地址簿增量更新字段（如 `username`、`hostname`、`platform`）
-- 分组面板相关请求兼容（`device-group/accessible`、`users/peers accessible`）
-- `devices/cli` 最小写入能力（设备/地址簿部分字段回写）
-- `record` 上传协议最小落盘实现（用于避免新版客户端录制上传时报错）
-- `sysinfo_ver` 稳定返回，减少客户端重复上传 `sysinfo`
-- 审计备注更新接口兼容（`PUT /api/audit`）
+## 已补齐的关键兼容点（相对旧版第三方实现）
 
-## 非完整实现（发布前请知悉）
+- 地址簿 `note` 字段支持（读/写/同步）
+- 新版地址簿增量更新字段兼容（如 `username`、`hostname`、`platform`、`note`）
+- `display_name` 字段补齐（用户/登录相关响应）
+- `device_group_name` 字段补齐（设备列表兼容字段）
+- `devices/cli` 从 no-op 升级为最小可用写入（设备与地址簿部分字段回写）
+- `record` 从 no-op 升级为最小落盘协议实现
+- `sysinfo_ver` 改为稳定返回值，减少客户端重复上传 `sysinfo`
+- `PUT /api/audit` 备注更新兼容
 
-- `OIDC` 仍为兼容返回（未实现完整登录流程）
-- `plugin-sign` 为兼容占位实现（非官方签名服务）
-- `device-group/accessible`、`users?accessible=`、`peers?accessible=` 为兼容模型，不等同官方 Pro 权限逻辑
+## 非完整官方 Pro 实现（发布前请知悉）
 
-### 对发布决策的影响（建议）
+以下能力目前是“兼容实现”或“占位返回”，用于避免客户端报错，但不等同官方 Pro：
 
-- 如果你的目标是“新版客户端主流程可用”：当前版本可以发布
-- 如果你的目标是“完整替代官方 Pro 的高级能力”：建议继续补齐 OIDC、插件签名、完整权限模型后再发布
+- OIDC（`/api/oidc/*`）：返回兼容结构，未实现完整登录流程
+- 插件签名（`/lic/web/api/plugin-sign`）：兼容占位，不是官方签名服务
+- 分组权限模型：`device-group/accessible`、`users/peers?accessible=` 为兼容模型，非官方完整权限逻辑
+
+发布判断建议：
+
+- 如果目标是“最新版客户端主流程可用”：当前版本可发布
+- 如果目标是“完全替代官方 Pro 高级能力”：建议继续补齐 OIDC、插件签名、完整权限模型后再发布
 
 ## 技术栈
 
@@ -79,24 +112,17 @@
 - `backend/`：Go 后端 API 服务
 - `soybean-admin/`：管理后台前端
 - `docker/`：容器相关配置
+- `docs/`：使用说明、端口说明、问题排查手册
 - `img/`：README 图片资源
 
-## 发布前建议（最小流程）
+## 发布前最小检查（建议）
 
 1. 执行数据库结构同步：`rustdesk-api-server-pro.exe sync`
-2. 重启服务
-3. 用最新版客户端做冒烟测试（登录、地址簿、分组面板、设备列表、审计）
-
-### 推荐冒烟测试项（更详细）
-
-- 账号登录/退出、`currentUser` 返回正常
-- 地址簿新增/编辑/删除、备注字段保存与回显
-- 分组面板加载不报错（即使无真实分组数据）
-- 设备列表可加载，字段显示正常
-- 审计日志可记录，审计备注可修改
-- 如启用录制：确认 `record_uploads/` 目录可写
+2. 重启服务，确认 `server.yaml` 中端口与静态目录配置正确
+3. 用最新版客户端做一轮冒烟测试（登录、地址簿、设备列表、分组面板、审计）
+4. 检查日志中是否存在持续报错（OIDC/record/权限/数据库字段缺失等）
 
 ## 说明
 
-- GitHub 页面按钮/标签语言（如 `README`、`Commits`）由 GitHub/浏览器语言决定，仓库无法直接修改。
-- 本 README 仅用于说明当前分支状态与兼容范围，详细开发/部署细节可按需补充到独立文档。
+- GitHub 页面按钮/标签（如 `README`、`Commits`）的显示语言由 GitHub 与浏览器语言决定，仓库代码无法直接修改
+- 仓库首页仅展示总览信息；详细部署与排障请查看上方“文档中心”
