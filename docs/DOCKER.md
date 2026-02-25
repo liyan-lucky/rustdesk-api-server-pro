@@ -8,6 +8,90 @@
 - 需要可复制的参考命令
 - 需要了解容器内默认目录、端口、环境变量与卷挂载关系
 
+## 快速安装命令（参考原作者写法风格）
+
+下面这部分优先给出“可直接复制”的命令块，说明放在后面章节。
+
+### 方式一：`docker compose`（推荐）
+
+```bash
+# 创建目录
+mkdir -p /opt/rustdesk-api-server-pro/data
+cd /opt/rustdesk-api-server-pro
+
+# 下载示例配置（下载后请修改 signKey、端口、数据库等）
+curl -L -o server.yaml https://raw.githubusercontent.com/liyan-lucky/rustdesk-api-server-pro/master/backend/server.yaml
+
+# 创建 docker-compose.yaml
+cat > docker-compose.yaml <<'YAML'
+services:
+  rustdesk-api-server-pro:
+    container_name: rustdesk-api-server-pro
+    image: ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+    environment:
+      - "ADMIN_USER=admin"
+      - "ADMIN_PASS=ChangeMe123!"
+    volumes:
+      - ./server.yaml:/app/server.yaml
+      - ./data:/app/data
+    network_mode: host
+    restart: unless-stopped
+YAML
+
+# 启动
+docker compose up -d
+
+# 查看日志
+docker compose logs -f rustdesk-api-server-pro
+```
+
+### 方式二：`docker run`（host 网络）
+
+```bash
+mkdir -p /opt/rustdesk-api-server-pro/data
+cd /opt/rustdesk-api-server-pro
+
+curl -L -o server.yaml https://raw.githubusercontent.com/liyan-lucky/rustdesk-api-server-pro/master/backend/server.yaml
+
+docker run -d \
+  --name rustdesk-api-server-pro \
+  --restart unless-stopped \
+  --network host \
+  -e ADMIN_USER=admin \
+  -e ADMIN_PASS='ChangeMe123!' \
+  -v $(pwd)/server.yaml:/app/server.yaml \
+  -v $(pwd)/data:/app/data \
+  ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+
+docker logs -f rustdesk-api-server-pro
+```
+
+### 常用命令（升级 / 重启 / 进入容器）
+
+```bash
+# compose 升级
+docker compose pull
+docker compose up -d
+
+# compose 重启
+docker compose restart rustdesk-api-server-pro
+
+# 查看运行状态
+docker compose ps
+
+# 进入容器
+docker exec -it rustdesk-api-server-pro sh
+
+# 手动执行数据库同步（通常启动脚本已自动执行）
+docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
+```
+
+快速说明：
+
+- 默认示例使用 `host` 网络，实际监听端口以 `server.yaml` 中 `httpConfig.port` 为准（常见 `:12345`）
+- 首次启动会自动 `sync`
+- 同时设置 `ADMIN_USER` 和 `ADMIN_PASS` 时会自动创建管理员（仅首次）
+
 ## 1. 先说结论（推荐部署方式）
 
 推荐优先使用 `docker-compose.yaml`，并至少持久化以下内容：
