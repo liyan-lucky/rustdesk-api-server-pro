@@ -52,7 +52,7 @@ func (c *UserController) GetUsers() mvc.Result {
 
 func (c *UserController) PostLogout() mvc.Result {
 	var f api.LoginForm
-	err := c.Ctx.ReadJSON(&f)
+	err := c.readJSONBody(&f)
 	if err != nil {
 		return c.fail(err)
 	}

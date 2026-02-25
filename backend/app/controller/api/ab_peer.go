@@ -1,8 +1,6 @@
 package api
 
 import (
-	"io"
-
 	"github.com/kataras/iris/v12/mvc"
 	"github.com/tidwall/gjson"
 
@@ -43,7 +41,7 @@ func (c *AddressBookPeerController) HandleAbPeerAdd() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
 	var form abform.AbPeer
-	if err := c.Ctx.ReadJSON(&form); err != nil {
+	if err := c.readJSONBody(&form); err != nil {
 		return c.fail(err)
 	}
 
@@ -90,7 +88,7 @@ func (c *AddressBookPeerController) HandleAbPeerAdd() mvc.Result {
 func (c *AddressBookPeerController) HandleAbPeerUpdate() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
-	body, err := io.ReadAll(c.Ctx.Request().Body)
+	body, err := c.readBodyBytes()
 	if err != nil {
 		return c.fail(err)
 	}

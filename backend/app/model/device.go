@@ -12,6 +12,7 @@ type Device struct {
 	Username   string    `xorm:"'username' varchar(255)"`
 	Uuid       string    `xorm:"'uuid' varchar(255)"`
 	Version    string    `xorm:"'version' varchar(255)"`
+	Disabled   bool      `xorm:"'disabled' tinyint"`
 	IsOnline   bool      `xorm:"'is_online' tinyint"`
 	Conns      int       `xorm:"'conns' int"`
 	CreatedAt  time.Time `xorm:"'created_at' datetime created"`

@@ -33,6 +33,12 @@ var dbSyncCmd = &cobra.Command{
 			new(model.VerifyCode),
 			new(model.SystemSettings),
 			new(model.MailTemplate),
+			new(model.DeviceGroup),
+			new(model.DeviceGroupDevice),
+			new(model.UserGroup),
+			new(model.UserGroupMember),
+			new(model.Strategy),
+			new(model.StrategyAssignment),
 		}
 		err = engine.Sync(models...)
 		if err != nil {

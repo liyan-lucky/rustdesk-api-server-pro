@@ -26,14 +26,13 @@ func (c *CompatLicController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *CompatLicController) HandlePluginSign() mvc.Result {
 	var req pluginSignReq
 	// Always return the expected JSON shape even when payload is invalid, so client plugins do not fail on decode.
-	if err := c.Ctx.ReadJSON(&req); err != nil {
+	if err := c.readJSONBody(&req); err != nil {
 		return mvc.Response{
 			Object: pluginSignResp{SignedMsg: []byte{}},
 		}
 	}
-	// Placeholder implementation: echo bytes back as a deterministic non-empty response.
-	// Real signature generation requires the official licensing/signing service.
+	result := c.compatService().PluginSign(req.Msg)
 	return mvc.Response{
-		Object: pluginSignResp{SignedMsg: req.Msg},
+		Object: pluginSignResp{SignedMsg: result.SignedMsg},
 	}
 }

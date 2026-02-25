@@ -2,10 +2,9 @@ package api
 
 import (
 	"rustdesk-api-server-pro/app/form/api"
-	"rustdesk-api-server-pro/app/model"
-	"time"
+	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/transport/httpdto"
 
-	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
 
@@ -16,98 +15,50 @@ type SystemController struct {
 func (c *SystemController) PostHeartbeat() mvc.Result {
 	// {"conns":[762],"id":"182921366","modified_at":1725698100,"uuid":"xxx","ver":1002070}
 	var form api.HeartbeatForm
-	err := c.Ctx.ReadJSON(&form)
+	err := c.readJSONBody(&form)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
-	var device model.Device
-	has, err := c.Db.Where("rustdesk_id = ?", form.RustdeskId).Get(&device)
-	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
-	}
-
-	if !has {
-		device.RustdeskId = form.RustdeskId
-		device.Uuid = form.Uuid
-		device.Conns = len(form.Conns)
-		device.IsOnline = true
-		_, err = c.Db.Insert(&device)
-		if err != nil {
-			return mvc.Response{
-				Object: iris.Map{
-					"error": err.Error(),
-				},
-			}
-		}
-	}
-
-	_, err = c.Db.Where("rustdesk_id = ?", form.RustdeskId).Cols("is_online", "conns").Update(&model.Device{
-		IsOnline: true,
-		Conns:    len(form.Conns),
+	result, err := c.systemService().HandleHeartbeat(core.HeartbeatCommand{
+		RustdeskID: form.RustdeskId,
+		UUID:       form.Uuid,
+		ConnCount:  len(form.Conns),
 	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	return mvc.Response{
-		Object: iris.Map{
-			"modified_at": time.Now().Unix(),
-			//"disconnect":  0,
-			//"strategy":    iris.Map{},
-		},
+		Object: httpdto.NewHeartbeatResponse(result),
 	}
 }
 
 func (c *SystemController) PostSysinfo() mvc.Result {
 	var form api.DeviceForm
-	err := c.Ctx.ReadJSON(&form)
+	err := c.readJSONBody(&form)
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
-	var device model.Device
-	has, err := c.Db.Where("rustdesk_id = ?", form.RustdeskId).Get(&device)
+	result, err := c.systemService().UpdateSysinfo(core.SysinfoUpdateCommand{
+		RustdeskID: form.RustdeskId,
+		CPU:        form.Cpu,
+		Hostname:   form.Hostname,
+		Memory:     form.Memory,
+		OS:         form.Os,
+		Username:   form.Username,
+		UUID:       form.Uuid,
+		Version:    form.Version,
+	})
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
-
-	if !has {
+	if !result.Updated {
 		return mvc.Response{
 			Text: "ID_NOT_FOUND",
 		}
 	}
-
-	device.Cpu = form.Cpu
-	device.Hostname = form.Hostname
-	device.RustdeskId = form.RustdeskId
-	device.Memory = form.Memory
-	device.Os = form.Os
-	device.Username = form.Username
-	device.Uuid = form.Uuid
-	device.Version = form.Version
-
-	c.Db.Where("id = ?", device.Id).Update(&device)
 
 	return mvc.Response{
 		Text: "SYSINFO_UPDATED",

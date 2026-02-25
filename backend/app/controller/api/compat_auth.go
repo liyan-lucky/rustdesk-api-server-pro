@@ -1,12 +1,10 @@
 package api
 
 import (
-	"encoding/json"
-	"io"
-	"rustdesk-api-server-pro/app/model"
 	"strings"
 
-	"github.com/kataras/iris/v12"
+	"rustdesk-api-server-pro/internal/core"
+
 	"github.com/kataras/iris/v12/mvc"
 	"github.com/tidwall/gjson"
 )
@@ -21,103 +19,69 @@ func (c *CompatAuthController) BeforeActivation(b mvc.BeforeActivation) {
 }
 
 func (c *CompatAuthController) HandleDevicesCli() mvc.Result {
-	body, err := io.ReadAll(c.Ctx.Request().Body)
+	body, err := c.readBodyBytes()
 	if err != nil {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": err.Error(),
-			},
-		}
+		return c.fail(err)
 	}
 
 	rustdeskID := gjson.GetBytes(body, "id").String()
 	if rustdeskID == "" {
-		return mvc.Response{
-			Object: iris.Map{
-				"error": "id required",
-			},
-		}
+		return c.failMsg("id required")
 	}
 
 	user := c.GetUser()
+	cmd := core.CompatDevicesCliCommand{
+		UserID:     user.Id,
+		RustdeskID: rustdeskID,
+	}
 
-	// Update runtime device metadata if present.
-	deviceUpdates := make([]string, 0, 2)
-	device := model.Device{}
 	if v := gjson.GetBytes(body, "device_name"); v.Exists() {
-		device.Hostname = v.String()
-		deviceUpdates = append(deviceUpdates, "hostname")
+		value := v.String()
+		cmd.DeviceName = &value
 	}
 	if v := gjson.GetBytes(body, "device_username"); v.Exists() {
-		device.Username = v.String()
-		deviceUpdates = append(deviceUpdates, "username")
-	}
-	if len(deviceUpdates) > 0 {
-		_, _ = c.Db.Where("rustdesk_id = ?", rustdeskID).Cols(deviceUpdates...).Update(&device)
-	}
-
-	// Update persisted peer metadata for current user (legacy + address book peers share the same table).
-	peer := model.Peer{}
-	peerUpdates := make([]string, 0, 8)
-	if v := gjson.GetBytes(body, "note"); v.Exists() {
-		peer.Note = v.String()
-		peerUpdates = append(peerUpdates, "note")
+		value := v.String()
+		cmd.DeviceUsername = &value
 	}
 	if v := gjson.GetBytes(body, "user_name"); v.Exists() {
-		peer.LoginName = v.String()
-		peerUpdates = append(peerUpdates, "loginName")
+		value := v.String()
+		cmd.UserName = &value
 	}
-	if v := gjson.GetBytes(body, "device_name"); v.Exists() {
-		peer.Hostname = v.String()
-		peerUpdates = append(peerUpdates, "hostname")
-	}
-	if v := gjson.GetBytes(body, "device_username"); v.Exists() {
-		peer.Username = v.String()
-		peerUpdates = append(peerUpdates, "username")
-	}
-	if v := gjson.GetBytes(body, "address_book_alias"); v.Exists() {
-		peer.Alias = v.String()
-		peerUpdates = append(peerUpdates, "alias")
-	}
-	if v := gjson.GetBytes(body, "address_book_password"); v.Exists() {
-		peer.Password = v.String()
-		peerUpdates = append(peerUpdates, "password")
+
+	if v := gjson.GetBytes(body, "note"); v.Exists() {
+		value := v.String()
+		cmd.Note = &value
 	}
 	if v := gjson.GetBytes(body, "address_book_note"); v.Exists() {
-		peer.Note = v.String()
-		if !contains(peerUpdates, "note") {
-			peerUpdates = append(peerUpdates, "note")
-		}
+		// address_book_note should override generic note when both exist.
+		value := v.String()
+		cmd.Note = &value
+	}
+	if v := gjson.GetBytes(body, "address_book_alias"); v.Exists() {
+		value := v.String()
+		cmd.Alias = &value
+	}
+	if v := gjson.GetBytes(body, "address_book_password"); v.Exists() {
+		value := v.String()
+		cmd.Password = &value
 	}
 	if v := gjson.GetBytes(body, "address_book_tag"); v.Exists() {
+		cmd.HasTags = true
 		tagText := strings.TrimSpace(v.String())
-		tags := []string{}
 		if tagText != "" {
 			for _, t := range strings.Split(tagText, ",") {
 				t = strings.TrimSpace(t)
 				if t != "" {
-					tags = append(tags, t)
+					cmd.Tags = append(cmd.Tags, t)
 				}
 			}
 		}
-		if b, mErr := json.Marshal(tags); mErr == nil {
-			peer.Tags = string(b)
-			peerUpdates = append(peerUpdates, "tags")
-		}
 	}
-	if len(peerUpdates) > 0 {
-		_, _ = c.Db.Where("user_id = ? and rustdesk_id = ?", user.Id, rustdeskID).Cols(peerUpdates...).Update(&peer)
+
+	if err := c.compatService().ApplyDevicesCli(cmd); err != nil {
+		return c.fail(err)
 	}
 
 	// Keep compatibility behavior with the official client CLI helper: empty body means success.
 	return mvc.Response{Text: ""}
-}
-
-func contains(items []string, target string) bool {
-	for _, item := range items {
-		if item == target {
-			return true
-		}
-	}
-	return false
 }

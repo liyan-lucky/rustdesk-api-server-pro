@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"io"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/repository"
@@ -59,6 +60,14 @@ func (c *basicController) failMsg(msg string) mvc.Result {
 	}
 }
 
+func (c *basicController) readJSONBody(target interface{}) error {
+	return c.Ctx.ReadJSON(target)
+}
+
+func (c *basicController) readBodyBytes() ([]byte, error) {
+	return io.ReadAll(c.Ctx.Request().Body)
+}
+
 func (c *basicController) withTx(fn func(session *xorm.Session) error) error {
 	session := c.Db.NewSession()
 	defer session.Close()
@@ -95,4 +104,20 @@ func (c *basicController) userService() *v2service.UserService {
 
 func (c *basicController) addressBookService() *v2service.AddressBookService {
 	return v2service.NewAddressBookService(repository.NewXormAddressBookRepository(c.Db))
+}
+
+func (c *basicController) systemService() *v2service.SystemService {
+	return v2service.NewSystemService(repository.NewXormSystemRepository(c.Db))
+}
+
+func (c *basicController) auditService() *v2service.AuditService {
+	return v2service.NewAuditService(repository.NewXormAuditRepository(c.Db))
+}
+
+func (c *basicController) compatService() *v2service.CompatService {
+	return v2service.NewCompatService(repository.NewXormCompatRepository(c.Db))
+}
+
+func (c *basicController) loginService() *v2service.LoginService {
+	return v2service.NewLoginService()
 }

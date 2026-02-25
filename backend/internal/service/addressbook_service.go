@@ -13,6 +13,18 @@ func NewAddressBookService(repo repository.AddressBookRepository) *AddressBookSe
 	return &AddressBookService{repo: repo}
 }
 
+func (s *AddressBookService) GetLegacyAddressBook(query core.LegacyAddressBookGetQuery) (core.LegacyAddressBookGetResult, error) {
+	return s.repo.GetLegacyAddressBook(query)
+}
+
+func (s *AddressBookService) EnsurePersonalAddressBook(cmd core.PersonalAddressBookEnsureCommand) (core.PersonalAddressBookEnsureResult, error) {
+	return s.repo.EnsurePersonalAddressBook(cmd)
+}
+
+func (s *AddressBookService) GetSettings(query core.AddressBookSettingsQuery) (core.AddressBookSettingsResult, error) {
+	return s.repo.GetAddressBookSettings(query)
+}
+
 func (s *AddressBookService) ListPeers(query core.AddressBookPeerListQuery) (core.AddressBookPeerListResult, error) {
 	return s.repo.ListAddressBookPeers(query)
 }
@@ -55,4 +67,8 @@ func (s *AddressBookService) UpdatePeer(cmd core.AddressBookPeerUpdateCommand) (
 
 func (s *AddressBookService) DeletePeers(cmd core.AddressBookPeerDeleteCommand) error {
 	return s.repo.DeleteAddressBookPeers(cmd)
+}
+
+func (s *AddressBookService) ReplaceLegacyAddressBookData(cmd core.LegacyAddressBookReplaceCommand) error {
+	return s.repo.ReplaceLegacyAddressBookData(cmd)
 }

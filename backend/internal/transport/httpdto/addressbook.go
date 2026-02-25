@@ -1,6 +1,10 @@
 package httpdto
 
-import "rustdesk-api-server-pro/internal/core"
+import (
+	"encoding/json"
+
+	"rustdesk-api-server-pro/internal/core"
+)
 
 type AddressBookPeerRow struct {
 	ID               string   `json:"id"`
@@ -17,6 +21,76 @@ type AddressBookPeerRow struct {
 	RdpUsername      string   `json:"rdpUsername"`
 	LoginName        string   `json:"loginName"`
 	SameServer       bool     `json:"same_server"`
+}
+
+type LegacyAddressBookPeerRow struct {
+	ID       string   `json:"id"`
+	Hash     string   `json:"hash"`
+	Username string   `json:"username"`
+	Hostname string   `json:"hostname"`
+	Platform string   `json:"platform"`
+	Alias    string   `json:"alias"`
+	Tags     []string `json:"tags"`
+	Note     string   `json:"note"`
+}
+
+type LegacyAddressBookDataPayload struct {
+	Tags      []string                   `json:"tags"`
+	Peers     []LegacyAddressBookPeerRow `json:"peers"`
+	TagColors string                     `json:"tag_colors"`
+}
+
+type LegacyAddressBookResponse struct {
+	LicensedDevices int    `json:"licensed_devices"`
+	Data            string `json:"data"`
+}
+
+type PersonalAddressBookResponse struct {
+	Guid string `json:"guid"`
+}
+
+type AddressBookSettingsResponse struct {
+	MaxPeerOneAB int `json:"max_peer_one_ab"`
+}
+
+func NewLegacyAddressBookResponse(licensedDevices int, result core.LegacyAddressBookGetResult) (LegacyAddressBookResponse, error) {
+	tagColorsJSON, err := json.Marshal(result.TagColors)
+	if err != nil {
+		return LegacyAddressBookResponse{}, err
+	}
+	peers := make([]LegacyAddressBookPeerRow, 0, len(result.Peers))
+	for _, p := range result.Peers {
+		peers = append(peers, LegacyAddressBookPeerRow{
+			ID:       p.RustdeskID,
+			Hash:     p.Hash,
+			Username: p.Username,
+			Hostname: p.Hostname,
+			Platform: p.Platform,
+			Alias:    p.Alias,
+			Tags:     p.Tags,
+			Note:     p.Note,
+		})
+	}
+	dataBytes, err := json.Marshal(LegacyAddressBookDataPayload{
+		Tags:      result.Tags,
+		Peers:     peers,
+		TagColors: string(tagColorsJSON),
+	})
+	if err != nil {
+		return LegacyAddressBookResponse{}, err
+	}
+	return LegacyAddressBookResponse{
+		LicensedDevices: licensedDevices,
+		Data:            string(dataBytes),
+	}, nil
+}
+
+func NewPersonalAddressBookResponse(result core.PersonalAddressBookEnsureResult) PersonalAddressBookResponse {
+	return PersonalAddressBookResponse{Guid: result.Guid}
+}
+
+func NewAddressBookSettingsResponse(result core.AddressBookSettingsResult) AddressBookSettingsResponse {
+	return AddressBookSettingsResponse{MaxPeerOneAB: result.MaxPeerOneAB}
 }
 
 type AddressBookPeerListResponse struct {

@@ -123,3 +123,55 @@ type AddressBookPeerDeleteCommand struct {
 	AbID   int
 	IDs    []string
 }
+
+type LegacyAddressBookTagEntry struct {
+	Name  string
+	Color int64
+}
+
+type LegacyAddressBookPeerEntry struct {
+	RustdeskID string
+	Hash       string
+	Username   string
+	Hostname   string
+	Platform   string
+	Alias      string
+	Tags       []string
+	Note       string
+}
+
+type LegacyAddressBookReplaceCommand struct {
+	UserID int
+	Tags   []LegacyAddressBookTagEntry
+	Peers  []LegacyAddressBookPeerEntry
+}
+
+type LegacyAddressBookGetQuery struct {
+	UserID int
+}
+
+type LegacyAddressBookGetResult struct {
+	Tags      []string
+	TagColors map[string]int64
+	Peers     []LegacyAddressBookPeerEntry
+}
+
+type PersonalAddressBookEnsureCommand struct {
+	UserID         int
+	Username       string
+	DefaultNote    string
+	DefaultRule    int
+	DefaultMaxPeer int
+}
+
+type PersonalAddressBookEnsureResult struct {
+	Guid string
+}
+
+type AddressBookSettingsQuery struct {
+	UserID int
+}
+
+type AddressBookSettingsResult struct {
+	MaxPeerOneAB int
+}

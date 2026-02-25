@@ -39,7 +39,7 @@ func (c *AddressBookTagController) HandleAbTagAdd() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
 	var form api.AbTagForm
-	err := c.Ctx.ReadJSON(&form)
+	err := c.readJSONBody(&form)
 	if err != nil {
 		return c.fail(err)
 	}
@@ -65,7 +65,7 @@ func (c *AddressBookTagController) HandleAbTagUpdate() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
 	var form api.AbTagForm
-	err := c.Ctx.ReadJSON(&form)
+	err := c.readJSONBody(&form)
 	if err != nil {
 		return c.fail(err)
 	}
@@ -91,7 +91,7 @@ func (c *AddressBookTagController) HandleAbTagRename() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
 	var form api.AbTagRenameForm
-	err := c.Ctx.ReadJSON(&form)
+	err := c.readJSONBody(&form)
 	if err != nil {
 		return c.fail(err)
 	}

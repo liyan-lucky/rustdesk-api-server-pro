@@ -2,11 +2,13 @@ package repository
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/db"
 	"rustdesk-api-server-pro/internal/core"
 
+	"github.com/beevik/guid"
 	"xorm.io/xorm"
 )
 
@@ -16,6 +18,85 @@ type XormAddressBookRepository struct {
 
 func NewXormAddressBookRepository(dbEngine *xorm.Engine) *XormAddressBookRepository {
 	return &XormAddressBookRepository{DB: dbEngine}
+}
+
+func (r *XormAddressBookRepository) GetLegacyAddressBook(query core.LegacyAddressBookGetQuery) (core.LegacyAddressBookGetResult, error) {
+	tagList := make([]model.Tags, 0)
+	if err := r.DB.Where("user_id = ?", query.UserID).Find(&tagList); err != nil {
+		return core.LegacyAddressBookGetResult{}, err
+	}
+
+	tags := make([]string, 0, len(tagList))
+	tagColors := make(map[string]int64, len(tagList))
+	for _, tag := range tagList {
+		tags = append(tags, tag.Tag)
+		colorCode, err := strconv.ParseInt(tag.Color, 10, 64)
+		if err != nil {
+			continue
+		}
+		tagColors[tag.Tag] = colorCode
+	}
+
+	peerList := make([]model.Peer, 0)
+	if err := r.DB.Where("user_id = ?", query.UserID).Find(&peerList); err != nil {
+		return core.LegacyAddressBookGetResult{}, err
+	}
+
+	peers := make([]core.LegacyAddressBookPeerEntry, 0, len(peerList))
+	for _, peer := range peerList {
+		peerTags := make([]string, 0)
+		if err := json.Unmarshal([]byte(peer.Tags), &peerTags); err != nil {
+			continue
+		}
+		peers = append(peers, core.LegacyAddressBookPeerEntry{
+			RustdeskID: peer.RustdeskId,
+			Hash:       peer.Hash,
+			Username:   peer.Username,
+			Hostname:   peer.Hostname,
+			Platform:   peer.Platform,
+			Alias:      peer.Alias,
+			Tags:       peerTags,
+			Note:       peer.Note,
+		})
+	}
+
+	return core.LegacyAddressBookGetResult{
+		Tags:      tags,
+		TagColors: tagColors,
+		Peers:     peers,
+	}, nil
+}
+
+func (r *XormAddressBookRepository) EnsurePersonalAddressBook(cmd core.PersonalAddressBookEnsureCommand) (core.PersonalAddressBookEnsureResult, error) {
+	var ab model.AddressBook
+	has, err := r.DB.Where("user_id = ?", cmd.UserID).Get(&ab)
+	if err != nil {
+		return core.PersonalAddressBookEnsureResult{}, err
+	}
+	if !has {
+		g := guid.New()
+		ab = model.AddressBook{
+			UserId:  cmd.UserID,
+			Guid:    g.String(),
+			Name:    model.PersonalAddressBookName,
+			Owner:   cmd.Username,
+			MaxPeer: cmd.DefaultMaxPeer,
+			Note:    cmd.DefaultNote,
+			Rule:    cmd.DefaultRule,
+		}
+		if _, err := r.DB.Insert(&ab); err != nil {
+			return core.PersonalAddressBookEnsureResult{}, err
+		}
+	}
+	return core.PersonalAddressBookEnsureResult{Guid: ab.Guid}, nil
+}
+
+func (r *XormAddressBookRepository) GetAddressBookSettings(query core.AddressBookSettingsQuery) (core.AddressBookSettingsResult, error) {
+	var ab model.AddressBook
+	if _, err := r.DB.Where("user_id = ?", query.UserID).Get(&ab); err != nil {
+		return core.AddressBookSettingsResult{}, err
+	}
+	return core.AddressBookSettingsResult{MaxPeerOneAB: ab.MaxPeer}, nil
 }
 
 func (r *XormAddressBookRepository) ListAddressBookPeers(query core.AddressBookPeerListQuery) (core.AddressBookPeerListResult, error) {
@@ -215,4 +296,64 @@ func (r *XormAddressBookRepository) DeleteAddressBookPeers(cmd core.AddressBookP
 		In("rustdesk_id", cmd.IDs).
 		Delete(&model.Peer{})
 	return err
+}
+
+func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.LegacyAddressBookReplaceCommand) error {
+	session := r.DB.NewSession()
+	defer session.Close()
+
+	if err := session.Begin(); err != nil {
+		return err
+	}
+
+	if _, err := session.Where("user_id = ?", cmd.UserID).Delete(&model.Tags{}); err != nil {
+		_ = session.Rollback()
+		return err
+	}
+	if _, err := session.Where("user_id = ?", cmd.UserID).Delete(&model.Peer{}); err != nil {
+		_ = session.Rollback()
+		return err
+	}
+
+	tags := make([]*model.Tags, 0, len(cmd.Tags))
+	for _, tag := range cmd.Tags {
+		tags = append(tags, &model.Tags{
+			UserId: cmd.UserID,
+			Tag:    tag.Name,
+			Color:  strconv.FormatInt(tag.Color, 10),
+		})
+	}
+	if len(tags) > 0 {
+		if _, err := session.Insert(tags); err != nil {
+			_ = session.Rollback()
+			return err
+		}
+	}
+
+	peers := make([]*model.Peer, 0, len(cmd.Peers))
+	for _, peer := range cmd.Peers {
+		peerTags := "[]"
+		if b, err := json.Marshal(peer.Tags); err == nil {
+			peerTags = string(b)
+		}
+		peers = append(peers, &model.Peer{
+			UserId:     cmd.UserID,
+			RustdeskId: peer.RustdeskID,
+			Hash:       peer.Hash,
+			Username:   peer.Username,
+			Hostname:   peer.Hostname,
+			Platform:   peer.Platform,
+			Alias:      peer.Alias,
+			Tags:       peerTags,
+			Note:       peer.Note,
+		})
+	}
+	if len(peers) > 0 {
+		if _, err := session.Insert(peers); err != nil {
+			_ = session.Rollback()
+			return err
+		}
+	}
+
+	return session.Commit()
 }
