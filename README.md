@@ -11,6 +11,7 @@
 ## 文档中心（上线建议放这里）
 
 - [使用说明（部署、初始化、升级、验证）](./docs/USAGE.md)
+- [Docker 安装与配置参考（安装命令、默认参数、卷、端口）](./docs/DOCKER.md)
 - [端口与访问路径说明（HTTP/API/Admin/SMTP）](./docs/PORTS.md)
 - [问题排查手册（常见问题与日志定位）](./docs/TROUBLESHOOTING.md)
 - [发版说明模板（GitHub Release 可直接复用）](./RELEASE_NOTES.md)

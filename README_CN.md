@@ -7,6 +7,7 @@
 快速入口：
 
 - [使用说明](./docs/USAGE.md)
+- [Docker 安装与配置参考](./docs/DOCKER.md)
 - [端口与访问路径说明](./docs/PORTS.md)
 - [问题排查手册](./docs/TROUBLESHOOTING.md)
 

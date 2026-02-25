@@ -11,6 +11,7 @@ An API server implementation based on the open-source [RustDesk](https://github.
 ## Docs (Chinese-first, shown on repository homepage)
 
 - [Usage Guide (Chinese)](./docs/USAGE.md)
+- [Docker Deployment Guide (Chinese)](./docs/DOCKER.md)
 - [Ports & Paths Guide (Chinese)](./docs/PORTS.md)
 - [Troubleshooting Manual (Chinese)](./docs/TROUBLESHOOTING.md)
 

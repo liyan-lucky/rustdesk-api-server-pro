@@ -6,6 +6,7 @@ services:
       - "ADMIN_USER=youruser" # optional
       - "ADMIN_PASS=yourpassword" # optional
     volumes:
-      - ./server.yaml:/app/server.yaml
+      - ./server.yaml:/app/server.yaml # startup script will copy to /app/data/server.yaml
+      - ./data:/app/data # persist sqlite db, init lock, record_uploads and runtime config
     network_mode: host
     restart: unless-stopped

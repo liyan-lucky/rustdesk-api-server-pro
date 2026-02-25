@@ -6,6 +6,12 @@ fi
 
 mkdir /app/data || true
 
+# Make mounted config at /app/server.yaml effective, because the binary reads server.yaml from CWD.
+# The process runs in /app/data, so keep /app/data/server.yaml in sync with /app/server.yaml.
+if [ -f /app/server.yaml ]; then
+    cp /app/server.yaml /app/data/server.yaml
+fi
+
 cd /app/data
 
 #if [ ! -f /app/server.db ]; then # This is not good if one wants to upgrade instance
