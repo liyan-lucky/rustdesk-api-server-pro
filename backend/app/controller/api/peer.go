@@ -14,14 +14,17 @@ func (c *PeerController) GetPeers() mvc.Result {
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 10)
 	status := c.Ctx.URLParamIntDefault("status", 1)
+	hasAccessibleParam := c.Ctx.Request().URL.Query().Has("accessible")
 
 	user := c.GetUser()
 	result, err := c.peerService().ListPeers(core.PeerListQuery{
-		UserID:   user.Id,
-		Username: user.Username,
-		Current:  current,
-		PageSize: pageSize,
-		Status:   status,
+		UserID:             user.Id,
+		Username:           user.Username,
+		RequestUserIsAdmin: user.IsAdmin,
+		HasAccessibleParam: hasAccessibleParam,
+		Current:            current,
+		PageSize:           pageSize,
+		Status:             status,
 	})
 	if err != nil {
 		return c.fail(err)

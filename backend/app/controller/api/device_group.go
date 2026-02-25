@@ -27,12 +27,20 @@ func (c *DeviceGroupController) HandleAccessible() mvc.Result {
 		pageSize = 100
 	}
 
-	total, err := c.Db.Count(&model.DeviceGroup{})
+	user := c.GetUser()
+	countQ := c.Db.Table(&model.DeviceGroup{})
+	listQ := c.Db.Table(&model.DeviceGroup{})
+	if user != nil && !user.IsAdmin {
+		countQ = countQ.Where("owner_id = ?", user.Id)
+		listQ = listQ.Where("owner_id = ?", user.Id)
+	}
+
+	total, err := countQ.Count(&model.DeviceGroup{})
 	if err != nil {
 		return c.fail(err)
 	}
 	var groups []model.DeviceGroup
-	if err := c.Db.Asc("name").Limit(pageSize, (current-1)*pageSize).Find(&groups); err != nil {
+	if err := listQ.Asc("name").Limit(pageSize, (current-1)*pageSize).Find(&groups); err != nil {
 		return c.fail(err)
 	}
 	data := make([]iris.Map, 0, len(groups))

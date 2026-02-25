@@ -26,6 +26,10 @@ type PeerListResponse struct {
 func NewPeerListResponse(result core.PeerListResult, status int, username string) PeerListResponse {
 	rows := make([]PeerRow, 0, len(result.Items))
 	for _, p := range result.Items {
+		ownerName := p.OwnerName
+		if ownerName == "" {
+			ownerName = username
+		}
 		rows = append(rows, PeerRow{
 			ID: p.RustdeskID,
 			Info: PeerInfo{
@@ -34,7 +38,7 @@ func NewPeerListResponse(result core.PeerListResult, status int, username string
 				DeviceName: p.Hostname,
 			},
 			Status:          status,
-			User:            username,
+			User:            ownerName,
 			UserName:        p.LoginName,
 			DeviceGroupName: p.DeviceGroupName,
 			Note:            p.Note,

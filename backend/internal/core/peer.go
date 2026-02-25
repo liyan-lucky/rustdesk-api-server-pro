@@ -2,11 +2,13 @@ package core
 
 // PeerListQuery is the service-level query for listing peers.
 type PeerListQuery struct {
-	UserID   int
-	Username string
-	Current  int
-	PageSize int
-	Status   int
+	UserID             int
+	Username           string
+	RequestUserIsAdmin bool
+	HasAccessibleParam bool
+	Current            int
+	PageSize           int
+	Status             int
 }
 
 // PeerListItem is the normalized peer view used by services and transport mappers.
@@ -16,6 +18,7 @@ type PeerListItem struct {
 	Platform        string
 	Hostname        string
 	LoginName       string
+	OwnerName       string
 	DeviceGroupName string
 	Note            string
 }
