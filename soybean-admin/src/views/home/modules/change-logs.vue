@@ -13,7 +13,7 @@ interface LogItem {
 }
 
 const logs = computed<LogItem[]>(() => [
-  { id: 1, content: '适配v1.2.7版本客户端', version: 'v1.2.7', time: '2024-08-29' }
+  { id: 1, content: '兼容增强版持续更新（适配新版客户端接口）', version: 'latest', time: '2026-02-26' }
 ]);
 </script>
 
