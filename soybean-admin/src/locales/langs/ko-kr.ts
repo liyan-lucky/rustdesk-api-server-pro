@@ -348,7 +348,31 @@ const local: App.I18n.Schema = {
     VerificationCodeError: '인증 코드 오류',
     UUIDEmpty: 'UUID를 입력하세요'
   },
-  icon: { ...enUs.icon, lang: '언어 전환', reload: '페이지 새로고침', fullscreen: '전체화면' }
+  dropdown: {
+    ...enUs.dropdown,
+    closeCurrent: '?? ??',
+    closeOther: '?? ? ??',
+    closeLeft: '?? ??',
+    closeRight: '??? ??',
+    closeAll: '?? ??'
+  },
+  icon: {
+    ...enUs.icon,
+    themeConfig: '?? ??',
+    themeSchema: '?? ???',
+    lang: '?? ??',
+    fullscreen: '?? ??',
+    fullscreenExit: '?? ?? ??',
+    reload: '??? ????',
+    collapse: '?? ??',
+    expand: '?? ???',
+    pin: '??',
+    unpin: '?? ??'
+  },
+  datatable: {
+    ...enUs.datatable,
+    itemCount: '? {total}?'
+  }
 };
 
 export default local;

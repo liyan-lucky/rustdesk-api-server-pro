@@ -348,7 +348,31 @@ const local: App.I18n.Schema = {
     VerificationCodeError: 'Fehler beim Verifizierungscode',
     UUIDEmpty: 'UUID darf nicht leer sein'
   },
-  icon: { ...enUs.icon, lang: 'Sprache wechseln', reload: 'Seite neu laden', fullscreen: 'Vollbild' }
+  dropdown: {
+    ...enUs.dropdown,
+    closeCurrent: 'Aktuelles schlie?en',
+    closeOther: 'Andere schlie?en',
+    closeLeft: 'Links schlie?en',
+    closeRight: 'Rechts schlie?en',
+    closeAll: 'Alle schlie?en'
+  },
+  icon: {
+    ...enUs.icon,
+    themeConfig: 'Theme-Konfiguration',
+    themeSchema: 'Theme-Schema',
+    lang: 'Sprache wechseln',
+    fullscreen: 'Vollbild',
+    fullscreenExit: 'Vollbild verlassen',
+    reload: 'Seite neu laden',
+    collapse: 'Men? einklappen',
+    expand: 'Men? ausklappen',
+    pin: 'Anheften',
+    unpin: 'L?sen'
+  },
+  datatable: {
+    ...enUs.datatable,
+    itemCount: 'Insgesamt {total} Eintr?ge'
+  }
 };
 
 export default local;
