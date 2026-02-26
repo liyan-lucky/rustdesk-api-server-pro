@@ -1,6 +1,6 @@
 # i18n Coverage Report
 
-Generated: 2026-02-26T21:26:47.254Z
+Generated: 2026-02-26T21:34:14.765Z
 Base locale: `en-US`
 
 Metrics:
@@ -16,7 +16,7 @@ Metrics:
 | ja-JP | 320 | 252 | 68 | 0 | 0 | 78.75% | 78.75% |
 | ko-KR | 320 | 253 | 67 | 0 | 0 | 79.06% | 79.06% |
 | ru-RU | 320 | 308 | 12 | 0 | 0 | 96.25% | 96.25% |
-| zh-CN | 320 | 266 | 54 | 0 | 0 | 83.13% | 83.13% |
+| zh-CN | 320 | 314 | 6 | 0 | 0 | 98.13% | 98.13% |
 
 ## de-DE
 
@@ -334,53 +334,18 @@ Metrics:
 ## zh-CN
 
 - Base leaf keys: 320
-- Translated leaves: 266 (83.13%)
-- Fallback-identical leaves: 54 (16.88%)
+- Translated leaves: 314 (98.13%)
+- Fallback-identical leaves: 6 (1.88%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `api.CaptchaError`
-  - `api.DataError`
-  - `api.MailTemplateAddSuccess`
-  - `api.MailTemplateContentsEmpty`
-  - `api.MailTemplateNameEmpty`
-  - `api.MailTemplateSubjectEmpty`
-  - `api.MailTemplateUpdateSuccess`
-  - `api.NoEmailAddress`
-  - `api.PasswordEmpty`
-  - `api.SessionKillSuccess`
-  - `api.UUIDEmpty`
-  - `api.UserAddSuccess`
-  - `api.UserDeleteSuccess`
-  - `api.UserExists`
-  - `api.UserNotExists`
-  - `api.UserUpdateSuccess`
-  - `api.UsernameEmpty`
-  - `api.UsernameOrPasswordError`
-  - `api.VerificationCodeError`
-  - `dataMap.audit.fileTransferTypeLabel.controlled_master`
-  - `dataMap.audit.fileTransferTypeLabel.master_controlled`
   - `dataMap.audit.ip`
-  - `dataMap.audit.typeLabel.file_transfer`
-  - `dataMap.audit.typeLabel.remote_control`
-  - `dataMap.audit.typeLabel.tcp_tunnel`
   - `dataMap.audit.uuid`
-  - `dataMap.mailLog.contents`
-  - `dataMap.mailLog.created_at`
-  - `dataMap.mailLog.from`
-  - `dataMap.mailLog.status`
-  - `dataMap.mailLog.statusLabel.err`
-  - `dataMap.mailLog.statusLabel.ok`
-  - `dataMap.mailLog.subject`
-  - `dataMap.mailLog.to`
-  - `dataMap.mailLog.username`
   - `dataMap.mailLog.uuid`
-  - `dataMap.mailTemplate.contents`
-  - `dataMap.mailTemplate.created_at`
-  - `dataMap.mailTemplate.name`
-  - `dataMap.mailTemplate.subject`
-  - ... and 14 more
+  - `page.home.serverConfig.key`
+  - `system.title`
+  - `theme.tab.mode.chrome`
 
 **Missing Keys**
 -
