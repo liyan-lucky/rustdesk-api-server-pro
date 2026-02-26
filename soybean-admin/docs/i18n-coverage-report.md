@@ -1,6 +1,6 @@
 # i18n Coverage Report
 
-Generated: 2026-02-26T21:13:43.269Z
+Generated: 2026-02-26T21:20:58.104Z
 Base locale: `en-US`
 
 Metrics:
@@ -15,8 +15,8 @@ Metrics:
 | fr-FR | 320 | 245 | 75 | 0 | 0 | 76.56% | 76.56% |
 | ja-JP | 320 | 252 | 68 | 0 | 0 | 78.75% | 78.75% |
 | ko-KR | 320 | 253 | 67 | 0 | 0 | 79.06% | 79.06% |
-| ru-RU | 320 | 161 | 159 | 0 | 0 | 50.31% | 50.31% |
-| zh-CN | 320 | 193 | 127 | 0 | 0 | 60.31% | 60.31% |
+| ru-RU | 320 | 275 | 45 | 0 | 0 | 85.94% | 85.94% |
+| zh-CN | 320 | 266 | 54 | 0 | 0 | 83.13% | 83.13% |
 
 ## de-DE
 
@@ -306,53 +306,53 @@ Metrics:
 ## ru-RU
 
 - Base leaf keys: 320
-- Translated leaves: 161 (50.31%)
-- Fallback-identical leaves: 159 (49.69%)
+- Translated leaves: 275 (85.94%)
+- Fallback-identical leaves: 45 (14.06%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `common.action`
-  - `common.add`
-  - `common.addSuccess`
-  - `common.backToHome`
-  - `common.batchDelete`
-  - `common.cancel`
-  - `common.check`
-  - `common.close`
-  - `common.columnSetting`
-  - `common.config`
-  - `common.confirm`
-  - `common.confirmDelete`
-  - `common.delete`
-  - `common.deleteSuccess`
-  - `common.edit`
-  - `common.expandColumn`
-  - `common.index`
-  - `common.keywordSearch`
-  - `common.logout`
-  - `common.logoutConfirm`
-  - `common.look`
-  - `common.lookForward`
-  - `common.modify`
-  - `common.modifySuccess`
-  - `common.operate`
-  - `common.pleaseCheckValue`
-  - `common.reset`
-  - `common.search`
-  - `common.switch`
-  - `common.tip`
-  - `common.trigger`
-  - `common.update`
-  - `common.updateSuccess`
-  - `common.userCenter`
-  - `common.yesOrNo.no`
-  - `common.yesOrNo.yes`
   - `dataMap.audit.closed_at`
   - `dataMap.audit.conn_id`
   - `dataMap.audit.ip`
   - `dataMap.audit.path`
-  - ... and 119 more
+  - `dataMap.audit.peer_id`
+  - `dataMap.audit.rustdesk_id`
+  - `dataMap.audit.session_id`
+  - `dataMap.audit.uuid`
+  - `dataMap.device.rustdesk_id`
+  - `dataMap.mailLog.contents`
+  - `dataMap.mailLog.uuid`
+  - `dataMap.session.created_at`
+  - `dataMap.session.expired`
+  - `dataMap.user.email`
+  - `dataMap.user.loginVerifyLabel.tfaCheck`
+  - `dataMap.user.password`
+  - `dataMap.user.tfa_code`
+  - `dataMap.user.tfa_secret`
+  - `page.home.serverConfig.copy`
+  - `page.home.serverConfig.key`
+  - `page.login.common.back`
+  - `page.login.common.codeLogin`
+  - `page.login.common.codePlaceholder`
+  - `page.login.common.confirm`
+  - `page.login.common.confirmPasswordPlaceholder`
+  - `page.login.common.loginOrRegister`
+  - `page.login.common.loginSuccess`
+  - `page.login.common.passwordPlaceholder`
+  - `page.login.common.phonePlaceholder`
+  - `page.login.common.userNamePlaceholder`
+  - `page.login.common.validateSuccess`
+  - `page.login.common.welcomeBack`
+  - `page.login.pwdLogin.rememberMe`
+  - `page.login.pwdLogin.title`
+  - `page.user.list.emailFormatError`
+  - `page.user.list.inputNickname`
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - ... and 5 more
 
 **Missing Keys**
 -
@@ -363,8 +363,8 @@ Metrics:
 ## zh-CN
 
 - Base leaf keys: 320
-- Translated leaves: 193 (60.31%)
-- Fallback-identical leaves: 127 (39.69%)
+- Translated leaves: 266 (83.13%)
+- Fallback-identical leaves: 54 (16.88%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -388,7 +388,6 @@ Metrics:
   - `api.UsernameEmpty`
   - `api.UsernameOrPasswordError`
   - `api.VerificationCodeError`
-  - `common.close`
   - `dataMap.audit.fileTransferTypeLabel.controlled_master`
   - `dataMap.audit.fileTransferTypeLabel.master_controlled`
   - `dataMap.audit.ip`
@@ -409,7 +408,8 @@ Metrics:
   - `dataMap.mailTemplate.contents`
   - `dataMap.mailTemplate.created_at`
   - `dataMap.mailTemplate.name`
-  - ... and 87 more
+  - `dataMap.mailTemplate.subject`
+  - ... and 14 more
 
 **Missing Keys**
 -

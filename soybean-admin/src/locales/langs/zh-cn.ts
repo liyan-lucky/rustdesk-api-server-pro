@@ -12,93 +12,209 @@ const local: App.I18n.Schema = {
   },
   common: {
     ...enUs.common,
-    action: '操作',
-    add: '新增',
-    addSuccess: '新增成功',
-    backToHome: '返回首页',
-    batchDelete: '批量删除',
-    cancel: '取消',
-    check: '勾选',
-    expandColumn: '展开列',
-    columnSetting: '列设置',
-    config: '配置',
-    confirm: '确认',
-    delete: '删除',
-    deleteSuccess: '删除成功',
-    confirmDelete: '确认删除吗？',
-    edit: '编辑',
-    look: '查看',
-    warning: '警告',
-    error: '错误',
-    index: '序号',
-    keywordSearch: '请输入关键词',
-    logout: '退出登录',
-    logoutConfirm: '确认退出登录吗？',
-    lookForward: '敬请期待',
-    modify: '修改',
-    modifySuccess: '修改成功',
-    noData: '暂无数据',
-    operate: '操作',
-    pleaseCheckValue: '请检查输入值是否有效',
-    refresh: '刷新',
-    reset: '重置',
-    search: '搜索',
-    switch: '切换',
-    tip: '提示',
-    trigger: '触发',
-    update: '更新',
-    updateSuccess: '更新成功',
-    userCenter: '个人中心',
+    action: '??',
+    add: '??',
+    addSuccess: '????',
+    backToHome: '????',
+    batchDelete: '????',
+    cancel: '??',
+    close: '??',
+    check: '??',
+    expandColumn: '???',
+    columnSetting: '???',
+    config: '??',
+    confirm: '??',
+    delete: '??',
+    deleteSuccess: '????',
+    confirmDelete: '??????',
+    edit: '??',
+    look: '??',
+    warning: '??',
+    error: '??',
+    index: '??',
+    keywordSearch: '??????',
+    logout: '????',
+    logoutConfirm: '????????',
+    lookForward: '????',
+    modify: '??',
+    modifySuccess: '????',
+    noData: '????',
+    operate: '??',
+    pleaseCheckValue: '??????????',
+    refresh: '??',
+    reset: '??',
+    search: '??',
+    switch: '??',
+    tip: '??',
+    trigger: '??',
+    update: '??',
+    updateSuccess: '????',
+    userCenter: '????',
     yesOrNo: {
-      yes: '是',
-      no: '否'
+      yes: '?',
+      no: '?'
+    }
+  },
+  request: {
+    ...enUs.request,
+    logout: '?????????',
+    logoutMsg: '????????????',
+    logoutWithModal: '??????????????',
+    logoutWithModalMsg: '????????????',
+    refreshToken: '??????????????',
+    tokenExpired: '???????'
+  },
+  theme: {
+    ...enUs.theme,
+    themeSchema: {
+      ...enUs.theme.themeSchema,
+      title: '????',
+      light: '??',
+      dark: '??',
+      auto: '????'
+    },
+    grayscale: '????',
+    colourWeakness: '????',
+    layoutMode: {
+      ...enUs.theme.layoutMode,
+      title: '????',
+      vertical: '??????',
+      horizontal: '??????',
+      'vertical-mix': '????????',
+      'horizontal-mix': '????????',
+      reverseHorizontalMix: '????????????'
+    },
+    recommendColor: '????????',
+    recommendColorDesc: '????????',
+    themeColor: {
+      ...enUs.theme.themeColor,
+      title: '????',
+      primary: '??',
+      info: '??',
+      success: '??',
+      warning: '??',
+      error: '??',
+      followPrimary: '????'
+    },
+    scrollMode: {
+      ...enUs.theme.scrollMode,
+      title: '????',
+      wrapper: '??',
+      content: '??'
+    },
+    page: {
+      ...enUs.theme.page,
+      animate: '????',
+      mode: {
+        ...enUs.theme.page.mode,
+        title: '??????',
+        fade: '????',
+        'fade-slide': '??',
+        'fade-bottom': '????',
+        'fade-scale': '????(??)',
+        'zoom-fade': '????',
+        'zoom-out': '????',
+        none: '?'
+      }
+    },
+    fixedHeaderAndTab: '????????',
+    header: {
+      ...enUs.theme.header,
+      height: '????',
+      breadcrumb: {
+        ...enUs.theme.header.breadcrumb,
+        visible: '?????',
+        showIcon: '???????'
+      }
+    },
+    tab: {
+      ...enUs.theme.tab,
+      visible: '?????',
+      cache: '?????',
+      height: '?????',
+      mode: {
+        ...enUs.theme.tab.mode,
+        title: '?????',
+        chrome: 'Chrome',
+        button: '??'
+      }
+    },
+    sider: {
+      ...enUs.theme.sider,
+      inverted: '?????',
+      width: '?????',
+      collapsedWidth: '???????',
+      mixWidth: '???????',
+      mixCollapsedWidth: '?????????',
+      mixChildMenuWidth: '???????'
+    },
+    footer: {
+      ...enUs.theme.footer,
+      visible: '????',
+      fixed: '????',
+      height: '????',
+      right: '????'
+    },
+    watermark: {
+      ...enUs.theme.watermark,
+      visible: '??????',
+      text: '????'
+    },
+    themeDrawerTitle: '????',
+    pageFunTitle: '????',
+    configOperation: {
+      ...enUs.theme.configOperation,
+      copyConfig: '????',
+      copySuccessMsg: '???????? "src/theme/settings.ts" ???? "themeSettings"',
+      resetConfig: '????',
+      resetSuccessMsg: '????'
     }
   },
   route: {
     ...enUs.route,
-    login: '登录',
-    403: '无权限',
-    404: '页面不存在',
-    500: '服务器错误',
-    'iframe-page': '外链页面',
-    home: '首页',
-    audit: '日志审计',
-    user: '用户管理',
-    user_list: '用户列表',
-    user_sessions: '会话管理',
-    system: '系统管理',
-    system_mail_template: '邮件模板',
-    system_mail_logs: '邮件日志',
-    system_mail: '邮件管理',
-    audit_baselogs: '基础日志',
-    audit_filetransferlogs: '文件传输日志',
-    devices: '设备管理'
+    login: '??',
+    403: '???',
+    404: '?????',
+    500: '?????',
+    'iframe-page': '????',
+    home: '??',
+    audit: '????',
+    user: '????',
+    user_list: '????',
+    user_sessions: '????',
+    system: '????',
+    system_mail_template: '????',
+    system_mail_logs: '????',
+    system_mail: '????',
+    audit_baselogs: '????',
+    audit_filetransferlogs: '??????',
+    devices: '????'
   },
   page: {
     ...enUs.page,
-    login: {
-      ...enUs.page.login,
-      common: {
-        ...enUs.page.login.common,
-        loginOrRegister: '登录 / 注册',
-        userNamePlaceholder: '请输入用户名',
-        phonePlaceholder: '请输入手机号',
-        codePlaceholder: '请输入验证码',
-        passwordPlaceholder: '请输入密码',
-        confirmPasswordPlaceholder: '请再次输入密码',
-        codeLogin: '验证码登录',
-        confirm: '确定',
-        back: '返回',
-        validateSuccess: '验证成功',
-        loginSuccess: '登录成功',
-        welcomeBack: '欢迎回来，{userName}！'
+      login: {
+        ...enUs.page.login,
+        common: {
+          ...enUs.page.login.common,
+          loginOrRegister: '?? / ??',
+          userNamePlaceholder: '??????',
+          phonePlaceholder: '??????',
+          codePlaceholder: '??????',
+          passwordPlaceholder: '?????',
+          confirmPasswordPlaceholder: '???????',
+          codeLogin: '?????',
+          confirm: '??',
+          back: '??',
+          validateSuccess: '????',
+          loginSuccess: '????',
+          welcomeBack: '?????{userName}?'
+        },
+        pwdLogin: {
+          ...enUs.page.login.pwdLogin,
+          title: '????',
+          rememberMe: '???'
+        }
       },
-      pwdLogin: {
-        ...enUs.page.login.pwdLogin,
-        title: '密码登录',
-        rememberMe: '记住我'
-      }
-    },
     home: {
       ...enUs.page.home,
       greeting: '你好，{userName}，今天又是充满活力的一天！',
@@ -215,18 +331,30 @@ const local: App.I18n.Schema = {
       }
     }
   },
+  dropdown: {
+    ...enUs.dropdown,
+    closeCurrent: '????',
+    closeOther: '????',
+    closeLeft: '????',
+    closeRight: '????',
+    closeAll: '????'
+  },
   icon: {
     ...enUs.icon,
-    themeConfig: '主题配置',
-    themeSchema: '主题模式',
-    lang: '切换语言',
-    fullscreen: '全屏',
-    fullscreenExit: '退出全屏',
-    reload: '刷新页面',
-    collapse: '折叠菜单',
-    expand: '展开菜单',
-    pin: '固定',
-    unpin: '取消固定'
+    themeConfig: '????',
+    themeSchema: '????',
+    lang: '????',
+    fullscreen: '??',
+    fullscreenExit: '????',
+    reload: '????',
+    collapse: '????',
+    expand: '????',
+    pin: '??',
+    unpin: '????'
+  },
+  datatable: {
+    ...enUs.datatable,
+    itemCount: '? {total} ?'
   },
   dataMap: {
     ...enUs.dataMap,
