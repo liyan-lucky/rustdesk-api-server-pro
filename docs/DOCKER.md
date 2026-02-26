@@ -27,7 +27,7 @@ cat > docker-compose.yaml <<'YAML'
 services:
   rustdesk-api-server-pro:
     container_name: rustdesk-api-server-pro
-    image: ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+    image: ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
     environment:
       - "ADMIN_USER=admin"
       - "ADMIN_PASS=ChangeMe123!"
@@ -61,7 +61,7 @@ docker run -d \
   -e ADMIN_PASS='ChangeMe123!' \
   -v $(pwd)/server.yaml:/app/server.yaml \
   -v $(pwd)/data:/app/data \
-  ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+  ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
 
 docker logs -f rustdesk-api-server-pro
 ```
@@ -166,7 +166,7 @@ docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
 
 仓库内 `docker-compose.yaml` 已提供基础配置，当前关键点：
 
-- 使用镜像：`ghcr.io/lantongxue/rustdesk-api-server-pro:latest`
+- 使用镜像：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`
 - `network_mode: host`
 - 支持环境变量：
   - `ADMIN_USER`
@@ -215,7 +215,7 @@ docker run -d \
   -e ADMIN_PASS='ChangeMe123!' \
   -v $(pwd)/server.yaml:/app/server.yaml \
   -v $(pwd)/data:/app/data \
-  ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+  ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
 ```
 
 说明：
@@ -238,7 +238,7 @@ docker run -d \
   -e ADMIN_PASS='ChangeMe123!' \
   -v $(pwd)/server.yaml:/app/server.yaml \
   -v $(pwd)/data:/app/data \
-  ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+  ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
 ```
 
 如果你把 `server.yaml` 改成 `:8080`，则映射改为：
@@ -345,7 +345,7 @@ docker compose up -d
 ### 10.2 `docker run` 方式升级（示例）
 
 ```bash
-docker pull ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+docker pull ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
 docker rm -f rustdesk-api-server-pro
 # 然后重新执行 docker run（保持原有 -v / -e / 端口参数）
 ```
@@ -392,3 +392,26 @@ Docker 环境下应指向：
 3. 持久化 `/app/data`
 4. 首次启动创建管理员（环境变量或手动）
 5. 用最新版客户端做冒烟测试（登录、地址簿、设备列表、分组面板、审计、录制上传）
+
+## GHCR `denied` 排查（补充）
+
+如果执行下面命令报错：
+
+```bash
+docker pull ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
+# Error response from daemon: Head ... denied
+```
+
+通常是以下原因之一：
+
+- GHCR 包未发布（GitHub Actions 的 `Docker build` 工作流尚未手动执行）
+- GHCR 包是私有（Private），匿名拉取会被拒绝
+- `latest` 标签不存在
+- 未登录 GHCR（私有包场景）
+
+排查建议：
+
+1. 先在仓库 `Actions` 中手动运行 `Docker build` 工作流，确认推送成功。
+2. 到 GitHub 仓库右侧 `Packages` 打开 `rustdesk-api-server-pro`，将包可见性改为 `Public`。
+3. 若暂时不公开，先执行 `docker login ghcr.io`，使用 GitHub 用户名 + PAT（需 `read:packages` 权限）。
+4. 检查镜像标签是否存在（确认拉取的是 `latest`）。

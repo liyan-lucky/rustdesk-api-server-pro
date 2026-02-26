@@ -1,7 +1,7 @@
 services:
   rustdesk-api-server-pro:
     container_name: rustdesk-api-server-pro
-    image: ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+    image: ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
     environment:
       - "ADMIN_USER=youruser" # optional
       - "ADMIN_PASS=yourpassword" # optional

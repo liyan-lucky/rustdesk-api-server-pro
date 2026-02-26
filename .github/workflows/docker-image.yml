@@ -7,6 +7,9 @@ name: Docker build
 # - A pull request is created or updated
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
   # This creates an environment variable called `IMAGE_NAME ` with the value `ghtoken_product_demo`.
 env:
   IMAGE_NAME: rustdesk-api-server-pro

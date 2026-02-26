@@ -32,7 +32,7 @@ docker run -d \\
   -e ADMIN_PASS='ChangeMe123!' \\
   -v $(pwd)/server.yaml:/app/server.yaml \\
   -v $(pwd)/data:/app/data \\
-  ghcr.io/lantongxue/rustdesk-api-server-pro:latest
+  ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
 
 docker logs -f rustdesk-api-server-pro
 ```
