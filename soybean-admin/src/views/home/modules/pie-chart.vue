@@ -69,28 +69,30 @@ async function fetchChartsData() {
             }
           }
         ];
-    opt.series = hasData
-      ? [
-          {
-            name: $t('page.home.operatingSystem'),
-            type: 'pie',
-            radius: ['45%', '75%'],
-            avoidLabelOverlap: false,
-            itemStyle: {
-              borderRadius: 10,
-              borderColor: '#fff',
-              borderWidth: 1
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '12'
-              }
-            },
-            data: data as []
+    opt.series = [
+      {
+        name: $t('page.home.operatingSystem'),
+        type: 'pie',
+        radius: ['45%', '75%'],
+        avoidLabelOverlap: false,
+        silent: !hasData,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 1
+        },
+        emphasis: {
+          label: {
+            show: hasData,
+            fontSize: '12'
           }
-        ]
-      : [];
+        },
+        label: {
+          show: hasData
+        },
+        data: (hasData ? data : [{ name: $t('common.noData'), value: 1, itemStyle: { color: '#e5e7eb' } }]) as []
+      }
+    ] as any;
     return opt;
   });
 }
