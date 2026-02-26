@@ -70,51 +70,95 @@ const local: App.I18n.Schema = {
     colourWeakness: 'Deficiencia de color',
     layoutMode: {
       ...enUs.theme.layoutMode,
-      title: 'Modo de dise?o'
+      title: 'Modo de dise?o',
+      vertical: 'Men? vertical',
+      horizontal: 'Men? horizontal',
+      'vertical-mix': 'Modo mixto vertical',
+      'horizontal-mix': 'Modo mixto horizontal',
+      reverseHorizontalMix: 'Invertir posici?n de men?s de primer y segundo nivel'
     },
     recommendColor: 'Aplicar algoritmo de color recomendado',
+    recommendColorDesc: 'El algoritmo de color recomendado se refiere a',
     themeColor: {
       ...enUs.theme.themeColor,
-      title: 'Color del tema'
+      title: 'Color del tema',
+      primary: 'Primario',
+      info: 'Info',
+      success: '?xito',
+      warning: 'Advertencia',
+      error: 'Error',
+      followPrimary: 'Seguir color primario'
     },
     scrollMode: {
       ...enUs.theme.scrollMode,
-      title: 'Modo de desplazamiento'
+      title: 'Modo de desplazamiento',
+      wrapper: 'Contenedor',
+      content: 'Contenido'
     },
     page: {
       ...enUs.theme.page,
       animate: 'Animaci?n de p?gina',
       mode: {
         ...enUs.theme.page.mode,
-        title: 'Modo de animaci?n'
+        title: 'Modo de animaci?n',
+        fade: 'Desvanecer',
+        'fade-slide': 'Deslizar',
+        'fade-bottom': 'Zoom desvanecido',
+        'fade-scale': 'Escala desvanecida',
+        'zoom-fade': 'Zoom con desvanecido',
+        'zoom-out': 'Alejar',
+        none: 'Ninguno'
       }
     },
     fixedHeaderAndTab: 'Fijar cabecera y pesta?as',
     header: {
       ...enUs.theme.header,
-      height: 'Altura de cabecera'
+      height: 'Altura de cabecera',
+      breadcrumb: {
+        ...enUs.theme.header.breadcrumb,
+        visible: 'Breadcrumb visible',
+        showIcon: 'Icono de breadcrumb visible'
+      }
     },
     tab: {
       ...enUs.theme.tab,
       visible: 'Pesta?as visibles',
+      cache: 'Cach? de pesta?as',
+      height: 'Altura de pesta?as',
       mode: {
         ...enUs.theme.tab.mode,
-        title: 'Modo de pesta?as'
+        title: 'Modo de pesta?as',
+        chrome: 'Chrome',
+        button: 'Bot?n'
       }
     },
     sider: {
       ...enUs.theme.sider,
-      width: 'Ancho de barra lateral'
+      inverted: 'Barra lateral oscura',
+      width: 'Ancho de barra lateral',
+      collapsedWidth: 'Ancho colapsado',
+      mixWidth: 'Ancho modo mixto',
+      mixCollapsedWidth: 'Ancho colapsado mixto',
+      mixChildMenuWidth: 'Ancho submen? mixto'
     },
     footer: {
       ...enUs.theme.footer,
-      visible: 'Pie visible'
+      visible: 'Pie visible',
+      fixed: 'Pie fijo',
+      height: 'Altura del pie',
+      right: 'Pie derecho'
+    },
+    watermark: {
+      ...enUs.theme.watermark,
+      visible: 'Marca de agua visible en pantalla completa',
+      text: 'Texto de marca de agua'
     },
     themeDrawerTitle: 'Configuraci?n de tema',
     pageFunTitle: 'Funciones de p?gina',
     configOperation: {
       ...enUs.theme.configOperation,
       copyConfig: 'Copiar configuraci?n',
+      copySuccessMsg: 'Copia correcta, sustituye la variable "themeSettings" en "src/theme/settings.ts"',
       resetConfig: 'Restablecer configuraci?n',
       resetSuccessMsg: 'Restablecido con ?xito'
     }

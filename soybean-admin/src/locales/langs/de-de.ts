@@ -70,51 +70,95 @@ const local: App.I18n.Schema = {
     colourWeakness: 'Farbschw?che',
     layoutMode: {
       ...enUs.theme.layoutMode,
-      title: 'Layoutmodus'
+      title: 'Layoutmodus',
+      vertical: 'Vertikales Men?',
+      horizontal: 'Horizontales Men?',
+      'vertical-mix': 'Vertikaler Mix-Modus',
+      'horizontal-mix': 'Horizontaler Mix-Modus',
+      reverseHorizontalMix: 'Position von Haupt- und Untermen?s umkehren'
     },
     recommendColor: 'Empfohlenen Farbalgorithmus anwenden',
+    recommendColorDesc: 'Der empfohlene Farbalgorithmus bezieht sich auf',
     themeColor: {
       ...enUs.theme.themeColor,
-      title: 'Theme-Farbe'
+      title: 'Theme-Farbe',
+      primary: 'Prim?r',
+      info: 'Info',
+      success: 'Erfolg',
+      warning: 'Warnung',
+      error: 'Fehler',
+      followPrimary: 'Prim?rfarbe folgen'
     },
     scrollMode: {
       ...enUs.theme.scrollMode,
-      title: 'Scrollmodus'
+      title: 'Scrollmodus',
+      wrapper: 'Wrapper',
+      content: 'Inhalt'
     },
     page: {
       ...enUs.theme.page,
       animate: 'Seitenanimation',
       mode: {
         ...enUs.theme.page.mode,
-        title: 'Animationsmodus'
+        title: 'Animationsmodus',
+        fade: 'Einblenden',
+        'fade-slide': 'Gleiten',
+        'fade-bottom': 'Fade-Zoom',
+        'fade-scale': 'Fade-Skalierung',
+        'zoom-fade': 'Zoom-Fade',
+        'zoom-out': 'Zoom-Out',
+        none: 'Keine'
       }
     },
     fixedHeaderAndTab: 'Header und Tabs fixieren',
     header: {
       ...enUs.theme.header,
-      height: 'Headerh?he'
+      height: 'Headerh?he',
+      breadcrumb: {
+        ...enUs.theme.header.breadcrumb,
+        visible: 'Breadcrumb sichtbar',
+        showIcon: 'Breadcrumb-Symbol sichtbar'
+      }
     },
     tab: {
       ...enUs.theme.tab,
       visible: 'Tab sichtbar',
+      cache: 'Tab-Cache',
+      height: 'Tab-H?he',
       mode: {
         ...enUs.theme.tab.mode,
-        title: 'Tab-Modus'
+        title: 'Tab-Modus',
+        chrome: 'Chrome',
+        button: 'Button'
       }
     },
     sider: {
       ...enUs.theme.sider,
-      width: 'Seitenleistenbreite'
+      inverted: 'Dunkle Seitenleiste',
+      width: 'Seitenleistenbreite',
+      collapsedWidth: 'Breite eingeklappt',
+      mixWidth: 'Mix-Seitenleistenbreite',
+      mixCollapsedWidth: 'Mix eingeklappt Breite',
+      mixChildMenuWidth: 'Mix-Untermen?breite'
     },
     footer: {
       ...enUs.theme.footer,
-      visible: 'Footer sichtbar'
+      visible: 'Footer sichtbar',
+      fixed: 'Footer fixieren',
+      height: 'Footer-H?he',
+      right: 'Rechter Footer'
+    },
+    watermark: {
+      ...enUs.theme.watermark,
+      visible: 'Wasserzeichen Vollbild sichtbar',
+      text: 'Wasserzeichentext'
     },
     themeDrawerTitle: 'Theme-Konfiguration',
     pageFunTitle: 'Seitenfunktionen',
     configOperation: {
       ...enUs.theme.configOperation,
       copyConfig: 'Konfiguration kopieren',
+      copySuccessMsg: 'Kopieren erfolgreich, bitte Variable "themeSettings" in "src/theme/settings.ts" ersetzen',
       resetConfig: 'Konfiguration zur?cksetzen',
       resetSuccessMsg: 'Zur?cksetzen erfolgreich'
     }

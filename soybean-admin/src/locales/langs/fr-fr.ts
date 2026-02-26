@@ -70,51 +70,95 @@ const local: App.I18n.Schema = {
     colourWeakness: 'D?ficience des couleurs',
     layoutMode: {
       ...enUs.theme.layoutMode,
-      title: 'Mode de mise en page'
+      title: 'Mode de mise en page',
+      vertical: 'Menu vertical',
+      horizontal: 'Menu horizontal',
+      'vertical-mix': 'Mode mixte vertical',
+      'horizontal-mix': 'Mode mixte horizontal',
+      reverseHorizontalMix: 'Inverser la position des menus de niveau 1 et enfants'
     },
     recommendColor: 'Appliquer l?algorithme de couleur recommand?',
+    recommendColorDesc: 'L?algorithme de couleur recommand? fait r?f?rence ?',
     themeColor: {
       ...enUs.theme.themeColor,
-      title: 'Couleur du th?me'
+      title: 'Couleur du th?me',
+      primary: 'Primaire',
+      info: 'Info',
+      success: 'Succ?s',
+      warning: 'Avertissement',
+      error: 'Erreur',
+      followPrimary: 'Suivre la couleur primaire'
     },
     scrollMode: {
       ...enUs.theme.scrollMode,
-      title: 'Mode de d?filement'
+      title: 'Mode de d?filement',
+      wrapper: 'Conteneur',
+      content: 'Contenu'
     },
     page: {
       ...enUs.theme.page,
       animate: 'Animation de page',
       mode: {
         ...enUs.theme.page.mode,
-        title: 'Mode d?animation'
+        title: 'Mode d?animation',
+        fade: 'Fondu',
+        'fade-slide': 'Glisser',
+        'fade-bottom': 'Fondu zoom',
+        'fade-scale': 'Fondu ?chelle',
+        'zoom-fade': 'Zoom fondu',
+        'zoom-out': 'Zoom arri?re',
+        none: 'Aucun'
       }
     },
     fixedHeaderAndTab: 'En-t?te et onglets fixes',
     header: {
       ...enUs.theme.header,
-      height: 'Hauteur de l?en-t?te'
+      height: 'Hauteur de l?en-t?te',
+      breadcrumb: {
+        ...enUs.theme.header.breadcrumb,
+        visible: 'Fil d?Ariane visible',
+        showIcon: 'Ic?ne du fil d?Ariane visible'
+      }
     },
     tab: {
       ...enUs.theme.tab,
       visible: 'Onglets visibles',
+      cache: 'Cache des onglets',
+      height: 'Hauteur des onglets',
       mode: {
         ...enUs.theme.tab.mode,
-        title: 'Mode des onglets'
+        title: 'Mode des onglets',
+        chrome: 'Chrome',
+        button: 'Bouton'
       }
     },
     sider: {
       ...enUs.theme.sider,
-      width: 'Largeur de la barre lat?rale'
+      inverted: 'Barre lat?rale sombre',
+      width: 'Largeur de la barre lat?rale',
+      collapsedWidth: 'Largeur repli?e',
+      mixWidth: 'Largeur mixte',
+      mixCollapsedWidth: 'Largeur mixte repli?e',
+      mixChildMenuWidth: 'Largeur du sous-menu mixte'
     },
     footer: {
       ...enUs.theme.footer,
-      visible: 'Pied de page visible'
+      visible: 'Pied de page visible',
+      fixed: 'Pied de page fixe',
+      height: 'Hauteur du pied de page',
+      right: 'Pied de page droit'
+    },
+    watermark: {
+      ...enUs.theme.watermark,
+      visible: 'Filigrane visible en plein ?cran',
+      text: 'Texte du filigrane'
     },
     themeDrawerTitle: 'Configuration du th?me',
     pageFunTitle: 'Fonctions de page',
     configOperation: {
       ...enUs.theme.configOperation,
       copyConfig: 'Copier la configuration',
+      copySuccessMsg: 'Copie r?ussie, veuillez remplacer la variable "themeSettings" dans "src/theme/settings.ts"',
       resetConfig: 'R?initialiser la configuration',
       resetSuccessMsg: 'R?initialisation r?ussie'
     }

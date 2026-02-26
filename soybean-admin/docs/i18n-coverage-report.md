@@ -1,6 +1,6 @@
 # i18n Coverage Report
 
-Generated: 2026-02-26T21:09:55.268Z
+Generated: 2026-02-26T21:13:43.269Z
 Base locale: `en-US`
 
 Metrics:
@@ -10,19 +10,19 @@ Metrics:
 
 | Locale | Base Keys | Translated | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 320 | 209 | 111 | 0 | 0 | 65.31% | 65.31% |
-| es-ES | 320 | 213 | 107 | 0 | 0 | 66.56% | 66.56% |
-| fr-FR | 320 | 209 | 111 | 0 | 0 | 65.31% | 65.31% |
-| ja-JP | 320 | 215 | 105 | 0 | 0 | 67.19% | 67.19% |
-| ko-KR | 320 | 216 | 104 | 0 | 0 | 67.50% | 67.50% |
+| de-DE | 320 | 243 | 77 | 0 | 0 | 75.94% | 75.94% |
+| es-ES | 320 | 248 | 72 | 0 | 0 | 77.50% | 77.50% |
+| fr-FR | 320 | 245 | 75 | 0 | 0 | 76.56% | 76.56% |
+| ja-JP | 320 | 252 | 68 | 0 | 0 | 78.75% | 78.75% |
+| ko-KR | 320 | 253 | 67 | 0 | 0 | 79.06% | 79.06% |
 | ru-RU | 320 | 161 | 159 | 0 | 0 | 50.31% | 50.31% |
 | zh-CN | 320 | 193 | 127 | 0 | 0 | 60.31% | 60.31% |
 
 ## de-DE
 
 - Base leaf keys: 320
-- Translated leaves: 209 (65.31%)
-- Fallback-identical leaves: 111 (34.69%)
+- Translated leaves: 243 (75.94%)
+- Fallback-identical leaves: 77 (24.06%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -67,7 +67,7 @@ Metrics:
   - `page.home.serverConfig.fetchFailed`
   - `page.home.serverConfig.hide`
   - `page.home.serverConfig.idServer`
-  - ... and 71 more
+  - ... and 37 more
 
 **Missing Keys**
 -
@@ -78,8 +78,8 @@ Metrics:
 ## es-ES
 
 - Base leaf keys: 320
-- Translated leaves: 213 (66.56%)
-- Fallback-identical leaves: 107 (33.44%)
+- Translated leaves: 248 (77.50%)
+- Fallback-identical leaves: 72 (22.50%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -124,7 +124,7 @@ Metrics:
   - `page.home.serverConfig.idServerPlaceholder`
   - `page.home.serverConfig.key`
   - `page.home.serverConfig.keyPlaceholder`
-  - ... and 67 more
+  - ... and 32 more
 
 **Missing Keys**
 -
@@ -135,8 +135,8 @@ Metrics:
 ## fr-FR
 
 - Base leaf keys: 320
-- Translated leaves: 209 (65.31%)
-- Fallback-identical leaves: 111 (34.69%)
+- Translated leaves: 245 (76.56%)
+- Fallback-identical leaves: 75 (23.44%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -181,7 +181,7 @@ Metrics:
   - `page.home.serverConfig.hide`
   - `page.home.serverConfig.idServer`
   - `page.home.serverConfig.idServerPlaceholder`
-  - ... and 71 more
+  - ... and 35 more
 
 **Missing Keys**
 -
@@ -192,8 +192,8 @@ Metrics:
 ## ja-JP
 
 - Base leaf keys: 320
-- Translated leaves: 215 (67.19%)
-- Fallback-identical leaves: 105 (32.81%)
+- Translated leaves: 252 (78.75%)
+- Fallback-identical leaves: 68 (21.25%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -238,7 +238,7 @@ Metrics:
   - `page.home.serverConfig.keyPlaceholder`
   - `page.home.serverConfig.lastUpdated`
   - `page.home.serverConfig.missingTip`
-  - ... and 65 more
+  - ... and 28 more
 
 **Missing Keys**
 -
@@ -249,8 +249,8 @@ Metrics:
 ## ko-KR
 
 - Base leaf keys: 320
-- Translated leaves: 216 (67.50%)
-- Fallback-identical leaves: 104 (32.50%)
+- Translated leaves: 253 (79.06%)
+- Fallback-identical leaves: 67 (20.94%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -295,7 +295,7 @@ Metrics:
   - `page.home.serverConfig.lastUpdated`
   - `page.home.serverConfig.missingTip`
   - `page.home.serverConfig.relayServer`
-  - ... and 64 more
+  - ... and 27 more
 
 **Missing Keys**
 -
