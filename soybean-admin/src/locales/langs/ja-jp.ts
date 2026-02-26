@@ -132,12 +132,15 @@ const local: App.I18n.Schema = {
     user: {
       ...enUs.dataMap.user,
       username: 'ユーザー名',
+        password: '?????',
       name: 'ニックネーム',
       email: 'メール',
       licensed_devices: '許可デバイス数',
       login_verify: 'ログイン認証',
       status: '状態',
       is_admin: '管理者',
+        tfa_secret: '2FA??????',
+        tfa_code: '2FA???',
       created_at: '作成日時',
       statusLabel: {
         ...enUs.dataMap.user.statusLabel,
@@ -152,11 +155,17 @@ const local: App.I18n.Schema = {
         tfaCheck: '2FA'
       }
     },
+      session: {
+        ...enUs.dataMap.session,
+        expired: '??????',
+        created_at: '????'
+      },
     device: {
       ...enUs.dataMap.device,
       username: 'ユーザー名',
       hostname: 'ホスト名',
       version: 'RustDesk バージョン',
+        memory: '???',
       os: 'OS',
       rustdesk_id: 'Rustdesk ID'
     },
@@ -164,9 +173,14 @@ const local: App.I18n.Schema = {
       ...enUs.dataMap.audit,
       username: 'ユーザー名',
       type: '種類',
+        conn_id: '??ID',
       rustdesk_id: 'Rustdesk ID',
+        peer_id: 'Peer ID',
       ip: 'IP',
+        session_id: '?????ID',
+        uuid: 'UUID',
       created_at: '作成日時',
+        closed_at: '????',
       typeLabel: {
         ...enUs.dataMap.audit.typeLabel,
         remote_control: 'リモート操作',
@@ -177,7 +191,8 @@ const local: App.I18n.Schema = {
         ...enUs.dataMap.audit.fileTransferTypeLabel,
         master_controlled: '操作側 -> 被操作側',
         controlled_master: '被操作側 -> 操作側'
-      }
+      },
+        path: '??'
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -196,9 +211,11 @@ const local: App.I18n.Schema = {
     mailLog: {
       ...enUs.dataMap.mailLog,
       username: 'ユーザー名',
+        uuid: 'UUID',
       from: '送信元',
       to: '宛先',
       subject: '件名',
+        contents: '??',
       status: '状態',
       created_at: '送信日時',
       statusLabel: {

@@ -1,6 +1,6 @@
 # i18n Coverage Report
 
-Generated: 2026-02-26T20:42:40.312Z
+Generated: 2026-02-26T20:51:00.772Z
 Base locale: `en-US`
 
 Metrics:
@@ -10,269 +10,36 @@ Metrics:
 
 | Locale | Base Keys | Translated | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 320 | 135 | 185 | 0 | 0 | 42.19% | 42.19% |
-| es-ES | 320 | 139 | 181 | 0 | 0 | 43.44% | 43.44% |
-| fr-FR | 320 | 135 | 185 | 0 | 0 | 42.19% | 42.19% |
-| ja-JP | 320 | 142 | 178 | 0 | 0 | 44.38% | 44.38% |
-| ko-KR | 320 | 143 | 177 | 0 | 0 | 44.69% | 44.69% |
+| de-DE | 320 | 147 | 173 | 0 | 0 | 45.94% | 45.94% |
+| es-ES | 320 | 151 | 169 | 0 | 0 | 47.19% | 47.19% |
+| fr-FR | 320 | 147 | 173 | 0 | 0 | 45.94% | 45.94% |
+| ja-JP | 320 | 153 | 167 | 0 | 0 | 47.81% | 47.81% |
+| ko-KR | 320 | 154 | 166 | 0 | 0 | 48.13% | 48.13% |
 | ru-RU | 320 | 161 | 159 | 0 | 0 | 50.31% | 50.31% |
 | zh-CN | 320 | 193 | 127 | 0 | 0 | 60.31% | 60.31% |
 
 ## de-DE
 
 - Base leaf keys: 320
-- Translated leaves: 135 (42.19%)
-- Fallback-identical leaves: 185 (57.81%)
+- Translated leaves: 147 (45.94%)
+- Fallback-identical leaves: 173 (54.06%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
   - `common.index`
   - `common.update`
-  - `dataMap.audit.closed_at`
-  - `dataMap.audit.conn_id`
   - `dataMap.audit.ip`
-  - `dataMap.audit.path`
-  - `dataMap.audit.peer_id`
   - `dataMap.audit.rustdesk_id`
-  - `dataMap.audit.session_id`
   - `dataMap.audit.uuid`
-  - `dataMap.device.memory`
   - `dataMap.device.os`
   - `dataMap.device.rustdesk_id`
-  - `dataMap.mailLog.contents`
   - `dataMap.mailLog.status`
   - `dataMap.mailLog.uuid`
   - `dataMap.mailTemplate.name`
-  - `dataMap.session.created_at`
-  - `dataMap.session.expired`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `dataMap.user.password`
   - `dataMap.user.status`
   - `dataMap.user.statusLabel.normal`
-  - `dataMap.user.tfa_code`
-  - `dataMap.user.tfa_secret`
-  - `datatable.itemCount`
-  - `dropdown.closeAll`
-  - `dropdown.closeCurrent`
-  - `dropdown.closeLeft`
-  - `dropdown.closeOther`
-  - `dropdown.closeRight`
-  - `icon.collapse`
-  - `icon.expand`
-  - `icon.fullscreenExit`
-  - `icon.pin`
-  - `icon.themeConfig`
-  - `icon.themeSchema`
-  - `icon.unpin`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - ... and 145 more
-
-**Missing Keys**
--
-
-**Extra Keys**
--
-
-## es-ES
-
-- Base leaf keys: 320
-- Translated leaves: 139 (43.44%)
-- Fallback-identical leaves: 181 (56.56%)
-- Missing leaves: 0
-- Extra leaves: 0
-
-**Sample Fallback Keys**
-  - `common.error`
-  - `common.yesOrNo.no`
-  - `dataMap.audit.closed_at`
-  - `dataMap.audit.conn_id`
-  - `dataMap.audit.ip`
-  - `dataMap.audit.path`
-  - `dataMap.audit.peer_id`
-  - `dataMap.audit.rustdesk_id`
-  - `dataMap.audit.session_id`
-  - `dataMap.audit.uuid`
-  - `dataMap.device.memory`
-  - `dataMap.device.rustdesk_id`
-  - `dataMap.mailLog.contents`
-  - `dataMap.mailLog.statusLabel.err`
-  - `dataMap.mailLog.uuid`
-  - `dataMap.session.created_at`
-  - `dataMap.session.expired`
-  - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `dataMap.user.password`
-  - `dataMap.user.statusLabel.normal`
-  - `dataMap.user.tfa_code`
-  - `dataMap.user.tfa_secret`
-  - `datatable.itemCount`
-  - `dropdown.closeAll`
-  - `dropdown.closeCurrent`
-  - `dropdown.closeLeft`
-  - `dropdown.closeOther`
-  - `dropdown.closeRight`
-  - `icon.collapse`
-  - `icon.expand`
-  - `icon.fullscreenExit`
-  - `icon.pin`
-  - `icon.themeConfig`
-  - `icon.themeSchema`
-  - `icon.unpin`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - `page.home.serverConfig.clearCacheReload`
-  - `page.home.serverConfig.connectivity.checkFailed`
-  - ... and 141 more
-
-**Missing Keys**
--
-
-**Extra Keys**
--
-
-## fr-FR
-
-- Base leaf keys: 320
-- Translated leaves: 135 (42.19%)
-- Fallback-identical leaves: 185 (57.81%)
-- Missing leaves: 0
-- Extra leaves: 0
-
-**Sample Fallback Keys**
-  - `common.action`
-  - `common.index`
-  - `dataMap.audit.closed_at`
-  - `dataMap.audit.conn_id`
-  - `dataMap.audit.ip`
-  - `dataMap.audit.path`
-  - `dataMap.audit.peer_id`
-  - `dataMap.audit.rustdesk_id`
-  - `dataMap.audit.session_id`
-  - `dataMap.audit.type`
-  - `dataMap.audit.uuid`
-  - `dataMap.device.memory`
-  - `dataMap.device.os`
-  - `dataMap.device.rustdesk_id`
-  - `dataMap.mailLog.contents`
-  - `dataMap.mailLog.uuid`
-  - `dataMap.mailTemplate.type`
-  - `dataMap.session.created_at`
-  - `dataMap.session.expired`
-  - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `dataMap.user.password`
-  - `dataMap.user.statusLabel.normal`
-  - `dataMap.user.tfa_code`
-  - `dataMap.user.tfa_secret`
-  - `datatable.itemCount`
-  - `dropdown.closeAll`
-  - `dropdown.closeCurrent`
-  - `dropdown.closeLeft`
-  - `dropdown.closeOther`
-  - `dropdown.closeRight`
-  - `icon.collapse`
-  - `icon.expand`
-  - `icon.fullscreenExit`
-  - `icon.pin`
-  - `icon.themeConfig`
-  - `icon.themeSchema`
-  - `icon.unpin`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - ... and 145 more
-
-**Missing Keys**
--
-
-**Extra Keys**
--
-
-## ja-JP
-
-- Base leaf keys: 320
-- Translated leaves: 142 (44.38%)
-- Fallback-identical leaves: 178 (55.63%)
-- Missing leaves: 0
-- Extra leaves: 0
-
-**Sample Fallback Keys**
-  - `dataMap.audit.closed_at`
-  - `dataMap.audit.conn_id`
-  - `dataMap.audit.ip`
-  - `dataMap.audit.path`
-  - `dataMap.audit.peer_id`
-  - `dataMap.audit.rustdesk_id`
-  - `dataMap.audit.session_id`
-  - `dataMap.audit.uuid`
-  - `dataMap.device.memory`
-  - `dataMap.device.os`
-  - `dataMap.device.rustdesk_id`
-  - `dataMap.mailLog.contents`
-  - `dataMap.mailLog.uuid`
-  - `dataMap.session.created_at`
-  - `dataMap.session.expired`
-  - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `dataMap.user.password`
-  - `dataMap.user.tfa_code`
-  - `dataMap.user.tfa_secret`
-  - `datatable.itemCount`
-  - `dropdown.closeAll`
-  - `dropdown.closeCurrent`
-  - `dropdown.closeLeft`
-  - `dropdown.closeOther`
-  - `dropdown.closeRight`
-  - `icon.collapse`
-  - `icon.expand`
-  - `icon.fullscreenExit`
-  - `icon.pin`
-  - `icon.themeConfig`
-  - `icon.themeSchema`
-  - `icon.unpin`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - `page.home.serverConfig.clearCacheReload`
-  - `page.home.serverConfig.connectivity.checkFailed`
-  - `page.home.serverConfig.connectivity.checkSourceType.cache`
-  - `page.home.serverConfig.connectivity.checkSourceType.remote`
-  - `page.home.serverConfig.connectivity.checked`
-  - ... and 138 more
-
-**Missing Keys**
--
-
-**Extra Keys**
--
-
-## ko-KR
-
-- Base leaf keys: 320
-- Translated leaves: 143 (44.69%)
-- Fallback-identical leaves: 177 (55.31%)
-- Missing leaves: 0
-- Extra leaves: 0
-
-**Sample Fallback Keys**
-  - `dataMap.audit.closed_at`
-  - `dataMap.audit.conn_id`
-  - `dataMap.audit.ip`
-  - `dataMap.audit.path`
-  - `dataMap.audit.peer_id`
-  - `dataMap.audit.rustdesk_id`
-  - `dataMap.audit.session_id`
-  - `dataMap.audit.uuid`
-  - `dataMap.device.memory`
-  - `dataMap.device.rustdesk_id`
-  - `dataMap.mailLog.contents`
-  - `dataMap.mailLog.uuid`
-  - `dataMap.session.created_at`
-  - `dataMap.session.expired`
-  - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `dataMap.user.password`
-  - `dataMap.user.tfa_code`
-  - `dataMap.user.tfa_secret`
   - `datatable.itemCount`
   - `dropdown.closeAll`
   - `dropdown.closeCurrent`
@@ -295,7 +62,240 @@ Metrics:
   - `page.home.serverConfig.connectivity.checkSourceType.remote`
   - `page.home.serverConfig.connectivity.checked`
   - `page.home.serverConfig.connectivity.checkedCached`
-  - ... and 137 more
+  - `page.home.serverConfig.connectivity.checkedOne`
+  - `page.home.serverConfig.connectivity.cleared`
+  - `page.home.serverConfig.connectivity.duration`
+  - `page.home.serverConfig.connectivity.lastChecked`
+  - `page.home.serverConfig.connectivity.notChecked`
+  - ... and 133 more
+
+**Missing Keys**
+-
+
+**Extra Keys**
+-
+
+## es-ES
+
+- Base leaf keys: 320
+- Translated leaves: 151 (47.19%)
+- Fallback-identical leaves: 169 (52.81%)
+- Missing leaves: 0
+- Extra leaves: 0
+
+**Sample Fallback Keys**
+  - `common.error`
+  - `common.yesOrNo.no`
+  - `dataMap.audit.ip`
+  - `dataMap.audit.rustdesk_id`
+  - `dataMap.audit.uuid`
+  - `dataMap.device.rustdesk_id`
+  - `dataMap.mailLog.statusLabel.err`
+  - `dataMap.mailLog.uuid`
+  - `dataMap.user.loginVerifyLabel.tfaCheck`
+  - `dataMap.user.statusLabel.normal`
+  - `datatable.itemCount`
+  - `dropdown.closeAll`
+  - `dropdown.closeCurrent`
+  - `dropdown.closeLeft`
+  - `dropdown.closeOther`
+  - `dropdown.closeRight`
+  - `icon.collapse`
+  - `icon.expand`
+  - `icon.fullscreenExit`
+  - `icon.pin`
+  - `icon.themeConfig`
+  - `icon.themeSchema`
+  - `icon.unpin`
+  - `page.home.serverConfig.apiServer`
+  - `page.home.serverConfig.apiServerPlaceholder`
+  - `page.home.serverConfig.cacheCleared`
+  - `page.home.serverConfig.clearCacheReload`
+  - `page.home.serverConfig.connectivity.checkFailed`
+  - `page.home.serverConfig.connectivity.checkSourceType.cache`
+  - `page.home.serverConfig.connectivity.checkSourceType.remote`
+  - `page.home.serverConfig.connectivity.checked`
+  - `page.home.serverConfig.connectivity.checkedCached`
+  - `page.home.serverConfig.connectivity.checkedOne`
+  - `page.home.serverConfig.connectivity.cleared`
+  - `page.home.serverConfig.connectivity.duration`
+  - `page.home.serverConfig.connectivity.lastChecked`
+  - `page.home.serverConfig.connectivity.notChecked`
+  - `page.home.serverConfig.connectivity.source`
+  - `page.home.serverConfig.connectivity.status.error`
+  - `page.home.serverConfig.connectivity.status.idle`
+  - ... and 129 more
+
+**Missing Keys**
+-
+
+**Extra Keys**
+-
+
+## fr-FR
+
+- Base leaf keys: 320
+- Translated leaves: 147 (45.94%)
+- Fallback-identical leaves: 173 (54.06%)
+- Missing leaves: 0
+- Extra leaves: 0
+
+**Sample Fallback Keys**
+  - `common.action`
+  - `common.index`
+  - `dataMap.audit.ip`
+  - `dataMap.audit.rustdesk_id`
+  - `dataMap.audit.type`
+  - `dataMap.audit.uuid`
+  - `dataMap.device.os`
+  - `dataMap.device.rustdesk_id`
+  - `dataMap.mailLog.uuid`
+  - `dataMap.mailTemplate.type`
+  - `dataMap.user.loginVerifyLabel.tfaCheck`
+  - `dataMap.user.statusLabel.normal`
+  - `datatable.itemCount`
+  - `dropdown.closeAll`
+  - `dropdown.closeCurrent`
+  - `dropdown.closeLeft`
+  - `dropdown.closeOther`
+  - `dropdown.closeRight`
+  - `icon.collapse`
+  - `icon.expand`
+  - `icon.fullscreenExit`
+  - `icon.pin`
+  - `icon.themeConfig`
+  - `icon.themeSchema`
+  - `icon.unpin`
+  - `page.home.serverConfig.apiServer`
+  - `page.home.serverConfig.apiServerPlaceholder`
+  - `page.home.serverConfig.cacheCleared`
+  - `page.home.serverConfig.clearCacheReload`
+  - `page.home.serverConfig.connectivity.checkFailed`
+  - `page.home.serverConfig.connectivity.checkSourceType.cache`
+  - `page.home.serverConfig.connectivity.checkSourceType.remote`
+  - `page.home.serverConfig.connectivity.checked`
+  - `page.home.serverConfig.connectivity.checkedCached`
+  - `page.home.serverConfig.connectivity.checkedOne`
+  - `page.home.serverConfig.connectivity.cleared`
+  - `page.home.serverConfig.connectivity.duration`
+  - `page.home.serverConfig.connectivity.lastChecked`
+  - `page.home.serverConfig.connectivity.notChecked`
+  - `page.home.serverConfig.connectivity.source`
+  - ... and 133 more
+
+**Missing Keys**
+-
+
+**Extra Keys**
+-
+
+## ja-JP
+
+- Base leaf keys: 320
+- Translated leaves: 153 (47.81%)
+- Fallback-identical leaves: 167 (52.19%)
+- Missing leaves: 0
+- Extra leaves: 0
+
+**Sample Fallback Keys**
+  - `dataMap.audit.ip`
+  - `dataMap.audit.peer_id`
+  - `dataMap.audit.rustdesk_id`
+  - `dataMap.audit.uuid`
+  - `dataMap.device.os`
+  - `dataMap.device.rustdesk_id`
+  - `dataMap.mailLog.uuid`
+  - `dataMap.user.loginVerifyLabel.tfaCheck`
+  - `datatable.itemCount`
+  - `dropdown.closeAll`
+  - `dropdown.closeCurrent`
+  - `dropdown.closeLeft`
+  - `dropdown.closeOther`
+  - `dropdown.closeRight`
+  - `icon.collapse`
+  - `icon.expand`
+  - `icon.fullscreenExit`
+  - `icon.pin`
+  - `icon.themeConfig`
+  - `icon.themeSchema`
+  - `icon.unpin`
+  - `page.home.serverConfig.apiServer`
+  - `page.home.serverConfig.apiServerPlaceholder`
+  - `page.home.serverConfig.cacheCleared`
+  - `page.home.serverConfig.clearCacheReload`
+  - `page.home.serverConfig.connectivity.checkFailed`
+  - `page.home.serverConfig.connectivity.checkSourceType.cache`
+  - `page.home.serverConfig.connectivity.checkSourceType.remote`
+  - `page.home.serverConfig.connectivity.checked`
+  - `page.home.serverConfig.connectivity.checkedCached`
+  - `page.home.serverConfig.connectivity.checkedOne`
+  - `page.home.serverConfig.connectivity.cleared`
+  - `page.home.serverConfig.connectivity.duration`
+  - `page.home.serverConfig.connectivity.lastChecked`
+  - `page.home.serverConfig.connectivity.notChecked`
+  - `page.home.serverConfig.connectivity.source`
+  - `page.home.serverConfig.connectivity.status.error`
+  - `page.home.serverConfig.connectivity.status.idle`
+  - `page.home.serverConfig.connectivity.status.ok`
+  - `page.home.serverConfig.connectivity.status.skip`
+  - ... and 127 more
+
+**Missing Keys**
+-
+
+**Extra Keys**
+-
+
+## ko-KR
+
+- Base leaf keys: 320
+- Translated leaves: 154 (48.13%)
+- Fallback-identical leaves: 166 (51.88%)
+- Missing leaves: 0
+- Extra leaves: 0
+
+**Sample Fallback Keys**
+  - `dataMap.audit.ip`
+  - `dataMap.audit.peer_id`
+  - `dataMap.audit.rustdesk_id`
+  - `dataMap.audit.uuid`
+  - `dataMap.device.rustdesk_id`
+  - `dataMap.mailLog.uuid`
+  - `dataMap.user.loginVerifyLabel.tfaCheck`
+  - `datatable.itemCount`
+  - `dropdown.closeAll`
+  - `dropdown.closeCurrent`
+  - `dropdown.closeLeft`
+  - `dropdown.closeOther`
+  - `dropdown.closeRight`
+  - `icon.collapse`
+  - `icon.expand`
+  - `icon.fullscreenExit`
+  - `icon.pin`
+  - `icon.themeConfig`
+  - `icon.themeSchema`
+  - `icon.unpin`
+  - `page.home.serverConfig.apiServer`
+  - `page.home.serverConfig.apiServerPlaceholder`
+  - `page.home.serverConfig.cacheCleared`
+  - `page.home.serverConfig.clearCacheReload`
+  - `page.home.serverConfig.connectivity.checkFailed`
+  - `page.home.serverConfig.connectivity.checkSourceType.cache`
+  - `page.home.serverConfig.connectivity.checkSourceType.remote`
+  - `page.home.serverConfig.connectivity.checked`
+  - `page.home.serverConfig.connectivity.checkedCached`
+  - `page.home.serverConfig.connectivity.checkedOne`
+  - `page.home.serverConfig.connectivity.cleared`
+  - `page.home.serverConfig.connectivity.duration`
+  - `page.home.serverConfig.connectivity.lastChecked`
+  - `page.home.serverConfig.connectivity.notChecked`
+  - `page.home.serverConfig.connectivity.source`
+  - `page.home.serverConfig.connectivity.status.error`
+  - `page.home.serverConfig.connectivity.status.idle`
+  - `page.home.serverConfig.connectivity.status.ok`
+  - `page.home.serverConfig.connectivity.status.skip`
+  - `page.home.serverConfig.connectivity.target`
+  - ... and 126 more
 
 **Missing Keys**
 -

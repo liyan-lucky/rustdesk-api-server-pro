@@ -132,12 +132,15 @@ const local: App.I18n.Schema = {
     user: {
       ...enUs.dataMap.user,
       username: 'Benutzername',
+        password: 'Passwort',
       name: 'Spitzname',
       email: 'E-Mail',
       licensed_devices: 'Lizenzierte Geräte',
       login_verify: 'Login-Prüfung',
       status: 'Status',
       is_admin: 'Admin',
+        tfa_secret: '2FA-Geheimnis',
+        tfa_code: '2FA-Code',
       created_at: 'Erstellt am',
       statusLabel: {
         ...enUs.dataMap.user.statusLabel,
@@ -152,11 +155,17 @@ const local: App.I18n.Schema = {
         tfaCheck: '2FA'
       }
     },
+      session: {
+        ...enUs.dataMap.session,
+        expired: 'L?uft ab am',
+        created_at: 'Erstellt am'
+      },
     device: {
       ...enUs.dataMap.device,
       username: 'Benutzername',
       hostname: 'Hostname',
       version: 'RustDesk-Version',
+        memory: 'Speicher',
       os: 'OS',
       rustdesk_id: 'Rustdesk ID'
     },
@@ -164,9 +173,14 @@ const local: App.I18n.Schema = {
       ...enUs.dataMap.audit,
       username: 'Benutzer',
       type: 'Typ',
+        conn_id: 'Verbindungs-ID',
       rustdesk_id: 'Rustdesk ID',
+        peer_id: 'Peer-ID',
       ip: 'IP',
+        session_id: 'Sitzungs-ID',
+        uuid: 'UUID',
       created_at: 'Erstellt am',
+        closed_at: 'Geschlossen am',
       typeLabel: {
         ...enUs.dataMap.audit.typeLabel,
         remote_control: 'Fernsteuerung',
@@ -177,7 +191,8 @@ const local: App.I18n.Schema = {
         ...enUs.dataMap.audit.fileTransferTypeLabel,
         master_controlled: 'Steuernd -> Gesteuert',
         controlled_master: 'Gesteuert -> Steuernd'
-      }
+      },
+        path: 'Pfad'
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -196,9 +211,11 @@ const local: App.I18n.Schema = {
     mailLog: {
       ...enUs.dataMap.mailLog,
       username: 'Benutzer',
+        uuid: 'UUID',
       from: 'Von',
       to: 'An',
       subject: 'Betreff',
+        contents: 'Inhalt',
       status: 'Status',
       created_at: 'Gesendet am',
       statusLabel: {

@@ -132,12 +132,15 @@ const local: App.I18n.Schema = {
     user: {
       ...enUs.dataMap.user,
       username: 'Nom utilisateur',
+        password: 'Mot de passe',
       name: 'Pseudo',
       email: 'E-mail',
       licensed_devices: 'Appareils autorisés',
       login_verify: 'Vérification connexion',
       status: 'Statut',
       is_admin: 'Admin',
+        tfa_secret: 'Secret 2FA',
+        tfa_code: 'Code 2FA',
       created_at: 'Créé le',
       statusLabel: {
         ...enUs.dataMap.user.statusLabel,
@@ -152,11 +155,17 @@ const local: App.I18n.Schema = {
         tfaCheck: '2FA'
       }
     },
+      session: {
+        ...enUs.dataMap.session,
+        expired: 'Expire le',
+        created_at: 'Cr?? le'
+      },
     device: {
       ...enUs.dataMap.device,
       username: 'Nom utilisateur',
       hostname: 'Nom de l’hôte',
       version: 'Version RustDesk',
+        memory: 'M?moire',
       os: 'OS',
       rustdesk_id: 'Rustdesk ID'
     },
@@ -164,9 +173,14 @@ const local: App.I18n.Schema = {
       ...enUs.dataMap.audit,
       username: 'Utilisateur',
       type: 'Type',
+        conn_id: 'ID de connexion',
       rustdesk_id: 'Rustdesk ID',
+        peer_id: 'ID pair',
       ip: 'IP',
+        session_id: 'ID de session',
+        uuid: 'UUID',
       created_at: 'Créé le',
+        closed_at: 'Ferm? le',
       typeLabel: {
         ...enUs.dataMap.audit.typeLabel,
         remote_control: 'Contrôle à distance',
@@ -177,7 +191,8 @@ const local: App.I18n.Schema = {
         ...enUs.dataMap.audit.fileTransferTypeLabel,
         master_controlled: 'Contrôleur -> Contrôlé',
         controlled_master: 'Contrôlé -> Contrôleur'
-      }
+      },
+        path: 'Chemin'
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -196,9 +211,11 @@ const local: App.I18n.Schema = {
     mailLog: {
       ...enUs.dataMap.mailLog,
       username: 'Utilisateur',
+        uuid: 'UUID',
       from: 'De',
       to: 'À',
       subject: 'Sujet',
+        contents: 'Contenu',
       status: 'Statut',
       created_at: 'Envoyé le',
       statusLabel: {

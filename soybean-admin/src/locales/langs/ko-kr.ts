@@ -132,12 +132,15 @@ const local: App.I18n.Schema = {
     user: {
       ...enUs.dataMap.user,
       username: '사용자명',
+        password: '????',
       name: '닉네임',
       email: '이메일',
       licensed_devices: '허용 장치 수',
       login_verify: '로그인 인증',
       status: '상태',
       is_admin: '관리자',
+        tfa_secret: '2FA ???',
+        tfa_code: '2FA ??',
       created_at: '생성일',
       statusLabel: {
         ...enUs.dataMap.user.statusLabel,
@@ -152,11 +155,17 @@ const local: App.I18n.Schema = {
         tfaCheck: '2FA'
       }
     },
+      session: {
+        ...enUs.dataMap.session,
+        expired: '?? ??',
+        created_at: '?? ??'
+      },
     device: {
       ...enUs.dataMap.device,
       username: '사용자명',
       hostname: '호스트명',
       version: 'RustDesk 버전',
+        memory: '???',
       os: '운영체제',
       rustdesk_id: 'Rustdesk ID'
     },
@@ -164,9 +173,14 @@ const local: App.I18n.Schema = {
       ...enUs.dataMap.audit,
       username: '사용자명',
       type: '유형',
+        conn_id: '?? ID',
       rustdesk_id: 'Rustdesk ID',
+        peer_id: 'Peer ID',
       ip: 'IP',
+        session_id: '?? ID',
+        uuid: 'UUID',
       created_at: '생성일',
+        closed_at: '?? ??',
       typeLabel: {
         ...enUs.dataMap.audit.typeLabel,
         remote_control: '원격 제어',
@@ -177,7 +191,8 @@ const local: App.I18n.Schema = {
         ...enUs.dataMap.audit.fileTransferTypeLabel,
         master_controlled: '제어자 -> 피제어자',
         controlled_master: '피제어자 -> 제어자'
-      }
+      },
+        path: '??'
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -196,9 +211,11 @@ const local: App.I18n.Schema = {
     mailLog: {
       ...enUs.dataMap.mailLog,
       username: '사용자명',
+        uuid: 'UUID',
       from: '발신자',
       to: '수신자',
       subject: '제목',
+        contents: '??',
       status: '상태',
       created_at: '전송 시간',
       statusLabel: {
