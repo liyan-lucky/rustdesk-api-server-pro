@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { fetchStat } from '@/service/api/home';
 
 defineOptions({
   name: 'ChangeLogs'
@@ -12,9 +13,23 @@ interface LogItem {
   time: string;
 }
 
+const compatVersion = ref('latest');
+
 const logs = computed<LogItem[]>(() => [
-  { id: 1, content: '兼容增强版持续更新（适配新版客户端接口）', version: 'latest', time: '2026-02-26' }
+  {
+    id: 1,
+    content: '兼容增强版持续更新（适配新版客户端接口）',
+    version: compatVersion.value,
+    time: new Date().toISOString().slice(0, 10)
+  }
 ]);
+
+onMounted(async () => {
+  const stat = (await fetchStat()).data;
+  if (stat?.compatVersion) {
+    compatVersion.value = stat.compatVersion;
+  }
+});
 </script>
 
 <template>

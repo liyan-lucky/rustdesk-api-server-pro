@@ -68,6 +68,7 @@ declare namespace Api {
       deviceCount: number;
       onlineCount: number;
       visitsCount: number;
+      compatVersion?: string;
     }
 
     interface LineChart {

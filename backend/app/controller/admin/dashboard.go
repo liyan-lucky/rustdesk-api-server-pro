@@ -3,6 +3,7 @@ package admin
 import (
 	"fmt"
 	"rustdesk-api-server-pro/app/model"
+	v2service "rustdesk-api-server-pro/internal/service"
 
 	"github.com/golang-module/carbon/v2"
 	"github.com/kataras/iris/v12"
@@ -36,10 +37,11 @@ func (c *DashboardController) GetDashboardStat() mvc.Result {
 	}
 
 	return c.Success(iris.Map{
-		"userCount":   userCount,
-		"deviceCount": deviceCount,
-		"onlineCount": onlineCount,
-		"visitsCount": visitsCount,
+		"userCount":     userCount,
+		"deviceCount":   deviceCount,
+		"onlineCount":   onlineCount,
+		"visitsCount":   visitsCount,
+		"compatVersion": v2service.CompatSysinfoVersion,
 	}, "ok")
 }
 
