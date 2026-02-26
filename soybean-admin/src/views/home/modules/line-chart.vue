@@ -9,7 +9,9 @@ defineOptions({
 
 const { domRef, updateOptions } = useEcharts(() => ({
   title: {
-    text: $t('page.home.oneWeek')
+    text: $t('page.home.oneWeek'),
+    top: 8,
+    left: 16
   },
   tooltip: {
     trigger: 'axis',
@@ -21,11 +23,16 @@ const { domRef, updateOptions } = useEcharts(() => ({
     }
   },
   legend: {
+    type: 'scroll',
+    top: 36,
+    left: 16,
+    right: 16,
     data: [$t('page.home.userCount'), $t('page.home.deviceCount')]
   },
   grid: {
     left: '3%',
     right: '4%',
+    top: 84,
     bottom: '3%',
     containLabel: true
   },

@@ -2,8 +2,12 @@ package admin
 
 import (
 	"fmt"
+	"net"
+	"os"
 	"rustdesk-api-server-pro/app/model"
+	"rustdesk-api-server-pro/config"
 	v2service "rustdesk-api-server-pro/internal/service"
+	"strings"
 
 	"github.com/golang-module/carbon/v2"
 	"github.com/kataras/iris/v12"
@@ -12,6 +16,7 @@ import (
 
 type DashboardController struct {
 	basicController
+	Cfg *config.ServerConfig
 }
 
 func (c *DashboardController) GetDashboardStat() mvc.Result {
@@ -109,4 +114,45 @@ func (c *DashboardController) GetDashboardPieCharts() mvc.Result {
 		return c.Error(nil, err.Error())
 	}
 	return c.Success(pieMap, "ok")
+}
+
+func (c *DashboardController) GetDashboardServerConfig() mvc.Result {
+	req := c.Ctx.Request()
+	hostWithPort := req.Host
+	scheme := "http"
+	if req.TLS != nil {
+		scheme = "https"
+	}
+	if forwardedProto := c.Ctx.GetHeader("X-Forwarded-Proto"); forwardedProto != "" {
+		scheme = strings.TrimSpace(strings.Split(forwardedProto, ",")[0])
+	}
+
+	hostOnly := hostWithPort
+	if h, _, err := net.SplitHostPort(hostWithPort); err == nil {
+		hostOnly = h
+	} else if idx := strings.LastIndex(hostWithPort, ":"); idx > -1 && !strings.Contains(hostWithPort, "]") {
+		hostOnly = hostWithPort[:idx]
+	}
+	hostOnly = strings.Trim(hostOnly, "[]")
+
+	apiServer := firstNonEmpty(
+		os.Getenv("RUSTDESK_API_SERVER"),
+		fmt.Sprintf("%s://%s", scheme, hostWithPort),
+	)
+
+	return c.Success(iris.Map{
+		"idServer":    firstNonEmpty(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly),
+		"relayServer": firstNonEmpty(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly),
+		"apiServer":   apiServer,
+		"key":         os.Getenv("RUSTDESK_KEY"),
+	}, "ok")
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if strings.TrimSpace(v) != "" {
+			return strings.TrimSpace(v)
+		}
+	}
+	return ""
 }

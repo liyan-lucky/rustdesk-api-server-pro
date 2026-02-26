@@ -195,7 +195,26 @@ const local: App.I18n.Schema = {
       visitsCount: 'Visite',
       operatingSystem: 'Sistema operativo',
       oneWeek: 'Una settimana',
-      changeLogs: 'Registro modifiche'
+      changeLogs: 'Registro modifiche',
+      serverConfig: {
+        title: 'Configurazione connessione client',
+        tip: 'Copia i seguenti valori nel client RustDesk. Se la KEY è vuota, imposta la variabile d’ambiente del container `RUSTDESK_KEY`.',
+        idServer: 'Server ID',
+        relayServer: 'Server relay',
+        apiServer: 'Server API',
+        key: 'KEY',
+        idServerPlaceholder: 'es. your.domain.com',
+        relayServerPlaceholder: 'es. your.domain.com',
+        apiServerPlaceholder: 'es. https://your.domain.com',
+        keyPlaceholder: 'Fornisci tramite variabile d’ambiente RUSTDESK_KEY',
+        copy: 'Copia',
+        show: 'Mostra',
+        hide: 'Nascondi',
+        copyEmpty: '{label} è vuoto e non può essere copiato',
+        copySuccess: '{label} copiato',
+        copyFailed: 'Copia di {label} non riuscita',
+        fetchFailed: 'Impossibile caricare la configurazione del server'
+      }
     },
     user: {
       list: {

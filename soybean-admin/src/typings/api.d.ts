@@ -71,6 +71,13 @@ declare namespace Api {
       compatVersion?: string;
     }
 
+    interface ServerConfig {
+      idServer: string;
+      relayServer: string;
+      apiServer: string;
+      key: string;
+    }
+
     interface LineChart {
       xAxis: string[];
       users: number[];

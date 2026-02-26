@@ -11,3 +11,7 @@ export function fetchLineCharts() {
 export function fetchPieCharts() {
   return request<Api.Home.PieChart[]>({ url: '/dashboard/pie/charts' });
 }
+
+export function fetchServerConfig() {
+  return request<Api.Home.ServerConfig>({ url: '/dashboard/server/config' });
+}

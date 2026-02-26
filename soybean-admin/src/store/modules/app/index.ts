@@ -1,4 +1,4 @@
-import { effectScope, nextTick, onScopeDispose, ref, watch } from 'vue';
+﻿import { effectScope, nextTick, onScopeDispose, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { breakpointsTailwind, useBreakpoints, useEventListener, useTitle } from '@vueuse/core';
 import { useBoolean } from '@sa/hooks';
@@ -51,22 +51,14 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
   const locale = ref<App.I18n.LangType>(localStg.get('lang') || 'zh-CN');
 
   const localeOptions: App.I18n.LangOption[] = [
-    {
-      label: '中文',
-      key: 'zh-CN'
-    },
-    {
-      label: 'English',
-      key: 'en-US'
-    },
-    {
-      label: 'Italiano',
-      key: 'it-IT'
-    },
-    {
-      label: 'Русский',
-      key: 'ru-RU'
-    }
+    { label: '中文', key: 'zh-CN' },
+    { label: 'English', key: 'en-US' },
+    { label: '日本語', key: 'ja-JP' },
+    { label: '한국어', key: 'ko-KR' },
+    { label: 'Français', key: 'fr-FR' },
+    { label: 'Deutsch', key: 'de-DE' },
+    { label: 'Español', key: 'es-ES' },
+    { label: 'Русский', key: 'ru-RU' }
   ];
 
   function changeLocale(lang: App.I18n.LangType) {
@@ -171,3 +163,4 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
     toggleMixSiderFixed
   };
 });
+

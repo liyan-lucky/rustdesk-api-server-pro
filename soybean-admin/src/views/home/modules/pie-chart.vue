@@ -46,26 +46,51 @@ const { domRef, updateOptions } = useEcharts(() => ({
 async function fetchChartsData() {
   const pie = await fetchPieCharts();
   updateOptions(opt => {
-    opt.series = [
-      {
-        name: $t('page.home.operatingSystem'),
-        type: 'pie',
-        radius: ['45%', '75%'],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: '#fff',
-          borderWidth: 1
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: '12'
+    const data = (pie.data || []).filter(item => Number(item?.value || 0) > 0);
+    const hasData = data.length > 0;
+
+    (opt as any).tooltip = hasData ? { trigger: 'item' } : { show: false };
+    (opt as any).legend = {
+      ...(opt as any).legend,
+      show: hasData
+    };
+    (opt as any).graphic = hasData
+      ? []
+      : [
+          {
+            type: 'text',
+            left: 'center',
+            top: 'middle',
+            style: {
+              text: $t('common.noData'),
+              fill: '#999',
+              fontSize: 14,
+              fontWeight: 500
+            }
           }
-        },
-        data: pie.data as []
-      }
-    ];
+        ];
+    opt.series = hasData
+      ? [
+          {
+            name: $t('page.home.operatingSystem'),
+            type: 'pie',
+            radius: ['45%', '75%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 1
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '12'
+              }
+            },
+            data: data as []
+          }
+        ]
+      : [];
     return opt;
   });
 }

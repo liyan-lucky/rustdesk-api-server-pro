@@ -198,7 +198,26 @@ const local: App.I18n.Schema = {
       visitsCount: 'Visits Count',
       operatingSystem: 'Operating System',
       oneWeek: 'One Week',
-      changeLogs: 'Change Logs'
+      changeLogs: 'Change Logs',
+      serverConfig: {
+        title: 'Client Connection Config',
+        tip: 'Copy the following values into the RustDesk client. If KEY is empty, set the `RUSTDESK_KEY` container environment variable.',
+        idServer: 'ID Server',
+        relayServer: 'Relay Server',
+        apiServer: 'API Server',
+        key: 'KEY',
+        idServerPlaceholder: 'e.g. your.domain.com',
+        relayServerPlaceholder: 'e.g. your.domain.com',
+        apiServerPlaceholder: 'e.g. https://your.domain.com',
+        keyPlaceholder: 'Provide via RUSTDESK_KEY environment variable',
+        copy: 'Copy',
+        show: 'Show',
+        hide: 'Hide',
+        copyEmpty: '{label} is empty and cannot be copied',
+        copySuccess: '{label} copied',
+        copyFailed: '{label} copy failed',
+        fetchFailed: 'Failed to load server configuration'
+      }
     },
     user: {
       list: {

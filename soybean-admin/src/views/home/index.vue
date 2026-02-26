@@ -5,6 +5,7 @@ import HeaderBanner from './modules/header-banner.vue';
 import CardData from './modules/card-data.vue';
 import LineChart from './modules/line-chart.vue';
 import PieChart from './modules/pie-chart.vue';
+import ServerConnectionConfig from './modules/server-connection-config.vue';
 import ChangeLogs from './modules/change-logs.vue';
 
 const appStore = useAppStore();
@@ -28,6 +29,7 @@ const gap = computed(() => (appStore.isMobile ? 0 : 16));
         </NCard>
       </NGi>
     </NGrid>
+    <ServerConnectionConfig />
     <ChangeLogs />
   </NSpace>
 </template>
