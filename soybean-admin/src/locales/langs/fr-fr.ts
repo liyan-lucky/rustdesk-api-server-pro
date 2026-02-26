@@ -18,6 +18,9 @@ const local: App.I18n.Schema = {
     user_list: 'Liste des utilisateurs',
     user_sessions: 'Sessions',
     system: 'Gestion système',
+    system_mail_template: 'Modèles e-mail',
+    system_mail_logs: 'Logs e-mail',
+    system_mail: 'E-mail',
     devices: 'Appareils'
   },
   page: {
@@ -68,6 +71,22 @@ const local: App.I18n.Schema = {
         ...enUs.page.user.devices,
         logsSearchPlaceholder: 'Utilisateur/Hôte/RustdeskID'
       }
+    },
+    system: {
+      ...enUs.page.system,
+      mailTemplate: {
+        ...enUs.page.system.mailTemplate,
+        addMailTemplate: 'Ajouter un modèle',
+        editMailTemplate: 'Modifier le modèle',
+        inputName: 'Saisir le nom',
+        inputSubject: 'Saisir le sujet',
+        inputContents: 'Saisir le contenu',
+        selectType: 'Sélectionner le type'
+      },
+      mailLog: {
+        ...enUs.page.system.mailLog,
+        info: 'Détail'
+      }
     }
   },
   dataMap: {
@@ -98,6 +117,23 @@ const local: App.I18n.Schema = {
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
       created_at: 'Créé le'
+    },
+    mailTemplate: {
+      ...enUs.dataMap.mailTemplate,
+      name: 'Nom',
+      type: 'Type',
+      subject: 'Sujet',
+      contents: 'Contenu',
+      created_at: 'Créé le'
+    },
+    mailLog: {
+      ...enUs.dataMap.mailLog,
+      username: 'Utilisateur',
+      from: 'De',
+      to: 'À',
+      subject: 'Sujet',
+      status: 'Statut',
+      created_at: 'Envoyé le'
     }
   },
   icon: { ...enUs.icon, lang: 'Changer de langue', reload: 'Recharger la page', fullscreen: 'Plein écran' }

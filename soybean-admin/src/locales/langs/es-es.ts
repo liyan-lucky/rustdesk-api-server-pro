@@ -18,6 +18,9 @@ const local: App.I18n.Schema = {
     user_list: 'Lista de usuarios',
     user_sessions: 'Sesiones',
     system: 'Gestión del sistema',
+    system_mail_template: 'Plantillas de correo',
+    system_mail_logs: 'Registros de correo',
+    system_mail: 'Correo',
     devices: 'Dispositivos'
   },
   page: {
@@ -68,6 +71,22 @@ const local: App.I18n.Schema = {
         ...enUs.page.user.devices,
         logsSearchPlaceholder: 'Usuario/Host/RustdeskID'
       }
+    },
+    system: {
+      ...enUs.page.system,
+      mailTemplate: {
+        ...enUs.page.system.mailTemplate,
+        addMailTemplate: 'Agregar plantilla',
+        editMailTemplate: 'Editar plantilla',
+        inputName: 'Ingresar nombre',
+        inputSubject: 'Ingresar asunto',
+        inputContents: 'Ingresar contenido',
+        selectType: 'Seleccionar tipo'
+      },
+      mailLog: {
+        ...enUs.page.system.mailLog,
+        info: 'Detalle'
+      }
     }
   },
   dataMap: {
@@ -98,6 +117,23 @@ const local: App.I18n.Schema = {
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
       created_at: 'Creado el'
+    },
+    mailTemplate: {
+      ...enUs.dataMap.mailTemplate,
+      name: 'Nombre',
+      type: 'Tipo',
+      subject: 'Asunto',
+      contents: 'Contenido',
+      created_at: 'Creado el'
+    },
+    mailLog: {
+      ...enUs.dataMap.mailLog,
+      username: 'Usuario',
+      from: 'De',
+      to: 'Para',
+      subject: 'Asunto',
+      status: 'Estado',
+      created_at: 'Enviado el'
     }
   },
   icon: { ...enUs.icon, lang: 'Cambiar idioma', reload: 'Recargar página', fullscreen: 'Pantalla completa' }

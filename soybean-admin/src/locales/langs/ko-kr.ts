@@ -18,6 +18,9 @@ const local: App.I18n.Schema = {
     user_list: '사용자 목록',
     user_sessions: '세션',
     system: '시스템 관리',
+    system_mail_template: '메일 템플릿',
+    system_mail_logs: '메일 로그',
+    system_mail: '메일',
     devices: '장치'
   },
   page: {
@@ -68,6 +71,22 @@ const local: App.I18n.Schema = {
         ...enUs.page.user.devices,
         logsSearchPlaceholder: '사용자명/호스트명/RustdeskID'
       }
+    },
+    system: {
+      ...enUs.page.system,
+      mailTemplate: {
+        ...enUs.page.system.mailTemplate,
+        addMailTemplate: '템플릿 추가',
+        editMailTemplate: '템플릿 수정',
+        inputName: '이름 입력',
+        inputSubject: '제목 입력',
+        inputContents: '내용 입력',
+        selectType: '유형 선택'
+      },
+      mailLog: {
+        ...enUs.page.system.mailLog,
+        info: '상세'
+      }
     }
   },
   dataMap: {
@@ -98,6 +117,23 @@ const local: App.I18n.Schema = {
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
       created_at: '생성일'
+    },
+    mailTemplate: {
+      ...enUs.dataMap.mailTemplate,
+      name: '이름',
+      type: '유형',
+      subject: '제목',
+      contents: '내용',
+      created_at: '생성일'
+    },
+    mailLog: {
+      ...enUs.dataMap.mailLog,
+      username: '사용자명',
+      from: '발신자',
+      to: '수신자',
+      subject: '제목',
+      status: '상태',
+      created_at: '전송 시간'
     }
   },
   icon: { ...enUs.icon, lang: '언어 전환', reload: '페이지 새로고침', fullscreen: '전체화면' }

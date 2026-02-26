@@ -18,6 +18,9 @@ const local: App.I18n.Schema = {
     user_list: 'ユーザー一覧',
     user_sessions: 'セッション',
     system: 'システム管理',
+    system_mail_template: 'メールテンプレート',
+    system_mail_logs: 'メールログ',
+    system_mail: 'メール',
     devices: 'デバイス'
   },
   page: {
@@ -68,6 +71,22 @@ const local: App.I18n.Schema = {
         ...enUs.page.user.devices,
         logsSearchPlaceholder: 'ユーザー名/ホスト名/RustdeskID'
       }
+    },
+    system: {
+      ...enUs.page.system,
+      mailTemplate: {
+        ...enUs.page.system.mailTemplate,
+        addMailTemplate: 'テンプレート追加',
+        editMailTemplate: 'テンプレート編集',
+        inputName: '名前を入力',
+        inputSubject: '件名を入力',
+        inputContents: '内容を入力',
+        selectType: '種類を選択'
+      },
+      mailLog: {
+        ...enUs.page.system.mailLog,
+        info: '詳細'
+      }
     }
   },
   dataMap: {
@@ -98,6 +117,23 @@ const local: App.I18n.Schema = {
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
       created_at: '作成日時'
+    },
+    mailTemplate: {
+      ...enUs.dataMap.mailTemplate,
+      name: '名前',
+      type: '種類',
+      subject: '件名',
+      contents: '内容',
+      created_at: '作成日時'
+    },
+    mailLog: {
+      ...enUs.dataMap.mailLog,
+      username: 'ユーザー名',
+      from: '送信元',
+      to: '宛先',
+      subject: '件名',
+      status: '状態',
+      created_at: '送信日時'
     }
   },
   icon: { ...enUs.icon, lang: '言語を切り替え', reload: 'ページ再読み込み', fullscreen: '全画面' }
