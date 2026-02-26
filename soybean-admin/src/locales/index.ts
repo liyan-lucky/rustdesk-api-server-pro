@@ -5,7 +5,7 @@ import messages from './locale';
 
 const i18n = createI18n({
   locale: localStg.get('lang') || 'zh-CN',
-  fallbackLocale: 'en',
+  fallbackLocale: 'en-US',
   messages,
   legacy: false
 });
