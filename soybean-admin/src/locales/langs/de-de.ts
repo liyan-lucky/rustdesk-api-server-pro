@@ -170,6 +170,28 @@ const local: App.I18n.Schema = {
       }
     }
   },
+  api: {
+    ...enUs.api,
+    CaptchaError: 'CAPTCHA-Fehler',
+    UserNotExists: 'Benutzer existiert nicht',
+    UsernameOrPasswordError: 'Konto oder Passwort ist falsch',
+    UserExists: 'Der Benutzername wird bereits verwendet',
+    UsernameEmpty: 'Benutzername darf nicht leer sein',
+    PasswordEmpty: 'Passwort darf nicht leer sein',
+    UserAddSuccess: 'Benutzer erfolgreich erstellt',
+    DataError: 'Datenfehler',
+    UserUpdateSuccess: 'Benutzer erfolgreich geändert',
+    UserDeleteSuccess: 'Benutzer erfolgreich gelöscht',
+    SessionKillSuccess: 'Sitzung erfolgreich beendet',
+    MailTemplateNameEmpty: 'Name darf nicht leer sein',
+    MailTemplateSubjectEmpty: 'Betreff darf nicht leer sein',
+    MailTemplateContentsEmpty: 'Inhalt darf nicht leer sein',
+    MailTemplateAddSuccess: 'Mail-Vorlage erfolgreich erstellt',
+    MailTemplateUpdateSuccess: 'Mail-Vorlage erfolgreich geändert',
+    NoEmailAddress: 'Keine E-Mail-Adresse gesetzt',
+    VerificationCodeError: 'Fehler beim Verifizierungscode',
+    UUIDEmpty: 'UUID darf nicht leer sein'
+  },
   icon: { ...enUs.icon, lang: 'Sprache wechseln', reload: 'Seite neu laden', fullscreen: 'Vollbild' }
 };
 

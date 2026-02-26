@@ -170,6 +170,28 @@ const local: App.I18n.Schema = {
       }
     }
   },
+  api: {
+    ...enUs.api,
+    CaptchaError: 'CAPTCHA エラー',
+    UserNotExists: 'ユーザーが存在しません',
+    UsernameOrPasswordError: 'アカウントまたはパスワードが正しくありません',
+    UserExists: 'ユーザー名は既に使用されています',
+    UsernameEmpty: 'ユーザー名を入力してください',
+    PasswordEmpty: 'パスワードを入力してください',
+    UserAddSuccess: 'ユーザーを作成しました',
+    DataError: 'データエラー',
+    UserUpdateSuccess: 'ユーザーを更新しました',
+    UserDeleteSuccess: 'ユーザーを削除しました',
+    SessionKillSuccess: 'セッションを終了しました',
+    MailTemplateNameEmpty: 'テンプレート名を入力してください',
+    MailTemplateSubjectEmpty: '件名を入力してください',
+    MailTemplateContentsEmpty: '内容を入力してください',
+    MailTemplateAddSuccess: 'メールテンプレートを作成しました',
+    MailTemplateUpdateSuccess: 'メールテンプレートを更新しました',
+    NoEmailAddress: 'メールアドレスが設定されていません',
+    VerificationCodeError: '認証コードエラー',
+    UUIDEmpty: 'UUID を入力してください'
+  },
   icon: { ...enUs.icon, lang: '言語を切り替え', reload: 'ページ再読み込み', fullscreen: '全画面' }
 };
 

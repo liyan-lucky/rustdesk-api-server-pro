@@ -170,6 +170,28 @@ const local: App.I18n.Schema = {
       }
     }
   },
+  api: {
+    ...enUs.api,
+    CaptchaError: 'Erreur CAPTCHA',
+    UserNotExists: 'L’utilisateur n’existe pas',
+    UsernameOrPasswordError: 'Compte ou mot de passe incorrect',
+    UserExists: 'Le nom d’utilisateur est déjà utilisé',
+    UsernameEmpty: 'Le nom d’utilisateur ne peut pas être vide',
+    PasswordEmpty: 'Le mot de passe ne peut pas être vide',
+    UserAddSuccess: 'Utilisateur créé avec succès',
+    DataError: 'Erreur de données',
+    UserUpdateSuccess: 'Utilisateur modifié avec succès',
+    UserDeleteSuccess: 'Utilisateur supprimé avec succès',
+    SessionKillSuccess: 'Session terminée avec succès',
+    MailTemplateNameEmpty: 'Le nom ne peut pas être vide',
+    MailTemplateSubjectEmpty: 'Le sujet ne peut pas être vide',
+    MailTemplateContentsEmpty: 'Le contenu ne peut pas être vide',
+    MailTemplateAddSuccess: 'Modèle e-mail créé avec succès',
+    MailTemplateUpdateSuccess: 'Modèle e-mail modifié avec succès',
+    NoEmailAddress: 'Aucune adresse e-mail définie',
+    VerificationCodeError: 'Code de vérification incorrect',
+    UUIDEmpty: 'UUID ne peut pas être vide'
+  },
   icon: { ...enUs.icon, lang: 'Changer de langue', reload: 'Recharger la page', fullscreen: 'Plein écran' }
 };
 

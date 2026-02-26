@@ -170,6 +170,28 @@ const local: App.I18n.Schema = {
       }
     }
   },
+  api: {
+    ...enUs.api,
+    CaptchaError: 'CAPTCHA 오류',
+    UserNotExists: '사용자가 존재하지 않습니다',
+    UsernameOrPasswordError: '계정 또는 비밀번호가 올바르지 않습니다',
+    UserExists: '이미 사용 중인 사용자명입니다',
+    UsernameEmpty: '사용자명을 입력하세요',
+    PasswordEmpty: '비밀번호를 입력하세요',
+    UserAddSuccess: '사용자가 생성되었습니다',
+    DataError: '데이터 오류',
+    UserUpdateSuccess: '사용자가 수정되었습니다',
+    UserDeleteSuccess: '사용자가 삭제되었습니다',
+    SessionKillSuccess: '세션이 종료되었습니다',
+    MailTemplateNameEmpty: '템플릿 이름을 입력하세요',
+    MailTemplateSubjectEmpty: '제목을 입력하세요',
+    MailTemplateContentsEmpty: '내용을 입력하세요',
+    MailTemplateAddSuccess: '메일 템플릿이 생성되었습니다',
+    MailTemplateUpdateSuccess: '메일 템플릿이 수정되었습니다',
+    NoEmailAddress: '이메일 주소가 설정되지 않았습니다',
+    VerificationCodeError: '인증 코드 오류',
+    UUIDEmpty: 'UUID를 입력하세요'
+  },
   icon: { ...enUs.icon, lang: '언어 전환', reload: '페이지 새로고침', fullscreen: '전체화면' }
 };
 
