@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { fetchServerConfig, fetchServerConnectivity } from '@/service/api/home';
 
@@ -84,6 +84,19 @@ const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message
   apiServer: { status: 'idle', message: '', target: '' },
   key: { status: 'idle', message: '', target: '' }
 });
+
+function resetConnectivityState() {
+  connectivity.value = {
+    idServer: { status: 'idle', message: '', target: '' },
+    relayServer: { status: 'idle', message: '', target: '' },
+    apiServer: { status: 'idle', message: '', target: '' },
+    key: { status: 'idle', message: '', target: '' }
+  };
+  connectivityCache = null;
+  connectivityCacheAt = 0;
+  lastConnectivityCheckedAt.value = 0;
+  lastConnectivityCheckSource.value = '';
+}
 
 function normalizeServerConfig(data: Api.Home.ServerConfig): Api.Home.ServerConfig {
   const sources = data.sources || {};
@@ -296,10 +309,7 @@ async function copyAllConfig() {
 
 async function clearCacheAndReload() {
   clearServerConfigCache();
-  connectivityCache = null;
-  connectivityCacheAt = 0;
-  lastConnectivityCheckedAt.value = 0;
-  lastConnectivityCheckSource.value = '';
+  resetConnectivityState();
   lastLoadedAt.value = 0;
   lastLoadSource.value = '';
   window.$message?.success(t('page.home.serverConfig.cacheCleared'));
@@ -381,6 +391,15 @@ async function loadServerConfig(force = false) {
 }
 
 onMounted(loadServerConfig);
+
+watch(
+  () => [config.value.idServer, config.value.relayServer, config.value.apiServer, config.value.key].join('|'),
+  (next, prev) => {
+    if (prev !== undefined && next !== prev) {
+      resetConnectivityState();
+    }
+  }
+);
 </script>
 
 <template>
