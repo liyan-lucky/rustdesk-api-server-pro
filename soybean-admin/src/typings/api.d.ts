@@ -76,7 +76,16 @@ declare namespace Api {
       relayServer: string;
       apiServer: string;
       key: string;
+      sources?: Partial<Record<'idServer' | 'relayServer' | 'apiServer' | 'key', 'env' | 'inferred' | 'empty'>>;
     }
+
+    interface ServerConnectivityItem {
+      status: 'ok' | 'error' | 'skip';
+      message: string;
+      target: string;
+    }
+
+    type ServerConnectivity = Record<'idServer' | 'relayServer' | 'apiServer' | 'key', ServerConnectivityItem>;
 
     interface LineChart {
       xAxis: string[];

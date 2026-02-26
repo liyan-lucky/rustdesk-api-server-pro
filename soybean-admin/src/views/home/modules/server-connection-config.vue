@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { fetchServerConfig } from '@/service/api/home';
+import { fetchServerConfig, fetchServerConnectivity } from '@/service/api/home';
 
 defineOptions({
   name: 'ServerConnectionConfig'
@@ -20,7 +20,12 @@ interface ConfigItem {
   label: string;
   value: string;
   placeholder?: string;
+  source: 'env' | 'inferred' | 'empty';
 }
+
+type ConfigLoadSource = 'remote' | 'memory-cache' | 'session-cache' | '';
+type ConfigValueSource = 'env' | 'inferred' | 'empty';
+type ConnectivityStatus = 'idle' | Api.Home.ServerConnectivityItem['status'];
 
 const SERVER_CONFIG_CACHE_TTL_MS = 30 * 1000;
 const SERVER_CONFIG_CACHE_KEY = 'home.server-config-cache.v1';
@@ -61,16 +66,32 @@ const config = ref<Api.Home.ServerConfig>({
   key: ''
 });
 const loading = ref(false);
+const checkingConnectivity = ref(false);
 const loadError = ref('');
 const showKey = ref(false);
+const lastLoadedAt = ref(0);
+const lastLoadSource = ref<ConfigLoadSource>('');
 let latestLoadRequestId = 0;
+const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message: string; target: string }>>({
+  idServer: { status: 'idle', message: '', target: '' },
+  relayServer: { status: 'idle', message: '', target: '' },
+  apiServer: { status: 'idle', message: '', target: '' },
+  key: { status: 'idle', message: '', target: '' }
+});
 
 function normalizeServerConfig(data: Api.Home.ServerConfig): Api.Home.ServerConfig {
+  const sources = data.sources || {};
   return {
     idServer: (data.idServer || '').trim(),
     relayServer: (data.relayServer || '').trim(),
     apiServer: (data.apiServer || '').trim(),
-    key: (data.key || '').trim()
+    key: (data.key || '').trim(),
+    sources: {
+      idServer: sources.idServer || 'empty',
+      relayServer: sources.relayServer || 'empty',
+      apiServer: sources.apiServer || 'empty',
+      key: sources.key || 'empty'
+    }
   };
 }
 
@@ -98,6 +119,17 @@ function writeSessionCache(data: Api.Home.ServerConfig) {
   }
 }
 
+function clearServerConfigCache() {
+  serverConfigCache = null;
+  serverConfigCacheAt = 0;
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.removeItem(SERVER_CONFIG_CACHE_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 async function requestServerConfig() {
   if (!serverConfigInFlight) {
     serverConfigInFlight = (async () => {
@@ -115,7 +147,8 @@ const items = computed<ConfigItem[]>(() =>
     key: field.key,
     label: t(field.labelKey),
     value: config.value[field.key],
-    placeholder: t(field.placeholderKey)
+    placeholder: t(field.placeholderKey),
+    source: (config.value.sources?.[field.key] || 'empty') as ConfigValueSource
   }))
 );
 
@@ -135,13 +168,61 @@ const canCopyAll = computed(() => !loading.value && !loadError.value && !hasMiss
 readSessionCache();
 if (serverConfigCache) {
   config.value = serverConfigCache;
+  lastLoadedAt.value = serverConfigCacheAt;
+  lastLoadSource.value = 'session-cache';
 }
+
+const sourceLabel = computed(() => {
+  if (!lastLoadSource.value) return '';
+  return t(`page.home.serverConfig.sourceType.${lastLoadSource.value}`);
+});
+
+const lastUpdatedText = computed(() => {
+  if (!lastLoadedAt.value) return '';
+  try {
+    return new Date(lastLoadedAt.value).toLocaleString();
+  } catch {
+    return '';
+  }
+});
 
 function getDisplayValue(item: ConfigItem) {
   if (item.key === 'key' && !showKey.value) {
     return maskedKeyValue.value;
   }
   return item.value;
+}
+
+function getFieldSourceLabel(source: ConfigValueSource) {
+  return t(`page.home.serverConfig.sourceType.${source}`);
+}
+
+function getFieldSourceHint(source: ConfigValueSource) {
+  return t(`page.home.serverConfig.sourceHint.${source}`);
+}
+
+function getConnectivityLabel(status: ConnectivityStatus) {
+  return t(`page.home.serverConfig.connectivity.status.${status}`);
+}
+
+function getConnectivityClass(status: ConnectivityStatus) {
+  if (status === 'ok') return 'is-ok';
+  if (status === 'error') return 'is-error';
+  if (status === 'skip') return 'is-skip';
+  return 'is-idle';
+}
+
+function getConnectivityHint(item: ConfigItem) {
+  const state = connectivity.value[item.key];
+  if (!state || state.status === 'idle') {
+    return t('page.home.serverConfig.connectivity.notChecked');
+  }
+
+  const parts = [state.message];
+  if (state.target) {
+    parts.push(`${t('page.home.serverConfig.connectivity.target')}: ${state.target}`);
+  }
+  return parts.join(' | ');
 }
 
 function fallbackCopyText(text: string) {
@@ -195,12 +276,47 @@ async function copyAllConfig() {
   await copyValue(buildClientConfigText(), t('page.home.serverConfig.copyAll'));
 }
 
+async function clearCacheAndReload() {
+  clearServerConfigCache();
+  lastLoadedAt.value = 0;
+  lastLoadSource.value = '';
+  window.$message?.success(t('page.home.serverConfig.cacheCleared'));
+  await loadServerConfig(true);
+}
+
+async function checkConnectivity() {
+  if (checkingConnectivity.value) return;
+
+  checkingConnectivity.value = true;
+  try {
+    const res = await fetchServerConnectivity();
+    if (!res.data) {
+      window.$message?.warning(t('page.home.serverConfig.connectivity.checkFailed'));
+      return;
+    }
+
+    connectivity.value = {
+      idServer: res.data.idServer,
+      relayServer: res.data.relayServer,
+      apiServer: res.data.apiServer,
+      key: res.data.key
+    };
+    window.$message?.success(t('page.home.serverConfig.connectivity.checked'));
+  } catch {
+    window.$message?.error(t('page.home.serverConfig.connectivity.checkFailed'));
+  } finally {
+    checkingConnectivity.value = false;
+  }
+}
+
 async function loadServerConfig(force = false) {
   if (loading.value) return;
 
   if (!force && serverConfigCache && Date.now() - serverConfigCacheAt < SERVER_CONFIG_CACHE_TTL_MS) {
     config.value = serverConfigCache;
     loadError.value = '';
+    lastLoadedAt.value = serverConfigCacheAt;
+    lastLoadSource.value = 'memory-cache';
     return;
   }
 
@@ -215,6 +331,8 @@ async function loadServerConfig(force = false) {
       config.value = data;
       serverConfigCache = data;
       serverConfigCacheAt = Date.now();
+      lastLoadedAt.value = serverConfigCacheAt;
+      lastLoadSource.value = 'remote';
       writeSessionCache(data);
       return;
     }
@@ -239,6 +357,12 @@ onMounted(loadServerConfig);
         <NButton size="small" :loading="loading" @click="loadServerConfig(true)">
           {{ $t('page.home.serverConfig.refresh') }}
         </NButton>
+        <NButton size="small" :disabled="loading" @click="clearCacheAndReload">
+          {{ $t('page.home.serverConfig.clearCacheReload') }}
+        </NButton>
+        <NButton size="small" :loading="checkingConnectivity" :disabled="loading" @click="checkConnectivity">
+          {{ $t('page.home.serverConfig.connectivity.check') }}
+        </NButton>
         <NButton size="small" type="primary" secondary :disabled="!canCopyAll" @click="copyAllConfig">
           {{ $t('page.home.serverConfig.copyAll') }}
         </NButton>
@@ -247,6 +371,14 @@ onMounted(loadServerConfig);
     <NAlert type="info" :show-icon="false" class="mb-12px">
       {{ $t('page.home.serverConfig.tip') }}
     </NAlert>
+    <div v-if="sourceLabel || lastUpdatedText" class="config-meta mb-12px">
+      <span v-if="sourceLabel">
+        {{ $t('page.home.serverConfig.source') }}: {{ sourceLabel }}
+      </span>
+      <span v-if="lastUpdatedText">
+        {{ $t('page.home.serverConfig.lastUpdated') }}: {{ lastUpdatedText }}
+      </span>
+    </div>
     <NAlert v-if="loadError" type="warning" :show-icon="false" class="mb-12px">
       {{ loadError }}
     </NAlert>
@@ -256,6 +388,22 @@ onMounted(loadServerConfig);
     <NSpace vertical :size="10">
       <div v-for="item in items" :key="item.key" class="config-row">
         <div class="config-label">{{ item.label }}</div>
+        <div class="config-badges">
+          <NTooltip trigger="hover">
+            <template #trigger>
+              <div class="config-label-source">{{ getFieldSourceLabel(item.source) }}</div>
+            </template>
+            {{ getFieldSourceHint(item.source) }}
+          </NTooltip>
+          <NTooltip trigger="hover">
+            <template #trigger>
+              <div class="config-label-source" :class="getConnectivityClass(connectivity[item.key].status)">
+                {{ getConnectivityLabel(connectivity[item.key].status) }}
+              </div>
+            </template>
+            {{ getConnectivityHint(item) }}
+          </NTooltip>
+        </div>
         <NInput
           :value="getDisplayValue(item)"
           readonly
@@ -284,7 +432,7 @@ onMounted(loadServerConfig);
 <style scoped>
 .config-row {
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr) auto;
+  grid-template-columns: 92px 84px minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
 }
@@ -298,10 +446,42 @@ onMounted(loadServerConfig);
   min-width: 0;
 }
 
+.config-label-source {
+  font-size: 12px;
+  color: var(--n-text-color-3);
+  white-space: nowrap;
+}
+
+.config-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.config-label-source.is-ok {
+  color: var(--n-success-color);
+}
+
+.config-label-source.is-error {
+  color: var(--n-error-color);
+}
+
+.config-label-source.is-skip {
+  color: var(--n-warning-color);
+}
+
 .config-actions {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.config-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--n-text-color-3);
 }
 
 @media (max-width: 640px) {
@@ -311,6 +491,11 @@ onMounted(loadServerConfig);
 
   .config-actions {
     justify-content: flex-start;
+  }
+
+  .config-meta {
+    gap: 8px;
+    flex-direction: column;
   }
 }
 </style>

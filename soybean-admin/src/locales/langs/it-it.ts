@@ -210,13 +210,43 @@ const local: App.I18n.Schema = {
         copy: 'Copia',
         copyAll: 'Copia tutto',
         refresh: 'Aggiorna',
+        clearCacheReload: 'Svuota cache e ricarica',
+        source: 'Origine',
+        lastUpdated: 'Ultimo aggiornamento',
         show: 'Mostra',
         hide: 'Nascondi',
         missingTip: 'I seguenti campi sono vuoti, configurali prima nelle variabili d’ambiente del container: {fields}',
         copyEmpty: '{label} è vuoto e non può essere copiato',
         copySuccess: '{label} copiato',
         copyFailed: 'Copia di {label} non riuscita',
-        fetchFailed: 'Impossibile caricare la configurazione del server'
+        fetchFailed: 'Impossibile caricare la configurazione del server',
+        cacheCleared: 'Cache svuotata, ricarico la configurazione del server',
+        sourceType: {
+          remote: 'Remoto',
+          'memory-cache': 'Cache memoria',
+          'session-cache': 'Cache sessione',
+          env: 'Variabile env',
+          inferred: 'Dedotto',
+          empty: 'Vuoto'
+        },
+        sourceHint: {
+          env: 'Questo valore proviene da una variabile d’ambiente del container.',
+          inferred: 'Questo valore è dedotto automaticamente dall’indirizzo di accesso corrente.',
+          empty: 'Nessun valore configurato o dedotto al momento.'
+        },
+        connectivity: {
+          check: 'Verifica connettività',
+          checked: 'Verifica connettività completata',
+          checkFailed: 'Verifica connettività fallita',
+          target: 'Destinazione',
+          notChecked: 'Non ancora verificato',
+          status: {
+            idle: 'Non verificato',
+            ok: 'Raggiungibile',
+            error: 'Errore',
+            skip: 'Saltato'
+          }
+        }
       }
     },
     user: {

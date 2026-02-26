@@ -213,13 +213,43 @@ const local: App.I18n.Schema = {
         copy: 'Copy',
         copyAll: 'Copy All',
         refresh: 'Refresh',
+        clearCacheReload: 'Clear Cache & Reload',
+        source: 'Source',
+        lastUpdated: 'Last Updated',
         show: 'Show',
         hide: 'Hide',
         missingTip: 'The following fields are empty, please configure them in container environment variables first: {fields}',
         copyEmpty: '{label} is empty and cannot be copied',
         copySuccess: '{label} copied',
         copyFailed: '{label} copy failed',
-        fetchFailed: 'Failed to load server configuration'
+        fetchFailed: 'Failed to load server configuration',
+        cacheCleared: 'Cache cleared, reloading server configuration',
+        sourceType: {
+          remote: 'Remote',
+          'memory-cache': 'Memory Cache',
+          'session-cache': 'Session Cache',
+          env: 'Env',
+          inferred: 'Inferred',
+          empty: 'Empty'
+        },
+        sourceHint: {
+          env: 'This value comes from the container environment variable.',
+          inferred: 'This value is auto-inferred from the current access address.',
+          empty: 'No value is configured or inferred yet.'
+        },
+        connectivity: {
+          check: 'Check Connectivity',
+          checked: 'Connectivity check completed',
+          checkFailed: 'Connectivity check failed',
+          target: 'Target',
+          notChecked: 'Not checked yet',
+          status: {
+            idle: 'Unchecked',
+            ok: 'Reachable',
+            error: 'Failed',
+            skip: 'Skipped'
+          }
+        }
       }
     },
     user: {

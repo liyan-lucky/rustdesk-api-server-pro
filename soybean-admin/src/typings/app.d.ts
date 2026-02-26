@@ -441,6 +441,9 @@ declare namespace App {
             copy: string;
             copyAll: string;
             refresh: string;
+            clearCacheReload: string;
+            source: string;
+            lastUpdated: string;
             show: string;
             hide: string;
             missingTip: string;
@@ -448,6 +451,33 @@ declare namespace App {
             copySuccess: string;
             copyFailed: string;
             fetchFailed: string;
+            cacheCleared: string;
+            sourceType: {
+              remote: string;
+              'memory-cache': string;
+              'session-cache': string;
+              env: string;
+              inferred: string;
+              empty: string;
+            };
+            sourceHint: {
+              env: string;
+              inferred: string;
+              empty: string;
+            };
+            connectivity: {
+              check: string;
+              checked: string;
+              checkFailed: string;
+              target: string;
+              notChecked: string;
+              status: {
+                idle: string;
+                ok: string;
+                error: string;
+                skip: string;
+              };
+            };
           };
         };
         user: {

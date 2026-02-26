@@ -123,13 +123,43 @@ const local: App.I18n.Schema = {
         copy: '复制',
         copyAll: '复制全部',
         refresh: '刷新配置',
+        clearCacheReload: '清缓存并重载',
+        source: '来源',
+        lastUpdated: '最后更新',
         show: '显示',
         hide: '隐藏',
         missingTip: '以下字段为空，请先在容器环境变量中配置：{fields}',
         copyEmpty: '{label}为空，无法复制',
         copySuccess: '{label}已复制',
         copyFailed: '{label}复制失败',
-        fetchFailed: '获取服务器配置失败，请稍后重试'
+        fetchFailed: '获取服务器配置失败，请稍后重试',
+        cacheCleared: '已清除缓存，正在重新加载服务器配置',
+        sourceType: {
+          remote: '远端接口',
+          'memory-cache': '内存缓存',
+          'session-cache': '会话缓存',
+          env: '环境变量',
+          inferred: '自动推断',
+          empty: '未配置'
+        },
+        sourceHint: {
+          env: '该值来自容器环境变量配置。',
+          inferred: '该值根据当前访问地址自动推断生成。',
+          empty: '当前既没有配置，也无法自动推断。'
+        },
+        connectivity: {
+          check: '检测连通性',
+          checked: '连通性检测完成',
+          checkFailed: '连通性检测失败',
+          target: '目标',
+          notChecked: '尚未检测',
+          status: {
+            idle: '未检测',
+            ok: '可连接',
+            error: '失败',
+            skip: '跳过'
+          }
+        }
       }
     },
     user: {
