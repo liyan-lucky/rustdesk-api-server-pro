@@ -314,11 +314,11 @@ func probeHTTPServer(value string) iris.Map {
 	}
 
 	client := &http.Client{Timeout: 3 * time.Second}
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
-	resp, err := client.Do(req)
+	resp, err := doHTTPProbeRequest(client, target, http.MethodHead)
+	if err == nil && (resp.StatusCode == http.StatusMethodNotAllowed || resp.StatusCode == http.StatusNotImplemented) {
+		_ = resp.Body.Close()
+		resp, err = doHTTPProbeRequest(client, target, http.MethodGet)
+	}
 	if err != nil {
 		return iris.Map{"status": "error", "message": err.Error(), "target": target, "durationMs": time.Since(start).Milliseconds()}
 	}
@@ -330,6 +330,14 @@ func probeHTTPServer(value string) iris.Map {
 		"target":  target,
 		"durationMs": time.Since(start).Milliseconds(),
 	}
+}
+
+func doHTTPProbeRequest(client *http.Client, target, method string) (*http.Response, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	req, _ := http.NewRequestWithContext(ctx, method, target, nil)
+	return client.Do(req)
 }
 
 func probeKeyConfig(value string) iris.Map {
