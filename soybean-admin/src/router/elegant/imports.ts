@@ -20,8 +20,8 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   500: () => import("@/views/_builtin/500/index.vue"),
   "iframe-page": () => import("@/views/_builtin/iframe-page/[url].vue"),
   login: () => import("@/views/_builtin/login/index.vue"),
-  audit_baselogs: () => import("@/views/audit/baseLogs/index.vue"),
-  audit_filetransferlogs: () => import("@/views/audit/fileTransferLogs/index.vue"),
+  audit_baselogs: () => import("@/views/audit/baselogs/index.vue"),
+  audit_filetransferlogs: () => import("@/views/audit/filetransferlogs/index.vue"),
   devices: () => import("@/views/devices/index.vue"),
   home: () => import("@/views/home/index.vue"),
   system_mail_logs: () => import("@/views/system/mail_logs/index.vue"),
@@ -29,5 +29,3 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   user_list: () => import("@/views/user/list/index.vue"),
   user_sessions: () => import("@/views/user/sessions/index.vue"),
 };
-
-export {};

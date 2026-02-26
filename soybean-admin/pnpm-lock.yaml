@@ -75,6 +75,24 @@ importers:
       '@elegant-router/vue':
         specifier: 0.3.8
         version: 0.3.8
+      '@iconify-json/ant-design':
+        specifier: ^1.2.5
+        version: 1.2.5
+      '@iconify-json/fluent':
+        specifier: ^1.2.39
+        version: 1.2.39
+      '@iconify-json/gridicons':
+        specifier: ^1.2.4
+        version: 1.2.4
+      '@iconify-json/ic':
+        specifier: ^1.2.4
+        version: 1.2.4
+      '@iconify-json/mdi':
+        specifier: ^1.2.3
+        version: 1.2.3
+      '@iconify-json/uil':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@iconify/json':
         specifier: 2.2.237
         version: 2.2.237
@@ -797,6 +815,24 @@ packages:
   '@humanwhocodes/retry@0.3.0':
     resolution: {integrity: sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==}
     engines: {node: '>=18.18'}
+
+  '@iconify-json/ant-design@1.2.5':
+    resolution: {integrity: sha512-SYxhrx1AFq2MBcXk77AERYz2mPhLQes1F0vtvG64+dJZWyge9studXo7MiR8PPeLjRjZdWRrReRbxiwdRMf70Q==}
+
+  '@iconify-json/fluent@1.2.39':
+    resolution: {integrity: sha512-nIvOPuNIqSqTr0vpPFdROsC/mnUfGyIgOSByy1RhXMcbP+tRjX1hQvm41MnJN/ztSwbH4iSgcT3lN/qO9PBPhQ==}
+
+  '@iconify-json/gridicons@1.2.4':
+    resolution: {integrity: sha512-gP7Zh4gbvcGnklhMUkM5E0tNxiiMU0v0hV6DbDNAf9I+WW1VQLE6HKlOGT/XWspQPTRgiR2TSeR62Jw3SQFfyw==}
+
+  '@iconify-json/ic@1.2.4':
+    resolution: {integrity: sha512-pzPMmrZrBQuwT7nmtrYdkttun8KalRGgZPIL1Ny9KpF2zjRGIUPN+npTfuD3lrgO/OnSwAoJWuekQwBpt/Cqrw==}
+
+  '@iconify-json/mdi@1.2.3':
+    resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
+
+  '@iconify-json/uil@1.2.3':
+    resolution: {integrity: sha512-if91+UBhDQc6glPsIaXecGIcXnbQZfEO4Gdv89TV2xQ+V5e9GWbY5rNl2fsKZd8COsRQ5lRQAKimVQVL0CZZVg==}
 
   '@iconify/json@2.2.237':
     resolution: {integrity: sha512-lMK5I9JX90L2LR18Lz6C5XrivxxAGejdJvFQI7TQkj03WcaxRJlciPbQb6z4nX+DS1T6k591ZQ2/hyRVbjqrgA==}
@@ -4914,6 +4950,30 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.3.0': {}
+
+  '@iconify-json/ant-design@1.2.5':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/fluent@1.2.39':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/gridicons@1.2.4':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/ic@1.2.4':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/mdi@1.2.3':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/uil@1.2.3':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify/json@2.2.237':
     dependencies:

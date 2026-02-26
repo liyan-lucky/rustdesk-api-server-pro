@@ -3,6 +3,15 @@ import path from 'node:path';
 import unocss from '@unocss/vite';
 import presetIcons from '@unocss/preset-icons';
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const antDesign = require('@iconify-json/ant-design/icons.json');
+const fluent = require('@iconify-json/fluent/icons.json');
+const gridicons = require('@iconify-json/gridicons/icons.json');
+const ic = require('@iconify-json/ic/icons.json');
+const mdi = require('@iconify-json/mdi/icons.json');
+const uil = require('@iconify-json/uil/icons.json');
 
 export function setupUnocss(viteEnv: Env.ImportMeta) {
   const { VITE_ICON_PREFIX, VITE_ICON_LOCAL_PREFIX } = viteEnv;
@@ -23,9 +32,15 @@ export function setupUnocss(viteEnv: Env.ImportMeta) {
         collections: {
           [collectionName]: FileSystemIconLoader(localIconPath, svg =>
             svg.replace(/^<svg\s/, '<svg width="1em" height="1em" ')
-          )
+          ),
+          'ant-design': antDesign,
+          fluent,
+          gridicons,
+          ic,
+          mdi,
+          uil
         },
-        warn: true
+        warn: false
       })
     ]
   });
