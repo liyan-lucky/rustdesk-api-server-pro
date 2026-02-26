@@ -14,6 +14,7 @@ type LocaleReport = {
   missingKeys: string[];
   extraKeys: string[];
   fallbackKeys: string[];
+  suspectKeys: string[];
   translatedKeys: string[];
 };
 
@@ -63,9 +64,29 @@ function normalizeForCompare(value: JsonValue): string {
   return JSON.stringify(value);
 }
 
+function isSuspiciousTranslationValue(baseValue: JsonValue, targetValue: JsonValue): boolean {
+  if (typeof targetValue !== 'string') return false;
+  if (typeof baseValue !== 'string') return false;
+
+  if (targetValue.includes('�')) return true;
+
+  const compact = targetValue.replace(/\s/g, '');
+  if (!compact) return false;
+
+  const qCount = [...compact].filter(ch => ch === '?').length;
+  if (qCount === 0) return false;
+
+  if (/^\?+$/.test(compact)) return true;
+  if (/\?{3,}/.test(targetValue)) return true;
+  if (qCount >= 2 && qCount / compact.length >= 0.3) return true;
+
+  return false;
+}
+
 function buildReport(localeName: string, baseFlat: FlatMap, targetFlat: FlatMap): LocaleReport {
   const missingKeys: string[] = [];
   const fallbackKeys: string[] = [];
+  const suspectKeys: string[] = [];
   const translatedKeys: string[] = [];
 
   for (const [key, baseValue] of Object.entries(baseFlat)) {
@@ -80,7 +101,11 @@ function buildReport(localeName: string, baseFlat: FlatMap, targetFlat: FlatMap)
     if (sameAsBase) {
       fallbackKeys.push(key);
     } else {
-      translatedKeys.push(key);
+      if (isSuspiciousTranslationValue(baseValue, targetValue)) {
+        suspectKeys.push(key);
+      } else {
+        translatedKeys.push(key);
+      }
     }
   }
 
@@ -92,6 +117,7 @@ function buildReport(localeName: string, baseFlat: FlatMap, targetFlat: FlatMap)
     missingKeys: missingKeys.sort(),
     extraKeys,
     fallbackKeys: fallbackKeys.sort(),
+    suspectKeys: suspectKeys.sort(),
     translatedKeys: translatedKeys.sort()
   };
 }
@@ -127,7 +153,7 @@ function main() {
       const translatedRatio = pct(report.translatedKeys.length, report.totalBaseLeafKeys);
       const nonFallbackRatio = pct(report.translatedKeys.length, Math.max(1, effectiveTotal));
 
-      return `| ${report.locale} | ${report.totalBaseLeafKeys} | ${report.translatedKeys.length} | ${report.fallbackKeys.length} | ${report.missingKeys.length} | ${report.extraKeys.length} | ${translatedRatio} | ${nonFallbackRatio} |`;
+      return `| ${report.locale} | ${report.totalBaseLeafKeys} | ${report.translatedKeys.length} | ${report.suspectKeys.length} | ${report.fallbackKeys.length} | ${report.missingKeys.length} | ${report.extraKeys.length} | ${translatedRatio} | ${nonFallbackRatio} |`;
     })
     .join('\n');
 
@@ -138,12 +164,16 @@ function main() {
         '',
         `- Base leaf keys: ${report.totalBaseLeafKeys}`,
         `- Translated leaves: ${report.translatedKeys.length} (${pct(report.translatedKeys.length, report.totalBaseLeafKeys)})`,
+        `- Suspect translated leaves: ${report.suspectKeys.length}`,
         `- Fallback-identical leaves: ${report.fallbackKeys.length} (${pct(report.fallbackKeys.length, report.totalBaseLeafKeys)})`,
         `- Missing leaves: ${report.missingKeys.length}`,
         `- Extra leaves: ${report.extraKeys.length}`,
         '',
         '**Sample Fallback Keys**',
         formatSample(report.fallbackKeys),
+        '',
+        '**Suspect Keys**',
+        formatSample(report.suspectKeys),
         '',
         '**Missing Keys**',
         formatSample(report.missingKeys),
@@ -158,28 +188,32 @@ function main() {
   const markdown = [
     '# i18n Coverage Report',
     '',
-    `Generated: ${new Date().toISOString()}`,
     `Base locale: \`${baseLocaleKey}\``,
     '',
     'Metrics:',
-    '- `Translated` = leaf value differs from `en-US`',
+    '- `Translated` = leaf value differs from `en-US` and does not match suspicious placeholder patterns',
+    '- `Suspect` = leaf differs from `en-US` but looks corrupted (e.g. many `?` placeholders)',
     '- `Fallback-identical` = leaf exists but equals `en-US` (usually untranslated fallback)',
     '- `Missing` = leaf key not present in locale object',
     '',
-    '| Locale | Base Keys | Translated | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |',
-    '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
+    '| Locale | Base Keys | Translated | Suspect | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |',
+    '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
     summaryRows,
     '',
     details
   ].join('\n');
 
   ensureDir(reportPath);
-  fs.writeFileSync(reportPath, markdown, 'utf8');
+  const prev = fs.existsSync(reportPath) ? fs.readFileSync(reportPath, 'utf8') : '';
+  const changed = prev !== markdown;
+  if (changed) {
+    fs.writeFileSync(reportPath, markdown, 'utf8');
+  }
 
-  console.log(`Wrote report: ${path.relative(process.cwd(), reportPath)}`);
+  console.log(`${changed ? 'Wrote' : 'Unchanged'} report: ${path.relative(process.cwd(), reportPath)}`);
   for (const report of reports) {
     console.log(
-      `${report.locale}: translated=${report.translatedKeys.length}, fallback=${report.fallbackKeys.length}, missing=${report.missingKeys.length}, extra=${report.extraKeys.length}`
+      `${report.locale}: translated=${report.translatedKeys.length}, suspect=${report.suspectKeys.length}, fallback=${report.fallbackKeys.length}, missing=${report.missingKeys.length}, extra=${report.extraKeys.length}`
     );
   }
 }
