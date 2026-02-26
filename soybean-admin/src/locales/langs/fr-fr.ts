@@ -48,6 +48,77 @@ const local: App.I18n.Schema = {
       no: 'Non'
     }
   },
+  request: {
+    ...enUs.request,
+    logout: 'D?connecter l?utilisateur apr?s ?chec de requ?te',
+    logoutMsg: '?tat utilisateur invalide, veuillez vous reconnecter',
+    logoutWithModal: 'Afficher une fen?tre apr?s ?chec de requ?te puis d?connecter',
+    logoutWithModalMsg: '?tat utilisateur invalide, veuillez vous reconnecter',
+    refreshToken: 'Le jeton a expir?, actualisation du jeton',
+    tokenExpired: 'Le jeton de la requ?te a expir?'
+  },
+  theme: {
+    ...enUs.theme,
+    themeSchema: {
+      ...enUs.theme.themeSchema,
+      title: 'Sch?ma de th?me',
+      light: 'Clair',
+      dark: 'Sombre',
+      auto: 'Suivre le syst?me'
+    },
+    grayscale: 'Niveaux de gris',
+    colourWeakness: 'D?ficience des couleurs',
+    layoutMode: {
+      ...enUs.theme.layoutMode,
+      title: 'Mode de mise en page'
+    },
+    recommendColor: 'Appliquer l?algorithme de couleur recommand?',
+    themeColor: {
+      ...enUs.theme.themeColor,
+      title: 'Couleur du th?me'
+    },
+    scrollMode: {
+      ...enUs.theme.scrollMode,
+      title: 'Mode de d?filement'
+    },
+    page: {
+      ...enUs.theme.page,
+      animate: 'Animation de page',
+      mode: {
+        ...enUs.theme.page.mode,
+        title: 'Mode d?animation'
+      }
+    },
+    fixedHeaderAndTab: 'En-t?te et onglets fixes',
+    header: {
+      ...enUs.theme.header,
+      height: 'Hauteur de l?en-t?te'
+    },
+    tab: {
+      ...enUs.theme.tab,
+      visible: 'Onglets visibles',
+      mode: {
+        ...enUs.theme.tab.mode,
+        title: 'Mode des onglets'
+      }
+    },
+    sider: {
+      ...enUs.theme.sider,
+      width: 'Largeur de la barre lat?rale'
+    },
+    footer: {
+      ...enUs.theme.footer,
+      visible: 'Pied de page visible'
+    },
+    themeDrawerTitle: 'Configuration du th?me',
+    pageFunTitle: 'Fonctions de page',
+    configOperation: {
+      ...enUs.theme.configOperation,
+      copyConfig: 'Copier la configuration',
+      resetConfig: 'R?initialiser la configuration',
+      resetSuccessMsg: 'R?initialisation r?ussie'
+    }
+  },
   route: {
     ...enUs.route,
     home: 'Accueil',

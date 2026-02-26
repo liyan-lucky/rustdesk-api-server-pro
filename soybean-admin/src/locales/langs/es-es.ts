@@ -48,6 +48,77 @@ const local: App.I18n.Schema = {
       no: 'No'
     }
   },
+  request: {
+    ...enUs.request,
+    logout: 'Cerrar sesi?n del usuario tras error de solicitud',
+    logoutMsg: 'Estado de usuario inv?lido, inicia sesi?n de nuevo',
+    logoutWithModal: 'Mostrar di?logo tras error de solicitud y luego cerrar sesi?n',
+    logoutWithModalMsg: 'Estado de usuario inv?lido, inicia sesi?n de nuevo',
+    refreshToken: 'El token expir?, se actualizar?',
+    tokenExpired: 'El token de la solicitud ha expirado'
+  },
+  theme: {
+    ...enUs.theme,
+    themeSchema: {
+      ...enUs.theme.themeSchema,
+      title: 'Esquema de tema',
+      light: 'Claro',
+      dark: 'Oscuro',
+      auto: 'Seguir sistema'
+    },
+    grayscale: 'Escala de grises',
+    colourWeakness: 'Deficiencia de color',
+    layoutMode: {
+      ...enUs.theme.layoutMode,
+      title: 'Modo de dise?o'
+    },
+    recommendColor: 'Aplicar algoritmo de color recomendado',
+    themeColor: {
+      ...enUs.theme.themeColor,
+      title: 'Color del tema'
+    },
+    scrollMode: {
+      ...enUs.theme.scrollMode,
+      title: 'Modo de desplazamiento'
+    },
+    page: {
+      ...enUs.theme.page,
+      animate: 'Animaci?n de p?gina',
+      mode: {
+        ...enUs.theme.page.mode,
+        title: 'Modo de animaci?n'
+      }
+    },
+    fixedHeaderAndTab: 'Fijar cabecera y pesta?as',
+    header: {
+      ...enUs.theme.header,
+      height: 'Altura de cabecera'
+    },
+    tab: {
+      ...enUs.theme.tab,
+      visible: 'Pesta?as visibles',
+      mode: {
+        ...enUs.theme.tab.mode,
+        title: 'Modo de pesta?as'
+      }
+    },
+    sider: {
+      ...enUs.theme.sider,
+      width: 'Ancho de barra lateral'
+    },
+    footer: {
+      ...enUs.theme.footer,
+      visible: 'Pie visible'
+    },
+    themeDrawerTitle: 'Configuraci?n de tema',
+    pageFunTitle: 'Funciones de p?gina',
+    configOperation: {
+      ...enUs.theme.configOperation,
+      copyConfig: 'Copiar configuraci?n',
+      resetConfig: 'Restablecer configuraci?n',
+      resetSuccessMsg: 'Restablecido con ?xito'
+    }
+  },
   route: {
     ...enUs.route,
     home: 'Inicio',

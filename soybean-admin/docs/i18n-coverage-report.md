@@ -1,6 +1,6 @@
 # i18n Coverage Report
 
-Generated: 2026-02-26T20:51:00.772Z
+Generated: 2026-02-26T21:01:28.600Z
 Base locale: `en-US`
 
 Metrics:
@@ -10,19 +10,19 @@ Metrics:
 
 | Locale | Base Keys | Translated | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 320 | 147 | 173 | 0 | 0 | 45.94% | 45.94% |
-| es-ES | 320 | 151 | 169 | 0 | 0 | 47.19% | 47.19% |
-| fr-FR | 320 | 147 | 173 | 0 | 0 | 45.94% | 45.94% |
-| ja-JP | 320 | 153 | 167 | 0 | 0 | 47.81% | 47.81% |
-| ko-KR | 320 | 154 | 166 | 0 | 0 | 48.13% | 48.13% |
+| de-DE | 320 | 176 | 144 | 0 | 0 | 55.00% | 55.00% |
+| es-ES | 320 | 180 | 140 | 0 | 0 | 56.25% | 56.25% |
+| fr-FR | 320 | 176 | 144 | 0 | 0 | 55.00% | 55.00% |
+| ja-JP | 320 | 182 | 138 | 0 | 0 | 56.88% | 56.88% |
+| ko-KR | 320 | 183 | 137 | 0 | 0 | 57.19% | 57.19% |
 | ru-RU | 320 | 161 | 159 | 0 | 0 | 50.31% | 50.31% |
 | zh-CN | 320 | 193 | 127 | 0 | 0 | 60.31% | 60.31% |
 
 ## de-DE
 
 - Base leaf keys: 320
-- Translated leaves: 147 (45.94%)
-- Fallback-identical leaves: 173 (54.06%)
+- Translated leaves: 176 (55.00%)
+- Fallback-identical leaves: 144 (45.00%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -67,7 +67,7 @@ Metrics:
   - `page.home.serverConfig.connectivity.duration`
   - `page.home.serverConfig.connectivity.lastChecked`
   - `page.home.serverConfig.connectivity.notChecked`
-  - ... and 133 more
+  - ... and 104 more
 
 **Missing Keys**
 -
@@ -78,8 +78,8 @@ Metrics:
 ## es-ES
 
 - Base leaf keys: 320
-- Translated leaves: 151 (47.19%)
-- Fallback-identical leaves: 169 (52.81%)
+- Translated leaves: 180 (56.25%)
+- Fallback-identical leaves: 140 (43.75%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -124,7 +124,7 @@ Metrics:
   - `page.home.serverConfig.connectivity.source`
   - `page.home.serverConfig.connectivity.status.error`
   - `page.home.serverConfig.connectivity.status.idle`
-  - ... and 129 more
+  - ... and 100 more
 
 **Missing Keys**
 -
@@ -135,8 +135,8 @@ Metrics:
 ## fr-FR
 
 - Base leaf keys: 320
-- Translated leaves: 147 (45.94%)
-- Fallback-identical leaves: 173 (54.06%)
+- Translated leaves: 176 (55.00%)
+- Fallback-identical leaves: 144 (45.00%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -181,7 +181,7 @@ Metrics:
   - `page.home.serverConfig.connectivity.lastChecked`
   - `page.home.serverConfig.connectivity.notChecked`
   - `page.home.serverConfig.connectivity.source`
-  - ... and 133 more
+  - ... and 104 more
 
 **Missing Keys**
 -
@@ -192,8 +192,8 @@ Metrics:
 ## ja-JP
 
 - Base leaf keys: 320
-- Translated leaves: 153 (47.81%)
-- Fallback-identical leaves: 167 (52.19%)
+- Translated leaves: 182 (56.88%)
+- Fallback-identical leaves: 138 (43.13%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -238,7 +238,7 @@ Metrics:
   - `page.home.serverConfig.connectivity.status.idle`
   - `page.home.serverConfig.connectivity.status.ok`
   - `page.home.serverConfig.connectivity.status.skip`
-  - ... and 127 more
+  - ... and 98 more
 
 **Missing Keys**
 -
@@ -249,8 +249,8 @@ Metrics:
 ## ko-KR
 
 - Base leaf keys: 320
-- Translated leaves: 154 (48.13%)
-- Fallback-identical leaves: 166 (51.88%)
+- Translated leaves: 183 (57.19%)
+- Fallback-identical leaves: 137 (42.81%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -295,7 +295,7 @@ Metrics:
   - `page.home.serverConfig.connectivity.status.ok`
   - `page.home.serverConfig.connectivity.status.skip`
   - `page.home.serverConfig.connectivity.target`
-  - ... and 126 more
+  - ... and 97 more
 
 **Missing Keys**
 -

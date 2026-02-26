@@ -48,6 +48,77 @@ const local: App.I18n.Schema = {
       no: 'Nein'
     }
   },
+  request: {
+    ...enUs.request,
+    logout: 'Benutzer nach fehlgeschlagener Anfrage abmelden',
+    logoutMsg: 'Benutzerstatus ung?ltig, bitte erneut anmelden',
+    logoutWithModal: 'Nach fehlgeschlagener Anfrage Dialog anzeigen und dann abmelden',
+    logoutWithModalMsg: 'Benutzerstatus ung?ltig, bitte erneut anmelden',
+    refreshToken: 'Token abgelaufen, Token wird aktualisiert',
+    tokenExpired: 'Anfrage-Token ist abgelaufen'
+  },
+  theme: {
+    ...enUs.theme,
+    themeSchema: {
+      ...enUs.theme.themeSchema,
+      title: 'Designschema',
+      light: 'Hell',
+      dark: 'Dunkel',
+      auto: 'System folgen'
+    },
+    grayscale: 'Graustufen',
+    colourWeakness: 'Farbschw?che',
+    layoutMode: {
+      ...enUs.theme.layoutMode,
+      title: 'Layoutmodus'
+    },
+    recommendColor: 'Empfohlenen Farbalgorithmus anwenden',
+    themeColor: {
+      ...enUs.theme.themeColor,
+      title: 'Theme-Farbe'
+    },
+    scrollMode: {
+      ...enUs.theme.scrollMode,
+      title: 'Scrollmodus'
+    },
+    page: {
+      ...enUs.theme.page,
+      animate: 'Seitenanimation',
+      mode: {
+        ...enUs.theme.page.mode,
+        title: 'Animationsmodus'
+      }
+    },
+    fixedHeaderAndTab: 'Header und Tabs fixieren',
+    header: {
+      ...enUs.theme.header,
+      height: 'Headerh?he'
+    },
+    tab: {
+      ...enUs.theme.tab,
+      visible: 'Tab sichtbar',
+      mode: {
+        ...enUs.theme.tab.mode,
+        title: 'Tab-Modus'
+      }
+    },
+    sider: {
+      ...enUs.theme.sider,
+      width: 'Seitenleistenbreite'
+    },
+    footer: {
+      ...enUs.theme.footer,
+      visible: 'Footer sichtbar'
+    },
+    themeDrawerTitle: 'Theme-Konfiguration',
+    pageFunTitle: 'Seitenfunktionen',
+    configOperation: {
+      ...enUs.theme.configOperation,
+      copyConfig: 'Konfiguration kopieren',
+      resetConfig: 'Konfiguration zur?cksetzen',
+      resetSuccessMsg: 'Zur?cksetzen erfolgreich'
+    }
+  },
   route: {
     ...enUs.route,
     home: 'Startseite',
