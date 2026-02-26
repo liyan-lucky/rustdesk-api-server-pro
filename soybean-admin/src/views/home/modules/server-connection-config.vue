@@ -35,7 +35,7 @@ const CONNECTIVITY_CACHE_TTL_MS = 10 * 1000;
 let serverConfigCache: Api.Home.ServerConfig | null = null;
 let serverConfigCacheAt = 0;
 let serverConfigInFlight: Promise<Api.Home.ServerConfig | null> | null = null;
-let connectivityCache: Api.Home.ServerConnectivity | null = null;
+let connectivityCache: Partial<Api.Home.ServerConnectivity> | null = null;
 let connectivityCacheAt = 0;
 
 const CONFIG_FIELDS: ConfigFieldMeta[] = [
@@ -72,6 +72,7 @@ const config = ref<Api.Home.ServerConfig>({
 });
 const loading = ref(false);
 const checkingConnectivity = ref(false);
+const checkingConnectivityKey = ref<ConfigKey | ''>('');
 const loadError = ref('');
 const showKey = ref(false);
 const lastLoadedAt = ref(0);
@@ -85,6 +86,22 @@ const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message
   apiServer: { status: 'idle', message: '', target: '' },
   key: { status: 'idle', message: '', target: '' }
 });
+
+function applyConnectivityPatch(patch: Partial<Api.Home.ServerConnectivity>) {
+  const next = { ...connectivity.value };
+  if (patch.idServer) next.idServer = patch.idServer;
+  if (patch.relayServer) next.relayServer = patch.relayServer;
+  if (patch.apiServer) next.apiServer = patch.apiServer;
+  if (patch.key) next.key = patch.key;
+  connectivity.value = next;
+}
+
+function mergeConnectivityCache(patch: Partial<Api.Home.ServerConnectivity>) {
+  connectivityCache = {
+    ...(connectivityCache || {}),
+    ...patch
+  };
+}
 
 function resetConnectivityState() {
   connectivity.value = {
@@ -144,7 +161,7 @@ function readConnectivitySessionCache() {
   try {
     const raw = window.sessionStorage.getItem(CONNECTIVITY_CACHE_KEY);
     if (!raw) return;
-    const parsed = JSON.parse(raw) as { at?: number; data?: Api.Home.ServerConnectivity };
+    const parsed = JSON.parse(raw) as { at?: number; data?: Partial<Api.Home.ServerConnectivity> };
     if (!parsed?.at || !parsed?.data) return;
     if (Date.now() - parsed.at >= CONNECTIVITY_CACHE_TTL_MS) return;
     connectivityCache = parsed.data;
@@ -154,7 +171,7 @@ function readConnectivitySessionCache() {
   }
 }
 
-function writeConnectivitySessionCache(data: Api.Home.ServerConnectivity) {
+function writeConnectivitySessionCache(data: Partial<Api.Home.ServerConnectivity>) {
   if (typeof window === 'undefined') return;
   try {
     window.sessionStorage.setItem(CONNECTIVITY_CACHE_KEY, JSON.stringify({ at: connectivityCacheAt, data }));
@@ -227,7 +244,7 @@ if (serverConfigCache) {
 }
 readConnectivitySessionCache();
 if (connectivityCache) {
-  connectivity.value = connectivityCache;
+  applyConnectivityPatch(connectivityCache);
   lastConnectivityCheckedAt.value = connectivityCacheAt;
   lastConnectivityCheckSource.value = 'cache';
 }
@@ -345,12 +362,30 @@ function buildClientConfigText() {
   return items.value.map(item => `${item.label}: ${item.value || '-'}`).join('\n');
 }
 
+function buildRustDeskTemplateText() {
+  return [
+    '[RustDesk Server Config]',
+    `ID_SERVER=${config.value.idServer || ''}`,
+    `RELAY_SERVER=${config.value.relayServer || ''}`,
+    `API_SERVER=${config.value.apiServer || ''}`,
+    `KEY=${config.value.key || ''}`
+  ].join('\n');
+}
+
 async function copyAllConfig() {
   if (hasMissingRequired.value) {
     window.$message?.warning(t('page.home.serverConfig.missingTip', { fields: missingKeys.value.join(' / ') }));
     return;
   }
   await copyValue(buildClientConfigText(), t('page.home.serverConfig.copyAll'));
+}
+
+async function copyRustDeskTemplate() {
+  if (hasMissingRequired.value) {
+    window.$message?.warning(t('page.home.serverConfig.missingTip', { fields: missingKeys.value.join(' / ') }));
+    return;
+  }
+  await copyValue(buildRustDeskTemplateText(), t('page.home.serverConfig.copyTemplate'));
 }
 
 async function clearCacheAndReload() {
@@ -370,7 +405,7 @@ function clearConnectivityResults() {
 async function checkConnectivity() {
   if (checkingConnectivity.value) return;
   if (connectivityCache && Date.now() - connectivityCacheAt < CONNECTIVITY_CACHE_TTL_MS) {
-    connectivity.value = connectivityCache;
+    applyConnectivityPatch(connectivityCache);
     lastConnectivityCheckedAt.value = connectivityCacheAt;
     lastConnectivityCheckSource.value = 'cache';
     window.$message?.success(t('page.home.serverConfig.connectivity.checkedCached'));
@@ -385,13 +420,8 @@ async function checkConnectivity() {
       return;
     }
 
-    connectivity.value = {
-      idServer: res.data.idServer,
-      relayServer: res.data.relayServer,
-      apiServer: res.data.apiServer,
-      key: res.data.key
-    };
-    connectivityCache = res.data;
+    applyConnectivityPatch(res.data);
+    mergeConnectivityCache(res.data);
     connectivityCacheAt = Date.now();
     lastConnectivityCheckedAt.value = connectivityCacheAt;
     lastConnectivityCheckSource.value = 'remote';
@@ -401,6 +431,33 @@ async function checkConnectivity() {
     window.$message?.error(t('page.home.serverConfig.connectivity.checkFailed'));
   } finally {
     checkingConnectivity.value = false;
+  }
+}
+
+async function checkConnectivityItem(target: ConfigKey) {
+  if (checkingConnectivity.value || checkingConnectivityKey.value) return;
+
+  checkingConnectivityKey.value = target;
+  try {
+    const res = await fetchServerConnectivity(target);
+    if (!res.data?.[target]) {
+      window.$message?.warning(t('page.home.serverConfig.connectivity.checkFailed'));
+      return;
+    }
+
+    applyConnectivityPatch({ [target]: res.data[target] } as Partial<Api.Home.ServerConnectivity>);
+    mergeConnectivityCache({ [target]: res.data[target] } as Partial<Api.Home.ServerConnectivity>);
+    connectivityCacheAt = Date.now();
+    lastConnectivityCheckedAt.value = connectivityCacheAt;
+    lastConnectivityCheckSource.value = 'remote';
+    if (connectivityCache) {
+      writeConnectivitySessionCache(connectivityCache);
+    }
+    window.$message?.success(t('page.home.serverConfig.connectivity.checkedOne', { field: t(`page.home.serverConfig.${target}`) }));
+  } catch {
+    window.$message?.error(t('page.home.serverConfig.connectivity.checkFailed'));
+  } finally {
+    checkingConnectivityKey.value = '';
   }
 }
 
@@ -470,6 +527,9 @@ watch(
         <NButton size="small" :loading="checkingConnectivity" :disabled="loading" @click="checkConnectivity">
           {{ $t('page.home.serverConfig.connectivity.check') }}
         </NButton>
+        <NButton size="small" secondary :disabled="!canCopyAll" @click="copyRustDeskTemplate">
+          {{ $t('page.home.serverConfig.copyTemplate') }}
+        </NButton>
         <NButton size="small" type="primary" secondary :disabled="!canCopyAll" @click="copyAllConfig">
           {{ $t('page.home.serverConfig.copyAll') }}
         </NButton>
@@ -537,6 +597,14 @@ watch(
             @click="showKey = !showKey"
           >
             {{ $t(showKey ? 'page.home.serverConfig.hide' : 'page.home.serverConfig.show') }}
+          </NButton>
+          <NButton
+            size="small"
+            :loading="checkingConnectivityKey === item.key"
+            :disabled="loading || checkingConnectivity"
+            @click="checkConnectivityItem(item.key)"
+          >
+            {{ $t('page.home.serverConfig.connectivity.checkOne') }}
           </NButton>
           <NButton size="small" :disabled="loading" @click="copyValue(item.value, item.label)">
             {{ $t('page.home.serverConfig.copy') }}

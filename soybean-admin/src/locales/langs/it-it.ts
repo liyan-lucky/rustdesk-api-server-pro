@@ -209,6 +209,7 @@ const local: App.I18n.Schema = {
         keyPlaceholder: 'Fornisci tramite variabile d’ambiente RUSTDESK_KEY',
         copy: 'Copia',
         copyAll: 'Copia tutto',
+        copyTemplate: 'Copia template RustDesk',
         refresh: 'Aggiorna',
         clearCacheReload: 'Svuota cache e ricarica',
         source: 'Origine',
@@ -237,7 +238,9 @@ const local: App.I18n.Schema = {
         connectivity: {
           clear: 'Cancella risultati',
           check: 'Verifica connettività',
+          checkOne: 'Verifica',
           checked: 'Verifica connettività completata',
+          checkedOne: 'Connettività di {field} verificata',
           checkedCached: 'Uso del risultato recente della verifica (cache)',
           checkFailed: 'Verifica connettività fallita',
           cleared: 'Risultati della connettività cancellati',

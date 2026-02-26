@@ -212,6 +212,7 @@ const local: App.I18n.Schema = {
         keyPlaceholder: 'Provide via RUSTDESK_KEY environment variable',
         copy: 'Copy',
         copyAll: 'Copy All',
+        copyTemplate: 'Copy RustDesk Template',
         refresh: 'Refresh',
         clearCacheReload: 'Clear Cache & Reload',
         source: 'Source',
@@ -240,7 +241,9 @@ const local: App.I18n.Schema = {
         connectivity: {
           clear: 'Clear Results',
           check: 'Check Connectivity',
+          checkOne: 'Check',
           checked: 'Connectivity check completed',
+          checkedOne: '{field} connectivity checked',
           checkedCached: 'Using recent connectivity check result (cache)',
           checkFailed: 'Connectivity check failed',
           cleared: 'Connectivity results cleared',

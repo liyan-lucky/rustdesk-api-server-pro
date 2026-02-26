@@ -440,6 +440,7 @@ declare namespace App {
             keyPlaceholder: string;
             copy: string;
             copyAll: string;
+            copyTemplate: string;
             refresh: string;
             clearCacheReload: string;
             source: string;
@@ -468,7 +469,9 @@ declare namespace App {
             connectivity: {
               clear: string;
               check: string;
+              checkOne: string;
               checked: string;
+              checkedOne: string;
               checkedCached: string;
               checkFailed: string;
               cleared: string;

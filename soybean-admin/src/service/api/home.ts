@@ -16,6 +16,9 @@ export function fetchServerConfig() {
   return request<Api.Home.ServerConfig>({ url: '/dashboard/server/config' });
 }
 
-export function fetchServerConnectivity() {
-  return request<Api.Home.ServerConnectivity>({ url: '/dashboard/server/connectivity' });
+export function fetchServerConnectivity(target?: 'idServer' | 'relayServer' | 'apiServer' | 'key') {
+  return request<Partial<Api.Home.ServerConnectivity>>({
+    url: '/dashboard/server/connectivity',
+    params: target ? { target } : undefined
+  });
 }

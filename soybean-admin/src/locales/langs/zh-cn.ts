@@ -122,6 +122,7 @@ const local: App.I18n.Schema = {
         keyPlaceholder: '可通过环境变量 RUSTDESK_KEY 提供',
         copy: '复制',
         copyAll: '复制全部',
+        copyTemplate: '复制RustDesk模板',
         refresh: '刷新配置',
         clearCacheReload: '清缓存并重载',
         source: '来源',
@@ -150,7 +151,9 @@ const local: App.I18n.Schema = {
         connectivity: {
           clear: '清除检测结果',
           check: '检测连通性',
+          checkOne: '检测',
           checked: '连通性检测完成',
+          checkedOne: '{field} 连通性检测完成',
           checkedCached: '使用最近一次检测结果（缓存）',
           checkFailed: '连通性检测失败',
           cleared: '已清除连通性检测结果',

@@ -185,6 +185,22 @@ func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
 	relayServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
 	apiServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_API_SERVER"), fmt.Sprintf("%s://%s", scheme, hostWithPort))
 	key, _ := resolveConfigValue(os.Getenv("RUSTDESK_KEY"), "")
+	targetKey := strings.TrimSpace(c.Ctx.URLParamDefault("target", ""))
+
+	if targetKey != "" {
+		switch targetKey {
+		case "idServer":
+			return c.Success(iris.Map{"idServer": probeTCPServer(idServer, "21116")}, "ok")
+		case "relayServer":
+			return c.Success(iris.Map{"relayServer": probeTCPServer(relayServer, "21117")}, "ok")
+		case "apiServer":
+			return c.Success(iris.Map{"apiServer": probeHTTPServer(apiServer)}, "ok")
+		case "key":
+			return c.Success(iris.Map{"key": probeKeyConfig(key)}, "ok")
+		default:
+			return c.Error(nil, "invalid connectivity target")
+		}
+	}
 
 	type probeResult struct {
 		idServer    iris.Map
