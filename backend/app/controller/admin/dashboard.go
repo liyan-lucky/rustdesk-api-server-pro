@@ -217,23 +217,24 @@ func resolveConfigValue(envValue, fallbackValue string) (string, string) {
 }
 
 func probeTCPServer(value, defaultPort string) iris.Map {
+	start := time.Now()
 	value = strings.TrimSpace(value)
 	if value == "" {
-		return iris.Map{"status": "skip", "message": "empty", "target": ""}
+		return iris.Map{"status": "skip", "message": "empty", "target": "", "durationMs": 0}
 	}
 
 	target, err := tcpDialTarget(value, defaultPort)
 	if err != nil {
-		return iris.Map{"status": "error", "message": err.Error(), "target": value}
+		return iris.Map{"status": "error", "message": err.Error(), "target": value, "durationMs": time.Since(start).Milliseconds()}
 	}
 
 	conn, err := net.DialTimeout("tcp", target, 2*time.Second)
 	if err != nil {
-		return iris.Map{"status": "error", "message": err.Error(), "target": target}
+		return iris.Map{"status": "error", "message": err.Error(), "target": target, "durationMs": time.Since(start).Milliseconds()}
 	}
 	_ = conn.Close()
 
-	return iris.Map{"status": "ok", "message": "connected", "target": target}
+	return iris.Map{"status": "ok", "message": "connected", "target": target, "durationMs": time.Since(start).Milliseconds()}
 }
 
 func tcpDialTarget(value, defaultPort string) (string, error) {
@@ -266,9 +267,10 @@ func tcpDialTarget(value, defaultPort string) (string, error) {
 }
 
 func probeHTTPServer(value string) iris.Map {
+	start := time.Now()
 	target := strings.TrimSpace(value)
 	if target == "" {
-		return iris.Map{"status": "skip", "message": "empty", "target": ""}
+		return iris.Map{"status": "skip", "message": "empty", "target": "", "durationMs": 0}
 	}
 
 	if !strings.Contains(target, "://") {
@@ -279,7 +281,7 @@ func probeHTTPServer(value string) iris.Map {
 		if err == nil {
 			err = fmt.Errorf("invalid url")
 		}
-		return iris.Map{"status": "error", "message": err.Error(), "target": target}
+		return iris.Map{"status": "error", "message": err.Error(), "target": target, "durationMs": time.Since(start).Milliseconds()}
 	}
 
 	client := &http.Client{Timeout: 3 * time.Second}
@@ -289,7 +291,7 @@ func probeHTTPServer(value string) iris.Map {
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
 	resp, err := client.Do(req)
 	if err != nil {
-		return iris.Map{"status": "error", "message": err.Error(), "target": target}
+		return iris.Map{"status": "error", "message": err.Error(), "target": target, "durationMs": time.Since(start).Milliseconds()}
 	}
 	_ = resp.Body.Close()
 
@@ -297,12 +299,13 @@ func probeHTTPServer(value string) iris.Map {
 		"status":  "ok",
 		"message": fmt.Sprintf("http %d", resp.StatusCode),
 		"target":  target,
+		"durationMs": time.Since(start).Milliseconds(),
 	}
 }
 
 func probeKeyConfig(value string) iris.Map {
 	if strings.TrimSpace(value) == "" {
-		return iris.Map{"status": "error", "message": "key is empty", "target": ""}
+		return iris.Map{"status": "error", "message": "key is empty", "target": "", "durationMs": 0}
 	}
-	return iris.Map{"status": "ok", "message": "configured", "target": ""}
+	return iris.Map{"status": "ok", "message": "configured", "target": "", "durationMs": 0}
 }

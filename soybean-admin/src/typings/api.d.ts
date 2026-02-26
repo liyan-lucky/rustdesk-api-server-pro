@@ -83,6 +83,7 @@ declare namespace Api {
       status: 'ok' | 'error' | 'skip';
       message: string;
       target: string;
+      durationMs?: number;
     }
 
     type ServerConnectivity = Record<'idServer' | 'relayServer' | 'apiServer' | 'key', ServerConnectivityItem>;

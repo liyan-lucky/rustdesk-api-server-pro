@@ -471,6 +471,7 @@ declare namespace App {
               checkedCached: string;
               checkFailed: string;
               target: string;
+              duration: string;
               notChecked: string;
               status: {
                 idle: string;

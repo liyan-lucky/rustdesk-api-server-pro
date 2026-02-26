@@ -240,6 +240,7 @@ const local: App.I18n.Schema = {
           checkedCached: 'Uso del risultato recente della verifica (cache)',
           checkFailed: 'Verifica connettività fallita',
           target: 'Destinazione',
+          duration: 'Durata',
           notChecked: 'Non ancora verificato',
           status: {
             idle: 'Non verificato',

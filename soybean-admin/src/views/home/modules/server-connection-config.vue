@@ -78,7 +78,7 @@ const lastLoadSource = ref<ConfigLoadSource>('');
 const lastConnectivityCheckedAt = ref(0);
 const lastConnectivityCheckSource = ref<ConnectivityCheckSource | ''>('');
 let latestLoadRequestId = 0;
-const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message: string; target: string }>>({
+const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message: string; target: string; durationMs?: number }>>({
   idServer: { status: 'idle', message: '', target: '' },
   relayServer: { status: 'idle', message: '', target: '' },
   apiServer: { status: 'idle', message: '', target: '' },
@@ -227,6 +227,9 @@ function getConnectivityHint(item: ConfigItem) {
   const parts = [state.message];
   if (state.target) {
     parts.push(`${t('page.home.serverConfig.connectivity.target')}: ${state.target}`);
+  }
+  if (typeof state.durationMs === 'number') {
+    parts.push(`${t('page.home.serverConfig.connectivity.duration')}: ${state.durationMs}ms`);
   }
   return parts.join(' | ');
 }
