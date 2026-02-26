@@ -152,9 +152,15 @@ const local: App.I18n.Schema = {
           checked: '连通性检测完成',
           checkedCached: '使用最近一次检测结果（缓存）',
           checkFailed: '连通性检测失败',
+          source: '检测来源',
+          lastChecked: '最后检测',
           target: '目标',
           duration: '耗时',
           notChecked: '尚未检测',
+          checkSourceType: {
+            remote: '远端检测',
+            cache: '缓存结果'
+          },
           status: {
             idle: '未检测',
             ok: '可连接',

@@ -239,9 +239,15 @@ const local: App.I18n.Schema = {
           checked: 'Verifica connettività completata',
           checkedCached: 'Uso del risultato recente della verifica (cache)',
           checkFailed: 'Verifica connettività fallita',
+          source: 'Origine verifica',
+          lastChecked: 'Ultima verifica',
           target: 'Destinazione',
           duration: 'Durata',
           notChecked: 'Non ancora verificato',
+          checkSourceType: {
+            remote: 'Remoto',
+            cache: 'Cache'
+          },
           status: {
             idle: 'Non verificato',
             ok: 'Raggiungibile',

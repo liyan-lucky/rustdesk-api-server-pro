@@ -470,9 +470,15 @@ declare namespace App {
               checked: string;
               checkedCached: string;
               checkFailed: string;
+              source: string;
+              lastChecked: string;
               target: string;
               duration: string;
               notChecked: string;
+              checkSourceType: {
+                remote: string;
+                cache: string;
+              };
               status: {
                 idle: string;
                 ok: string;

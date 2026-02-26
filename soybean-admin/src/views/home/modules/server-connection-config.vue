@@ -214,6 +214,20 @@ const lastUpdatedText = computed(() => {
   }
 });
 
+const connectivityCheckSourceLabel = computed(() => {
+  if (!lastConnectivityCheckSource.value) return '';
+  return t(`page.home.serverConfig.connectivity.checkSourceType.${lastConnectivityCheckSource.value}`);
+});
+
+const lastConnectivityCheckedText = computed(() => {
+  if (!lastConnectivityCheckedAt.value) return '';
+  try {
+    return new Date(lastConnectivityCheckedAt.value).toLocaleString();
+  } catch {
+    return '';
+  }
+});
+
 function getDisplayValue(item: ConfigItem) {
   if (item.key === 'key' && !showKey.value) {
     return maskedKeyValue.value;
@@ -432,6 +446,12 @@ watch(
       </span>
     </div>
     <div v-if="connectivityStats.checked" class="config-meta mb-12px">
+      <span v-if="connectivityCheckSourceLabel">
+        {{ $t('page.home.serverConfig.connectivity.source') }}: {{ connectivityCheckSourceLabel }}
+      </span>
+      <span v-if="lastConnectivityCheckedText">
+        {{ $t('page.home.serverConfig.connectivity.lastChecked') }}: {{ lastConnectivityCheckedText }}
+      </span>
       <span class="is-ok">{{ $t('page.home.serverConfig.connectivity.status.ok') }}: {{ connectivityStats.ok }}</span>
       <span class="is-error">{{ $t('page.home.serverConfig.connectivity.status.error') }}: {{ connectivityStats.error }}</span>
       <span class="is-skip">{{ $t('page.home.serverConfig.connectivity.status.skip') }}: {{ connectivityStats.skip }}</span>
