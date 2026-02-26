@@ -29,3 +29,5 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   user_list: () => import("@/views/user/list/index.vue"),
   user_sessions: () => import("@/views/user/sessions/index.vue"),
 };
+
+export {};
