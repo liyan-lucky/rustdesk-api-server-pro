@@ -1,6 +1,6 @@
 # i18n Coverage Report
 
-Generated: 2026-02-26T21:20:58.104Z
+Generated: 2026-02-26T21:26:47.254Z
 Base locale: `en-US`
 
 Metrics:
@@ -15,7 +15,7 @@ Metrics:
 | fr-FR | 320 | 245 | 75 | 0 | 0 | 76.56% | 76.56% |
 | ja-JP | 320 | 252 | 68 | 0 | 0 | 78.75% | 78.75% |
 | ko-KR | 320 | 253 | 67 | 0 | 0 | 79.06% | 79.06% |
-| ru-RU | 320 | 275 | 45 | 0 | 0 | 85.94% | 85.94% |
+| ru-RU | 320 | 308 | 12 | 0 | 0 | 96.25% | 96.25% |
 | zh-CN | 320 | 266 | 54 | 0 | 0 | 83.13% | 83.13% |
 
 ## de-DE
@@ -306,53 +306,24 @@ Metrics:
 ## ru-RU
 
 - Base leaf keys: 320
-- Translated leaves: 275 (85.94%)
-- Fallback-identical leaves: 45 (14.06%)
+- Translated leaves: 308 (96.25%)
+- Fallback-identical leaves: 12 (3.75%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `dataMap.audit.closed_at`
-  - `dataMap.audit.conn_id`
   - `dataMap.audit.ip`
-  - `dataMap.audit.path`
   - `dataMap.audit.peer_id`
   - `dataMap.audit.rustdesk_id`
-  - `dataMap.audit.session_id`
   - `dataMap.audit.uuid`
   - `dataMap.device.rustdesk_id`
-  - `dataMap.mailLog.contents`
   - `dataMap.mailLog.uuid`
-  - `dataMap.session.created_at`
-  - `dataMap.session.expired`
   - `dataMap.user.email`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `dataMap.user.password`
-  - `dataMap.user.tfa_code`
-  - `dataMap.user.tfa_secret`
-  - `page.home.serverConfig.copy`
   - `page.home.serverConfig.key`
-  - `page.login.common.back`
-  - `page.login.common.codeLogin`
-  - `page.login.common.codePlaceholder`
-  - `page.login.common.confirm`
-  - `page.login.common.confirmPasswordPlaceholder`
-  - `page.login.common.loginOrRegister`
-  - `page.login.common.loginSuccess`
-  - `page.login.common.passwordPlaceholder`
-  - `page.login.common.phonePlaceholder`
-  - `page.login.common.userNamePlaceholder`
-  - `page.login.common.validateSuccess`
-  - `page.login.common.welcomeBack`
-  - `page.login.pwdLogin.rememberMe`
-  - `page.login.pwdLogin.title`
-  - `page.user.list.emailFormatError`
-  - `page.user.list.inputNickname`
-  - `page.user.list.inputPassword`
-  - `page.user.list.inputUsername`
-  - `page.user.list.require2FACode`
-  - `page.user.list.require2FASecret`
-  - ... and 5 more
+  - `route.iframe-page`
+  - `system.title`
+  - `theme.tab.mode.chrome`
 
 **Missing Keys**
 -
