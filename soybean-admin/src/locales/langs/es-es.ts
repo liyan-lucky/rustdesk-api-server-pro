@@ -220,16 +220,73 @@ const local: App.I18n.Schema = {
       changeLogs: 'Registro de cambios',
       serverConfig: {
         ...enUs.page.home.serverConfig,
-        title: 'Configuración de conexión del cliente',
-        tip: 'Copia estos valores en el cliente RustDesk. Si KEY está vacío, configura `RUSTDESK_KEY`.',
-        refresh: 'Actualizar',
+        title: 'Configuraci?n de conexi?n del cliente',
+        tip: 'Copia los siguientes valores en el cliente RustDesk. Si KEY est? vac?o, configura `RUSTDESK_KEY` como variable de entorno del contenedor.',
+        idServer: 'Servidor ID',
+        relayServer: 'Servidor relay',
+        apiServer: 'Servidor API',
+        key: 'KEY',
+        idServerPlaceholder: 'p. ej. your.domain.com',
+        relayServerPlaceholder: 'p. ej. your.domain.com',
+        apiServerPlaceholder: 'p. ej. https://your.domain.com',
+        keyPlaceholder: 'Proporcionar mediante la variable RUSTDESK_KEY',
+        copy: 'Copiar',
         copyAll: 'Copiar todo',
         copyTemplate: 'Copiar plantilla RustDesk',
+        refresh: 'Actualizar configuraci?n',
+        clearCacheReload: 'Limpiar cach? y recargar',
+        source: 'Origen',
+        lastUpdated: '?ltima actualizaci?n',
+        show: 'Mostrar',
+        hide: 'Ocultar',
+        missingTip: 'Los siguientes campos est?n vac?os. Config?ralos primero en las variables de entorno del contenedor: {fields}',
+        copyEmpty: '{label} est? vac?o y no se puede copiar',
+        copySuccess: '{label} copiado',
+        copyFailed: 'Error al copiar {label}',
+        fetchFailed: 'No se pudo cargar la configuraci?n del servidor',
+        cacheCleared: 'Cach? limpiada, recargando configuraci?n del servidor',
+        sourceType: {
+          ...enUs.page.home.serverConfig.sourceType,
+          remote: 'Remoto',
+          'memory-cache': 'Cach? en memoria',
+          'session-cache': 'Cach? de sesi?n',
+          env: 'Entorno',
+          inferred: 'Inferido',
+          empty: 'Vac?o'
+        },
+        sourceHint: {
+          ...enUs.page.home.serverConfig.sourceHint,
+          env: 'Este valor proviene de una variable de entorno del contenedor.',
+          inferred: 'Este valor se infiere autom?ticamente de la direcci?n de acceso actual.',
+          empty: 'A?n no hay valor configurado ni inferido.'
+        },
         connectivity: {
           ...enUs.page.home.serverConfig.connectivity,
+          clear: 'Limpiar resultados',
           check: 'Comprobar conectividad',
           checkOne: 'Comprobar',
-          clear: 'Limpiar resultados'
+          checked: 'Comprobaci?n de conectividad completada',
+          checkedOne: 'Conectividad de {field} comprobada',
+          checkedCached: 'Usando resultado reciente de conectividad (cach?)',
+          checkFailed: 'Error en la comprobaci?n de conectividad',
+          cleared: 'Resultados de conectividad limpiados',
+          source: 'Origen de comprobaci?n',
+          lastChecked: '?ltima comprobaci?n',
+          target: 'Destino',
+          duration: 'Duraci?n',
+          notChecked: 'A?n no comprobado',
+          checkSourceType: {
+            ...enUs.page.home.serverConfig.connectivity.checkSourceType,
+            remote: 'Remoto',
+            cache: 'Cach?'
+          },
+          status: {
+            ...enUs.page.home.serverConfig.connectivity.status,
+            idle: 'Sin comprobar',
+            ok: 'Accesible',
+            error: 'Fallido',
+            skip: 'Omitido'
+          }
         }
       }
     },

@@ -1,6 +1,6 @@
 # i18n Coverage Report
 
-Generated: 2026-02-26T21:34:14.765Z
+Generated: 2026-02-26T21:45:18.292Z
 Base locale: `en-US`
 
 Metrics:
@@ -10,19 +10,19 @@ Metrics:
 
 | Locale | Base Keys | Translated | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 320 | 243 | 77 | 0 | 0 | 75.94% | 75.94% |
-| es-ES | 320 | 248 | 72 | 0 | 0 | 77.50% | 77.50% |
-| fr-FR | 320 | 245 | 75 | 0 | 0 | 76.56% | 76.56% |
-| ja-JP | 320 | 252 | 68 | 0 | 0 | 78.75% | 78.75% |
-| ko-KR | 320 | 253 | 67 | 0 | 0 | 79.06% | 79.06% |
+| de-DE | 320 | 284 | 36 | 0 | 0 | 88.75% | 88.75% |
+| es-ES | 320 | 292 | 28 | 0 | 0 | 91.25% | 91.25% |
+| fr-FR | 320 | 286 | 34 | 0 | 0 | 89.38% | 89.38% |
+| ja-JP | 320 | 296 | 24 | 0 | 0 | 92.50% | 92.50% |
+| ko-KR | 320 | 297 | 23 | 0 | 0 | 92.81% | 92.81% |
 | ru-RU | 320 | 308 | 12 | 0 | 0 | 96.25% | 96.25% |
 | zh-CN | 320 | 314 | 6 | 0 | 0 | 98.13% | 98.13% |
 
 ## de-DE
 
 - Base leaf keys: 320
-- Translated leaves: 243 (75.94%)
-- Fallback-identical leaves: 77 (24.06%)
+- Translated leaves: 284 (88.75%)
+- Fallback-identical leaves: 36 (11.25%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -40,34 +40,29 @@ Metrics:
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.status`
   - `dataMap.user.statusLabel.normal`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - `page.home.serverConfig.clearCacheReload`
-  - `page.home.serverConfig.connectivity.checkFailed`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
   - `page.home.serverConfig.connectivity.checkSourceType.remote`
-  - `page.home.serverConfig.connectivity.checked`
-  - `page.home.serverConfig.connectivity.checkedCached`
-  - `page.home.serverConfig.connectivity.checkedOne`
-  - `page.home.serverConfig.connectivity.cleared`
-  - `page.home.serverConfig.connectivity.duration`
-  - `page.home.serverConfig.connectivity.lastChecked`
-  - `page.home.serverConfig.connectivity.notChecked`
-  - `page.home.serverConfig.connectivity.source`
-  - `page.home.serverConfig.connectivity.status.error`
-  - `page.home.serverConfig.connectivity.status.idle`
-  - `page.home.serverConfig.connectivity.status.ok`
-  - `page.home.serverConfig.connectivity.status.skip`
-  - `page.home.serverConfig.connectivity.target`
-  - `page.home.serverConfig.copy`
-  - `page.home.serverConfig.copyEmpty`
-  - `page.home.serverConfig.copyFailed`
-  - `page.home.serverConfig.copySuccess`
-  - `page.home.serverConfig.fetchFailed`
-  - `page.home.serverConfig.hide`
-  - `page.home.serverConfig.idServer`
-  - ... and 37 more
+  - `page.home.serverConfig.key`
+  - `page.home.serverConfig.sourceType.remote`
+  - `page.user.list.emailFormatError`
+  - `page.user.list.inputNickname`
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - `page.user.list.selectUserStatus`
+  - `page.user.list.tfa_secret_bind`
+  - `route.audit`
+  - `route.iframe-page`
+  - `system.title`
+  - `system.updateCancel`
+  - `system.updateConfirm`
+  - `system.updateContent`
+  - `system.updateTitle`
+  - `theme.scrollMode.wrapper`
+  - `theme.tab.mode.button`
+  - `theme.tab.mode.chrome`
+  - `theme.themeColor.info`
 
 **Missing Keys**
 -
@@ -78,8 +73,8 @@ Metrics:
 ## es-ES
 
 - Base leaf keys: 320
-- Translated leaves: 248 (77.50%)
-- Fallback-identical leaves: 72 (22.50%)
+- Translated leaves: 292 (91.25%)
+- Fallback-identical leaves: 28 (8.75%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -94,37 +89,24 @@ Metrics:
   - `dataMap.mailLog.uuid`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.statusLabel.normal`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - `page.home.serverConfig.clearCacheReload`
-  - `page.home.serverConfig.connectivity.checkFailed`
-  - `page.home.serverConfig.connectivity.checkSourceType.cache`
-  - `page.home.serverConfig.connectivity.checkSourceType.remote`
-  - `page.home.serverConfig.connectivity.checked`
-  - `page.home.serverConfig.connectivity.checkedCached`
-  - `page.home.serverConfig.connectivity.checkedOne`
-  - `page.home.serverConfig.connectivity.cleared`
-  - `page.home.serverConfig.connectivity.duration`
-  - `page.home.serverConfig.connectivity.lastChecked`
-  - `page.home.serverConfig.connectivity.notChecked`
-  - `page.home.serverConfig.connectivity.source`
-  - `page.home.serverConfig.connectivity.status.error`
-  - `page.home.serverConfig.connectivity.status.idle`
-  - `page.home.serverConfig.connectivity.status.ok`
-  - `page.home.serverConfig.connectivity.status.skip`
-  - `page.home.serverConfig.connectivity.target`
-  - `page.home.serverConfig.copy`
-  - `page.home.serverConfig.copyEmpty`
-  - `page.home.serverConfig.copyFailed`
-  - `page.home.serverConfig.copySuccess`
-  - `page.home.serverConfig.fetchFailed`
-  - `page.home.serverConfig.hide`
-  - `page.home.serverConfig.idServer`
-  - `page.home.serverConfig.idServerPlaceholder`
   - `page.home.serverConfig.key`
-  - `page.home.serverConfig.keyPlaceholder`
-  - ... and 32 more
+  - `page.user.list.emailFormatError`
+  - `page.user.list.inputNickname`
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - `page.user.list.selectUserStatus`
+  - `page.user.list.tfa_secret_bind`
+  - `route.iframe-page`
+  - `system.title`
+  - `system.updateCancel`
+  - `system.updateConfirm`
+  - `system.updateContent`
+  - `system.updateTitle`
+  - `theme.tab.mode.chrome`
+  - `theme.themeColor.error`
+  - `theme.themeColor.info`
 
 **Missing Keys**
 -
@@ -135,8 +117,8 @@ Metrics:
 ## fr-FR
 
 - Base leaf keys: 320
-- Translated leaves: 245 (76.56%)
-- Fallback-identical leaves: 75 (23.44%)
+- Translated leaves: 286 (89.38%)
+- Fallback-identical leaves: 34 (10.63%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -153,35 +135,28 @@ Metrics:
   - `dataMap.mailTemplate.type`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.statusLabel.normal`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - `page.home.serverConfig.clearCacheReload`
-  - `page.home.serverConfig.connectivity.checkFailed`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
-  - `page.home.serverConfig.connectivity.checkSourceType.remote`
-  - `page.home.serverConfig.connectivity.checked`
-  - `page.home.serverConfig.connectivity.checkedCached`
-  - `page.home.serverConfig.connectivity.checkedOne`
-  - `page.home.serverConfig.connectivity.cleared`
-  - `page.home.serverConfig.connectivity.duration`
-  - `page.home.serverConfig.connectivity.lastChecked`
-  - `page.home.serverConfig.connectivity.notChecked`
-  - `page.home.serverConfig.connectivity.source`
-  - `page.home.serverConfig.connectivity.status.error`
-  - `page.home.serverConfig.connectivity.status.idle`
-  - `page.home.serverConfig.connectivity.status.ok`
-  - `page.home.serverConfig.connectivity.status.skip`
-  - `page.home.serverConfig.connectivity.target`
-  - `page.home.serverConfig.copy`
-  - `page.home.serverConfig.copyEmpty`
-  - `page.home.serverConfig.copyFailed`
-  - `page.home.serverConfig.copySuccess`
-  - `page.home.serverConfig.fetchFailed`
-  - `page.home.serverConfig.hide`
-  - `page.home.serverConfig.idServer`
-  - `page.home.serverConfig.idServerPlaceholder`
-  - ... and 35 more
+  - `page.home.serverConfig.key`
+  - `page.home.serverConfig.source`
+  - `page.home.serverConfig.sourceType.env`
+  - `page.user.list.emailFormatError`
+  - `page.user.list.inputNickname`
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - `page.user.list.selectUserStatus`
+  - `page.user.list.tfa_secret_bind`
+  - `route.audit`
+  - `route.iframe-page`
+  - `route.user_sessions`
+  - `system.title`
+  - `system.updateCancel`
+  - `system.updateConfirm`
+  - `system.updateContent`
+  - `system.updateTitle`
+  - `theme.tab.mode.chrome`
+  - `theme.themeColor.info`
 
 **Missing Keys**
 -
@@ -192,8 +167,8 @@ Metrics:
 ## ja-JP
 
 - Base leaf keys: 320
-- Translated leaves: 252 (78.75%)
-- Fallback-identical leaves: 68 (21.25%)
+- Translated leaves: 296 (92.50%)
+- Fallback-identical leaves: 24 (7.50%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -206,39 +181,22 @@ Metrics:
   - `dataMap.device.rustdesk_id`
   - `dataMap.mailLog.uuid`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - `page.home.serverConfig.clearCacheReload`
-  - `page.home.serverConfig.connectivity.checkFailed`
-  - `page.home.serverConfig.connectivity.checkSourceType.cache`
-  - `page.home.serverConfig.connectivity.checkSourceType.remote`
-  - `page.home.serverConfig.connectivity.checked`
-  - `page.home.serverConfig.connectivity.checkedCached`
-  - `page.home.serverConfig.connectivity.checkedOne`
-  - `page.home.serverConfig.connectivity.cleared`
-  - `page.home.serverConfig.connectivity.duration`
-  - `page.home.serverConfig.connectivity.lastChecked`
-  - `page.home.serverConfig.connectivity.notChecked`
-  - `page.home.serverConfig.connectivity.source`
-  - `page.home.serverConfig.connectivity.status.error`
-  - `page.home.serverConfig.connectivity.status.idle`
-  - `page.home.serverConfig.connectivity.status.ok`
-  - `page.home.serverConfig.connectivity.status.skip`
-  - `page.home.serverConfig.connectivity.target`
-  - `page.home.serverConfig.copy`
-  - `page.home.serverConfig.copyEmpty`
-  - `page.home.serverConfig.copyFailed`
-  - `page.home.serverConfig.copySuccess`
-  - `page.home.serverConfig.fetchFailed`
-  - `page.home.serverConfig.hide`
-  - `page.home.serverConfig.idServer`
-  - `page.home.serverConfig.idServerPlaceholder`
   - `page.home.serverConfig.key`
-  - `page.home.serverConfig.keyPlaceholder`
-  - `page.home.serverConfig.lastUpdated`
-  - `page.home.serverConfig.missingTip`
-  - ... and 28 more
+  - `page.user.list.emailFormatError`
+  - `page.user.list.inputNickname`
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - `page.user.list.selectUserStatus`
+  - `page.user.list.tfa_secret_bind`
+  - `route.iframe-page`
+  - `system.title`
+  - `system.updateCancel`
+  - `system.updateConfirm`
+  - `system.updateContent`
+  - `system.updateTitle`
+  - `theme.tab.mode.chrome`
 
 **Missing Keys**
 -
@@ -249,8 +207,8 @@ Metrics:
 ## ko-KR
 
 - Base leaf keys: 320
-- Translated leaves: 253 (79.06%)
-- Fallback-identical leaves: 67 (20.94%)
+- Translated leaves: 297 (92.81%)
+- Fallback-identical leaves: 23 (7.19%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -262,40 +220,22 @@ Metrics:
   - `dataMap.device.rustdesk_id`
   - `dataMap.mailLog.uuid`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
-  - `page.home.serverConfig.apiServer`
-  - `page.home.serverConfig.apiServerPlaceholder`
-  - `page.home.serverConfig.cacheCleared`
-  - `page.home.serverConfig.clearCacheReload`
-  - `page.home.serverConfig.connectivity.checkFailed`
-  - `page.home.serverConfig.connectivity.checkSourceType.cache`
-  - `page.home.serverConfig.connectivity.checkSourceType.remote`
-  - `page.home.serverConfig.connectivity.checked`
-  - `page.home.serverConfig.connectivity.checkedCached`
-  - `page.home.serverConfig.connectivity.checkedOne`
-  - `page.home.serverConfig.connectivity.cleared`
-  - `page.home.serverConfig.connectivity.duration`
-  - `page.home.serverConfig.connectivity.lastChecked`
-  - `page.home.serverConfig.connectivity.notChecked`
-  - `page.home.serverConfig.connectivity.source`
-  - `page.home.serverConfig.connectivity.status.error`
-  - `page.home.serverConfig.connectivity.status.idle`
-  - `page.home.serverConfig.connectivity.status.ok`
-  - `page.home.serverConfig.connectivity.status.skip`
-  - `page.home.serverConfig.connectivity.target`
-  - `page.home.serverConfig.copy`
-  - `page.home.serverConfig.copyEmpty`
-  - `page.home.serverConfig.copyFailed`
-  - `page.home.serverConfig.copySuccess`
-  - `page.home.serverConfig.fetchFailed`
-  - `page.home.serverConfig.hide`
-  - `page.home.serverConfig.idServer`
-  - `page.home.serverConfig.idServerPlaceholder`
   - `page.home.serverConfig.key`
-  - `page.home.serverConfig.keyPlaceholder`
-  - `page.home.serverConfig.lastUpdated`
-  - `page.home.serverConfig.missingTip`
-  - `page.home.serverConfig.relayServer`
-  - ... and 27 more
+  - `page.user.list.emailFormatError`
+  - `page.user.list.inputNickname`
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - `page.user.list.selectUserStatus`
+  - `page.user.list.tfa_secret_bind`
+  - `route.iframe-page`
+  - `system.title`
+  - `system.updateCancel`
+  - `system.updateConfirm`
+  - `system.updateContent`
+  - `system.updateTitle`
+  - `theme.tab.mode.chrome`
 
 **Missing Keys**
 -

@@ -221,15 +221,72 @@ const local: App.I18n.Schema = {
       serverConfig: {
         ...enUs.page.home.serverConfig,
         title: 'Client-Verbindungskonfiguration',
-        tip: 'Kopieren Sie die folgenden Werte in den RustDesk-Client. Wenn KEY leer ist, setzen Sie `RUSTDESK_KEY`.',
-        refresh: 'Aktualisieren',
+        tip: 'Kopieren Sie die folgenden Werte in den RustDesk-Client. Wenn KEY leer ist, setzen Sie `RUSTDESK_KEY` als Container-Umgebungsvariable.',
+        idServer: 'ID-Server',
+        relayServer: 'Relay-Server',
+        apiServer: 'API-Server',
+        key: 'KEY',
+        idServerPlaceholder: 'z. B. your.domain.com',
+        relayServerPlaceholder: 'z. B. your.domain.com',
+        apiServerPlaceholder: 'z. B. https://your.domain.com',
+        keyPlaceholder: '?ber Umgebungsvariable RUSTDESK_KEY bereitstellen',
+        copy: 'Kopieren',
         copyAll: 'Alles kopieren',
         copyTemplate: 'RustDesk-Vorlage kopieren',
+        refresh: 'Konfiguration aktualisieren',
+        clearCacheReload: 'Cache leeren & neu laden',
+        source: 'Quelle',
+        lastUpdated: 'Zuletzt aktualisiert',
+        show: 'Anzeigen',
+        hide: 'Verbergen',
+        missingTip: 'Die folgenden Felder sind leer. Bitte zuerst in den Container-Umgebungsvariablen konfigurieren: {fields}',
+        copyEmpty: '{label} ist leer und kann nicht kopiert werden',
+        copySuccess: '{label} kopiert',
+        copyFailed: '{label} konnte nicht kopiert werden',
+        fetchFailed: 'Serverkonfiguration konnte nicht geladen werden',
+        cacheCleared: 'Cache geleert, Serverkonfiguration wird neu geladen',
+        sourceType: {
+          ...enUs.page.home.serverConfig.sourceType,
+          remote: 'Remote',
+          'memory-cache': 'Speicher-Cache',
+          'session-cache': 'Sitzungs-Cache',
+          env: 'Umgebung',
+          inferred: 'Abgeleitet',
+          empty: 'Leer'
+        },
+        sourceHint: {
+          ...enUs.page.home.serverConfig.sourceHint,
+          env: 'Dieser Wert stammt aus einer Container-Umgebungsvariable.',
+          inferred: 'Dieser Wert wurde aus der aktuellen Zugriffsadresse automatisch abgeleitet.',
+          empty: 'Noch kein Wert konfiguriert oder ableitbar.'
+        },
         connectivity: {
           ...enUs.page.home.serverConfig.connectivity,
-          check: 'Konnektivität prüfen',
-          checkOne: 'Prüfen',
-          clear: 'Ergebnisse löschen'
+          clear: 'Ergebnisse l?schen',
+          check: 'Konnektivit?t pr?fen',
+          checkOne: 'Pr?fen',
+          checked: 'Konnektivit?tspr?fung abgeschlossen',
+          checkedOne: 'Konnektivit?t von {field} gepr?ft',
+          checkedCached: 'Letztes Pr?fergebnis aus Cache verwendet',
+          checkFailed: 'Konnektivit?tspr?fung fehlgeschlagen',
+          cleared: 'Konnektivit?tsergebnisse gel?scht',
+          source: 'Pr?fquelle',
+          lastChecked: 'Zuletzt gepr?ft',
+          target: 'Ziel',
+          duration: 'Dauer',
+          notChecked: 'Noch nicht gepr?ft',
+          checkSourceType: {
+            ...enUs.page.home.serverConfig.connectivity.checkSourceType,
+            remote: 'Remote',
+            cache: 'Cache'
+          },
+          status: {
+            ...enUs.page.home.serverConfig.connectivity.status,
+            idle: 'Ungepr?ft',
+            ok: 'Erreichbar',
+            error: 'Fehlgeschlagen',
+            skip: '?bersprungen'
+          }
         }
       }
     },

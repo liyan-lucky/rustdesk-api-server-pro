@@ -221,15 +221,72 @@ const local: App.I18n.Schema = {
       serverConfig: {
         ...enUs.page.home.serverConfig,
         title: 'Configuration de connexion client',
-        tip: 'Copiez ces valeurs dans le client RustDesk. Si KEY est vide, configurez `RUSTDESK_KEY`.',
-        refresh: 'Actualiser',
+        tip: 'Copiez les valeurs suivantes dans le client RustDesk. Si KEY est vide, d?finissez `RUSTDESK_KEY` dans les variables d?environnement du conteneur.',
+        idServer: 'Serveur ID',
+        relayServer: 'Serveur relais',
+        apiServer: 'Serveur API',
+        key: 'KEY',
+        idServerPlaceholder: 'ex. your.domain.com',
+        relayServerPlaceholder: 'ex. your.domain.com',
+        apiServerPlaceholder: 'ex. https://your.domain.com',
+        keyPlaceholder: 'Fournir via la variable RUSTDESK_KEY',
+        copy: 'Copier',
         copyAll: 'Tout copier',
-        copyTemplate: 'Copier le modèle RustDesk',
+        copyTemplate: 'Copier le mod?le RustDesk',
+        refresh: 'Actualiser la configuration',
+        clearCacheReload: 'Vider le cache et recharger',
+        source: 'Source',
+        lastUpdated: 'Derni?re mise ? jour',
+        show: 'Afficher',
+        hide: 'Masquer',
+        missingTip: 'Les champs suivants sont vides. Veuillez d?abord les configurer dans les variables d?environnement du conteneur : {fields}',
+        copyEmpty: '{label} est vide et ne peut pas ?tre copi?',
+        copySuccess: '{label} copi?',
+        copyFailed: '?chec de la copie de {label}',
+        fetchFailed: '?chec du chargement de la configuration serveur',
+        cacheCleared: 'Cache vid?, rechargement de la configuration serveur',
+        sourceType: {
+          ...enUs.page.home.serverConfig.sourceType,
+          remote: 'Distant',
+          'memory-cache': 'Cache m?moire',
+          'session-cache': 'Cache session',
+          env: 'Env',
+          inferred: 'D?duit',
+          empty: 'Vide'
+        },
+        sourceHint: {
+          ...enUs.page.home.serverConfig.sourceHint,
+          env: 'Cette valeur provient d?une variable d?environnement du conteneur.',
+          inferred: 'Cette valeur est d?duite automatiquement de l?adresse d?acc?s actuelle.',
+          empty: 'Aucune valeur configur?e ni d?duite pour le moment.'
+        },
         connectivity: {
           ...enUs.page.home.serverConfig.connectivity,
-          check: 'Tester la connectivité',
+          clear: 'Effacer les r?sultats',
+          check: 'Tester la connectivit?',
           checkOne: 'Tester',
-          clear: 'Effacer les résultats'
+          checked: 'V?rification de connectivit? termin?e',
+          checkedOne: 'Connectivit? de {field} v?rifi?e',
+          checkedCached: 'R?sultat r?cent de connectivit? utilis? (cache)',
+          checkFailed: '?chec de la v?rification de connectivit?',
+          cleared: 'R?sultats de connectivit? effac?s',
+          source: 'Source de v?rification',
+          lastChecked: 'Derni?re v?rification',
+          target: 'Cible',
+          duration: 'Dur?e',
+          notChecked: 'Pas encore v?rifi?',
+          checkSourceType: {
+            ...enUs.page.home.serverConfig.connectivity.checkSourceType,
+            remote: 'Distant',
+            cache: 'Cache'
+          },
+          status: {
+            ...enUs.page.home.serverConfig.connectivity.status,
+            idle: 'Non v?rifi?',
+            ok: 'Accessible',
+            error: '?chec',
+            skip: 'Ignor?'
+          }
         }
       }
     },
