@@ -46,6 +46,58 @@ const local: App.I18n.Schema = {
           clear: 'Limpiar resultados'
         }
       }
+    },
+    user: {
+      ...enUs.page.user,
+      list: {
+        ...enUs.page.user.list,
+        addUser: 'Agregar usuario',
+        editUser: 'Editar usuario',
+        searchPlaceholder: 'Usuario/Apodo/Correo'
+      },
+      sessions: {
+        ...enUs.page.user.sessions,
+        kill: 'Finalizar',
+        confirmKill: '¿Finalizar esta sesión?'
+      },
+      audit: {
+        ...enUs.page.user.audit,
+        logsSearchPlaceholder: 'Usuario/Acción/RustdeskID/IP'
+      },
+      devices: {
+        ...enUs.page.user.devices,
+        logsSearchPlaceholder: 'Usuario/Host/RustdeskID'
+      }
+    }
+  },
+  dataMap: {
+    ...enUs.dataMap,
+    user: {
+      ...enUs.dataMap.user,
+      username: 'Usuario',
+      name: 'Apodo',
+      email: 'Correo',
+      licensed_devices: 'Dispositivos licenciados',
+      login_verify: 'Verificación de acceso',
+      status: 'Estado',
+      is_admin: 'Admin',
+      created_at: 'Creado el'
+    },
+    device: {
+      ...enUs.dataMap.device,
+      username: 'Usuario',
+      hostname: 'Nombre del host',
+      version: 'Versión de RustDesk',
+      os: 'SO',
+      rustdesk_id: 'Rustdesk ID'
+    },
+    audit: {
+      ...enUs.dataMap.audit,
+      username: 'Usuario',
+      type: 'Tipo',
+      rustdesk_id: 'Rustdesk ID',
+      ip: 'IP',
+      created_at: 'Creado el'
     }
   },
   icon: { ...enUs.icon, lang: 'Cambiar idioma', reload: 'Recargar página', fullscreen: 'Pantalla completa' }

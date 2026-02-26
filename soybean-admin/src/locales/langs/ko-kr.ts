@@ -46,6 +46,58 @@ const local: App.I18n.Schema = {
           clear: '결과 지우기'
         }
       }
+    },
+    user: {
+      ...enUs.page.user,
+      list: {
+        ...enUs.page.user.list,
+        addUser: '사용자 추가',
+        editUser: '사용자 수정',
+        searchPlaceholder: '사용자명/닉네임/이메일'
+      },
+      sessions: {
+        ...enUs.page.user.sessions,
+        kill: '종료',
+        confirmKill: '이 세션을 종료하시겠습니까?'
+      },
+      audit: {
+        ...enUs.page.user.audit,
+        logsSearchPlaceholder: '사용자명/작업/RustdeskID/IP'
+      },
+      devices: {
+        ...enUs.page.user.devices,
+        logsSearchPlaceholder: '사용자명/호스트명/RustdeskID'
+      }
+    }
+  },
+  dataMap: {
+    ...enUs.dataMap,
+    user: {
+      ...enUs.dataMap.user,
+      username: '사용자명',
+      name: '닉네임',
+      email: '이메일',
+      licensed_devices: '허용 장치 수',
+      login_verify: '로그인 인증',
+      status: '상태',
+      is_admin: '관리자',
+      created_at: '생성일'
+    },
+    device: {
+      ...enUs.dataMap.device,
+      username: '사용자명',
+      hostname: '호스트명',
+      version: 'RustDesk 버전',
+      os: '운영체제',
+      rustdesk_id: 'Rustdesk ID'
+    },
+    audit: {
+      ...enUs.dataMap.audit,
+      username: '사용자명',
+      type: '유형',
+      rustdesk_id: 'Rustdesk ID',
+      ip: 'IP',
+      created_at: '생성일'
     }
   },
   icon: { ...enUs.icon, lang: '언어 전환', reload: '페이지 새로고침', fullscreen: '전체화면' }
