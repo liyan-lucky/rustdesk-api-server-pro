@@ -468,6 +468,7 @@ declare namespace App {
             connectivity: {
               check: string;
               checked: string;
+              checkedCached: string;
               checkFailed: string;
               target: string;
               notChecked: string;

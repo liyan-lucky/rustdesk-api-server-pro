@@ -237,6 +237,7 @@ const local: App.I18n.Schema = {
         connectivity: {
           check: 'Verifica connettività',
           checked: 'Verifica connettività completata',
+          checkedCached: 'Uso del risultato recente della verifica (cache)',
           checkFailed: 'Verifica connettività fallita',
           target: 'Destinazione',
           notChecked: 'Non ancora verificato',

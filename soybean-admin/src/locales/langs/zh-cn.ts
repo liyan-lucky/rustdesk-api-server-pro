@@ -150,6 +150,7 @@ const local: App.I18n.Schema = {
         connectivity: {
           check: '检测连通性',
           checked: '连通性检测完成',
+          checkedCached: '使用最近一次检测结果（缓存）',
           checkFailed: '连通性检测失败',
           target: '目标',
           notChecked: '尚未检测',

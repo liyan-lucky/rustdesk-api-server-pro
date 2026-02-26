@@ -240,6 +240,7 @@ const local: App.I18n.Schema = {
         connectivity: {
           check: 'Check Connectivity',
           checked: 'Connectivity check completed',
+          checkedCached: 'Using recent connectivity check result (cache)',
           checkFailed: 'Connectivity check failed',
           target: 'Target',
           notChecked: 'Not checked yet',

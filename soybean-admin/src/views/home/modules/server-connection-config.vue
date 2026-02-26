@@ -26,12 +26,16 @@ interface ConfigItem {
 type ConfigLoadSource = 'remote' | 'memory-cache' | 'session-cache' | '';
 type ConfigValueSource = 'env' | 'inferred' | 'empty';
 type ConnectivityStatus = 'idle' | Api.Home.ServerConnectivityItem['status'];
+type ConnectivityCheckSource = 'remote' | 'cache';
 
 const SERVER_CONFIG_CACHE_TTL_MS = 30 * 1000;
 const SERVER_CONFIG_CACHE_KEY = 'home.server-config-cache.v1';
+const CONNECTIVITY_CACHE_TTL_MS = 10 * 1000;
 let serverConfigCache: Api.Home.ServerConfig | null = null;
 let serverConfigCacheAt = 0;
 let serverConfigInFlight: Promise<Api.Home.ServerConfig | null> | null = null;
+let connectivityCache: Api.Home.ServerConnectivity | null = null;
+let connectivityCacheAt = 0;
 
 const CONFIG_FIELDS: ConfigFieldMeta[] = [
   {
@@ -71,6 +75,8 @@ const loadError = ref('');
 const showKey = ref(false);
 const lastLoadedAt = ref(0);
 const lastLoadSource = ref<ConfigLoadSource>('');
+const lastConnectivityCheckedAt = ref(0);
+const lastConnectivityCheckSource = ref<ConnectivityCheckSource | ''>('');
 let latestLoadRequestId = 0;
 const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message: string; target: string }>>({
   idServer: { status: 'idle', message: '', target: '' },
@@ -278,6 +284,10 @@ async function copyAllConfig() {
 
 async function clearCacheAndReload() {
   clearServerConfigCache();
+  connectivityCache = null;
+  connectivityCacheAt = 0;
+  lastConnectivityCheckedAt.value = 0;
+  lastConnectivityCheckSource.value = '';
   lastLoadedAt.value = 0;
   lastLoadSource.value = '';
   window.$message?.success(t('page.home.serverConfig.cacheCleared'));
@@ -286,6 +296,13 @@ async function clearCacheAndReload() {
 
 async function checkConnectivity() {
   if (checkingConnectivity.value) return;
+  if (connectivityCache && Date.now() - connectivityCacheAt < CONNECTIVITY_CACHE_TTL_MS) {
+    connectivity.value = connectivityCache;
+    lastConnectivityCheckedAt.value = connectivityCacheAt;
+    lastConnectivityCheckSource.value = 'cache';
+    window.$message?.success(t('page.home.serverConfig.connectivity.checkedCached'));
+    return;
+  }
 
   checkingConnectivity.value = true;
   try {
@@ -301,6 +318,10 @@ async function checkConnectivity() {
       apiServer: res.data.apiServer,
       key: res.data.key
     };
+    connectivityCache = res.data;
+    connectivityCacheAt = Date.now();
+    lastConnectivityCheckedAt.value = connectivityCacheAt;
+    lastConnectivityCheckSource.value = 'remote';
     window.$message?.success(t('page.home.serverConfig.connectivity.checked'));
   } catch {
     window.$message?.error(t('page.home.serverConfig.connectivity.checkFailed'));
