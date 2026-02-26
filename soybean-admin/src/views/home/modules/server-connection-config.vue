@@ -30,6 +30,7 @@ type ConnectivityCheckSource = 'remote' | 'cache';
 
 const SERVER_CONFIG_CACHE_TTL_MS = 30 * 1000;
 const SERVER_CONFIG_CACHE_KEY = 'home.server-config-cache.v1';
+const CONNECTIVITY_CACHE_KEY = 'home.server-connectivity-cache.v1';
 const CONNECTIVITY_CACHE_TTL_MS = 10 * 1000;
 let serverConfigCache: Api.Home.ServerConfig | null = null;
 let serverConfigCacheAt = 0;
@@ -138,12 +139,37 @@ function writeSessionCache(data: Api.Home.ServerConfig) {
   }
 }
 
+function readConnectivitySessionCache() {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = window.sessionStorage.getItem(CONNECTIVITY_CACHE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as { at?: number; data?: Api.Home.ServerConnectivity };
+    if (!parsed?.at || !parsed?.data) return;
+    if (Date.now() - parsed.at >= CONNECTIVITY_CACHE_TTL_MS) return;
+    connectivityCache = parsed.data;
+    connectivityCacheAt = parsed.at;
+  } catch {
+    window.sessionStorage.removeItem(CONNECTIVITY_CACHE_KEY);
+  }
+}
+
+function writeConnectivitySessionCache(data: Api.Home.ServerConnectivity) {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(CONNECTIVITY_CACHE_KEY, JSON.stringify({ at: connectivityCacheAt, data }));
+  } catch {
+    // ignore quota/private mode errors
+  }
+}
+
 function clearServerConfigCache() {
   serverConfigCache = null;
   serverConfigCacheAt = 0;
   if (typeof window === 'undefined') return;
   try {
     window.sessionStorage.removeItem(SERVER_CONFIG_CACHE_KEY);
+    window.sessionStorage.removeItem(CONNECTIVITY_CACHE_KEY);
   } catch {
     // ignore
   }
@@ -198,6 +224,12 @@ if (serverConfigCache) {
   config.value = serverConfigCache;
   lastLoadedAt.value = serverConfigCacheAt;
   lastLoadSource.value = 'session-cache';
+}
+readConnectivitySessionCache();
+if (connectivityCache) {
+  connectivity.value = connectivityCache;
+  lastConnectivityCheckedAt.value = connectivityCacheAt;
+  lastConnectivityCheckSource.value = 'cache';
 }
 
 const sourceLabel = computed(() => {
@@ -363,6 +395,7 @@ async function checkConnectivity() {
     connectivityCacheAt = Date.now();
     lastConnectivityCheckedAt.value = connectivityCacheAt;
     lastConnectivityCheckSource.value = 'remote';
+    writeConnectivitySessionCache(res.data);
     window.$message?.success(t('page.home.serverConfig.connectivity.checked'));
   } catch {
     window.$message?.error(t('page.home.serverConfig.connectivity.checkFailed'));
