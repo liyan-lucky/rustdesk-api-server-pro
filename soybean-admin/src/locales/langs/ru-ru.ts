@@ -10,6 +10,13 @@ const local: App.I18n.Schema = {
     updateConfirm: 'Обновить',
     updateCancel: 'Позже'
   },
+  common: {
+    ...enUs.common,
+    refresh: 'Обновить',
+    noData: 'Нет данных',
+    error: 'Ошибка',
+    warning: 'Предупреждение'
+  },
   route: {
     ...enUs.route,
     login: 'Вход',
@@ -45,6 +52,13 @@ const local: App.I18n.Schema = {
         ...enUs.page.home.serverConfig,
         title: 'Конфигурация подключения клиента',
         tip: 'Скопируйте значения ниже в клиент RustDesk. Если KEY пустой, задайте переменную окружения `RUSTDESK_KEY`.',
+        idServer: 'ID сервер',
+        relayServer: 'Релейный сервер',
+        apiServer: 'API сервер',
+        idServerPlaceholder: 'например your.domain.com',
+        relayServerPlaceholder: 'например your.domain.com',
+        apiServerPlaceholder: 'например https://your.domain.com',
+        keyPlaceholder: 'Укажите через переменную окружения RUSTDESK_KEY',
         copyAll: 'Копировать все',
         copyTemplate: 'Копировать шаблон RustDesk',
         refresh: 'Обновить',
@@ -148,6 +162,10 @@ const local: App.I18n.Schema = {
     lang: 'Сменить язык',
     reload: 'Перезагрузить страницу',
     fullscreen: 'Полный экран'
+  },
+  datatable: {
+    ...enUs.datatable,
+    itemCount: 'Всего {total} элементов'
   },
   dataMap: {
     ...enUs.dataMap,
