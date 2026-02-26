@@ -11,6 +11,7 @@ import (
 	"rustdesk-api-server-pro/config"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/golang-module/carbon/v2"
@@ -185,11 +186,39 @@ func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
 	apiServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_API_SERVER"), fmt.Sprintf("%s://%s", scheme, hostWithPort))
 	key, _ := resolveConfigValue(os.Getenv("RUSTDESK_KEY"), "")
 
+	type probeResult struct {
+		idServer    iris.Map
+		relayServer iris.Map
+		apiServer   iris.Map
+		key         iris.Map
+	}
+	result := &probeResult{}
+	var wg sync.WaitGroup
+	wg.Add(4)
+
+	go func() {
+		defer wg.Done()
+		result.idServer = probeTCPServer(idServer, "21116")
+	}()
+	go func() {
+		defer wg.Done()
+		result.relayServer = probeTCPServer(relayServer, "21117")
+	}()
+	go func() {
+		defer wg.Done()
+		result.apiServer = probeHTTPServer(apiServer)
+	}()
+	go func() {
+		defer wg.Done()
+		result.key = probeKeyConfig(key)
+	}()
+	wg.Wait()
+
 	return c.Success(iris.Map{
-		"idServer":    probeTCPServer(idServer, "21116"),
-		"relayServer": probeTCPServer(relayServer, "21117"),
-		"apiServer":   probeHTTPServer(apiServer),
-		"key":         probeKeyConfig(key),
+		"idServer":    result.idServer,
+		"relayServer": result.relayServer,
+		"apiServer":   result.apiServer,
+		"key":         result.key,
 	}, "ok")
 }
 
