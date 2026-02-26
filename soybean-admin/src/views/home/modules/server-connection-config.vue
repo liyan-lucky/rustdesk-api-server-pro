@@ -170,6 +170,15 @@ const missingKeys = computed(() =>
 
 const hasMissingRequired = computed(() => Boolean(missingKeys.value.length));
 const canCopyAll = computed(() => !loading.value && !loadError.value && !hasMissingRequired.value);
+const connectivityStats = computed(() => {
+  const list = Object.values(connectivity.value);
+  return {
+    ok: list.filter(item => item.status === 'ok').length,
+    error: list.filter(item => item.status === 'error').length,
+    skip: list.filter(item => item.status === 'skip').length,
+    checked: list.some(item => item.status !== 'idle')
+  };
+});
 
 readSessionCache();
 if (serverConfigCache) {
@@ -402,6 +411,11 @@ onMounted(loadServerConfig);
       <span v-if="lastUpdatedText">
         {{ $t('page.home.serverConfig.lastUpdated') }}: {{ lastUpdatedText }}
       </span>
+    </div>
+    <div v-if="connectivityStats.checked" class="config-meta mb-12px">
+      <span class="is-ok">{{ $t('page.home.serverConfig.connectivity.status.ok') }}: {{ connectivityStats.ok }}</span>
+      <span class="is-error">{{ $t('page.home.serverConfig.connectivity.status.error') }}: {{ connectivityStats.error }}</span>
+      <span class="is-skip">{{ $t('page.home.serverConfig.connectivity.status.skip') }}: {{ connectivityStats.skip }}</span>
     </div>
     <NAlert v-if="loadError" type="warning" :show-icon="false" class="mb-12px">
       {{ loadError }}
