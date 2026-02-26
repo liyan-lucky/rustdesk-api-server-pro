@@ -39,6 +39,7 @@
     "dev": "vite --mode test",
     "dev:prod": "vite --mode prod",
     "gen-route": "sa gen-route",
+    "i18n:report": "tsx scripts/i18n-coverage-report.ts",
     "lint": "eslint . --fix",
     "prepare": "simple-git-hooks",
     "preview": "vite preview",
