@@ -100,7 +100,19 @@ const local: App.I18n.Schema = {
       login_verify: 'Verificación de acceso',
       status: 'Estado',
       is_admin: 'Admin',
-      created_at: 'Creado el'
+      created_at: 'Creado el',
+      statusLabel: {
+        ...enUs.dataMap.user.statusLabel,
+        disabled: 'Deshabilitado',
+        unverified: 'No verificado',
+        normal: 'Normal'
+      },
+      loginVerifyLabel: {
+        ...enUs.dataMap.user.loginVerifyLabel,
+        none: 'Ninguna',
+        emailCheck: 'Verificación por correo',
+        tfaCheck: '2FA'
+      }
     },
     device: {
       ...enUs.dataMap.device,
@@ -116,7 +128,18 @@ const local: App.I18n.Schema = {
       type: 'Tipo',
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
-      created_at: 'Creado el'
+      created_at: 'Creado el',
+      typeLabel: {
+        ...enUs.dataMap.audit.typeLabel,
+        remote_control: 'Control remoto',
+        file_transfer: 'Transferencia de archivos',
+        tcp_tunnel: 'Túnel TCP'
+      },
+      fileTransferTypeLabel: {
+        ...enUs.dataMap.audit.fileTransferTypeLabel,
+        master_controlled: 'Controlador -> Controlado',
+        controlled_master: 'Controlado -> Controlador'
+      }
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -124,7 +147,13 @@ const local: App.I18n.Schema = {
       type: 'Tipo',
       subject: 'Asunto',
       contents: 'Contenido',
-      created_at: 'Creado el'
+      created_at: 'Creado el',
+      typeLabel: {
+        ...enUs.dataMap.mailTemplate.typeLabel,
+        loginVerify: 'Verificación de inicio de sesión',
+        registerVerify: 'Verificación de registro',
+        other: 'Otro'
+      }
     },
     mailLog: {
       ...enUs.dataMap.mailLog,
@@ -133,7 +162,12 @@ const local: App.I18n.Schema = {
       to: 'Para',
       subject: 'Asunto',
       status: 'Estado',
-      created_at: 'Enviado el'
+      created_at: 'Enviado el',
+      statusLabel: {
+        ...enUs.dataMap.mailLog.statusLabel,
+        ok: 'Éxito',
+        err: 'Error'
+      }
     }
   },
   icon: { ...enUs.icon, lang: 'Cambiar idioma', reload: 'Recargar página', fullscreen: 'Pantalla completa' }

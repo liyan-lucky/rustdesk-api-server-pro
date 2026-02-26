@@ -100,7 +100,19 @@ const local: App.I18n.Schema = {
       login_verify: '로그인 인증',
       status: '상태',
       is_admin: '관리자',
-      created_at: '생성일'
+      created_at: '생성일',
+      statusLabel: {
+        ...enUs.dataMap.user.statusLabel,
+        disabled: '비활성화',
+        unverified: '미인증',
+        normal: '정상'
+      },
+      loginVerifyLabel: {
+        ...enUs.dataMap.user.loginVerifyLabel,
+        none: '없음',
+        emailCheck: '이메일 인증',
+        tfaCheck: '2FA'
+      }
     },
     device: {
       ...enUs.dataMap.device,
@@ -116,7 +128,18 @@ const local: App.I18n.Schema = {
       type: '유형',
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
-      created_at: '생성일'
+      created_at: '생성일',
+      typeLabel: {
+        ...enUs.dataMap.audit.typeLabel,
+        remote_control: '원격 제어',
+        file_transfer: '파일 전송',
+        tcp_tunnel: 'TCP 터널'
+      },
+      fileTransferTypeLabel: {
+        ...enUs.dataMap.audit.fileTransferTypeLabel,
+        master_controlled: '제어자 -> 피제어자',
+        controlled_master: '피제어자 -> 제어자'
+      }
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -124,7 +147,13 @@ const local: App.I18n.Schema = {
       type: '유형',
       subject: '제목',
       contents: '내용',
-      created_at: '생성일'
+      created_at: '생성일',
+      typeLabel: {
+        ...enUs.dataMap.mailTemplate.typeLabel,
+        loginVerify: '로그인 인증',
+        registerVerify: '회원가입 인증',
+        other: '기타'
+      }
     },
     mailLog: {
       ...enUs.dataMap.mailLog,
@@ -133,7 +162,12 @@ const local: App.I18n.Schema = {
       to: '수신자',
       subject: '제목',
       status: '상태',
-      created_at: '전송 시간'
+      created_at: '전송 시간',
+      statusLabel: {
+        ...enUs.dataMap.mailLog.statusLabel,
+        ok: '성공',
+        err: '실패'
+      }
     }
   },
   icon: { ...enUs.icon, lang: '언어 전환', reload: '페이지 새로고침', fullscreen: '전체화면' }

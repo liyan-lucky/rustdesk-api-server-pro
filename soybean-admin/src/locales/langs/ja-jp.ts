@@ -100,7 +100,19 @@ const local: App.I18n.Schema = {
       login_verify: 'ログイン認証',
       status: '状態',
       is_admin: '管理者',
-      created_at: '作成日時'
+      created_at: '作成日時',
+      statusLabel: {
+        ...enUs.dataMap.user.statusLabel,
+        disabled: '無効',
+        unverified: '未確認',
+        normal: '正常'
+      },
+      loginVerifyLabel: {
+        ...enUs.dataMap.user.loginVerifyLabel,
+        none: '不要',
+        emailCheck: 'メール認証',
+        tfaCheck: '2FA'
+      }
     },
     device: {
       ...enUs.dataMap.device,
@@ -116,7 +128,18 @@ const local: App.I18n.Schema = {
       type: '種類',
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
-      created_at: '作成日時'
+      created_at: '作成日時',
+      typeLabel: {
+        ...enUs.dataMap.audit.typeLabel,
+        remote_control: 'リモート操作',
+        file_transfer: 'ファイル転送',
+        tcp_tunnel: 'TCP トンネル'
+      },
+      fileTransferTypeLabel: {
+        ...enUs.dataMap.audit.fileTransferTypeLabel,
+        master_controlled: '操作側 -> 被操作側',
+        controlled_master: '被操作側 -> 操作側'
+      }
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -124,7 +147,13 @@ const local: App.I18n.Schema = {
       type: '種類',
       subject: '件名',
       contents: '内容',
-      created_at: '作成日時'
+      created_at: '作成日時',
+      typeLabel: {
+        ...enUs.dataMap.mailTemplate.typeLabel,
+        loginVerify: 'ログイン認証',
+        registerVerify: '登録認証',
+        other: 'その他'
+      }
     },
     mailLog: {
       ...enUs.dataMap.mailLog,
@@ -133,7 +162,12 @@ const local: App.I18n.Schema = {
       to: '宛先',
       subject: '件名',
       status: '状態',
-      created_at: '送信日時'
+      created_at: '送信日時',
+      statusLabel: {
+        ...enUs.dataMap.mailLog.statusLabel,
+        ok: '成功',
+        err: '失敗'
+      }
     }
   },
   icon: { ...enUs.icon, lang: '言語を切り替え', reload: 'ページ再読み込み', fullscreen: '全画面' }

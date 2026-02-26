@@ -100,7 +100,19 @@ const local: App.I18n.Schema = {
       login_verify: 'Login-Prüfung',
       status: 'Status',
       is_admin: 'Admin',
-      created_at: 'Erstellt am'
+      created_at: 'Erstellt am',
+      statusLabel: {
+        ...enUs.dataMap.user.statusLabel,
+        disabled: 'Deaktiviert',
+        unverified: 'Unbestätigt',
+        normal: 'Normal'
+      },
+      loginVerifyLabel: {
+        ...enUs.dataMap.user.loginVerifyLabel,
+        none: 'Keine',
+        emailCheck: 'E-Mail-Prüfung',
+        tfaCheck: '2FA'
+      }
     },
     device: {
       ...enUs.dataMap.device,
@@ -116,7 +128,18 @@ const local: App.I18n.Schema = {
       type: 'Typ',
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
-      created_at: 'Erstellt am'
+      created_at: 'Erstellt am',
+      typeLabel: {
+        ...enUs.dataMap.audit.typeLabel,
+        remote_control: 'Fernsteuerung',
+        file_transfer: 'Dateiübertragung',
+        tcp_tunnel: 'TCP-Tunnel'
+      },
+      fileTransferTypeLabel: {
+        ...enUs.dataMap.audit.fileTransferTypeLabel,
+        master_controlled: 'Steuernd -> Gesteuert',
+        controlled_master: 'Gesteuert -> Steuernd'
+      }
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -124,7 +147,13 @@ const local: App.I18n.Schema = {
       type: 'Typ',
       subject: 'Betreff',
       contents: 'Inhalt',
-      created_at: 'Erstellt am'
+      created_at: 'Erstellt am',
+      typeLabel: {
+        ...enUs.dataMap.mailTemplate.typeLabel,
+        loginVerify: 'Login-Verifizierung',
+        registerVerify: 'Registrierungs-Verifizierung',
+        other: 'Sonstiges'
+      }
     },
     mailLog: {
       ...enUs.dataMap.mailLog,
@@ -133,7 +162,12 @@ const local: App.I18n.Schema = {
       to: 'An',
       subject: 'Betreff',
       status: 'Status',
-      created_at: 'Gesendet am'
+      created_at: 'Gesendet am',
+      statusLabel: {
+        ...enUs.dataMap.mailLog.statusLabel,
+        ok: 'Erfolg',
+        err: 'Fehler'
+      }
     }
   },
   icon: { ...enUs.icon, lang: 'Sprache wechseln', reload: 'Seite neu laden', fullscreen: 'Vollbild' }

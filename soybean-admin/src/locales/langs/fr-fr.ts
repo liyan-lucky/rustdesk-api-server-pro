@@ -100,7 +100,19 @@ const local: App.I18n.Schema = {
       login_verify: 'Vérification connexion',
       status: 'Statut',
       is_admin: 'Admin',
-      created_at: 'Créé le'
+      created_at: 'Créé le',
+      statusLabel: {
+        ...enUs.dataMap.user.statusLabel,
+        disabled: 'Désactivé',
+        unverified: 'Non vérifié',
+        normal: 'Normal'
+      },
+      loginVerifyLabel: {
+        ...enUs.dataMap.user.loginVerifyLabel,
+        none: 'Aucune',
+        emailCheck: 'Vérification e-mail',
+        tfaCheck: '2FA'
+      }
     },
     device: {
       ...enUs.dataMap.device,
@@ -116,7 +128,18 @@ const local: App.I18n.Schema = {
       type: 'Type',
       rustdesk_id: 'Rustdesk ID',
       ip: 'IP',
-      created_at: 'Créé le'
+      created_at: 'Créé le',
+      typeLabel: {
+        ...enUs.dataMap.audit.typeLabel,
+        remote_control: 'Contrôle à distance',
+        file_transfer: 'Transfert de fichiers',
+        tcp_tunnel: 'Tunnel TCP'
+      },
+      fileTransferTypeLabel: {
+        ...enUs.dataMap.audit.fileTransferTypeLabel,
+        master_controlled: 'Contrôleur -> Contrôlé',
+        controlled_master: 'Contrôlé -> Contrôleur'
+      }
     },
     mailTemplate: {
       ...enUs.dataMap.mailTemplate,
@@ -124,7 +147,13 @@ const local: App.I18n.Schema = {
       type: 'Type',
       subject: 'Sujet',
       contents: 'Contenu',
-      created_at: 'Créé le'
+      created_at: 'Créé le',
+      typeLabel: {
+        ...enUs.dataMap.mailTemplate.typeLabel,
+        loginVerify: 'Vérification de connexion',
+        registerVerify: 'Vérification d’inscription',
+        other: 'Autre'
+      }
     },
     mailLog: {
       ...enUs.dataMap.mailLog,
@@ -133,7 +162,12 @@ const local: App.I18n.Schema = {
       to: 'À',
       subject: 'Sujet',
       status: 'Statut',
-      created_at: 'Envoyé le'
+      created_at: 'Envoyé le',
+      statusLabel: {
+        ...enUs.dataMap.mailLog.statusLabel,
+        ok: 'Succès',
+        err: 'Erreur'
+      }
     }
   },
   icon: { ...enUs.icon, lang: 'Changer de langue', reload: 'Recharger la page', fullscreen: 'Plein écran' }
