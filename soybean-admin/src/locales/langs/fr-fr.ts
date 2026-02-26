@@ -121,19 +121,49 @@ const local: App.I18n.Schema = {
   },
   route: {
     ...enUs.route,
+    login: 'Connexion',
+    403: 'Acc?s refus?',
+    404: 'Page introuvable',
+    500: 'Erreur serveur',
+    'iframe-page': 'Iframe',
     home: 'Accueil',
     audit: 'Audit',
     user: 'Gestion des utilisateurs',
     user_list: 'Liste des utilisateurs',
     user_sessions: 'Sessions',
-    system: 'Gestion système',
-    system_mail_template: 'Modèles e-mail',
+    system: 'Gestion syst?me',
+    system_mail_template: 'Mod?les e-mail',
     system_mail_logs: 'Logs e-mail',
     system_mail: 'E-mail',
+    audit_baselogs: 'Journaux de base',
+    audit_filetransferlogs: 'Journaux de transfert de fichiers',
     devices: 'Appareils'
   },
   page: {
     ...enUs.page,
+      login: {
+        ...enUs.page.login,
+        common: {
+          ...enUs.page.login.common,
+          loginOrRegister: 'Connexion / Inscription',
+          userNamePlaceholder: 'Veuillez saisir le nom d?utilisateur',
+          phonePlaceholder: 'Veuillez saisir le num?ro de t?l?phone',
+          codePlaceholder: 'Veuillez saisir le code de v?rification',
+          passwordPlaceholder: 'Veuillez saisir le mot de passe',
+          confirmPasswordPlaceholder: 'Veuillez saisir ? nouveau le mot de passe',
+          codeLogin: 'Connexion par code',
+          confirm: 'Confirmer',
+          back: 'Retour',
+          validateSuccess: 'V?rification r?ussie',
+          loginSuccess: 'Connexion r?ussie',
+          welcomeBack: 'Bon retour, {userName} !'
+        },
+        pwdLogin: {
+          ...enUs.page.login.pwdLogin,
+          title: 'Connexion par mot de passe',
+          rememberMe: 'Se souvenir de moi'
+        }
+      },
     home: {
       ...enUs.page.home,
       greeting: 'Bonjour {userName}, excellente journée !',

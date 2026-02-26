@@ -121,19 +121,49 @@ const local: App.I18n.Schema = {
   },
   route: {
     ...enUs.route,
+    login: 'Iniciar sesi?n',
+    403: 'Sin permiso',
+    404: 'P?gina no encontrada',
+    500: 'Error del servidor',
+    'iframe-page': 'Iframe',
     home: 'Inicio',
-    audit: 'Auditoría',
-    user: 'Gestión de usuarios',
+    audit: 'Auditor?a',
+    user: 'Gesti?n de usuarios',
     user_list: 'Lista de usuarios',
     user_sessions: 'Sesiones',
-    system: 'Gestión del sistema',
+    system: 'Gesti?n del sistema',
     system_mail_template: 'Plantillas de correo',
     system_mail_logs: 'Registros de correo',
     system_mail: 'Correo',
+    audit_baselogs: 'Registros base',
+    audit_filetransferlogs: 'Registros de transferencia',
     devices: 'Dispositivos'
   },
   page: {
     ...enUs.page,
+      login: {
+        ...enUs.page.login,
+        common: {
+          ...enUs.page.login.common,
+          loginOrRegister: 'Iniciar sesi?n / Registrarse',
+          userNamePlaceholder: 'Introduce el nombre de usuario',
+          phonePlaceholder: 'Introduce el n?mero de tel?fono',
+          codePlaceholder: 'Introduce el c?digo de verificaci?n',
+          passwordPlaceholder: 'Introduce la contrase?a',
+          confirmPasswordPlaceholder: 'Introduce la contrase?a de nuevo',
+          codeLogin: 'Inicio con c?digo',
+          confirm: 'Confirmar',
+          back: 'Volver',
+          validateSuccess: 'Verificaci?n correcta',
+          loginSuccess: 'Inicio de sesi?n correcto',
+          welcomeBack: 'Bienvenido de nuevo, {userName} !'
+        },
+        pwdLogin: {
+          ...enUs.page.login.pwdLogin,
+          title: 'Inicio con contrase?a',
+          rememberMe: 'Recordarme'
+        }
+      },
     home: {
       ...enUs.page.home,
       greeting: 'Buenos días, {userName}!',

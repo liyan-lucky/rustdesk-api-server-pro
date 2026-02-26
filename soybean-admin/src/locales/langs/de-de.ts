@@ -121,6 +121,11 @@ const local: App.I18n.Schema = {
   },
   route: {
     ...enUs.route,
+    login: 'Anmeldung',
+    403: 'Keine Berechtigung',
+    404: 'Seite nicht gefunden',
+    500: 'Serverfehler',
+    'iframe-page': 'Iframe',
     home: 'Startseite',
     audit: 'Audit',
     user: 'Benutzerverwaltung',
@@ -130,10 +135,35 @@ const local: App.I18n.Schema = {
     system_mail_template: 'Mail-Vorlagen',
     system_mail_logs: 'Mail-Protokolle',
     system_mail: 'Mail',
-    devices: 'Geräte'
+    audit_baselogs: 'Basisprotokolle',
+    audit_filetransferlogs: 'Datei?bertragungsprotokolle',
+    devices: 'Ger?te'
   },
   page: {
     ...enUs.page,
+      login: {
+        ...enUs.page.login,
+        common: {
+          ...enUs.page.login.common,
+          loginOrRegister: 'Anmelden / Registrieren',
+          userNamePlaceholder: 'Benutzernamen eingeben',
+          phonePlaceholder: 'Telefonnummer eingeben',
+          codePlaceholder: 'Best?tigungscode eingeben',
+          passwordPlaceholder: 'Passwort eingeben',
+          confirmPasswordPlaceholder: 'Passwort erneut eingeben',
+          codeLogin: 'Code-Anmeldung',
+          confirm: 'Best?tigen',
+          back: 'Zur?ck',
+          validateSuccess: 'Pr?fung erfolgreich',
+          loginSuccess: 'Anmeldung erfolgreich',
+          welcomeBack: 'Willkommen zur?ck, {userName} !'
+        },
+        pwdLogin: {
+          ...enUs.page.login.pwdLogin,
+          title: 'Passwort-Anmeldung',
+          rememberMe: 'Angemeldet bleiben'
+        }
+      },
     home: {
       ...enUs.page.home,
       greeting: 'Guten Morgen, {userName}!',
