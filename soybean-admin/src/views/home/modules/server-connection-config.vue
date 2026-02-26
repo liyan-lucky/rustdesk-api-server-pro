@@ -9,12 +9,48 @@ defineOptions({
 
 type ConfigKey = 'idServer' | 'relayServer' | 'apiServer' | 'key';
 
+interface ConfigFieldMeta {
+  key: ConfigKey;
+  labelKey: string;
+  placeholderKey: string;
+}
+
 interface ConfigItem {
   key: ConfigKey;
   label: string;
   value: string;
   placeholder?: string;
 }
+
+const SERVER_CONFIG_CACHE_TTL_MS = 30 * 1000;
+const SERVER_CONFIG_CACHE_KEY = 'home.server-config-cache.v1';
+let serverConfigCache: Api.Home.ServerConfig | null = null;
+let serverConfigCacheAt = 0;
+let serverConfigInFlight: Promise<Api.Home.ServerConfig | null> | null = null;
+
+const CONFIG_FIELDS: ConfigFieldMeta[] = [
+  {
+    key: 'idServer',
+    labelKey: 'page.home.serverConfig.idServer',
+    placeholderKey: 'page.home.serverConfig.idServerPlaceholder'
+  },
+  {
+    key: 'relayServer',
+    labelKey: 'page.home.serverConfig.relayServer',
+    placeholderKey: 'page.home.serverConfig.relayServerPlaceholder'
+  },
+  {
+    key: 'apiServer',
+    labelKey: 'page.home.serverConfig.apiServer',
+    placeholderKey: 'page.home.serverConfig.apiServerPlaceholder'
+  },
+  {
+    key: 'key',
+    labelKey: 'page.home.serverConfig.key',
+    placeholderKey: 'page.home.serverConfig.keyPlaceholder'
+  }
+];
+const REQUIRED_KEYS = new Set<ConfigKey>(['key']);
 
 const { t } = useI18n();
 
@@ -27,39 +63,79 @@ const config = ref<Api.Home.ServerConfig>({
 const loading = ref(false);
 const loadError = ref('');
 const showKey = ref(false);
+let latestLoadRequestId = 0;
 
-const items = computed<ConfigItem[]>(() => [
-  {
-    key: 'idServer',
-    label: t('page.home.serverConfig.idServer'),
-    value: config.value.idServer,
-    placeholder: t('page.home.serverConfig.idServerPlaceholder')
-  },
-  {
-    key: 'relayServer',
-    label: t('page.home.serverConfig.relayServer'),
-    value: config.value.relayServer,
-    placeholder: t('page.home.serverConfig.relayServerPlaceholder')
-  },
-  {
-    key: 'apiServer',
-    label: t('page.home.serverConfig.apiServer'),
-    value: config.value.apiServer,
-    placeholder: t('page.home.serverConfig.apiServerPlaceholder')
-  },
-  {
-    key: 'key',
-    label: t('page.home.serverConfig.key'),
-    value: config.value.key,
-    placeholder: t('page.home.serverConfig.keyPlaceholder')
+function normalizeServerConfig(data: Api.Home.ServerConfig): Api.Home.ServerConfig {
+  return {
+    idServer: (data.idServer || '').trim(),
+    relayServer: (data.relayServer || '').trim(),
+    apiServer: (data.apiServer || '').trim(),
+    key: (data.key || '').trim()
+  };
+}
+
+function readSessionCache() {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = window.sessionStorage.getItem(SERVER_CONFIG_CACHE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as { at?: number; data?: Api.Home.ServerConfig };
+    if (!parsed?.at || !parsed?.data) return;
+    if (Date.now() - parsed.at >= SERVER_CONFIG_CACHE_TTL_MS) return;
+    serverConfigCache = normalizeServerConfig(parsed.data);
+    serverConfigCacheAt = parsed.at;
+  } catch {
+    window.sessionStorage.removeItem(SERVER_CONFIG_CACHE_KEY);
   }
-]);
+}
+
+function writeSessionCache(data: Api.Home.ServerConfig) {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(SERVER_CONFIG_CACHE_KEY, JSON.stringify({ at: serverConfigCacheAt, data }));
+  } catch {
+    // ignore quota/private mode errors
+  }
+}
+
+async function requestServerConfig() {
+  if (!serverConfigInFlight) {
+    serverConfigInFlight = (async () => {
+      const res = await fetchServerConfig();
+      return res.data ? normalizeServerConfig(res.data) : null;
+    })().finally(() => {
+      serverConfigInFlight = null;
+    });
+  }
+  return serverConfigInFlight;
+}
+
+const items = computed<ConfigItem[]>(() =>
+  CONFIG_FIELDS.map(field => ({
+    key: field.key,
+    label: t(field.labelKey),
+    value: config.value[field.key],
+    placeholder: t(field.placeholderKey)
+  }))
+);
 
 const maskedKeyValue = computed(() => {
   const value = config.value.key;
   if (!value) return '';
   return '*'.repeat(Math.min(Math.max(value.length, 8), 64));
 });
+
+const missingKeys = computed(() =>
+  items.value.filter(item => REQUIRED_KEYS.has(item.key) && !item.value.trim()).map(item => item.label)
+);
+
+const hasMissingRequired = computed(() => Boolean(missingKeys.value.length));
+const canCopyAll = computed(() => !loading.value && !loadError.value && !hasMissingRequired.value);
+
+readSessionCache();
+if (serverConfigCache) {
+  config.value = serverConfigCache;
+}
 
 function getDisplayValue(item: ConfigItem) {
   if (item.key === 'key' && !showKey.value) {
@@ -80,6 +156,14 @@ function fallbackCopyText(text: string) {
   document.body.removeChild(textarea);
 }
 
+async function writeClipboardText(text: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  fallbackCopyText(text);
+}
+
 async function copyValue(value: string, label: string) {
   if (!value) {
     window.$message?.warning(t('page.home.serverConfig.copyEmpty', { label }));
@@ -87,11 +171,7 @@ async function copyValue(value: string, label: string) {
   }
 
   try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(value);
-    } else {
-      fallbackCopyText(value);
-    }
+    await writeClipboardText(value);
     window.$message?.success(t('page.home.serverConfig.copySuccess', { label }));
   } catch {
     try {
@@ -103,31 +183,75 @@ async function copyValue(value: string, label: string) {
   }
 }
 
-onMounted(async () => {
+function buildClientConfigText() {
+  return items.value.map(item => `${item.label}: ${item.value || '-'}`).join('\n');
+}
+
+async function copyAllConfig() {
+  if (hasMissingRequired.value) {
+    window.$message?.warning(t('page.home.serverConfig.missingTip', { fields: missingKeys.value.join(' / ') }));
+    return;
+  }
+  await copyValue(buildClientConfigText(), t('page.home.serverConfig.copyAll'));
+}
+
+async function loadServerConfig(force = false) {
+  if (loading.value) return;
+
+  if (!force && serverConfigCache && Date.now() - serverConfigCacheAt < SERVER_CONFIG_CACHE_TTL_MS) {
+    config.value = serverConfigCache;
+    loadError.value = '';
+    return;
+  }
+
+  const requestId = ++latestLoadRequestId;
   loading.value = true;
   loadError.value = '';
   try {
-    const res = await fetchServerConfig();
-    if (res.data) {
-      config.value = res.data;
+    const data = await requestServerConfig();
+    if (requestId !== latestLoadRequestId) return;
+
+    if (data) {
+      config.value = data;
+      serverConfigCache = data;
+      serverConfigCacheAt = Date.now();
+      writeSessionCache(data);
       return;
     }
     loadError.value = t('page.home.serverConfig.fetchFailed');
   } catch {
+    if (requestId !== latestLoadRequestId) return;
     loadError.value = t('page.home.serverConfig.fetchFailed');
   } finally {
-    loading.value = false;
+    if (requestId === latestLoadRequestId) {
+      loading.value = false;
+    }
   }
-});
+}
+
+onMounted(loadServerConfig);
 </script>
 
 <template>
   <NCard :title="$t('page.home.serverConfig.title')" :bordered="false" size="small" class="card-wrapper">
+    <template #header-extra>
+      <NSpace :size="8">
+        <NButton size="small" :loading="loading" @click="loadServerConfig(true)">
+          {{ $t('page.home.serverConfig.refresh') }}
+        </NButton>
+        <NButton size="small" type="primary" secondary :disabled="!canCopyAll" @click="copyAllConfig">
+          {{ $t('page.home.serverConfig.copyAll') }}
+        </NButton>
+      </NSpace>
+    </template>
     <NAlert type="info" :show-icon="false" class="mb-12px">
       {{ $t('page.home.serverConfig.tip') }}
     </NAlert>
     <NAlert v-if="loadError" type="warning" :show-icon="false" class="mb-12px">
       {{ loadError }}
+    </NAlert>
+    <NAlert v-else-if="!loading && hasMissingRequired" type="warning" :show-icon="false" class="mb-12px">
+      {{ $t('page.home.serverConfig.missingTip', { fields: missingKeys.join(' / ') }) }}
     </NAlert>
     <NSpace vertical :size="10">
       <div v-for="item in items" :key="item.key" class="config-row">

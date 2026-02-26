@@ -439,8 +439,11 @@ declare namespace App {
             apiServerPlaceholder: string;
             keyPlaceholder: string;
             copy: string;
+            copyAll: string;
+            refresh: string;
             show: string;
             hide: string;
+            missingTip: string;
             copyEmpty: string;
             copySuccess: string;
             copyFailed: string;
