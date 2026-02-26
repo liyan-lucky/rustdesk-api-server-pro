@@ -330,6 +330,11 @@ async function clearCacheAndReload() {
   await loadServerConfig(true);
 }
 
+function clearConnectivityResults() {
+  resetConnectivityState();
+  window.$message?.success(t('page.home.serverConfig.connectivity.cleared'));
+}
+
 async function checkConnectivity() {
   if (checkingConnectivity.value) return;
   if (connectivityCache && Date.now() - connectivityCacheAt < CONNECTIVITY_CACHE_TTL_MS) {
@@ -425,6 +430,9 @@ watch(
         </NButton>
         <NButton size="small" :disabled="loading" @click="clearCacheAndReload">
           {{ $t('page.home.serverConfig.clearCacheReload') }}
+        </NButton>
+        <NButton size="small" :disabled="loading || checkingConnectivity" @click="clearConnectivityResults">
+          {{ $t('page.home.serverConfig.connectivity.clear') }}
         </NButton>
         <NButton size="small" :loading="checkingConnectivity" :disabled="loading" @click="checkConnectivity">
           {{ $t('page.home.serverConfig.connectivity.check') }}

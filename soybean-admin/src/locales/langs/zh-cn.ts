@@ -148,10 +148,12 @@ const local: App.I18n.Schema = {
           empty: '当前既没有配置，也无法自动推断。'
         },
         connectivity: {
+          clear: '清除检测结果',
           check: '检测连通性',
           checked: '连通性检测完成',
           checkedCached: '使用最近一次检测结果（缓存）',
           checkFailed: '连通性检测失败',
+          cleared: '已清除连通性检测结果',
           source: '检测来源',
           lastChecked: '最后检测',
           target: '目标',

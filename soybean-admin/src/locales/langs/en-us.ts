@@ -238,10 +238,12 @@ const local: App.I18n.Schema = {
           empty: 'No value is configured or inferred yet.'
         },
         connectivity: {
+          clear: 'Clear Results',
           check: 'Check Connectivity',
           checked: 'Connectivity check completed',
           checkedCached: 'Using recent connectivity check result (cache)',
           checkFailed: 'Connectivity check failed',
+          cleared: 'Connectivity results cleared',
           source: 'Check Source',
           lastChecked: 'Last Checked',
           target: 'Target',

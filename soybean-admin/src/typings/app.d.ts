@@ -466,10 +466,12 @@ declare namespace App {
               empty: string;
             };
             connectivity: {
+              clear: string;
               check: string;
               checked: string;
               checkedCached: string;
               checkFailed: string;
+              cleared: string;
               source: string;
               lastChecked: string;
               target: string;

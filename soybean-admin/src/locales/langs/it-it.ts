@@ -235,10 +235,12 @@ const local: App.I18n.Schema = {
           empty: 'Nessun valore configurato o dedotto al momento.'
         },
         connectivity: {
+          clear: 'Cancella risultati',
           check: 'Verifica connettività',
           checked: 'Verifica connettività completata',
           checkedCached: 'Uso del risultato recente della verifica (cache)',
           checkFailed: 'Verifica connettività fallita',
+          cleared: 'Risultati della connettività cancellati',
           source: 'Origine verifica',
           lastChecked: 'Ultima verifica',
           target: 'Destinazione',
