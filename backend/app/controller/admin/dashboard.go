@@ -132,19 +132,14 @@ func (c *DashboardController) GetDashboardServerConfig() mvc.Result {
 		scheme = strings.TrimSpace(strings.Split(forwardedProto, ",")[0])
 	}
 
-	hostOnly := hostWithPort
-	if h, _, err := net.SplitHostPort(hostWithPort); err == nil {
-		hostOnly = h
-	} else if idx := strings.LastIndex(hostWithPort, ":"); idx > -1 && !strings.Contains(hostWithPort, "]") {
-		hostOnly = hostWithPort[:idx]
-	}
-	hostOnly = strings.Trim(hostOnly, "[]")
+	hostOnly := extractHostOnly(hostWithPort)
+	inferredAPIServer := inferAPIServerURL(scheme, hostWithPort, c.getConfiguredHTTPPort())
 
 	idServer, idServerSource := resolveConfigValue(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
 	relayServer, relayServerSource := resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
 	apiServer, apiServerSource := resolveConfigValue(
 		os.Getenv("RUSTDESK_API_SERVER"),
-		fmt.Sprintf("%s://%s", scheme, hostWithPort),
+		inferredAPIServer,
 	)
 	key, keySource := resolveConfigValue(os.Getenv("RUSTDESK_KEY"), "")
 
@@ -173,17 +168,12 @@ func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
 		scheme = strings.TrimSpace(strings.Split(forwardedProto, ",")[0])
 	}
 
-	hostOnly := hostWithPort
-	if h, _, err := net.SplitHostPort(hostWithPort); err == nil {
-		hostOnly = h
-	} else if idx := strings.LastIndex(hostWithPort, ":"); idx > -1 && !strings.Contains(hostWithPort, "]") {
-		hostOnly = hostWithPort[:idx]
-	}
-	hostOnly = strings.Trim(hostOnly, "[]")
+	hostOnly := extractHostOnly(hostWithPort)
+	inferredAPIServer := inferAPIServerURL(scheme, hostWithPort, c.getConfiguredHTTPPort())
 
 	idServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
 	relayServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
-	apiServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_API_SERVER"), fmt.Sprintf("%s://%s", scheme, hostWithPort))
+	apiServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_API_SERVER"), inferredAPIServer)
 	key, _ := resolveConfigValue(os.Getenv("RUSTDESK_KEY"), "")
 	targetKey := strings.TrimSpace(c.Ctx.URLParamDefault("target", ""))
 
@@ -245,6 +235,129 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+func (c *DashboardController) getConfiguredHTTPPort() string {
+	if c == nil || c.Cfg == nil || c.Cfg.HttpConfig == nil {
+		return ""
+	}
+	return strings.TrimSpace(c.Cfg.HttpConfig.Port)
+}
+
+func extractHostOnly(hostWithPort string) string {
+	hostWithPort = strings.TrimSpace(hostWithPort)
+	if hostWithPort == "" {
+		return ""
+	}
+
+	if h, _, err := net.SplitHostPort(hostWithPort); err == nil {
+		return strings.Trim(h, "[]")
+	}
+
+	if strings.HasPrefix(hostWithPort, "[") && strings.Contains(hostWithPort, "]") {
+		end := strings.Index(hostWithPort, "]")
+		return strings.Trim(hostWithPort[1:end], "[]")
+	}
+
+	if idx := strings.LastIndex(hostWithPort, ":"); idx > -1 && !strings.Contains(hostWithPort, "]") {
+		portPart := strings.TrimSpace(hostWithPort[idx+1:])
+		if isDigits(portPart) {
+			return strings.Trim(hostWithPort[:idx], "[]")
+		}
+	}
+
+	return strings.Trim(hostWithPort, "[]")
+}
+
+func extractPort(hostWithPort string) string {
+	hostWithPort = strings.TrimSpace(hostWithPort)
+	if hostWithPort == "" {
+		return ""
+	}
+
+	if _, p, err := net.SplitHostPort(hostWithPort); err == nil {
+		return p
+	}
+
+	if strings.HasPrefix(hostWithPort, "[") && strings.Contains(hostWithPort, "]:") {
+		parts := strings.SplitN(hostWithPort, "]:", 2)
+		if len(parts) == 2 {
+			p := strings.TrimSpace(parts[1])
+			if isDigits(p) {
+				return p
+			}
+		}
+	}
+
+	if idx := strings.LastIndex(hostWithPort, ":"); idx > -1 && !strings.Contains(hostWithPort, "]") {
+		p := strings.TrimSpace(hostWithPort[idx+1:])
+		if isDigits(p) {
+			return p
+		}
+	}
+
+	return ""
+}
+
+func normalizePort(port string) string {
+	port = strings.TrimSpace(port)
+	if port == "" {
+		return ""
+	}
+
+	if strings.HasPrefix(port, ":") {
+		p := strings.TrimPrefix(port, ":")
+		if isDigits(p) {
+			return p
+		}
+	}
+
+	if isDigits(port) {
+		return port
+	}
+
+	if _, p, err := net.SplitHostPort(port); err == nil && isDigits(p) {
+		return p
+	}
+
+	if idx := strings.LastIndex(port, ":"); idx > -1 {
+		p := strings.TrimSpace(port[idx+1:])
+		if isDigits(p) {
+			return p
+		}
+	}
+
+	return ""
+}
+
+func inferAPIServerURL(scheme, hostWithPort, configuredPort string) string {
+	scheme = strings.TrimSpace(scheme)
+	if scheme == "" {
+		scheme = "http"
+	}
+
+	hostOnly := extractHostOnly(hostWithPort)
+	if hostOnly == "" {
+		return ""
+	}
+
+	port := firstNonEmpty(extractPort(hostWithPort), normalizePort(configuredPort))
+	if port != "" {
+		return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(hostOnly, port))
+	}
+	return fmt.Sprintf("%s://%s", scheme, hostOnly)
+}
+
+func isDigits(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, ch := range s {
+		if ch < '0' || ch > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 func resolveConfigValue(envValue, fallbackValue string) (string, string) {

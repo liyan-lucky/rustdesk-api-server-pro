@@ -389,13 +389,14 @@ function buildClientConfigText() {
 }
 
 function buildRustDeskTemplateText() {
-  return [
-    '[RustDesk Server Config]',
-    `ID_SERVER=${config.value.idServer || ''}`,
-    `RELAY_SERVER=${config.value.relayServer || ''}`,
-    `API_SERVER=${config.value.apiServer || ''}`,
-    `KEY=${config.value.key || ''}`
-  ].join('\n');
+  const payload = JSON.stringify({
+    host: config.value.idServer || '',
+    relay: config.value.relayServer || '',
+    api: config.value.apiServer || '',
+    key: config.value.key || ''
+  });
+  const base64 = window.btoa(payload);
+  return base64.split('').reverse().join('');
 }
 
 async function copyAllConfig() {
