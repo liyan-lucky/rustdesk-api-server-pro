@@ -1,12 +1,11 @@
+/* eslint-disable no-underscore-dangle, no-continue, no-lonely-if, n/prefer-global/process */
 import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
 
 import locales from '../src/locales/locale';
-
-type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
-
-type FlatMap = Record<string, JsonValue>;
+import { flattenLeaves, isSuspect, normalize } from './i18n-utils';
+import type { FlatMap } from './i18n-utils';
 
 type LocaleReport = {
   locale: string;
@@ -24,65 +23,6 @@ const reportPath = path.join(rootDir, 'docs', 'i18n-coverage-report.md');
 const baseLocaleKey = 'en-US' as const;
 const sampleLimit = 40;
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return Object.prototype.toString.call(value) === '[object Object]';
-}
-
-function flattenLeaves(input: unknown, prefix = '', out: FlatMap = {}): FlatMap {
-  if (Array.isArray(input)) {
-    out[prefix] = input as JsonValue;
-    return out;
-  }
-
-  if (!isPlainObject(input)) {
-    if (prefix) {
-      out[prefix] = (input ?? null) as JsonValue;
-    }
-    return out;
-  }
-
-  for (const [key, value] of Object.entries(input)) {
-    const nextPrefix = prefix ? `${prefix}.${key}` : key;
-    if (isPlainObject(value)) {
-      flattenLeaves(value, nextPrefix, out);
-      continue;
-    }
-    if (Array.isArray(value)) {
-      out[nextPrefix] = value as JsonValue;
-      continue;
-    }
-    out[nextPrefix] = (value ?? null) as JsonValue;
-  }
-
-  return out;
-}
-
-function normalizeForCompare(value: JsonValue): string {
-  if (typeof value === 'string') {
-    return value.trim();
-  }
-  return JSON.stringify(value);
-}
-
-function isSuspiciousTranslationValue(baseValue: JsonValue, targetValue: JsonValue): boolean {
-  if (typeof targetValue !== 'string') return false;
-  if (typeof baseValue !== 'string') return false;
-
-  if (targetValue.includes('�')) return true;
-
-  const compact = targetValue.replace(/\s/g, '');
-  if (!compact) return false;
-
-  const qCount = [...compact].filter(ch => ch === '?').length;
-  if (qCount === 0) return false;
-
-  if (/^\?+$/.test(compact)) return true;
-  if (/\?{3,}/.test(targetValue)) return true;
-  if (qCount >= 2 && qCount / compact.length >= 0.3) return true;
-
-  return false;
-}
-
 function buildReport(localeName: string, baseFlat: FlatMap, targetFlat: FlatMap): LocaleReport {
   const missingKeys: string[] = [];
   const fallbackKeys: string[] = [];
@@ -96,12 +36,12 @@ function buildReport(localeName: string, baseFlat: FlatMap, targetFlat: FlatMap)
     }
 
     const targetValue = targetFlat[key];
-    const sameAsBase = normalizeForCompare(targetValue) === normalizeForCompare(baseValue);
+    const sameAsBase = normalize(targetValue) === normalize(baseValue);
 
     if (sameAsBase) {
       fallbackKeys.push(key);
     } else {
-      if (isSuspiciousTranslationValue(baseValue, targetValue)) {
+      if (isSuspect(baseValue, targetValue)) {
         suspectKeys.push(key);
       } else {
         translatedKeys.push(key);

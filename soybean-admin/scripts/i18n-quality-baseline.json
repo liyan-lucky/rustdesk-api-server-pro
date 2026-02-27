@@ -1,0 +1,32 @@
+{
+  "locales": {
+    "zh-CN": {
+      "minTranslatedRatio": 0.98,
+      "maxFallbackRatio": 0.02
+    },
+    "es-ES": {
+      "minTranslatedRatio": 0.9,
+      "maxFallbackRatio": 0.1
+    },
+    "fr-FR": {
+      "minTranslatedRatio": 0.89,
+      "maxFallbackRatio": 0.11
+    },
+    "de-DE": {
+      "minTranslatedRatio": 0.88,
+      "maxFallbackRatio": 0.12
+    },
+    "ja-JP": {
+      "minTranslatedRatio": 0.25,
+      "maxFallbackRatio": 0.75
+    },
+    "ko-KR": {
+      "minTranslatedRatio": 0.25,
+      "maxFallbackRatio": 0.75
+    },
+    "ru-RU": {
+      "minTranslatedRatio": 0.42,
+      "maxFallbackRatio": 0.58
+    }
+  }
+}

@@ -1,0 +1,45 @@
+name: Backend Quality
+
+on:
+  push:
+    branches: ["master", "main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-quality.yml"
+  pull_request:
+    branches: ["master", "main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-quality.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: backend-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: Go vet
+        run: go vet ./...
+
+      - name: Go test
+        run: go test ./...

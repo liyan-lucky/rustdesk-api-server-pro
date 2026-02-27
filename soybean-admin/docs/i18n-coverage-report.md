@@ -12,7 +12,7 @@ Metrics:
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | de-DE | 320 | 284 | 0 | 36 | 0 | 0 | 88.75% | 88.75% |
 | es-ES | 320 | 292 | 0 | 28 | 0 | 0 | 91.25% | 91.25% |
-| fr-FR | 320 | 285 | 1 | 34 | 0 | 0 | 89.06% | 89.06% |
+| fr-FR | 320 | 286 | 0 | 34 | 0 | 0 | 89.38% | 89.38% |
 | ja-JP | 320 | 81 | 0 | 239 | 0 | 0 | 25.31% | 25.31% |
 | ko-KR | 320 | 81 | 0 | 239 | 0 | 0 | 25.31% | 25.31% |
 | ru-RU | 320 | 135 | 0 | 185 | 0 | 0 | 42.19% | 42.19% |
@@ -125,8 +125,8 @@ Metrics:
 ## fr-FR
 
 - Base leaf keys: 320
-- Translated leaves: 285 (89.06%)
-- Suspect translated leaves: 1
+- Translated leaves: 286 (89.38%)
+- Suspect translated leaves: 0
 - Fallback-identical leaves: 34 (10.63%)
 - Missing leaves: 0
 - Extra leaves: 0
@@ -168,7 +168,7 @@ Metrics:
   - `theme.themeColor.info`
 
 **Suspect Keys**
-  - `dataMap.session.created_at`
+-
 
 **Missing Keys**
 -

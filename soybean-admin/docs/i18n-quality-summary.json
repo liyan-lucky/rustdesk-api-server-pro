@@ -1,0 +1,95 @@
+{
+  "baseLocale": "en-US",
+  "strictMode": false,
+  "thresholds": {
+    "maxSuspectPerLocale": 0,
+    "maxMissingPerLocale": 0,
+    "maxExtraPerLocale": 0
+  },
+  "locales": [
+    {
+      "locale": "zh-CN",
+      "translated": 314,
+      "translatedRatio": 0.98125,
+      "fallbackRatio": 0.01875,
+      "maxFallbackRatio": 0.1,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.95,
+      "pass": true
+    },
+    {
+      "locale": "ja-JP",
+      "translated": 81,
+      "translatedRatio": 0.253125,
+      "fallbackRatio": 0.746875,
+      "maxFallbackRatio": 0.8,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.2,
+      "pass": true
+    },
+    {
+      "locale": "ko-KR",
+      "translated": 81,
+      "translatedRatio": 0.253125,
+      "fallbackRatio": 0.746875,
+      "maxFallbackRatio": 0.8,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.2,
+      "pass": true
+    },
+    {
+      "locale": "fr-FR",
+      "translated": 286,
+      "translatedRatio": 0.89375,
+      "fallbackRatio": 0.10625,
+      "maxFallbackRatio": 0.2,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.85,
+      "pass": true
+    },
+    {
+      "locale": "de-DE",
+      "translated": 284,
+      "translatedRatio": 0.8875,
+      "fallbackRatio": 0.1125,
+      "maxFallbackRatio": 0.25,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.85,
+      "pass": true
+    },
+    {
+      "locale": "es-ES",
+      "translated": 292,
+      "translatedRatio": 0.9125,
+      "fallbackRatio": 0.0875,
+      "maxFallbackRatio": 0.2,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.85,
+      "pass": true
+    },
+    {
+      "locale": "ru-RU",
+      "translated": 135,
+      "translatedRatio": 0.421875,
+      "fallbackRatio": 0.578125,
+      "maxFallbackRatio": 0.65,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.4,
+      "pass": true
+    }
+  ]
+}

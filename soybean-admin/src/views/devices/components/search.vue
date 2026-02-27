@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
-import { AuditTypeOptions, translateOptions } from '@/constants/business';
 
 defineOptions({
   name: 'AuditBaseLogsSearch'
@@ -42,7 +41,6 @@ async function search() {
             <NFormItemGi span="24 s:12 m:6" :label="$t('dataMap.device.rustdesk_id')" path="rustdesk_id">
               <NInput v-model:value="model.rustdesk_id" />
             </NFormItemGi>
-            
             <NFormItemGi span="24 m:12">
               <NSpace class="w-full" justify="end">
                 <NButton @click="reset">

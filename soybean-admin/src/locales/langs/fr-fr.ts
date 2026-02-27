@@ -360,7 +360,7 @@ const local: App.I18n.Schema = {
       session: {
         ...enUs.dataMap.session,
         expired: 'Expire le',
-        created_at: 'Cr?? le'
+        created_at: 'Créé le'
       },
     device: {
       ...enUs.dataMap.device,

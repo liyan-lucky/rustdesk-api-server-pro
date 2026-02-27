@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { fetchServerConfig, fetchServerConnectivity } from '@/service/api/home';
 
@@ -28,10 +28,17 @@ type ConfigValueSource = 'env' | 'inferred' | 'empty';
 type ConnectivityStatus = 'idle' | Api.Home.ServerConnectivityItem['status'];
 type ConnectivityCheckSource = 'remote' | 'cache';
 
-const SERVER_CONFIG_CACHE_TTL_MS = 30 * 1000;
+function parseTtlMs(raw: string | undefined, fallback: number) {
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return fallback;
+  if (parsed < 1000) return fallback;
+  return Math.floor(parsed);
+}
+
+const SERVER_CONFIG_CACHE_TTL_MS = parseTtlMs(import.meta.env.VITE_SERVER_CONFIG_CACHE_TTL_MS, 30 * 1000);
 const SERVER_CONFIG_CACHE_KEY = 'home.server-config-cache.v1';
 const CONNECTIVITY_CACHE_KEY = 'home.server-connectivity-cache.v1';
-const CONNECTIVITY_CACHE_TTL_MS = 10 * 1000;
+const CONNECTIVITY_CACHE_TTL_MS = parseTtlMs(import.meta.env.VITE_SERVER_CONNECTIVITY_CACHE_TTL_MS, 10 * 1000);
 let serverConfigCache: Api.Home.ServerConfig | null = null;
 let serverConfigCacheAt = 0;
 let serverConfigInFlight: Promise<Api.Home.ServerConfig | null> | null = null;
@@ -79,6 +86,8 @@ const lastLoadedAt = ref(0);
 const lastLoadSource = ref<ConfigLoadSource>('');
 const lastConnectivityCheckedAt = ref(0);
 const lastConnectivityCheckSource = ref<ConnectivityCheckSource | ''>('');
+const nowTick = ref(Date.now());
+let tickTimer: ReturnType<typeof setInterval> | null = null;
 let latestLoadRequestId = 0;
 const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message: string; target: string; durationMs?: number }>>({
   idServer: { status: 'idle', message: '', target: '' },
@@ -263,10 +272,21 @@ const lastUpdatedText = computed(() => {
   }
 });
 
+const lastUpdatedAgeText = computed(() => {
+  if (!lastLoadedAt.value) return '';
+  const sec = Math.max(0, Math.floor((nowTick.value - lastLoadedAt.value) / 1000));
+  return `${sec}s`;
+});
+
 const connectivityCheckSourceLabel = computed(() => {
   if (!lastConnectivityCheckSource.value) return '';
   return t(`page.home.serverConfig.connectivity.checkSourceType.${lastConnectivityCheckSource.value}`);
 });
+
+const cacheTtlHint = computed(
+  () =>
+    `Cache TTL: config ${Math.floor(SERVER_CONFIG_CACHE_TTL_MS / 1000)}s, connectivity ${Math.floor(CONNECTIVITY_CACHE_TTL_MS / 1000)}s`
+);
 
 const lastConnectivityCheckedText = computed(() => {
   if (!lastConnectivityCheckedAt.value) return '';
@@ -275,6 +295,12 @@ const lastConnectivityCheckedText = computed(() => {
   } catch {
     return '';
   }
+});
+
+const lastConnectivityCheckedAgeText = computed(() => {
+  if (!lastConnectivityCheckedAt.value) return '';
+  const sec = Math.max(0, Math.floor((nowTick.value - lastConnectivityCheckedAt.value) / 1000));
+  return `${sec}s`;
 });
 
 function getDisplayValue(item: ConfigItem) {
@@ -472,7 +498,8 @@ async function loadServerConfig(force = false) {
     return;
   }
 
-  const requestId = ++latestLoadRequestId;
+  latestLoadRequestId += 1;
+  const requestId = latestLoadRequestId;
   loading.value = true;
   loadError.value = '';
   try {
@@ -500,6 +527,17 @@ async function loadServerConfig(force = false) {
 }
 
 onMounted(loadServerConfig);
+onMounted(() => {
+  tickTimer = setInterval(() => {
+    nowTick.value = Date.now();
+  }, 1000);
+});
+onUnmounted(() => {
+  if (tickTimer) {
+    clearInterval(tickTimer);
+    tickTimer = null;
+  }
+});
 
 watch(
   () => [config.value.idServer, config.value.relayServer, config.value.apiServer, config.value.key].join('|'),
@@ -515,9 +553,14 @@ watch(
   <NCard :title="$t('page.home.serverConfig.title')" :bordered="false" size="small" class="card-wrapper">
     <template #header-extra>
       <NSpace :size="8">
-        <NButton size="small" :loading="loading" @click="loadServerConfig(true)">
-          {{ $t('page.home.serverConfig.refresh') }}
-        </NButton>
+        <NTooltip trigger="hover">
+          <template #trigger>
+            <NButton size="small" :loading="loading" @click="loadServerConfig(true)">
+              {{ $t('page.home.serverConfig.refresh') }}
+            </NButton>
+          </template>
+          {{ cacheTtlHint }}
+        </NTooltip>
         <NButton size="small" :disabled="loading" @click="clearCacheAndReload">
           {{ $t('page.home.serverConfig.clearCacheReload') }}
         </NButton>
@@ -543,7 +586,7 @@ watch(
         {{ $t('page.home.serverConfig.source') }}: {{ sourceLabel }}
       </span>
       <span v-if="lastUpdatedText">
-        {{ $t('page.home.serverConfig.lastUpdated') }}: {{ lastUpdatedText }}
+        {{ $t('page.home.serverConfig.lastUpdated') }}: {{ lastUpdatedText }} ({{ lastUpdatedAgeText }})
       </span>
     </div>
     <div v-if="connectivityStats.checked" class="config-meta mb-12px">
@@ -551,7 +594,9 @@ watch(
         {{ $t('page.home.serverConfig.connectivity.source') }}: {{ connectivityCheckSourceLabel }}
       </span>
       <span v-if="lastConnectivityCheckedText">
-        {{ $t('page.home.serverConfig.connectivity.lastChecked') }}: {{ lastConnectivityCheckedText }}
+        {{ $t('page.home.serverConfig.connectivity.lastChecked') }}: {{ lastConnectivityCheckedText }} ({{
+          lastConnectivityCheckedAgeText
+        }})
       </span>
       <span class="is-ok">{{ $t('page.home.serverConfig.connectivity.status.ok') }}: {{ connectivityStats.ok }}</span>
       <span class="is-error">{{ $t('page.home.serverConfig.connectivity.status.error') }}: {{ connectivityStats.error }}</span>

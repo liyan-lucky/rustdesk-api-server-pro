@@ -1,0 +1,82 @@
+name: Frontend Quality
+
+on:
+  push:
+    branches: ["master", "main"]
+    paths:
+      - "soybean-admin/**"
+      - ".github/workflows/frontend-quality.yml"
+  pull_request:
+    branches: ["master", "main"]
+    paths:
+      - "soybean-admin/**"
+      - ".github/workflows/frontend-quality.yml"
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: soybean-admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: soybean-admin/pnpm-lock.yaml
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: i18n quality check (strict)
+        run: pnpm i18n:check:strict
+
+      - name: i18n sanitize guard
+        run: pnpm i18n:sanitize:guard
+
+      - name: i18n report
+        run: pnpm i18n:check:report
+
+      - name: i18n summary
+        run: pnpm i18n:summary
+
+      - name: i18n fallback todo
+        run: pnpm i18n:todo
+
+      - name: i18n baseline compare
+        run: pnpm i18n:compare
+
+      - name: Upload i18n report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-report
+          path: |
+            soybean-admin/docs/i18n-coverage-report.md
+            soybean-admin/docs/i18n-fallback-todo.md
+            soybean-admin/docs/i18n-fallback-todo.json
+            soybean-admin/docs/i18n-quality-summary.json
+            soybean-admin/docs/i18n-sanitize-report.json
+          if-no-files-found: error
+
+      - name: Frontend quality bundle
+        run: pnpm ci:frontend

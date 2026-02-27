@@ -103,6 +103,10 @@ declare namespace Env {
     readonly VITE_ICONIFY_URL?: string;
     /** Used to differentiate storage across different domains */
     readonly VITE_STORAGE_PREFIX?: string;
+    /** Home server config cache ttl in milliseconds */
+    readonly VITE_SERVER_CONFIG_CACHE_TTL_MS?: string;
+    /** Home server connectivity cache ttl in milliseconds */
+    readonly VITE_SERVER_CONNECTIVITY_CACHE_TTL_MS?: string;
   }
 }
 
