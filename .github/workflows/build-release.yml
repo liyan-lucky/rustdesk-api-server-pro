@@ -57,7 +57,7 @@ jobs:
 
       - name: pack files
         run: |
-          zip ${{matrix.os}}-${{matrix.arch}}.zip build/*
+          zip -r ${{matrix.os}}-${{matrix.arch}}.zip build
 
       - name: upload package artifact
         uses: actions/upload-artifact@v4
