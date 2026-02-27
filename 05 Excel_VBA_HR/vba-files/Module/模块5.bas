@@ -112,9 +112,8 @@ End Sub
 ' ¹ý³ÌËµÃ÷£ºScheduleStatusBarReset
 Private Sub ScheduleStatusBarReset()
     On Error Resume Next
-    Application.onTime _
-        EarliestTime:=Now + timeValue("00:00:05"), _
-        Procedure:="»Ö¸´×´Ì¬À¸"
+    °²ÅÅ×´Ì¬À¸»Ö¸´ 5
     On Error GoTo 0
 End Sub
+
 

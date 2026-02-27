@@ -13,11 +13,14 @@ Sub 导出考勤卡()
 
     Dim oldAskToUpdateLinks As Boolean
     Dim oldAutomationSecurity As Long
+    Dim oldEnableCancelKey As XlEnableCancelKey
     Dim shouldResetStatusBar As Boolean  ' 仅正常完成时自动清空状态栏
     oldAskToUpdateLinks = Application.AskToUpdateLinks
     oldAutomationSecurity = Application.AutomationSecurity
+    oldEnableCancelKey = Application.EnableCancelKey
     Application.AskToUpdateLinks = False
     Application.AutomationSecurity = 3  ' msoAutomationSecurityForceDisable
+    Application.EnableCancelKey = xlDisabled
     shouldResetStatusBar = False
 
     Application.ScreenUpdating = False
@@ -36,7 +39,7 @@ Sub 导出考勤卡()
         GoTo CleanExit
     End If
 
-        UpdateStatus "正在检查并解除文件锁定..."
+    UpdateStatus "正在检查并解除文件锁定..."
     尝试解除文件锁定 CStr(filePath)
 
     UpdateStatus "正在打开目标文件..."
@@ -48,7 +51,7 @@ Sub 导出考勤卡()
 
     Set wbSource = ThisWorkbook
 
-        ' 先按普通方式打开；若仍被拦截，再回退到受保护视图流程
+    ' 先按普通方式打开；若仍被拦截，再回退到受保护视图流程
     On Error Resume Next
     Set wbTarget = Workbooks.Open(filePath, UpdateLinks:=0, ReadOnly:=False, IgnoreReadOnlyRecommended:=True, Notify:=False)
     On Error GoTo ErrorHandler
@@ -81,28 +84,36 @@ Sub 导出考勤卡()
     Set wsOld = wbTarget.Worksheets("考勤卡")
     On Error GoTo ErrorHandler
     If Not wsOld Is Nothing Then
-        tmpOldSheetName = "__bak_kqk_" & Format(Now, "hhmmss")
-        UpdateStatus "正在重命名旧表..."
-        wsOld.Name = tmpOldSheetName
+        UpdateStatus "检测到同名旧表，改为覆盖写入...", False
     End If
 
     ' 复制源工作表到目标文件，并保持位置一致（改为按内容复制，绕开 Worksheet.Copy 的不稳定问题）
-    UpdateStatus "正在复制工作表..."
+    UpdateStatus "正在复制工作表...", False
     Dim targetSheetCount As Long
     Dim srcIndex As Long
     Dim wsNew As Worksheet
     srcIndex = wsSource.Index
-    targetSheetCount = wbTarget.Sheets.Count
+    targetSheetCount = wbTarget.Worksheets.Count
 
-    按内容复制工作表 wsSource, wbTarget, srcIndex, wsNew
-
-    UpdateStatus "工作表复制完成，准备删除旧表副本..."
-
+    On Error Resume Next
     If Not wsOld Is Nothing Then
-        UpdateStatus "正在删除旧表副本..."
-        wsOld.Delete
-        Set wsOld = Nothing
+        按内容复制工作表 wsSource, wbTarget, srcIndex, wsNew, wsOld
+    Else
+        按内容复制工作表 wsSource, wbTarget, srcIndex, wsNew
     End If
+    If Err.Number <> 0 Then
+        UpdateStatus "复制阶段异常：" & Err.Number & " - " & Err.Description, False
+        Err.Clear
+        On Error GoTo ErrorHandler
+        GoTo CleanExit
+    End If
+    On Error GoTo ErrorHandler
+
+    If wsNew Is Nothing Then
+        GoTo CleanExit
+    End If
+
+    UpdateStatus "工作表复制完成，准备保存..."
 
     ' 保存并关闭目标文件
     wbTarget.Save
@@ -119,6 +130,7 @@ CleanExit:
     On Error GoTo 0
     Application.AskToUpdateLinks = oldAskToUpdateLinks
     Application.AutomationSecurity = oldAutomationSecurity
+    Application.EnableCancelKey = oldEnableCancelKey
     Application.DisplayAlerts = True
     Application.EnableEvents = True
     Application.Calculation = xlCalculationAutomatic
@@ -136,21 +148,40 @@ End Sub
 
 
 ' 过程说明：按内容复制工作表
-Private Sub 按内容复制工作表(ByVal wsSource As Worksheet, ByVal wbTarget As Workbook, ByVal srcIndex As Long, ByRef wsNew As Worksheet)
+Private Sub 按内容复制工作表(ByVal wsSource As Worksheet, ByVal wbTarget As Workbook, ByVal srcIndex As Long, ByRef wsNew As Worksheet, Optional ByVal wsReuse As Worksheet = Nothing)
     On Error GoTo CopyFailed
 
-    Dim targetSheetCount As Long
-    targetSheetCount = wbTarget.Sheets.Count
-
-    If targetSheetCount <= 0 Then
-        Set wsNew = wbTarget.Worksheets.Add
-    ElseIf srcIndex <= targetSheetCount Then
-        Set wsNew = wbTarget.Worksheets.Add(Before:=wbTarget.Sheets(srcIndex))
-    Else
-        Set wsNew = wbTarget.Worksheets.Add(After:=wbTarget.Sheets(targetSheetCount))
+    If wbTarget.ReadOnly Then
+        UpdateStatus "复制失败：目标文件以只读方式打开，无法新增工作表。", False
+        Exit Sub
     End If
 
-    UpdateStatus "正在复制单元格内容与格式..."
+    If wbTarget.ProtectStructure Then
+        UpdateStatus "复制失败：目标文件结构受保护，无法新增工作表。", False
+        Exit Sub
+    End If
+
+    Dim isSharedWorkbook As Boolean
+    On Error Resume Next
+    isSharedWorkbook = wbTarget.MultiUserEditing
+    On Error GoTo CopyFailed
+    If isSharedWorkbook Then
+        UpdateStatus "复制失败：目标文件为共享工作簿，无法新增工作表。", False
+        Exit Sub
+    End If
+
+    If wsReuse Is Nothing Then
+        Set wsNew = 安全新增工作表(wbTarget, srcIndex)
+        If wsNew Is Nothing Then
+            UpdateStatus "复制失败：无法在目标文件中新增工作表。", False
+            Exit Sub
+        End If
+    Else
+        Set wsNew = wsReuse
+        wsNew.Cells.Clear
+    End If
+
+    UpdateStatus "正在复制单元格内容与格式...", False
     Dim srcUsed As Range
     Set srcUsed = wsSource.UsedRange
 
@@ -160,8 +191,9 @@ Private Sub 按内容复制工作表(ByVal wsSource As Worksheet, ByVal wbTarget As Work
         wsNew.Range(srcUsed.Cells(1, 1).Address).PasteSpecial xlPasteColumnWidths
     End If
     Application.CutCopyMode = False
+    取消复制选区 wsNew
 
-    UpdateStatus "正在同步行高..."
+    UpdateStatus "正在同步行高...", False
     同步行高 wsSource, wsNew
 
     On Error Resume Next
@@ -172,8 +204,50 @@ Private Sub 按内容复制工作表(ByVal wsSource As Worksheet, ByVal wbTarget As Work
 
 CopyFailed:
     Application.CutCopyMode = False
-    Err.Raise Err.Number, "按内容复制工作表", Err.Description
+    取消复制选区 wsNew
+    UpdateStatus "复制失败：" & Err.Number & " - " & Err.Description, False
 End Sub
+
+' 过程说明：取消复制后残留选区
+Private Sub 取消复制选区(ByVal wsTarget As Worksheet)
+    On Error Resume Next
+    If wsTarget Is Nothing Then Exit Sub
+    wsTarget.Activate
+    wsTarget.Range("A1").Select
+    Application.CutCopyMode = False
+    On Error GoTo 0
+End Sub
+
+' 过程说明：安全新增工作表（优先按索引插入，失败时降级到末尾或默认新增）
+Private Function 安全新增工作表(ByVal wbTarget As Workbook, ByVal srcIndex As Long) As Worksheet
+    Dim wsNew As Worksheet
+    Dim targetSheetCount As Long
+
+    On Error GoTo AddFailed
+
+    targetSheetCount = wbTarget.Worksheets.Count
+    If targetSheetCount <= 0 Then
+        Set wsNew = wbTarget.Worksheets.Add
+        Set 安全新增工作表 = wsNew
+        Exit Function
+    End If
+
+    ' 先在末尾新增，避免部分工作簿在 Before:=... 场景下直接报错
+    Set wsNew = wbTarget.Worksheets.Add(After:=wbTarget.Worksheets(targetSheetCount))
+
+    ' 位置保持改为尽力而为，失败不影响主流程
+    If srcIndex > 0 And srcIndex <= targetSheetCount Then
+        On Error Resume Next
+        wsNew.Move Before:=wbTarget.Worksheets(srcIndex)
+        On Error GoTo AddFailed
+    End If
+
+    Set 安全新增工作表 = wsNew
+    Exit Function
+
+AddFailed:
+    Set 安全新增工作表 = Nothing
+End Function
 
 ' 过程说明：同步行高
 Private Sub 同步行高(ByVal wsSource As Worksheet, ByVal wsTarget As Worksheet)
@@ -227,26 +301,9 @@ End Sub
 ' 过程说明：ScheduleStatusBarReset
 Private Sub ScheduleStatusBarReset()
     On Error Resume Next
-    Application.onTime _
-        EarliestTime:=Now + timeValue("00:00:05"), _
-        Procedure:="恢复状态栏"
+    安排状态栏恢复 5
     On Error GoTo 0
 End Sub
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

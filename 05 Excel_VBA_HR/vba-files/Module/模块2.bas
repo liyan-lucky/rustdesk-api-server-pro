@@ -448,12 +448,14 @@ CleanUp:
 
         ' 仅正常完成时5秒后恢复状态栏；异常/取消保持当前文本
         If processedCount >= 0 Then
-            Application.onTime _
-                EarliestTime:=Now + timeValue("00:00:05"), _
-                Procedure:="恢复状态栏"
+            安排状态栏恢复 5
         End If
     Else
-        UpdateStatus Application.StatusBar & "，用时 " & Format(elapsedTime, "0.00") & " 秒", False
+        If VarType(Application.StatusBar) = vbBoolean Then
+            UpdateStatus "用时 " & Format(elapsedTime, "0.00") & " 秒", False
+        Else
+            UpdateStatus CStr(Application.StatusBar) & "，用时 " & Format(elapsedTime, "0.00") & " 秒", False
+        End If
     End If
 
     Exit Sub
@@ -464,25 +466,6 @@ ErrorHandler:
 End Sub
 
 ' ================= 新增辅助函数（参考企业微信代码） =================
-Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boolean = True)
-    Static lastMsg As String
-    Static lastTick As Double
-
-    Dim nowTick As Double
-    nowTick = Timer
-
-    If msg = lastMsg Then
-        If nowTick >= lastTick Then
-            If nowTick - lastTick < 0.2 Then Exit Sub
-        End If
-    End If
-
-    Application.StatusBar = msg
-    lastMsg = msg
-    lastTick = nowTick
-
-    If doEventsFlag Then DoEvents
-End Sub
 
 ' 函数说明：NormalizeName
 Private Function NormalizeName(ByVal nm As String) As String
@@ -604,4 +587,5 @@ End Sub
 Private Function CNWeek1(d As Date) As String
     CNWeek1 = Array("", "日", "一", "二", "三", "四", "五", "六")(Weekday(d, vbSunday))
 End Function
+
 

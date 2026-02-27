@@ -42,9 +42,7 @@ Sub 一键处理流程()
 
     UpdateStatus "一键流程完成", False
 
-    Application.onTime _
-        EarliestTime:=Now + timeValue("00:00:05"), _
-        Procedure:="恢复状态栏"
+    安排状态栏恢复 5
 
     Exit Sub
 
@@ -166,9 +164,7 @@ Private Sub 清理工作表(ByVal sheetName As String, Optional ByVal specialRanges A
 
     ' 使用Application.OnTime定时功能，在5秒后自动恢复状态栏
     ' 这样用户有足够时间看到完成消息，然后状态栏自动恢复正常
-    Application.onTime _
-        EarliestTime:=Now + timeValue("00:00:05"), _
-        Procedure:="恢复状态栏"  ' 调用公共的恢复状态栏函数
+    安排状态栏恢复 5
 
     Exit Sub  ' 正常退出
 
@@ -180,7 +176,7 @@ End Sub
 ' =================【工具函数区】=================
 ' 初始化Excel应用程序设置（优化性能）
 ' 更新状态栏并保持界面响应
-Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boolean = True)
+Public Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boolean = True)
     Static lastMsg As String
     Static lastTick As Double
 
@@ -193,6 +189,7 @@ Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boo
         End If
     End If
 
+    取消状态栏恢复
     Application.StatusBar = msg
     lastMsg = msg
     lastTick = nowTick
@@ -322,9 +319,7 @@ Private Sub 清理考勤清单工作表(ByVal sheetName As String)
 
     ' 使用Application.OnTime定时功能，在5秒后自动恢复状态栏
     ' 这样用户有足够时间看到完成消息，然后状态栏自动恢复正常
-    Application.onTime _
-        EarliestTime:=Now + timeValue("00:00:05"), _
-        Procedure:="恢复状态栏"  ' 调用公共的恢复状态栏函数
+    安排状态栏恢复 5
 
     Exit Sub  ' 正常退出
 
@@ -333,9 +328,40 @@ LocalErrorHandler:
     Err.Raise Err.Number, Err.Source, Err.Description
 End Sub
 
+
+' 状态栏定时恢复管理
+Public gStatusBarResetTime As Date
+Public gStatusBarResetScheduled As Boolean
+
+' 过程说明：安排状态栏恢复（会先取消上一次定时）
+Public Sub 安排状态栏恢复(Optional ByVal seconds As Double = 5)
+    On Error Resume Next
+    取消状态栏恢复
+    gStatusBarResetTime = Now + TimeSerial(0, 0, CLng(seconds))
+    Application.OnTime EarliestTime:=gStatusBarResetTime, Procedure:="恢复状态栏"
+    gStatusBarResetScheduled = True
+    On Error GoTo 0
+End Sub
+
+' 过程说明：取消已安排的状态栏恢复
+Public Sub 取消状态栏恢复()
+    On Error Resume Next
+    If gStatusBarResetScheduled Then
+        Application.OnTime EarliestTime:=gStatusBarResetTime, Procedure:="恢复状态栏", Schedule:=False
+        gStatusBarResetScheduled = False
+    End If
+    On Error GoTo 0
+End Sub
+
 ' 公开的状态栏恢复函数（供Application.OnTime调用）
 ' 必须是Public类型，否则OnTime无法调用
 Public Sub 恢复状态栏()
+    On Error Resume Next
     Application.StatusBar = False  ' 将状态栏恢复为默认状态
+    gStatusBarResetScheduled = False
+    On Error GoTo 0
 End Sub
+
+
+
 

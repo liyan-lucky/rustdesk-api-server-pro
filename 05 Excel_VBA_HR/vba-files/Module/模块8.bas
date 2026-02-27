@@ -179,32 +179,12 @@ Private Function GetAttendSheet(ByVal wb As Workbook) As Worksheet
 End Function
 
 ' 过程说明：UpdateStatus
-Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boolean = True)
-    Static lastMsg As String
-    Static lastTick As Double
-
-    Dim nowTick As Double
-    nowTick = Timer
-
-    If msg = lastMsg Then
-        If nowTick >= lastTick Then
-            If nowTick - lastTick < 0.2 Then Exit Sub
-        End If
-    End If
-
-    Application.StatusBar = msg
-    lastMsg = msg
-    lastTick = nowTick
-
-    If doEventsFlag Then DoEvents
-End Sub
 
 ' 过程说明：ScheduleStatusBarReset
 Private Sub ScheduleStatusBarReset()
     On Error Resume Next
-    Application.onTime _
-        EarliestTime:=Now + timeValue("00:00:05"), _
-        Procedure:="恢复状态栏"
+    安排状态栏恢复 5
     On Error GoTo 0
 End Sub
+
 

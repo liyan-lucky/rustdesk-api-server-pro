@@ -629,9 +629,7 @@ CleanExit:
     End If
 
     If shouldResetStatusBar Then
-        Application.onTime _
-            EarliestTime:=Now + timeValue("00:00:05"), _
-            Procedure:="恢复状态栏"
+        安排状态栏恢复 5
     End If
 
     Exit Sub
@@ -837,25 +835,6 @@ End Function
 ' ================= 辅助函数 =================
 ' 初始化Excel应用程序设置（优化性能）
 ' 更新状态栏并保持界面响应
-Private Sub UpdateStatus(ByVal msg As String, Optional ByVal doEventsFlag As Boolean = True)
-    Static lastMsg As String
-    Static lastTick As Double
-
-    Dim nowTick As Double
-    nowTick = Timer
-
-    If msg = lastMsg Then
-        If nowTick >= lastTick Then
-            If nowTick - lastTick < 0.2 Then Exit Sub
-        End If
-    End If
-
-    Application.StatusBar = msg
-    lastMsg = msg
-    lastTick = nowTick
-
-    If doEventsFlag Then DoEvents
-End Sub
 ' 过程说明：初始化设置
 Private Sub 初始化设置()
     Application.ScreenUpdating = False  ' 关闭屏幕更新，加快执行速度
@@ -921,4 +900,5 @@ Function FormatExcelTime(excelTime As Variant) As String
         FormatExcelTime = ""
     End If
 End Function
+
 
