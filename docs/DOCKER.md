@@ -8,7 +8,7 @@
 - 需要可复制的参考命令
 - 需要了解容器内默认目录、端口、环境变量与卷挂载关系
 
-## 快速安装命令（参考原作者写法风格）
+## 安装命令示例（可直接执行）
 
 下面这部分优先给出“可直接复制”的命令块，说明放在后面章节。
 
@@ -86,13 +86,13 @@ docker exec -it rustdesk-api-server-pro sh
 docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
 ```
 
-快速说明：
+简要说明：
 
 - 默认示例使用 `host` 网络，实际监听端口以 `server.yaml` 中 `httpConfig.port` 为准（常见 `:12345`）
 - 首次启动会自动 `sync`
 - 同时设置 `ADMIN_USER` 和 `ADMIN_PASS` 时会自动创建管理员（仅首次）
 
-## 1. 先说结论（推荐部署方式）
+## 1. 部署建议（推荐方式）
 
 推荐优先使用 `docker-compose.yaml`，并至少持久化以下内容：
 
@@ -204,7 +204,7 @@ docker compose down
 
 ### 5.1 Host 网络模式（Linux）
 
-适合简单部署，端口由 `server.yaml` 控制：
+适用于基础部署场景，端口由 `server.yaml` 控制：
 
 ```bash
 docker run -d \
@@ -383,7 +383,7 @@ Docker 环境下应指向：
 - `/app/data/record_uploads` 可写（宿主机目录权限正确）
 - 容器日志中无文件写入报错
 
-## 12. 上线建议（Docker）
+## 12. 生产部署建议（Docker）
 
 最小上线清单：
 

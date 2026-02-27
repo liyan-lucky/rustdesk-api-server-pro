@@ -8,7 +8,7 @@
 
 ![Dashboard](./img/1.jpeg "Dashboard")
 
-## 文档中心（上线建议放这里）
+## 文档中心（建议优先查阅）
 
 - [使用说明（部署、初始化、升级、验证）](./docs/USAGE.md)
 - [Docker 安装与配置参考（安装命令、默认参数、卷、端口）](./docs/DOCKER.md)
@@ -16,7 +16,7 @@
 - [问题排查手册（常见问题与日志定位）](./docs/TROUBLESHOOTING.md)
 - [发版说明模板（GitHub Release 可直接复用）](./RELEASE_NOTES.md)
 
-## Docker 快速开始（命令演示）
+## Docker 部署示例（命令）
 
 ```bash
 mkdir -p /opt/rustdesk-api-server-pro/data
@@ -40,7 +40,7 @@ docker logs -f rustdesk-api-server-pro
 - 详细 Docker 安装命令、Compose 示例、默认参数、端口与卷说明：`docs/DOCKER.md`
 - 默认示例使用 `host` 网络，实际监听端口以 `server.yaml` 中 `httpConfig.port` 为准（常见 `:12345`）
 
-## 当前状态（可发布兼容版）
+## 当前状态（兼容增强版）
 
 - 当前分支定位为“兼容增强版”，目标是尽量贴近最新版 RustDesk 客户端的常用 API 调用流程
 - 已完成新版客户端常见接口兼容补齐（地址簿、设备列表、分组面板基础请求、审计、sysinfo、devices/cli、record 等）
