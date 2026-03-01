@@ -1,4 +1,5 @@
-name: Backend Quality
+name: 后端质量检查
+run-name: 后端质量检查（${{ github.ref_name }}）
 
 on:
   push:
@@ -14,7 +15,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: backend-quality-${{ github.ref }}
+  group: backend-quality-zh-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -28,18 +29,18 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - name: Checkout
+      - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: Setup Go
+      - name: 配置 Go 环境
         uses: actions/setup-go@v5
         with:
           go-version: "1.23.x"
           cache: true
           cache-dependency-path: backend/go.sum
 
-      - name: Go vet
+      - name: 执行 Go vet
         run: go vet ./...
 
-      - name: Go test
+      - name: 执行 Go 测试
         run: go test ./...

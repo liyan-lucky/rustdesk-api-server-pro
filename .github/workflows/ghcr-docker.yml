@@ -1,4 +1,5 @@
-name: Build & Push Docker image to GHCR
+name: 构建并推送 Docker 镜像到 GHCR
+run-name: 构建镜像并推送到 GHCR（${{ github.ref_name }}）
 
 on:
   push:
@@ -13,23 +14,23 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: Set up QEMU
+      - name: 配置 QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
+      - name: 配置 Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to GHCR
+      - name: 登录 GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push (linux/amd64)
+      - name: 构建并推送（linux/amd64）
         uses: docker/build-push-action@v6
         with:
           context: .

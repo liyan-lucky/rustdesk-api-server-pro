@@ -1,3 +1,6 @@
+name: 构建并发布版本
+run-name: 发布构建（${{ github.ref_name || github.sha }}）
+
 on:
   workflow_dispatch:
   push:
@@ -17,36 +20,36 @@ jobs:
         os: [linux, windows, darwin]
         arch: [amd64, arm64]
     steps:
-      - name: checkout
+      - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: setup node
+      - name: 配置 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: setup pnpm
+      - name: 配置 pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
-      - name: setup go env
+      - name: 配置 Go 环境
         uses: actions/setup-go@v5
         with:
           go-version: '>=1.23.1'
           cache: false
 
-      - name: get tag
+      - name: 提取标签
         id: tag
         run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
-      - name: install
+      - name: 安装构建依赖
         run: |
           sudo apt update
           sudo apt install make zip -y
           cd soybean-admin && pnpm install --frozen-lockfile
       
-      - name: build
+      - name: 编译项目
         run: |
           go env -w GOOS=${{matrix.os}}
           go env -w GOARCH=${{matrix.arch}}
@@ -55,11 +58,11 @@ jobs:
           cd .. && cp -R soybean-admin/dist build/
           cp backend/server.yaml build/
 
-      - name: pack files
+      - name: 打包文件
         run: |
           zip -r ${{matrix.os}}-${{matrix.arch}}.zip build
 
-      - name: upload package artifact
+      - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ matrix.os }}-${{ matrix.arch }}
@@ -71,13 +74,13 @@ jobs:
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: download all build artifacts
+      - name: 下载全部构建产物
         uses: actions/download-artifact@v4
         with:
           path: release-assets
           merge-multiple: true
 
-      - name: create release
+      - name: 创建发布
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.build.outputs.tag_name }}
