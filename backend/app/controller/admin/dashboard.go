@@ -93,8 +93,7 @@ func (c *DashboardController) GetDashboardLineCharts() mvc.Result {
 	var xDateLine []string
 	var seriesUser []int
 	var seriesPeer []int
-	for i := startOfWeek.Day(); i <= endOfWeek.Day(); i++ {
-		current := carbon.Parse(fmt.Sprintf("%d-%d-%d", startOfWeek.Year(), startOfWeek.Month(), i))
+	for current := startOfWeek; current.Lte(endOfWeek); current = current.AddDay() {
 		s := current.ToDateString()
 		xDateLine = append(xDateLine, s)
 		seriesUser = append(seriesUser, userData[s])

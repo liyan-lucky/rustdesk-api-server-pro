@@ -180,8 +180,8 @@ const local: App.I18n.Schema = {
     system_mail_logs: 'Mail-Protokolle',
     system_mail: 'Mail',
     audit_baselogs: 'Basisprotokolle',
-    audit_filetransferlogs: 'Datei?bertragungsprotokolle',
-    devices: 'Ger?te'
+    audit_filetransferlogs: 'Dateiuebertragungsprotokolle',
+    devices: 'Geraete'
   },
   page: {
     ...enUs.page,
@@ -236,7 +236,7 @@ const local: App.I18n.Schema = {
         refresh: 'Konfiguration aktualisieren',
         clearCacheReload: 'Cache leeren & neu laden',
         source: 'Quelle',
-        lastUpdated: '最后更新',
+        lastUpdated: 'Zuletzt aktualisiert',
         show: 'Anzeigen',
         hide: 'Verbergen',
         missingTip: 'Die folgenden Felder sind leer. Bitte zuerst in den Container-Umgebungsvariablen konfigurieren: {fields}',

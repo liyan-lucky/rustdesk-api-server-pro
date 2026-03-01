@@ -1,11 +1,27 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { $t } from '@/locales';
 import { useEcharts } from '@/hooks/common/echarts';
 import { fetchPieCharts } from '@/service/api/home';
+import { useAppStore } from '@/store/modules/app';
 
 defineOptions({
   name: 'PieChart'
 });
+
+const appStore = useAppStore();
+const isNarrow = ref(false);
+const chartData = ref<Api.Home.PieChart[]>([]);
+
+function updateIsNarrow() {
+  if (typeof window === 'undefined') return;
+  isNarrow.value = window.innerWidth < 1400;
+}
+
+function ellipsisLabel(name: string) {
+  if (!name) return '';
+  return name.length > 30 ? `${name.slice(0, 30)}...` : name;
+}
 
 const { domRef, updateOptions } = useEcharts(() => ({
   title: {
@@ -16,8 +32,11 @@ const { domRef, updateOptions } = useEcharts(() => ({
     trigger: 'item'
   },
   legend: {
+    type: 'scroll',
     bottom: '1%',
     left: 'center',
+    right: 12,
+    formatter: (name: string) => ellipsisLabel(name),
     itemStyle: {
       borderWidth: 0
     }
@@ -36,17 +55,17 @@ const { domRef, updateOptions } = useEcharts(() => ({
       emphasis: {
         label: {
           show: true,
-          fontSize: '12'
+          fontSize: 12
         }
       },
       data: []
     }
   ]
 }));
-async function fetchChartsData() {
-  const pie = await fetchPieCharts();
+
+function renderChart(dataList: Api.Home.PieChart[] = []) {
   updateOptions(opt => {
-    const data = (pie.data || []).filter(item => Number(item?.value || 0) > 0);
+    const data = (dataList || []).filter(item => Number(item?.value || 0) > 0);
     const hasData = data.length > 0;
 
     (opt as any).tooltip = hasData ? { trigger: 'item' } : { show: false };
@@ -84,11 +103,12 @@ async function fetchChartsData() {
         emphasis: {
           label: {
             show: hasData,
-            fontSize: '12'
+            fontSize: 12
           }
         },
         label: {
-          show: hasData
+          show: hasData && !isNarrow.value,
+          formatter: ({ name }: { name: string }) => ellipsisLabel(name)
         },
         data: (hasData ? data : [{ name: $t('common.noData'), value: 1, itemStyle: { color: '#e5e7eb' } }]) as []
       }
@@ -96,11 +116,39 @@ async function fetchChartsData() {
     return opt;
   });
 }
+
+async function fetchChartsData() {
+  const pie = await fetchPieCharts();
+  chartData.value = pie.data || [];
+  renderChart(chartData.value);
+}
+
 async function init() {
-  fetchChartsData();
+  updateIsNarrow();
+  await fetchChartsData();
 }
 // init
 init();
+
+onMounted(() => {
+  updateIsNarrow();
+  window.addEventListener('resize', updateIsNarrow);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateIsNarrow);
+});
+
+watch(
+  () => appStore.locale,
+  () => {
+    renderChart(chartData.value);
+  }
+);
+
+watch(isNarrow, () => {
+  renderChart(chartData.value);
+});
 </script>
 
 <template>

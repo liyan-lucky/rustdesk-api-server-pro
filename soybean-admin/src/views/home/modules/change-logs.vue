@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { $t } from '@/locales';
 import { fetchStat } from '@/service/api/home';
 
 defineOptions({
@@ -18,7 +19,7 @@ const compatVersion = ref('latest');
 const logs = computed<LogItem[]>(() => [
   {
     id: 1,
-    content: '兼容增强版持续更新（适配新版客户端接口）',
+    content: `${$t('page.home.changeLogs')}: RustDesk API compatibility update`,
     version: compatVersion.value,
     time: new Date().toISOString().slice(0, 10)
   }
