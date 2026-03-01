@@ -76,8 +76,9 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
     const data = (dataList || []).filter(item => Number(item?.value || 0) > 0);
     const hasData = data.length > 0;
     const titleText = $t('page.home.operatingSystem');
+    const centerX = isNarrow.value ? '54%' : '50%';
     const centerY = isNarrow.value ? '40%' : '44%';
-    const radius = isNarrow.value ? (['36%', '60%'] as [string, string]) : (['42%', '68%'] as [string, string]);
+    const radius = isNarrow.value ? (['30%', '52%'] as [string, string]) : (['42%', '68%'] as [string, string]);
     const legendBottom = isNarrow.value ? 2 : 8;
 
     (opt as any).title = {
@@ -111,7 +112,7 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
       {
         name: titleText,
         type: 'pie',
-        center: ['50%', centerY],
+        center: [centerX, centerY],
         radius,
         avoidLabelOverlap: false,
         silent: !hasData,
@@ -131,12 +132,15 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
           formatter: ({ name }: { name: string }) => compactSideLabel(name),
           width: isNarrow.value ? 72 : 120,
           overflow: 'truncate',
-          fontSize: isNarrow.value ? 11 : 12
+          fontSize: isNarrow.value ? 11 : 12,
+          alignTo: isNarrow.value ? 'edge' : undefined,
+          edgeDistance: isNarrow.value ? 6 : undefined,
+          bleedMargin: isNarrow.value ? 6 : undefined
         },
         labelLine: {
           show: hasData,
-          length: isNarrow.value ? 8 : 14,
-          length2: isNarrow.value ? 8 : 12
+          length: isNarrow.value ? 6 : 14,
+          length2: isNarrow.value ? 6 : 12
         },
         data: (hasData ? data : [{ name: $t('common.noData'), value: 1, itemStyle: { color: '#e5e7eb' } }]) as []
       }
