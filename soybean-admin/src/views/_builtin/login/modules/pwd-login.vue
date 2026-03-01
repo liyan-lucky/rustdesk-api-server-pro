@@ -29,25 +29,25 @@ const rules = computed<Record<keyof Api.Form.LoginForm, App.Global.FormRule[]>>(
     username: [
       {
         required: true,
-        message: '账号不能为空'
+        message: $t('page.user.list.inputUsername')
       }
     ],
     password: [
       {
         required: true,
-        message: '密码不能为空'
+        message: $t('page.user.list.inputPassword')
       }
     ],
     code: [
       {
         required: true,
-        message: '验证码不能为空'
+        message: $t('page.login.common.codePlaceholder')
       }
     ],
     captchaId: [
       {
         required: true,
-        message: '验证码不能为空'
+        message: $t('page.login.common.codePlaceholder')
       }
     ]
   };
@@ -67,6 +67,7 @@ async function handleCaptcha() {
   captcha.img = c.data?.img || '';
   model.captchaId = captcha.id || '';
 }
+
 onMounted(() => {
   handleCaptcha();
 });
@@ -74,7 +75,7 @@ onMounted(() => {
 
 <template>
   <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
-    <NFormItem path="userName">
+    <NFormItem path="username">
       <NInput v-model:value="model.username" :placeholder="$t('page.login.common.userNamePlaceholder')" />
     </NFormItem>
     <NFormItem path="password">
