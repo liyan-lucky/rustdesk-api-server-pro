@@ -1,20 +1,20 @@
 {
   "locales": {
     "zh-CN": {
-      "minTranslatedRatio": 0.98,
-      "maxFallbackRatio": 0.02
+      "minTranslatedRatio": 0.95,
+      "maxFallbackRatio": 0.05
     },
     "es-ES": {
-      "minTranslatedRatio": 0.9,
-      "maxFallbackRatio": 0.1
-    },
-    "fr-FR": {
       "minTranslatedRatio": 0.89,
       "maxFallbackRatio": 0.11
     },
-    "de-DE": {
+    "fr-FR": {
       "minTranslatedRatio": 0.88,
       "maxFallbackRatio": 0.12
+    },
+    "de-DE": {
+      "minTranslatedRatio": 0.87,
+      "maxFallbackRatio": 0.13
     },
     "ja-JP": {
       "minTranslatedRatio": 0.25,

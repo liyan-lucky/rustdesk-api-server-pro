@@ -10,26 +10,29 @@ Metrics:
 
 | Locale | Base Keys | Translated | Suspect | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 320 | 284 | 0 | 36 | 0 | 0 | 88.75% | 88.75% |
-| es-ES | 320 | 292 | 0 | 28 | 0 | 0 | 91.25% | 91.25% |
-| fr-FR | 320 | 286 | 0 | 34 | 0 | 0 | 89.38% | 89.38% |
-| ja-JP | 320 | 81 | 0 | 239 | 0 | 0 | 25.31% | 25.31% |
-| ko-KR | 320 | 81 | 0 | 239 | 0 | 0 | 25.31% | 25.31% |
-| ru-RU | 320 | 135 | 0 | 185 | 0 | 0 | 42.19% | 42.19% |
-| zh-CN | 320 | 314 | 0 | 6 | 0 | 0 | 98.13% | 98.13% |
+| de-DE | 320 | 280 | 0 | 40 | 0 | 0 | 87.50% | 87.50% |
+| es-ES | 320 | 287 | 0 | 33 | 0 | 0 | 89.69% | 89.69% |
+| fr-FR | 320 | 283 | 0 | 37 | 0 | 0 | 88.44% | 88.44% |
+| ja-JP | 320 | 95 | 0 | 225 | 0 | 0 | 29.69% | 29.69% |
+| ko-KR | 320 | 95 | 0 | 225 | 0 | 0 | 29.69% | 29.69% |
+| ru-RU | 320 | 145 | 0 | 175 | 0 | 0 | 45.31% | 45.31% |
+| zh-CN | 320 | 305 | 0 | 15 | 0 | 0 | 95.31% | 95.31% |
 
 ## de-DE
 
 - Base leaf keys: 320
-- Translated leaves: 284 (88.75%)
+- Translated leaves: 280 (87.50%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 36 (11.25%)
+- Fallback-identical leaves: 40 (12.50%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
+  - `api.MailTemplateUpdateSuccess`
+  - `api.UserUpdateSuccess`
   - `common.index`
   - `common.update`
+  - `common.updateSuccess`
   - `dataMap.audit.ip`
   - `dataMap.audit.rustdesk_id`
   - `dataMap.audit.uuid`
@@ -44,6 +47,7 @@ Metrics:
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
   - `page.home.serverConfig.connectivity.checkSourceType.remote`
   - `page.home.serverConfig.key`
+  - `page.home.serverConfig.lastUpdated`
   - `page.home.serverConfig.sourceType.remote`
   - `page.user.list.emailFormatError`
   - `page.user.list.inputNickname`
@@ -77,14 +81,18 @@ Metrics:
 ## es-ES
 
 - Base leaf keys: 320
-- Translated leaves: 292 (91.25%)
+- Translated leaves: 287 (89.69%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 28 (8.75%)
+- Fallback-identical leaves: 33 (10.31%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
+  - `api.MailTemplateUpdateSuccess`
+  - `api.UserUpdateSuccess`
   - `common.error`
+  - `common.update`
+  - `common.updateSuccess`
   - `common.yesOrNo.no`
   - `dataMap.audit.ip`
   - `dataMap.audit.rustdesk_id`
@@ -95,6 +103,7 @@ Metrics:
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.statusLabel.normal`
   - `page.home.serverConfig.key`
+  - `page.home.serverConfig.lastUpdated`
   - `page.user.list.emailFormatError`
   - `page.user.list.inputNickname`
   - `page.user.list.inputPassword`
@@ -125,15 +134,17 @@ Metrics:
 ## fr-FR
 
 - Base leaf keys: 320
-- Translated leaves: 286 (89.38%)
+- Translated leaves: 283 (88.44%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 34 (10.63%)
+- Fallback-identical leaves: 37 (11.56%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
   - `common.action`
   - `common.index`
+  - `common.update`
+  - `common.updateSuccess`
   - `dataMap.audit.ip`
   - `dataMap.audit.rustdesk_id`
   - `dataMap.audit.type`
@@ -146,6 +157,7 @@ Metrics:
   - `dataMap.user.statusLabel.normal`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
   - `page.home.serverConfig.key`
+  - `page.home.serverConfig.lastUpdated`
   - `page.home.serverConfig.source`
   - `page.home.serverConfig.sourceType.env`
   - `page.user.list.emailFormatError`
@@ -179,13 +191,15 @@ Metrics:
 ## ja-JP
 
 - Base leaf keys: 320
-- Translated leaves: 81 (25.31%)
+- Translated leaves: 95 (29.69%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 239 (74.69%)
+- Fallback-identical leaves: 225 (70.31%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
+  - `api.MailTemplateUpdateSuccess`
+  - `api.UserUpdateSuccess`
   - `common.action`
   - `common.add`
   - `common.addSuccess`
@@ -224,9 +238,7 @@ Metrics:
   - `common.updateSuccess`
   - `common.userCenter`
   - `common.warning`
-  - `common.yesOrNo.no`
-  - `common.yesOrNo.yes`
-  - ... and 199 more
+  - ... and 185 more
 
 **Suspect Keys**
 -
@@ -240,13 +252,15 @@ Metrics:
 ## ko-KR
 
 - Base leaf keys: 320
-- Translated leaves: 81 (25.31%)
+- Translated leaves: 95 (29.69%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 239 (74.69%)
+- Fallback-identical leaves: 225 (70.31%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
+  - `api.MailTemplateUpdateSuccess`
+  - `api.UserUpdateSuccess`
   - `common.action`
   - `common.add`
   - `common.addSuccess`
@@ -285,9 +299,7 @@ Metrics:
   - `common.updateSuccess`
   - `common.userCenter`
   - `common.warning`
-  - `common.yesOrNo.no`
-  - `common.yesOrNo.yes`
-  - ... and 199 more
+  - ... and 185 more
 
 **Suspect Keys**
 -
@@ -301,13 +313,15 @@ Metrics:
 ## ru-RU
 
 - Base leaf keys: 320
-- Translated leaves: 135 (42.19%)
+- Translated leaves: 145 (45.31%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 185 (57.81%)
+- Fallback-identical leaves: 175 (54.69%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
+  - `api.MailTemplateUpdateSuccess`
+  - `api.UserUpdateSuccess`
   - `common.action`
   - `common.add`
   - `common.addSuccess`
@@ -346,9 +360,7 @@ Metrics:
   - `common.updateSuccess`
   - `common.userCenter`
   - `common.warning`
-  - `common.yesOrNo.no`
-  - `common.yesOrNo.yes`
-  - ... and 145 more
+  - ... and 135 more
 
 **Suspect Keys**
 -
@@ -362,18 +374,27 @@ Metrics:
 ## zh-CN
 
 - Base leaf keys: 320
-- Translated leaves: 314 (98.13%)
+- Translated leaves: 305 (95.31%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 6 (1.88%)
+- Fallback-identical leaves: 15 (4.69%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
+  - `api.MailTemplateUpdateSuccess`
+  - `api.UserUpdateSuccess`
+  - `common.update`
+  - `common.updateSuccess`
   - `dataMap.audit.ip`
   - `dataMap.audit.uuid`
   - `dataMap.mailLog.uuid`
   - `page.home.serverConfig.key`
+  - `page.home.serverConfig.lastUpdated`
   - `system.title`
+  - `system.updateCancel`
+  - `system.updateConfirm`
+  - `system.updateContent`
+  - `system.updateTitle`
   - `theme.tab.mode.chrome`
 
 **Suspect Keys**
