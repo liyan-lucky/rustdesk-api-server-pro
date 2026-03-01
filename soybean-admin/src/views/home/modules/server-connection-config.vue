@@ -551,9 +551,9 @@ watch(
 </script>
 
 <template>
-  <NCard :title="$t('page.home.serverConfig.title')" :bordered="false" size="small" class="card-wrapper">
+  <NCard :title="$t('page.home.serverConfig.title')" :bordered="false" size="small" class="card-wrapper server-config-card">
     <template #header-extra>
-      <NSpace :size="8">
+      <NSpace :size="8" wrap>
         <NTooltip trigger="hover">
           <template #trigger>
             <NButton size="small" :loading="loading" @click="loadServerConfig(true)">
@@ -716,7 +716,34 @@ watch(
   color: var(--n-text-color-3);
 }
 
+/* Keep card title horizontal and avoid character-by-character wrapping */
+.server-config-card :deep(.n-card-header__main) {
+  min-width: 0;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (max-width: 640px) {
+  .server-config-card :deep(.n-card-header) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .server-config-card :deep(.n-card-header__main) {
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .server-config-card :deep(.n-card-header__extra) {
+    margin-top: 0;
+  }
+
   .config-row {
     grid-template-columns: 1fr;
   }
