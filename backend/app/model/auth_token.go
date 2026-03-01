@@ -7,8 +7,8 @@ type AuthToken struct {
 	UserId     int       `xorm:"'user_id' int"`
 	RustdeskId string    `xorm:"'rustdesk_id' varchar(255)"`
 	Uuid       string    `xorm:"'uuid' varchar(255)"`
-	DeviceOs   string    `xorm:"'device_os' varchar(10)"`
-	DeviceType string    `xorm:"'device_type' varchar(10)"`
+	DeviceOs   string    `xorm:"'device_os' varchar(255)"`
+	DeviceType string    `xorm:"'device_type' varchar(50)"`
 	DeviceName string    `xorm:"'device_name' varchar(255)"`
 	Token      string    `xorm:"'token' varchar(255)"`
 	Expired    time.Time `xorm:"'expired' datetime"`

@@ -122,24 +122,35 @@ func (c *DashboardController) GetDashboardPieCharts() mvc.Result {
 	err := c.Db.SQL(`
 select
   case
-    when ifnull(d.os, '') <> '' then d.os
-    when ifnull((
-      select a.device_os
-      from auth_token a
-      where a.rustdesk_id = d.rustdesk_id and ifnull(a.device_os, '') <> ''
-      order by a.id desc
-      limit 1
-    ), '') <> '' then (
-      select a.device_os
-      from auth_token a
-      where a.rustdesk_id = d.rustdesk_id and ifnull(a.device_os, '') <> ''
-      order by a.id desc
-      limit 1
-    )
+    when trim(ifnull(d.os, '')) <> '' then trim(d.os)
+    when trim(ifnull(ato.device_os, '')) <> '' then trim(ato.device_os)
+    when trim(ifnull(po.platform, '')) <> '' then trim(po.platform)
     else 'unknown'
   end as name,
   count(*) as value
 from device d
+left join (
+  select t.rustdesk_id, t.device_os
+  from auth_token t
+  where ifnull(t.device_os, '') <> ''
+    and t.id in (
+      select max(id)
+      from auth_token
+      where ifnull(device_os, '') <> ''
+      group by rustdesk_id
+    )
+) ato on ato.rustdesk_id = d.rustdesk_id
+left join (
+  select p.rustdesk_id, p.platform
+  from peer p
+  where ifnull(p.platform, '') <> ''
+    and p.id in (
+      select max(id)
+      from peer
+      where ifnull(platform, '') <> ''
+      group by rustdesk_id
+    )
+) po on po.rustdesk_id = d.rustdesk_id
 group by name
 `).Find(&rawRows)
 	if err != nil {
@@ -162,16 +173,27 @@ group by name
 
 func normalizeDashboardOSName(raw string) string {
 	s := strings.ToLower(strings.TrimSpace(raw))
-	if s == "" || s == "unknown" || s == "unkn" {
+	if s == "" || s == "unknown" || s == "unkn" || s == "n/a" || s == "na" || s == "none" || s == "null" {
 		return "unknown"
 	}
 	if strings.Contains(s, "mac") || strings.Contains(s, "darwin") || strings.Contains(s, "osx") {
 		return "macOS"
 	}
+	if strings.Contains(s, "chrome") {
+		return "ChromeOS"
+	}
 	if strings.Contains(s, "win") {
 		return "Windows"
 	}
-	if strings.Contains(s, "linux") {
+	if strings.Contains(s, "linux") ||
+		strings.Contains(s, "ubuntu") ||
+		strings.Contains(s, "debian") ||
+		strings.Contains(s, "centos") ||
+		strings.Contains(s, "fedora") ||
+		strings.Contains(s, "arch") ||
+		strings.Contains(s, "openwrt") ||
+		strings.Contains(s, "alpine") ||
+		strings.Contains(s, "manjaro") {
 		return "Linux"
 	}
 	if strings.Contains(s, "android") {
