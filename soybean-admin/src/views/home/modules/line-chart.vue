@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import { watch } from 'vue';
 import { $t } from '@/locales';
 import { useEcharts } from '@/hooks/common/echarts';
 import { fetchLineCharts } from '@/service/api/home';
+import { useAppStore } from '@/store/modules/app';
 
 defineOptions({
   name: 'LineChart'
 });
+
+const appStore = useAppStore();
 
 const { domRef, updateOptions } = useEcharts(() => ({
   title: {
@@ -169,6 +173,13 @@ async function init() {
 
 // init
 init();
+
+watch(
+  () => appStore.locale,
+  () => {
+    fetchChartsData();
+  }
+);
 </script>
 
 <template>
