@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   "system": {
     "title": "Rustdesk Api Server",
-    "updateTitle": "Version Update Notice (ChatGPT-Generated)",
-    "updateContent": "This update content was generated/assembled by ChatGPT and may contain mistakes. Review and test carefully before using it, especially in production. Refresh now?",
-    "updateConfirm": "Refresh immediately",
-    "updateCancel": "Later"
+    "updateTitle": "系统版本更新通知",
+    "updateContent": "检测到系统有新版本发布，是否立即刷新页面？",
+    "updateConfirm": "立即刷新",
+    "updateCancel": "稍后再说"
   },
   "common": {
     "action": "Action",
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     "switch": "Switch",
     "tip": "Tip",
     "trigger": "Trigger",
-    "update": "Update",
-    "updateSuccess": "Update Success",
+    "update": "更新",
+    "updateSuccess": "更新成功",
     "userCenter": "User Center",
     "yesOrNo": {
       "yes": "Yes",
@@ -171,22 +171,22 @@ const local: App.I18n.Schema = {
   "page": {
     "login": {
       "common": {
-        "loginOrRegister": "Login / Register",
-        "userNamePlaceholder": "Please enter user name",
+        "loginOrRegister": "로그인 / 가입",
+        "userNamePlaceholder": "사용자 이름을 입력하세요",
         "phonePlaceholder": "Please enter phone number",
-        "codePlaceholder": "Please enter verification code",
-        "passwordPlaceholder": "Please enter password",
-        "confirmPasswordPlaceholder": "Please enter password again",
-        "codeLogin": "Verification code login",
-        "confirm": "Confirm",
-        "back": "Back",
-        "validateSuccess": "Verification passed",
-        "loginSuccess": "Login successfully",
-        "welcomeBack": "Welcome back, {userName} !"
+        "codePlaceholder": "인증 코드를 입력하세요",
+        "passwordPlaceholder": "비밀번호를 입력하세요",
+        "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
+        "codeLogin": "인증 코드 로그인",
+        "confirm": "확인",
+        "back": "뒤로",
+        "validateSuccess": "검증 성공",
+        "loginSuccess": "로그인 성공",
+        "welcomeBack": "환영합니다, {userName} 님!"
       },
       "pwdLogin": {
-        "title": "Password Login",
-        "rememberMe": "Remember me"
+        "title": "비밀번호 로그인",
+        "rememberMe": "로그인 상태 유지"
       }
     },
     "home": {
@@ -215,7 +215,7 @@ const local: App.I18n.Schema = {
         "refresh": "Refresh",
         "clearCacheReload": "Clear Cache & Reload",
         "source": "Source",
-        "lastUpdated": "Last Updated",
+        "lastUpdated": "最后更新",
         "show": "Show",
         "hide": "Hide",
         "missingTip": "The following fields are empty, please configure them in container environment variables first: {fields}",
@@ -268,8 +268,8 @@ const local: App.I18n.Schema = {
       "list": {
         "addUser": "사용자 추가",
         "editUser": "사용자 수정",
-        "inputUsername": "Input Username",
-        "inputPassword": "Input Password",
+        "inputUsername": "사용자 이름 입력",
+        "inputPassword": "비밀번호 입력",
         "inputNickname": "Input Nickname",
         "emailFormatError": "Email format error",
         "selectUserStatus": "Please select user status",
@@ -313,7 +313,7 @@ const local: App.I18n.Schema = {
   "icon": {
     "themeConfig": "Theme Configuration",
     "themeSchema": "Theme Schema",
-    "lang": "Switch Language",
+    "lang": "언어 전환",
     "fullscreen": "Fullscreen",
     "fullscreenExit": "Exit Fullscreen",
     "reload": "Reload Page",
@@ -419,14 +419,14 @@ const local: App.I18n.Schema = {
     "PasswordEmpty": "비밀번호를 입력하세요",
     "UserAddSuccess": "사용자가 생성되었습니다",
     "DataError": "데이터 오류",
-    "UserUpdateSuccess": "사용자가 수정되었습니다",
+    "UserUpdateSuccess": "用户修改成功",
     "UserDeleteSuccess": "사용자가 삭제되었습니다",
     "SessionKillSuccess": "세션이 종료되었습니다",
     "MailTemplateNameEmpty": "템플릿 이름을 입력하세요",
     "MailTemplateSubjectEmpty": "제목을 입력하세요",
     "MailTemplateContentsEmpty": "내용을 입력하세요",
     "MailTemplateAddSuccess": "메일 템플릿이 생성되었습니다",
-    "MailTemplateUpdateSuccess": "메일 템플릿이 수정되었습니다",
+    "MailTemplateUpdateSuccess": "邮件模板修改成功",
     "NoEmailAddress": "이메일 주소가 설정되지 않았습니다",
     "VerificationCodeError": "인증 코드 오류",
     "UUIDEmpty": "UUID를 입력하세요"

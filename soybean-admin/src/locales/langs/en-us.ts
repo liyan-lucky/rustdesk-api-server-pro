@@ -1,11 +1,10 @@
 const local: App.I18n.Schema = {
   system: {
     title: 'Rustdesk Api Server',
-    updateTitle: 'Version Update Notice (ChatGPT-Generated)',
-    updateContent:
-      'This update content was generated/assembled by ChatGPT and may contain mistakes. Review and test carefully before using it, especially in production. Refresh now?',
-    updateConfirm: 'Refresh immediately',
-    updateCancel: 'Later'
+    updateTitle: '系统版本更新通知',
+    updateContent: '检测到系统有新版本发布，是否立即刷新页面？',
+    updateConfirm: '立即刷新',
+    updateCancel: '稍后再说'
   },
   common: {
     action: 'Action',
@@ -43,8 +42,8 @@ const local: App.I18n.Schema = {
     switch: 'Switch',
     tip: 'Tip',
     trigger: 'Trigger',
-    update: 'Update',
-    updateSuccess: 'Update Success',
+    update: '更新',
+    updateSuccess: '更新成功',
     userCenter: 'User Center',
     yesOrNo: {
       yes: 'Yes',
@@ -216,7 +215,7 @@ const local: App.I18n.Schema = {
         refresh: 'Refresh',
         clearCacheReload: 'Clear Cache & Reload',
         source: 'Source',
-        lastUpdated: 'Last Updated',
+        lastUpdated: '最后更新',
         show: 'Show',
         hide: 'Hide',
         missingTip: 'The following fields are empty, please configure them in container environment variables first: {fields}',
@@ -420,14 +419,14 @@ const local: App.I18n.Schema = {
     PasswordEmpty: 'Password cannot be empty',
     UserAddSuccess: 'User created successfully',
     DataError: 'data error',
-    UserUpdateSuccess: 'User modified successfully',
+    UserUpdateSuccess: '用户修改成功',
     UserDeleteSuccess: 'User deleted successfully',
     SessionKillSuccess: 'Session killed successfully',
     MailTemplateNameEmpty: 'Name cannot be empty',
     MailTemplateSubjectEmpty: 'Subject cannot be empty',
     MailTemplateContentsEmpty: 'Contents cannot be empty',
     MailTemplateAddSuccess: 'Mail template created successfully',
-    MailTemplateUpdateSuccess: 'Mail template modified successfully',
+    MailTemplateUpdateSuccess: '邮件模板修改成功',
     NoEmailAddress: 'No e-mail address set',
     VerificationCodeError: 'Verification Code Error',
     UUIDEmpty: 'UUID cannot be empty'

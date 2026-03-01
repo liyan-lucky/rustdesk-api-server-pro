@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   "system": {
     "title": "Rustdesk Api Server",
-    "updateTitle": "Version Update Notice (ChatGPT-Generated)",
-    "updateContent": "This update content was generated/assembled by ChatGPT and may contain mistakes. Review and test carefully before using it, especially in production. Refresh now?",
-    "updateConfirm": "Refresh immediately",
-    "updateCancel": "Later"
+    "updateTitle": "系统版本更新通知",
+    "updateContent": "检测到系统有新版本发布，是否立即刷新页面？",
+    "updateConfirm": "立即刷新",
+    "updateCancel": "稍后再说"
   },
   "common": {
     "action": "Action",
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     "switch": "Switch",
     "tip": "Tip",
     "trigger": "Trigger",
-    "update": "Update",
-    "updateSuccess": "Update Success",
+    "update": "更新",
+    "updateSuccess": "更新成功",
     "userCenter": "User Center",
     "yesOrNo": {
       "yes": "Yes",
@@ -171,22 +171,22 @@ const local: App.I18n.Schema = {
   "page": {
     "login": {
       "common": {
-        "loginOrRegister": "Login / Register",
-        "userNamePlaceholder": "Please enter user name",
+        "loginOrRegister": "ログイン / 登録",
+        "userNamePlaceholder": "ユーザー名を入力してください",
         "phonePlaceholder": "Please enter phone number",
-        "codePlaceholder": "Please enter verification code",
-        "passwordPlaceholder": "Please enter password",
-        "confirmPasswordPlaceholder": "Please enter password again",
-        "codeLogin": "Verification code login",
-        "confirm": "Confirm",
-        "back": "Back",
-        "validateSuccess": "Verification passed",
-        "loginSuccess": "Login successfully",
-        "welcomeBack": "Welcome back, {userName} !"
+        "codePlaceholder": "認証コードを入力してください",
+        "passwordPlaceholder": "パスワードを入力してください",
+        "confirmPasswordPlaceholder": "パスワードを再入力してください",
+        "codeLogin": "認証コードでログイン",
+        "confirm": "確認",
+        "back": "戻る",
+        "validateSuccess": "検証に成功しました",
+        "loginSuccess": "ログイン成功",
+        "welcomeBack": "おかえりなさい、{userName} さん！"
       },
       "pwdLogin": {
-        "title": "Password Login",
-        "rememberMe": "Remember me"
+        "title": "パスワードログイン",
+        "rememberMe": "ログイン状態を保持"
       }
     },
     "home": {
@@ -215,7 +215,7 @@ const local: App.I18n.Schema = {
         "refresh": "Refresh",
         "clearCacheReload": "Clear Cache & Reload",
         "source": "Source",
-        "lastUpdated": "Last Updated",
+        "lastUpdated": "最后更新",
         "show": "Show",
         "hide": "Hide",
         "missingTip": "The following fields are empty, please configure them in container environment variables first: {fields}",
@@ -268,8 +268,8 @@ const local: App.I18n.Schema = {
       "list": {
         "addUser": "ユーザー追加",
         "editUser": "ユーザー編集",
-        "inputUsername": "Input Username",
-        "inputPassword": "Input Password",
+        "inputUsername": "ユーザー名を入力",
+        "inputPassword": "パスワードを入力",
         "inputNickname": "Input Nickname",
         "emailFormatError": "Email format error",
         "selectUserStatus": "Please select user status",
@@ -313,7 +313,7 @@ const local: App.I18n.Schema = {
   "icon": {
     "themeConfig": "Theme Configuration",
     "themeSchema": "Theme Schema",
-    "lang": "Switch Language",
+    "lang": "言語を切り替え",
     "fullscreen": "Fullscreen",
     "fullscreenExit": "Exit Fullscreen",
     "reload": "Reload Page",
@@ -419,14 +419,14 @@ const local: App.I18n.Schema = {
     "PasswordEmpty": "パスワードを入力してください",
     "UserAddSuccess": "ユーザーを作成しました",
     "DataError": "データエラー",
-    "UserUpdateSuccess": "ユーザーを更新しました",
+    "UserUpdateSuccess": "用户修改成功",
     "UserDeleteSuccess": "ユーザーを削除しました",
     "SessionKillSuccess": "セッションを終了しました",
     "MailTemplateNameEmpty": "テンプレート名を入力してください",
     "MailTemplateSubjectEmpty": "件名を入力してください",
     "MailTemplateContentsEmpty": "内容を入力してください",
     "MailTemplateAddSuccess": "メールテンプレートを作成しました",
-    "MailTemplateUpdateSuccess": "メールテンプレートを更新しました",
+    "MailTemplateUpdateSuccess": "邮件模板修改成功",
     "NoEmailAddress": "メールアドレスが設定されていません",
     "VerificationCodeError": "認証コードエラー",
     "UUIDEmpty": "UUID を入力してください"

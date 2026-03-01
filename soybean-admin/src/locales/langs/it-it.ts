@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   system: {
     title: 'Server API Rustdesk',
-    updateTitle: 'Version Update Notice (ChatGPT-Generated)',
-    updateContent: 'This update content was generated/assembled by ChatGPT and may contain mistakes. Review and test carefully before using it, especially in production. Refresh now?',
-    updateConfirm: 'Aggiorna subito',
-    updateCancel: 'Più tardi'
+    updateTitle: '系统版本更新通知',
+    updateContent: '检测到系统有新版本发布，是否立即刷新页面？',
+    updateConfirm: '立即刷新',
+    updateCancel: '稍后再说'
   },
   common: {
     action: 'Azione',
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     switch: 'Cambia',
     tip: 'Suggerimento',
     trigger: 'Attiva',
-    update: 'Aggiorna',
-    updateSuccess: 'Aggiornato con successo',
+    update: '更新',
+    updateSuccess: '更新成功',
     userCenter: 'Centro utente',
     yesOrNo: { yes: 'Sì', no: 'No' }
   },
@@ -213,7 +213,7 @@ const local: App.I18n.Schema = {
         refresh: 'Aggiorna',
         clearCacheReload: 'Svuota cache e ricarica',
         source: 'Origine',
-        lastUpdated: 'Ultimo aggiornamento',
+        lastUpdated: '最后更新',
         show: 'Mostra',
         hide: 'Nascondi',
         missingTip: 'I seguenti campi sono vuoti, configurali prima nelle variabili d’ambiente del container: {fields}',
@@ -417,14 +417,14 @@ const local: App.I18n.Schema = {
     PasswordEmpty: 'La password non può essere vuota',
     UserAddSuccess: 'Utente creato con successo',
     DataError: 'Errore dati',
-    UserUpdateSuccess: 'Utente modificato con successo',
+    UserUpdateSuccess: '用户修改成功',
     UserDeleteSuccess: 'Utente eliminato con successo',
     SessionKillSuccess: 'Sessione terminata con successo',
     MailTemplateNameEmpty: 'Il nome non può essere vuoto',
     MailTemplateSubjectEmpty: "L'oggetto non può essere vuoto",
     MailTemplateContentsEmpty: 'Il contenuto non può essere vuoto',
     MailTemplateAddSuccess: 'Modello email creato con successo',
-    MailTemplateUpdateSuccess: 'Modello email modificato con successo',
+    MailTemplateUpdateSuccess: '邮件模板修改成功',
     NoEmailAddress: 'Nessun indirizzo email impostato',
     VerificationCodeError: 'Errore codice di verifica',
     UUIDEmpty: "L'UUID non può essere vuoto"

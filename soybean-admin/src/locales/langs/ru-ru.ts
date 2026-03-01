@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   "system": {
     "title": "Rustdesk Api Server",
-    "updateTitle": "Уведомление об обновлении версии",
-    "updateContent": "This update content was generated/assembled by ChatGPT and may contain mistakes. Review and test carefully before using it, especially in production. Refresh now?",
-    "updateConfirm": "Обновить",
-    "updateCancel": "Позже"
+    "updateTitle": "系统版本更新通知",
+    "updateContent": "检测到系统有新版本发布，是否立即刷新页面？",
+    "updateConfirm": "立即刷新",
+    "updateCancel": "稍后再说"
   },
   "common": {
     "action": "Action",
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     "switch": "Switch",
     "tip": "Tip",
     "trigger": "Trigger",
-    "update": "Update",
-    "updateSuccess": "Update Success",
+    "update": "更新",
+    "updateSuccess": "更新成功",
     "userCenter": "User Center",
     "yesOrNo": {
       "yes": "Yes",
@@ -171,22 +171,22 @@ const local: App.I18n.Schema = {
   "page": {
     "login": {
       "common": {
-        "loginOrRegister": "Login / Register",
-        "userNamePlaceholder": "Please enter user name",
+        "loginOrRegister": "Вход / Регистрация",
+        "userNamePlaceholder": "Введите имя пользователя",
         "phonePlaceholder": "Please enter phone number",
-        "codePlaceholder": "Please enter verification code",
-        "passwordPlaceholder": "Please enter password",
-        "confirmPasswordPlaceholder": "Please enter password again",
-        "codeLogin": "Verification code login",
-        "confirm": "Confirm",
-        "back": "Back",
-        "validateSuccess": "Verification passed",
-        "loginSuccess": "Login successfully",
-        "welcomeBack": "Welcome back, {userName} !"
+        "codePlaceholder": "Введите код подтверждения",
+        "passwordPlaceholder": "Введите пароль",
+        "confirmPasswordPlaceholder": "Введите пароль еще раз",
+        "codeLogin": "Вход по коду подтверждения",
+        "confirm": "Подтвердить",
+        "back": "Назад",
+        "validateSuccess": "Проверка пройдена",
+        "loginSuccess": "Вход выполнен успешно",
+        "welcomeBack": "С возвращением, {userName}!"
       },
       "pwdLogin": {
-        "title": "Password Login",
-        "rememberMe": "Remember me"
+        "title": "Вход по паролю",
+        "rememberMe": "Запомнить меня"
       }
     },
     "home": {
@@ -215,7 +215,7 @@ const local: App.I18n.Schema = {
         "refresh": "Обновить",
         "clearCacheReload": "Очистить кэш и перезагрузить",
         "source": "Источник",
-        "lastUpdated": "Последнее обновление",
+        "lastUpdated": "最后更新",
         "show": "Показать",
         "hide": "Скрыть",
         "missingTip": "Следующие поля пустые, сначала настройте их в переменных окружения контейнера: {fields}",
@@ -268,8 +268,8 @@ const local: App.I18n.Schema = {
       "list": {
         "addUser": "Добавить пользователя",
         "editUser": "Редактировать пользователя",
-        "inputUsername": "Input Username",
-        "inputPassword": "Input Password",
+        "inputUsername": "Введите имя пользователя",
+        "inputPassword": "Введите пароль",
         "inputNickname": "Input Nickname",
         "emailFormatError": "Email format error",
         "selectUserStatus": "Please select user status",
@@ -313,7 +313,7 @@ const local: App.I18n.Schema = {
   "icon": {
     "themeConfig": "Theme Configuration",
     "themeSchema": "Theme Schema",
-    "lang": "Switch Language",
+    "lang": "Сменить язык",
     "fullscreen": "Fullscreen",
     "fullscreenExit": "Exit Fullscreen",
     "reload": "Reload Page",
@@ -419,14 +419,14 @@ const local: App.I18n.Schema = {
     "PasswordEmpty": "Пароль не может быть пустым",
     "UserAddSuccess": "Пользователь успешно создан",
     "DataError": "Ошибка данных",
-    "UserUpdateSuccess": "Пользователь успешно изменён",
+    "UserUpdateSuccess": "用户修改成功",
     "UserDeleteSuccess": "Пользователь успешно удалён",
     "SessionKillSuccess": "Сессия успешно завершена",
     "MailTemplateNameEmpty": "Имя не может быть пустым",
     "MailTemplateSubjectEmpty": "Тема не может быть пустой",
     "MailTemplateContentsEmpty": "Содержимое не может быть пустым",
     "MailTemplateAddSuccess": "Шаблон письма успешно создан",
-    "MailTemplateUpdateSuccess": "Шаблон письма успешно изменён",
+    "MailTemplateUpdateSuccess": "邮件模板修改成功",
     "NoEmailAddress": "Адрес электронной почты не задан",
     "VerificationCodeError": "Ошибка кода подтверждения",
     "UUIDEmpty": "UUID не может быть пустым"
