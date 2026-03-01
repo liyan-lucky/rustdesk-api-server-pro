@@ -26,16 +26,17 @@ function ellipsisLabel(name: string) {
 const { domRef, updateOptions } = useEcharts(() => ({
   title: {
     text: $t('page.home.operatingSystem'),
-    left: 'center'
+    left: 'center',
+    top: 14
   },
   tooltip: {
     trigger: 'item'
   },
   legend: {
     type: 'scroll',
-    bottom: '1%',
+    bottom: 8,
     left: 'center',
-    right: 12,
+    right: 10,
     formatter: (name: string) => ellipsisLabel(name),
     itemStyle: {
       borderWidth: 0
@@ -45,7 +46,8 @@ const { domRef, updateOptions } = useEcharts(() => ({
     {
       name: $t('page.home.operatingSystem'),
       type: 'pie',
-      radius: ['45%', '75%'],
+      center: ['50%', '44%'],
+      radius: ['42%', '68%'],
       avoidLabelOverlap: false,
       itemStyle: {
         borderRadius: 10,
@@ -67,11 +69,22 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
   updateOptions(opt => {
     const data = (dataList || []).filter(item => Number(item?.value || 0) > 0);
     const hasData = data.length > 0;
+    const titleText = $t('page.home.operatingSystem');
+    const centerY = isNarrow.value ? '42%' : '44%';
+    const radius = isNarrow.value ? (['36%', '60%'] as [string, string]) : (['42%', '68%'] as [string, string]);
+    const legendBottom = isNarrow.value ? 2 : 8;
+
+    (opt as any).title = {
+      ...(opt as any).title,
+      text: titleText
+    };
 
     (opt as any).tooltip = hasData ? { trigger: 'item' } : { show: false };
     (opt as any).legend = {
       ...(opt as any).legend,
-      show: hasData
+      show: hasData,
+      bottom: legendBottom,
+      formatter: (name: string) => ellipsisLabel(name)
     };
     (opt as any).graphic = hasData
       ? []
@@ -90,9 +103,10 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
         ];
     opt.series = [
       {
-        name: $t('page.home.operatingSystem'),
+        name: titleText,
         type: 'pie',
-        radius: ['45%', '75%'],
+        center: ['50%', centerY],
+        radius,
         avoidLabelOverlap: false,
         silent: !hasData,
         itemStyle: {

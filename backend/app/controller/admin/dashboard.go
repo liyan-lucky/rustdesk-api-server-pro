@@ -112,15 +112,75 @@ func (c *DashboardController) GetDashboardPieCharts() mvc.Result {
 		Value int    `json:"value"`
 		Name  string `json:"name"`
 	}
-	pieMap := make([]pieChartsData, 0)
-	err := c.Db.Table(&model.Device{}).
-		GroupBy("os").
-		Select("case when ifnull(`os`, '') = '' then 'unknown' else `os` end as `name`, count(*) as `value`").
-		Find(&pieMap)
+
+	type rawPieChartsData struct {
+		Value int    `xorm:"value"`
+		Name  string `xorm:"name"`
+	}
+
+	rawRows := make([]rawPieChartsData, 0)
+	err := c.Db.SQL(`
+select
+  case
+    when ifnull(d.os, '') <> '' then d.os
+    when ifnull((
+      select a.device_os
+      from auth_token a
+      where a.rustdesk_id = d.rustdesk_id and ifnull(a.device_os, '') <> ''
+      order by a.id desc
+      limit 1
+    ), '') <> '' then (
+      select a.device_os
+      from auth_token a
+      where a.rustdesk_id = d.rustdesk_id and ifnull(a.device_os, '') <> ''
+      order by a.id desc
+      limit 1
+    )
+    else 'unknown'
+  end as name,
+  count(*) as value
+from device d
+group by name
+`).Find(&rawRows)
 	if err != nil {
 		return c.Error(nil, err.Error())
 	}
+
+	merged := make(map[string]int)
+	for _, r := range rawRows {
+		key := normalizeDashboardOSName(r.Name)
+		merged[key] += r.Value
+	}
+
+	pieMap := make([]pieChartsData, 0, len(merged))
+	for name, value := range merged {
+		pieMap = append(pieMap, pieChartsData{Name: name, Value: value})
+	}
+
 	return c.Success(pieMap, "ok")
+}
+
+func normalizeDashboardOSName(raw string) string {
+	s := strings.ToLower(strings.TrimSpace(raw))
+	if s == "" || s == "unknown" || s == "unkn" {
+		return "unknown"
+	}
+	if strings.Contains(s, "mac") || strings.Contains(s, "darwin") || strings.Contains(s, "osx") {
+		return "macOS"
+	}
+	if strings.Contains(s, "win") {
+		return "Windows"
+	}
+	if strings.Contains(s, "linux") {
+		return "Linux"
+	}
+	if strings.Contains(s, "android") {
+		return "Android"
+	}
+	if strings.Contains(s, "ios") || strings.Contains(s, "iphone") || strings.Contains(s, "ipad") {
+		return "iOS"
+	}
+	return strings.TrimSpace(raw)
 }
 
 func (c *DashboardController) GetDashboardServerConfig() mvc.Result {

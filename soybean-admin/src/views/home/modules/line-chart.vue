@@ -94,6 +94,17 @@ const { domRef, updateOptions } = useEcharts(() => ({
 async function fetchChartsData() {
   const line = await fetchLineCharts();
   updateOptions(opt => {
+    const userLabel = $t('page.home.userCount');
+    const deviceLabel = $t('page.home.deviceCount');
+    (opt as any).title = {
+      ...(opt as any).title,
+      text: $t('page.home.oneWeek')
+    };
+    (opt as any).legend = {
+      ...(opt as any).legend,
+      data: [userLabel, deviceLabel]
+    };
+
     opt.xAxis = [
       {
         type: 'category',
@@ -104,7 +115,7 @@ async function fetchChartsData() {
     opt.series = [
       {
         color: '#8e9dff',
-        name: $t('page.home.userCount'),
+        name: userLabel,
         type: 'line',
         smooth: true,
         stack: 'Total',
@@ -134,7 +145,7 @@ async function fetchChartsData() {
       },
       {
         color: '#26deca',
-        name: $t('page.home.deviceCount'),
+        name: deviceLabel,
         type: 'line',
         smooth: true,
         stack: 'Total',
