@@ -11,11 +11,13 @@ defineOptions({
 
 const appStore = useAppStore();
 const isNarrow = ref(false);
+const isUltraNarrow = ref(false);
 const chartData = ref<Api.Home.PieChart[]>([]);
 
 function updateIsNarrow() {
   if (typeof window === 'undefined') return;
   isNarrow.value = window.innerWidth < 1400;
+  isUltraNarrow.value = window.innerWidth < 420;
 }
 
 function ellipsisLabel(name: string) {
@@ -76,9 +78,13 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
     const data = (dataList || []).filter(item => Number(item?.value || 0) > 0);
     const hasData = data.length > 0;
     const titleText = $t('page.home.operatingSystem');
-    const centerX = isNarrow.value ? '54%' : '50%';
+    const centerX = isUltraNarrow.value ? '50%' : isNarrow.value ? '54%' : '50%';
     const centerY = isNarrow.value ? '40%' : '44%';
-    const radius = isNarrow.value ? (['30%', '52%'] as [string, string]) : (['42%', '68%'] as [string, string]);
+    const radius = isUltraNarrow.value
+      ? (['32%', '54%'] as [string, string])
+      : isNarrow.value
+        ? (['30%', '52%'] as [string, string])
+        : (['42%', '68%'] as [string, string]);
     const legendBottom = isNarrow.value ? 2 : 8;
 
     (opt as any).title = {
@@ -128,7 +134,7 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
           }
         },
         label: {
-          show: hasData,
+          show: hasData && !isUltraNarrow.value,
           formatter: ({ name }: { name: string }) => compactSideLabel(name),
           width: isNarrow.value ? 72 : 120,
           overflow: 'truncate',
@@ -138,7 +144,7 @@ function renderChart(dataList: Api.Home.PieChart[] = []) {
           bleedMargin: isNarrow.value ? 6 : undefined
         },
         labelLine: {
-          show: hasData,
+          show: hasData && !isUltraNarrow.value,
           length: isNarrow.value ? 6 : 14,
           length2: isNarrow.value ? 6 : 12
         },
@@ -179,6 +185,10 @@ watch(
 );
 
 watch(isNarrow, () => {
+  renderChart(chartData.value);
+});
+
+watch(isUltraNarrow, () => {
   renderChart(chartData.value);
 });
 </script>
