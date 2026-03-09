@@ -427,21 +427,6 @@ declare namespace App {
           operatingSystem: string;
           oneWeek: string;
           changeLogs: string;
-          statDetail?: {
-            title: string;
-            clickHint: string;
-            openDetail: string;
-            close: string;
-            descUserCount: string;
-            descDeviceCount: string;
-            descOnlineCount: string;
-            descVisitCount: string;
-            latestUsers: string;
-            latestDevices: string;
-            latestVisits: string;
-            loadFailed: string;
-            noData: string;
-          };
           serverConfig: {
             title: string;
             tip: string;

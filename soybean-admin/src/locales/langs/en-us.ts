@@ -198,21 +198,6 @@ const local: App.I18n.Schema = {
       operatingSystem: 'Operating System',
       oneWeek: 'One Week',
       changeLogs: 'Change Logs',
-      statDetail: {
-        title: '{title} Details',
-        clickHint: 'Click to view details',
-        openDetail: 'Open Detail Page',
-        close: 'Close',
-        descUserCount: 'Shows the total users currently available in the system.',
-        descDeviceCount: 'Shows the total devices registered in the system.',
-        descOnlineCount: 'Shows current online device count from heartbeat statistics.',
-        descVisitCount: 'Shows the total visit count from audit records.',
-        latestUsers: 'Latest Users',
-        latestDevices: 'Latest Devices',
-        latestVisits: 'Latest Visits',
-        loadFailed: 'Failed to load detail list, please try again later.',
-        noData: 'No detail data available.'
-      },
       serverConfig: {
         title: 'Client Connection Config',
         tip: 'Copy the following values into the RustDesk client. If KEY is empty, set the `RUSTDESK_KEY` container environment variable.',

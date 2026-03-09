@@ -1,9 +1,5 @@
-export function getAppVersion() {
-  return BUILD_TIME || 'unknown';
-}
-
 export function getVersionTag() {
-  return `v${getAppVersion()}`;
+  return 'latest';
 }
 
 export function appendVersion(content: string) {
