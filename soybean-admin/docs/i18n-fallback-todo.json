@@ -1,0 +1,635 @@
+{
+  "baseLocale": "en-US",
+  "generatedAt": null,
+  "locales": [
+    {
+      "locale": "zh-CN",
+      "baseKeys": 320,
+      "fallbackCount": 6,
+      "translatedCount": 314,
+      "fallbackRatio": 0.01875,
+      "topFallbackKeys": [
+        "system.title",
+        "theme.tab.mode.chrome",
+        "page.home.serverConfig.key",
+        "dataMap.audit.ip",
+        "dataMap.audit.uuid",
+        "dataMap.mailLog.uuid"
+      ],
+      "modules": [
+        {
+          "module": "dataMap",
+          "count": 3
+        },
+        {
+          "module": "page",
+          "count": 1
+        },
+        {
+          "module": "system",
+          "count": 1
+        },
+        {
+          "module": "theme",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "locale": "ja-JP",
+      "baseKeys": 320,
+      "fallbackCount": 239,
+      "translatedCount": 81,
+      "fallbackRatio": 0.746875,
+      "topFallbackKeys": [
+        "system.title",
+        "system.updateTitle",
+        "system.updateContent",
+        "system.updateConfirm",
+        "system.updateCancel",
+        "common.action",
+        "common.add",
+        "common.addSuccess",
+        "common.backToHome",
+        "common.batchDelete",
+        "common.cancel",
+        "common.close",
+        "common.check",
+        "common.expandColumn",
+        "common.columnSetting",
+        "common.config",
+        "common.confirm",
+        "common.delete",
+        "common.deleteSuccess",
+        "common.confirmDelete",
+        "common.edit",
+        "common.look",
+        "common.warning",
+        "common.error",
+        "common.index",
+        "common.keywordSearch",
+        "common.logout",
+        "common.logoutConfirm",
+        "common.lookForward",
+        "common.modify",
+        "common.modifySuccess",
+        "common.noData",
+        "common.operate",
+        "common.pleaseCheckValue",
+        "common.refresh",
+        "common.reset",
+        "common.search",
+        "common.switch",
+        "common.tip",
+        "common.trigger",
+        "common.update",
+        "common.updateSuccess",
+        "common.userCenter",
+        "common.yesOrNo.yes",
+        "common.yesOrNo.no",
+        "request.logout",
+        "request.logoutMsg",
+        "request.logoutWithModal",
+        "request.logoutWithModalMsg",
+        "request.refreshToken",
+        "request.tokenExpired",
+        "theme.themeSchema.title",
+        "theme.themeSchema.light",
+        "theme.themeSchema.dark",
+        "theme.themeSchema.auto",
+        "theme.grayscale",
+        "theme.colourWeakness",
+        "theme.layoutMode.title",
+        "theme.layoutMode.vertical",
+        "theme.layoutMode.horizontal",
+        "theme.layoutMode.vertical-mix",
+        "theme.layoutMode.horizontal-mix",
+        "theme.layoutMode.reverseHorizontalMix",
+        "theme.recommendColor",
+        "theme.recommendColorDesc",
+        "theme.themeColor.title",
+        "theme.themeColor.primary",
+        "theme.themeColor.info",
+        "theme.themeColor.success",
+        "theme.themeColor.warning",
+        "theme.themeColor.error",
+        "theme.themeColor.followPrimary",
+        "theme.scrollMode.title",
+        "theme.scrollMode.wrapper",
+        "theme.scrollMode.content",
+        "theme.page.animate",
+        "theme.page.mode.title",
+        "theme.page.mode.fade",
+        "theme.page.mode.fade-slide",
+        "theme.page.mode.fade-bottom"
+      ],
+      "modules": [
+        {
+          "module": "page",
+          "count": 75
+        },
+        {
+          "module": "theme",
+          "count": 61
+        },
+        {
+          "module": "common",
+          "count": 40
+        },
+        {
+          "module": "dataMap",
+          "count": 19
+        },
+        {
+          "module": "route",
+          "count": 17
+        },
+        {
+          "module": "icon",
+          "count": 10
+        },
+        {
+          "module": "request",
+          "count": 6
+        },
+        {
+          "module": "dropdown",
+          "count": 5
+        },
+        {
+          "module": "system",
+          "count": 5
+        },
+        {
+          "module": "datatable",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "locale": "ko-KR",
+      "baseKeys": 320,
+      "fallbackCount": 239,
+      "translatedCount": 81,
+      "fallbackRatio": 0.746875,
+      "topFallbackKeys": [
+        "system.title",
+        "system.updateTitle",
+        "system.updateContent",
+        "system.updateConfirm",
+        "system.updateCancel",
+        "common.action",
+        "common.add",
+        "common.addSuccess",
+        "common.backToHome",
+        "common.batchDelete",
+        "common.cancel",
+        "common.close",
+        "common.check",
+        "common.expandColumn",
+        "common.columnSetting",
+        "common.config",
+        "common.confirm",
+        "common.delete",
+        "common.deleteSuccess",
+        "common.confirmDelete",
+        "common.edit",
+        "common.look",
+        "common.warning",
+        "common.error",
+        "common.index",
+        "common.keywordSearch",
+        "common.logout",
+        "common.logoutConfirm",
+        "common.lookForward",
+        "common.modify",
+        "common.modifySuccess",
+        "common.noData",
+        "common.operate",
+        "common.pleaseCheckValue",
+        "common.refresh",
+        "common.reset",
+        "common.search",
+        "common.switch",
+        "common.tip",
+        "common.trigger",
+        "common.update",
+        "common.updateSuccess",
+        "common.userCenter",
+        "common.yesOrNo.yes",
+        "common.yesOrNo.no",
+        "request.logout",
+        "request.logoutMsg",
+        "request.logoutWithModal",
+        "request.logoutWithModalMsg",
+        "request.refreshToken",
+        "request.tokenExpired",
+        "theme.themeSchema.title",
+        "theme.themeSchema.light",
+        "theme.themeSchema.dark",
+        "theme.themeSchema.auto",
+        "theme.grayscale",
+        "theme.colourWeakness",
+        "theme.layoutMode.title",
+        "theme.layoutMode.vertical",
+        "theme.layoutMode.horizontal",
+        "theme.layoutMode.vertical-mix",
+        "theme.layoutMode.horizontal-mix",
+        "theme.layoutMode.reverseHorizontalMix",
+        "theme.recommendColor",
+        "theme.recommendColorDesc",
+        "theme.themeColor.title",
+        "theme.themeColor.primary",
+        "theme.themeColor.info",
+        "theme.themeColor.success",
+        "theme.themeColor.warning",
+        "theme.themeColor.error",
+        "theme.themeColor.followPrimary",
+        "theme.scrollMode.title",
+        "theme.scrollMode.wrapper",
+        "theme.scrollMode.content",
+        "theme.page.animate",
+        "theme.page.mode.title",
+        "theme.page.mode.fade",
+        "theme.page.mode.fade-slide",
+        "theme.page.mode.fade-bottom"
+      ],
+      "modules": [
+        {
+          "module": "page",
+          "count": 76
+        },
+        {
+          "module": "theme",
+          "count": 61
+        },
+        {
+          "module": "common",
+          "count": 40
+        },
+        {
+          "module": "dataMap",
+          "count": 18
+        },
+        {
+          "module": "route",
+          "count": 17
+        },
+        {
+          "module": "icon",
+          "count": 10
+        },
+        {
+          "module": "request",
+          "count": 6
+        },
+        {
+          "module": "dropdown",
+          "count": 5
+        },
+        {
+          "module": "system",
+          "count": 5
+        },
+        {
+          "module": "datatable",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "locale": "fr-FR",
+      "baseKeys": 320,
+      "fallbackCount": 34,
+      "translatedCount": 286,
+      "fallbackRatio": 0.10625,
+      "topFallbackKeys": [
+        "system.title",
+        "system.updateTitle",
+        "system.updateContent",
+        "system.updateConfirm",
+        "system.updateCancel",
+        "common.action",
+        "common.index",
+        "theme.themeColor.info",
+        "theme.tab.mode.chrome",
+        "route.iframe-page",
+        "route.audit",
+        "route.user_sessions",
+        "page.home.serverConfig.key",
+        "page.home.serverConfig.source",
+        "page.home.serverConfig.sourceType.env",
+        "page.home.serverConfig.connectivity.checkSourceType.cache",
+        "page.user.list.inputUsername",
+        "page.user.list.inputPassword",
+        "page.user.list.inputNickname",
+        "page.user.list.emailFormatError",
+        "page.user.list.selectUserStatus",
+        "page.user.list.tfa_secret_bind",
+        "page.user.list.require2FASecret",
+        "page.user.list.require2FACode",
+        "dataMap.user.statusLabel.normal",
+        "dataMap.user.loginVerifyLabel.tfaCheck",
+        "dataMap.device.os",
+        "dataMap.device.rustdesk_id",
+        "dataMap.audit.type",
+        "dataMap.audit.rustdesk_id",
+        "dataMap.audit.ip",
+        "dataMap.audit.uuid",
+        "dataMap.mailTemplate.type",
+        "dataMap.mailLog.uuid"
+      ],
+      "modules": [
+        {
+          "module": "page",
+          "count": 12
+        },
+        {
+          "module": "dataMap",
+          "count": 10
+        },
+        {
+          "module": "system",
+          "count": 5
+        },
+        {
+          "module": "route",
+          "count": 3
+        },
+        {
+          "module": "common",
+          "count": 2
+        },
+        {
+          "module": "theme",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "locale": "de-DE",
+      "baseKeys": 320,
+      "fallbackCount": 36,
+      "translatedCount": 284,
+      "fallbackRatio": 0.1125,
+      "topFallbackKeys": [
+        "system.title",
+        "system.updateTitle",
+        "system.updateContent",
+        "system.updateConfirm",
+        "system.updateCancel",
+        "common.index",
+        "common.update",
+        "theme.themeColor.info",
+        "theme.scrollMode.wrapper",
+        "theme.tab.mode.chrome",
+        "theme.tab.mode.button",
+        "route.iframe-page",
+        "route.audit",
+        "page.home.serverConfig.key",
+        "page.home.serverConfig.sourceType.remote",
+        "page.home.serverConfig.connectivity.checkSourceType.remote",
+        "page.home.serverConfig.connectivity.checkSourceType.cache",
+        "page.user.list.inputUsername",
+        "page.user.list.inputPassword",
+        "page.user.list.inputNickname",
+        "page.user.list.emailFormatError",
+        "page.user.list.selectUserStatus",
+        "page.user.list.tfa_secret_bind",
+        "page.user.list.require2FASecret",
+        "page.user.list.require2FACode",
+        "dataMap.user.status",
+        "dataMap.user.statusLabel.normal",
+        "dataMap.user.loginVerifyLabel.tfaCheck",
+        "dataMap.device.os",
+        "dataMap.device.rustdesk_id",
+        "dataMap.audit.rustdesk_id",
+        "dataMap.audit.ip",
+        "dataMap.audit.uuid",
+        "dataMap.mailTemplate.name",
+        "dataMap.mailLog.uuid",
+        "dataMap.mailLog.status"
+      ],
+      "modules": [
+        {
+          "module": "page",
+          "count": 12
+        },
+        {
+          "module": "dataMap",
+          "count": 11
+        },
+        {
+          "module": "system",
+          "count": 5
+        },
+        {
+          "module": "theme",
+          "count": 4
+        },
+        {
+          "module": "common",
+          "count": 2
+        },
+        {
+          "module": "route",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "locale": "es-ES",
+      "baseKeys": 320,
+      "fallbackCount": 28,
+      "translatedCount": 292,
+      "fallbackRatio": 0.0875,
+      "topFallbackKeys": [
+        "system.title",
+        "system.updateTitle",
+        "system.updateContent",
+        "system.updateConfirm",
+        "system.updateCancel",
+        "common.error",
+        "common.yesOrNo.no",
+        "theme.themeColor.info",
+        "theme.themeColor.error",
+        "theme.tab.mode.chrome",
+        "route.iframe-page",
+        "page.home.serverConfig.key",
+        "page.user.list.inputUsername",
+        "page.user.list.inputPassword",
+        "page.user.list.inputNickname",
+        "page.user.list.emailFormatError",
+        "page.user.list.selectUserStatus",
+        "page.user.list.tfa_secret_bind",
+        "page.user.list.require2FASecret",
+        "page.user.list.require2FACode",
+        "dataMap.user.statusLabel.normal",
+        "dataMap.user.loginVerifyLabel.tfaCheck",
+        "dataMap.device.rustdesk_id",
+        "dataMap.audit.rustdesk_id",
+        "dataMap.audit.ip",
+        "dataMap.audit.uuid",
+        "dataMap.mailLog.uuid",
+        "dataMap.mailLog.statusLabel.err"
+      ],
+      "modules": [
+        {
+          "module": "page",
+          "count": 9
+        },
+        {
+          "module": "dataMap",
+          "count": 8
+        },
+        {
+          "module": "system",
+          "count": 5
+        },
+        {
+          "module": "theme",
+          "count": 3
+        },
+        {
+          "module": "common",
+          "count": 2
+        },
+        {
+          "module": "route",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "locale": "ru-RU",
+      "baseKeys": 320,
+      "fallbackCount": 185,
+      "translatedCount": 135,
+      "fallbackRatio": 0.578125,
+      "topFallbackKeys": [
+        "system.title",
+        "system.updateContent",
+        "common.action",
+        "common.add",
+        "common.addSuccess",
+        "common.backToHome",
+        "common.batchDelete",
+        "common.cancel",
+        "common.close",
+        "common.check",
+        "common.expandColumn",
+        "common.columnSetting",
+        "common.config",
+        "common.confirm",
+        "common.delete",
+        "common.deleteSuccess",
+        "common.confirmDelete",
+        "common.edit",
+        "common.look",
+        "common.warning",
+        "common.error",
+        "common.index",
+        "common.keywordSearch",
+        "common.logout",
+        "common.logoutConfirm",
+        "common.lookForward",
+        "common.modify",
+        "common.modifySuccess",
+        "common.noData",
+        "common.operate",
+        "common.pleaseCheckValue",
+        "common.refresh",
+        "common.reset",
+        "common.search",
+        "common.switch",
+        "common.tip",
+        "common.trigger",
+        "common.update",
+        "common.updateSuccess",
+        "common.userCenter",
+        "common.yesOrNo.yes",
+        "common.yesOrNo.no",
+        "request.logout",
+        "request.logoutMsg",
+        "request.logoutWithModal",
+        "request.logoutWithModalMsg",
+        "request.refreshToken",
+        "request.tokenExpired",
+        "theme.themeSchema.title",
+        "theme.themeSchema.light",
+        "theme.themeSchema.dark",
+        "theme.themeSchema.auto",
+        "theme.grayscale",
+        "theme.colourWeakness",
+        "theme.layoutMode.title",
+        "theme.layoutMode.vertical",
+        "theme.layoutMode.horizontal",
+        "theme.layoutMode.vertical-mix",
+        "theme.layoutMode.horizontal-mix",
+        "theme.layoutMode.reverseHorizontalMix",
+        "theme.recommendColor",
+        "theme.recommendColorDesc",
+        "theme.themeColor.title",
+        "theme.themeColor.primary",
+        "theme.themeColor.info",
+        "theme.themeColor.success",
+        "theme.themeColor.warning",
+        "theme.themeColor.error",
+        "theme.themeColor.followPrimary",
+        "theme.scrollMode.title",
+        "theme.scrollMode.wrapper",
+        "theme.scrollMode.content",
+        "theme.page.animate",
+        "theme.page.mode.title",
+        "theme.page.mode.fade",
+        "theme.page.mode.fade-slide",
+        "theme.page.mode.fade-bottom",
+        "theme.page.mode.fade-scale",
+        "theme.page.mode.zoom-fade",
+        "theme.page.mode.zoom-out"
+      ],
+      "modules": [
+        {
+          "module": "theme",
+          "count": 61
+        },
+        {
+          "module": "common",
+          "count": 40
+        },
+        {
+          "module": "page",
+          "count": 25
+        },
+        {
+          "module": "dataMap",
+          "count": 18
+        },
+        {
+          "module": "route",
+          "count": 17
+        },
+        {
+          "module": "icon",
+          "count": 10
+        },
+        {
+          "module": "request",
+          "count": 6
+        },
+        {
+          "module": "dropdown",
+          "count": 5
+        },
+        {
+          "module": "system",
+          "count": 2
+        },
+        {
+          "module": "datatable",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

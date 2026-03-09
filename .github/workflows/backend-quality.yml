@@ -1,0 +1,46 @@
+name: 后端质量检查
+run-name: 后端质量检查（${{ github.ref_name }}）
+
+on:
+  push:
+    branches: ["master", "main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-quality.yml"
+  pull_request:
+    branches: ["master", "main"]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-quality.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: backend-quality-zh-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Go 环境
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: 执行 Go vet
+        run: go vet ./...
+
+      - name: 执行 Go 测试
+        run: go test ./...

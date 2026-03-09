@@ -1,0 +1,95 @@
+{
+  "baseLocale": "en-US",
+  "strictMode": false,
+  "thresholds": {
+    "maxSuspectPerLocale": 0,
+    "maxMissingPerLocale": 0,
+    "maxExtraPerLocale": 0
+  },
+  "locales": [
+    {
+      "locale": "zh-CN",
+      "translated": 313,
+      "translatedRatio": 0.9542682926829268,
+      "fallbackRatio": 0.04573170731707317,
+      "maxFallbackRatio": 0.1,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.95,
+      "pass": true
+    },
+    {
+      "locale": "ja-JP",
+      "translated": 117,
+      "translatedRatio": 0.3567073170731707,
+      "fallbackRatio": 0.6432926829268293,
+      "maxFallbackRatio": 0.8,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.2,
+      "pass": true
+    },
+    {
+      "locale": "ko-KR",
+      "translated": 117,
+      "translatedRatio": 0.3567073170731707,
+      "fallbackRatio": 0.6432926829268293,
+      "maxFallbackRatio": 0.8,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.2,
+      "pass": true
+    },
+    {
+      "locale": "fr-FR",
+      "translated": 292,
+      "translatedRatio": 0.8902439024390244,
+      "fallbackRatio": 0.10975609756097561,
+      "maxFallbackRatio": 0.2,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.85,
+      "pass": true
+    },
+    {
+      "locale": "de-DE",
+      "translated": 289,
+      "translatedRatio": 0.8810975609756098,
+      "fallbackRatio": 0.11890243902439024,
+      "maxFallbackRatio": 0.25,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.85,
+      "pass": true
+    },
+    {
+      "locale": "es-ES",
+      "translated": 296,
+      "translatedRatio": 0.9024390243902439,
+      "fallbackRatio": 0.0975609756097561,
+      "maxFallbackRatio": 0.2,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.85,
+      "pass": true
+    },
+    {
+      "locale": "ru-RU",
+      "translated": 167,
+      "translatedRatio": 0.5091463414634146,
+      "fallbackRatio": 0.49085365853658536,
+      "maxFallbackRatio": 0.65,
+      "missing": 0,
+      "extra": 0,
+      "suspect": 0,
+      "minTranslatedRatio": 0.4,
+      "pass": true
+    }
+  ]
+}

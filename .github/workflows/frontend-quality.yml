@@ -1,0 +1,83 @@
+name: 前端质量检查
+run-name: 前端质量检查（${{ github.ref_name }}）
+
+on:
+  push:
+    branches: ["master", "main"]
+    paths:
+      - "soybean-admin/**"
+      - ".github/workflows/frontend-quality.yml"
+  pull_request:
+    branches: ["master", "main"]
+    paths:
+      - "soybean-admin/**"
+      - ".github/workflows/frontend-quality.yml"
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-quality-zh-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: soybean-admin
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 配置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: soybean-admin/pnpm-lock.yaml
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: i18n 质量检查（严格）
+        run: pnpm i18n:check:strict
+
+      - name: i18n 清洗守卫
+        run: pnpm i18n:sanitize:guard
+
+      - name: 生成 i18n 报告
+        run: pnpm i18n:check:report
+
+      - name: 生成 i18n 摘要
+        run: pnpm i18n:summary
+
+      - name: 生成 i18n 回退待办
+        run: pnpm i18n:todo
+
+      - name: i18n 基线对比
+        run: pnpm i18n:compare
+
+      - name: 上传 i18n 报告产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-report
+          path: |
+            soybean-admin/docs/i18n-coverage-report.md
+            soybean-admin/docs/i18n-fallback-todo.md
+            soybean-admin/docs/i18n-fallback-todo.json
+            soybean-admin/docs/i18n-quality-summary.json
+            soybean-admin/docs/i18n-sanitize-report.json
+          if-no-files-found: error
+
+      - name: 执行前端质量任务集
+        run: pnpm ci:frontend
