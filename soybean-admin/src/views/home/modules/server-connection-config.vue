@@ -551,9 +551,12 @@ watch(
 </script>
 
 <template>
-  <NCard :title="$t('page.home.serverConfig.title')" :bordered="false" size="small" class="card-wrapper server-config-card">
+  <NCard :bordered="false" size="small" class="card-wrapper server-config-card">
+    <template #header>
+      <div class="server-config-title">{{ $t('page.home.serverConfig.title') }}</div>
+    </template>
     <template #header-extra>
-      <NSpace :size="8" wrap>
+      <NSpace :size="8" wrap class="server-config-actions">
         <NTooltip trigger="hover">
           <template #trigger>
             <NButton size="small" :loading="loading" @click="loadServerConfig(true)">
@@ -717,8 +720,11 @@ watch(
 }
 
 /* Keep card title horizontal and avoid character-by-character wrapping */
-.server-config-card :deep(.n-card-header__main) {
-  min-width: 0;
+.server-config-title {
+  min-width: 120px;
+  max-width: 100%;
+  font-size: 16px;
+  font-weight: 600;
   white-space: nowrap;
   word-break: keep-all;
   overflow: hidden;
@@ -733,15 +739,20 @@ watch(
     gap: 8px;
   }
 
-  .server-config-card :deep(.n-card-header__main) {
-    white-space: nowrap;
-    word-break: keep-all;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .server-config-card :deep(.n-card-header__main),
+  .server-config-card :deep(.n-card-header__extra) {
+    width: 100%;
+    min-width: 0;
   }
 
   .server-config-card :deep(.n-card-header__extra) {
     margin-top: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .server-config-actions {
+    min-width: max-content;
   }
 
   .config-row {
