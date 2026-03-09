@@ -6,6 +6,7 @@ import { SetupStoreId } from '@/enum';
 import { useRouterPush } from '@/hooks/common/router';
 import { fetchGetUserInfo, fetchLogin } from '@/service/api';
 import { localStg } from '@/utils/storage';
+import { appendVersion, getVersionTag } from '@/utils/version';
 import { $t } from '@/locales';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
@@ -77,8 +78,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
         if (routeStore.isInitAuthRoute) {
           window.$notification?.success({
-            title: $t('page.login.common.loginSuccess'),
-            content: $t('page.login.common.welcomeBack', { userName: userInfo.userName }),
+            title: `${$t('page.login.common.loginSuccess')} (${getVersionTag()})`,
+            content: appendVersion($t('page.login.common.welcomeBack', { userName: userInfo.userName })),
             duration: 4500
           });
         }

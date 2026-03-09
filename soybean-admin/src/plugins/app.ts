@@ -1,6 +1,7 @@
 import { h } from 'vue';
 import { NButton } from 'naive-ui';
 import { $t } from '../locales';
+import { appendVersion, getVersionTag } from '@/utils/version';
 
 export function setupAppVersionNotification() {
   let isShow = false;
@@ -19,8 +20,8 @@ export function setupAppVersionNotification() {
     isShow = true;
 
     const n = window.$notification?.create({
-      title: $t('system.updateTitle'),
-      content: $t('system.updateContent'),
+      title: `${$t('system.updateTitle')} (${getVersionTag()})`,
+      content: appendVersion($t('system.updateContent')),
       action() {
         return h('div', { style: { display: 'flex', justifyContent: 'end', gap: '12px', width: '325px' } }, [
           h(

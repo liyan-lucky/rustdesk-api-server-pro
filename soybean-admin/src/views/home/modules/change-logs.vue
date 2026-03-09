@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { $t } from '@/locales';
 import { fetchStat } from '@/service/api/home';
+import { getVersionTag } from '@/utils/version';
 
 defineOptions({
   name: 'ChangeLogs'
@@ -15,12 +16,13 @@ interface LogItem {
 }
 
 const compatVersion = ref('latest');
+const appVersion = getVersionTag();
 
 const logs = computed<LogItem[]>(() => [
   {
     id: 1,
     content: `${$t('page.home.changeLogs')}: RustDesk API compatibility update`,
-    version: compatVersion.value,
+    version: `${compatVersion.value} / ${appVersion}`,
     time: new Date().toISOString().slice(0, 10)
   }
 ]);

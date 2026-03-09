@@ -225,6 +225,21 @@ const local: App.I18n.Schema = {
       operatingSystem: '操作系统',
       oneWeek: '一周内',
       changeLogs: '更新日志',
+      statDetail: {
+        title: '{title}详情',
+        clickHint: '点击查看详情',
+        openDetail: '打开详情页',
+        close: '关闭',
+        descUserCount: '展示当前系统内用户总数。',
+        descDeviceCount: '展示当前系统内设备总数。',
+        descOnlineCount: '展示基于心跳统计得到的在线设备数量。',
+        descVisitCount: '展示来自审计日志的访问次数统计。',
+        latestUsers: '最近用户',
+        latestDevices: '最近设备',
+        latestVisits: '最近访问记录',
+        loadFailed: '详情加载失败，请稍后重试。',
+        noData: '暂无详情数据。'
+      },
       serverConfig: {
         ...enUs.page.home.serverConfig,
         title: '客户端连接配置',
