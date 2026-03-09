@@ -12,7 +12,9 @@ import (
 	"rustdesk-api-server-pro/internal/repository"
 )
 
-const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-1"
+// CompatSysinfoVersion is exposed to admin dashboard and compatibility probes.
+// Keep this value aligned with the validated upstream RustDesk versions.
+const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-1.4.6-server-1.1.15-latest"
 const compatRecordDir = "record_uploads"
 
 type CompatService struct {

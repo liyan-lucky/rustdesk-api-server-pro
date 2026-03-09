@@ -4,6 +4,7 @@ run-name: 发布构建（${{ github.ref_name || github.sha }}）
 on:
   workflow_dispatch:
   push:
+    branches: ["master", "main"]
     tags:
       - "v*.*.*"
 
