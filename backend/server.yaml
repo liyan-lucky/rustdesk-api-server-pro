@@ -1,0 +1,51 @@
+signKey: "sercrethatmaycontainch@r$32chars" # this is the token signing key. change this before start server
+debugMode: false # debug mode (recommended false in production)
+db:
+  driver: "sqlite"
+  dsn: "./server.db"
+  timeZone: "Asia/Shanghai" # setting the time zone fixes the database creation time problem
+  showSql: false
+
+  # driver: "mysql"
+  # dsn: "root:123@tcp(localhost:3306)/test?charset=utf8mb4"
+httpConfig:
+  printRequestLog: false
+  staticdir: "/app/dist"
+  port: ":12345" # api server port
+
+smtpConfig:
+  host: "127.0.0.1"
+  port: 1025
+  username: "test"
+  password: "test"
+  encryption: "none" # none ssl/tls starttls
+  from: "test@localhost.com"
+
+jobsConfig:
+  deviceCheckJob:
+    duration: 30
+
+oidc:
+  enabled: false
+  providerName: "oidc"
+  issuer: ""
+  clientId: ""
+  clientSecret: ""
+  # If empty, callback URL is inferred as "<current_origin>/admin/auth/oidc/callback"
+  redirectUrl: ""
+  scopes:
+    - "openid"
+    - "profile"
+    - "email"
+  bindByEmail: true
+  autoCreateAdmin: false
+  stateTtlSeconds: 180
+  ticketTtlSeconds: 180
+  successRedirect: "/login"
+  failureRedirect: "/login"
+  subjectClaim: "sub"
+  emailClaim: "email"
+  nameClaim: "name"
+  pictureClaim: "picture"
+  prompt: ""
+  allowedEmailDomains: []

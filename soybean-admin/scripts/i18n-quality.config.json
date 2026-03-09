@@ -1,0 +1,31 @@
+{
+  "mode": "standard",
+  "maxSuspectPerLocale": 0,
+  "maxMissingPerLocale": 0,
+  "maxExtraPerLocale": 0,
+  "ignoreKeyPrefixes": [],
+  "ignoreExactKeys": [],
+  "maxFallbackRatio": {
+    "zh-CN": 0.1,
+    "es-ES": 0.2,
+    "fr-FR": 0.2,
+    "de-DE": 0.25,
+    "ja-JP": 0.8,
+    "ko-KR": 0.8,
+    "ru-RU": 0.65
+  },
+  "minTranslatedRatio": {
+    "zh-CN": 0.95,
+    "es-ES": 0.85,
+    "fr-FR": 0.85,
+    "de-DE": 0.85,
+    "ja-JP": 0.2,
+    "ko-KR": 0.2,
+    "ru-RU": 0.4
+  },
+  "strictOverrides": {
+    "maxSuspectPerLocale": 0,
+    "maxMissingPerLocale": 0,
+    "maxExtraPerLocale": 0
+  }
+}
