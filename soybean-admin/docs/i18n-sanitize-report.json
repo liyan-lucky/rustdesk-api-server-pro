@@ -1,0 +1,30 @@
+{
+  "dryRun": true,
+  "failOnDetect": true,
+  "targetLocales": [
+    "ja-JP",
+    "ko-KR",
+    "ru-RU"
+  ],
+  "totalReplaced": 0,
+  "report": [
+    {
+      "locale": "ja-JP",
+      "file": "src/locales/langs/ja-jp.ts",
+      "replaced": 0,
+      "applied": false
+    },
+    {
+      "locale": "ko-KR",
+      "file": "src/locales/langs/ko-kr.ts",
+      "replaced": 0,
+      "applied": false
+    },
+    {
+      "locale": "ru-RU",
+      "file": "src/locales/langs/ru-ru.ts",
+      "replaced": 0,
+      "applied": false
+    }
+  ]
+}
