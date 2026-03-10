@@ -6,7 +6,7 @@ An API server implementation based on the open-source [RustDesk](https://github.
 
 > Warning: Some compatibility updates in this fork were generated/assisted by ChatGPT. Review the code and test thoroughly before production use.
 
-![Dashboard](./img/1.jpeg "Dashboard")
+![Dashboard](./img/1.png "Dashboard")
 
 ## Docs (Chinese-first, shown on repository homepage)
 
