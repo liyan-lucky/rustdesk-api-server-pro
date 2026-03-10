@@ -14,6 +14,7 @@ const authStore = useAuthStore();
 const route = useRoute();
 const { formRef, validate } = useNaiveForm();
 const oidcLoading = ref(false);
+const oidcEnabled = ref(false);
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -71,6 +72,15 @@ async function handleCaptcha() {
   model.captchaId = captcha.id || '';
 }
 
+async function checkOidcEnabled() {
+  try {
+    const { data } = await fetchOidcLoginUrl('/');
+    oidcEnabled.value = !!data?.enabled;
+  } catch {
+    oidcEnabled.value = false;
+  }
+}
+
 async function handleOidcLogin() {
   oidcLoading.value = true;
   try {
@@ -88,6 +98,7 @@ async function handleOidcLogin() {
 
 onMounted(() => {
   handleCaptcha();
+  checkOidcEnabled();
 });
 </script>
 
@@ -125,7 +136,7 @@ onMounted(() => {
       >
         {{ $t('common.confirm') }}
       </NButton>
-      <NButton tertiary block :loading="oidcLoading" @click="handleOidcLogin">OIDC Login</NButton>
+      <NButton v-if="oidcEnabled" tertiary block :loading="oidcLoading" @click="handleOidcLogin">OIDC Login</NButton>
     </NSpace>
   </NForm>
 </template>
