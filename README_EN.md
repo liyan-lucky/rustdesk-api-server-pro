@@ -1,109 +1,252 @@
-# Rustdesk Api Server Pro
+﻿# RustDesk API Server Pro (Compatibility Enhanced)
 
-[简体中文](./README.md) | [English](./README_EN.md)
+[中文说明](./README.md)
 
-An API server implementation based on the open-source [RustDesk](https://github.com/rustdesk/rustdesk) client, with a bundled Web admin UI (`soybean-admin`).
+RustDesk API Server Pro is a third‑party API server implementation for the RustDesk client, bundled with an admin UI (`soybean-admin`). This edition focuses on compatibility with the latest client workflows while keeping deployment lightweight and maintainable.
 
-> Warning: Some compatibility updates in this fork were generated/assisted by ChatGPT. Review the code and test thoroughly before production use.
+This is the English full README. It includes feature list, architecture, deployment, configuration, screenshots, FAQ, and license. For deep‑dive topics, see the linked docs at the end.
 
-![Dashboard](./img/1.png "Dashboard")
+## Contents
 
-## Docs (Chinese-first, shown on repository homepage)
+- Overview
+- Features
+- Architecture
+- Repository Layout
+- Quick Start
+- Configuration (server.yaml)
+- Ports and Routes
+- Admin UI and Accounts
+- Data and Persistence
+- Production Recommendations
+- Upgrade and Migration
+- FAQ and Troubleshooting
+- Screenshots
+- Documentation Index
+- License
 
-- [Usage Guide (Chinese)](./docs/USAGE.md)
-- [Docker Deployment Guide (Chinese)](./docs/DOCKER.md)
-- [Ports & Paths Guide (Chinese)](./docs/PORTS.md)
-- [Troubleshooting Manual (Chinese)](./docs/TROUBLESHOOTING.md)
+## Overview
 
-## Current Status
+The project exposes everything on a single HTTP port:
 
-- This branch is positioned as a compatibility-enhanced edition focused on newer RustDesk client API behavior
-- Sponsorship / payment QR UI and related copy have been removed
-- The repository default README is now Chinese (switch to English via the links above)
-- The project is still planned to be rewritten: <https://github.com/lantongxue/rustdesk-api-server-pro/issues/30>
+- RustDesk client API (`/api/*`)
+- Admin API (`/admin/*`)
+- Admin UI static assets (`/`)
 
-## Project Positioning (Detailed)
+SQLite is the default database, and MySQL is supported. Configuration lives in `backend/server.yaml` (container runtime file is `/app/data/server.yaml`).
 
-This project is a third-party API server implementation for the RustDesk client ecosystem. The current goal is to provide a usable client-facing API + basic admin UI while keeping deployment lightweight and maintenance practical.
+## Features
 
-The current branch prioritizes:
+- Compatibility‑enhanced RustDesk client API
+- Address book read/write with `note` field compatibility
+- Device list, user list, and audit logs
+- Minimal compatibility for heartbeat, sysinfo, devices/cli
+- Minimal record upload flow for `/api/record` (`new/part/tail/remove`)
+- Admin UI (`soybean-admin`) served as static files
+- OIDC and plugin‑sign placeholder endpoints to avoid 404
+- SMTP configuration placeholder for admin notifications/templates
 
-- Compatibility first: keep newer clients working and avoid common 404/field mismatch issues
-- Lightweight deployment: sqlite by default, simple self-hosting experience
-- Iterative upgrades: add compatibility layers as official client API usage evolves
+Note: some advanced capabilities are placeholders. See the FAQ section.
 
-Typical use cases:
+## Architecture
 
-- Self-hosted RustDesk API + admin backend deployments
-- Studying or testing RustDesk client API behavior
-- Internal customization on top of an existing third-party API server base
+```mermaid
+flowchart TB
+  subgraph Client
+    A[RustDesk Client]
+  end
 
-Important: some advanced capabilities are still compatibility-level implementations and are not equivalent to the official Pro server.
+  subgraph Server
+    B[Go API Server]
+    C[Admin UI Static Files]
+    D[(SQLite / MySQL)]
+  end
 
-## Compatibility Scope (Current Code State)
+  A -->|/api/*| B
+  B -->|/admin/*| B
+  B -->|/| C
+  B --> D
+```
 
-- Compatible with common newer-client API flows:
-  - Login / logout / current user / login-options
-  - Address book (old + new APIs), including notes
-  - Basic group panel requests (users/peers/device-group accessible endpoints)
-  - Heartbeat / sysinfo / audit upload and audit note update
-  - Minimal `devices/cli` update support
-  - Minimal `record` upload protocol (`new/part/tail/remove`)
-- Added compatibility endpoints (to avoid 404):
-  - `/api/oidc/auth`
-  - `/api/oidc/auth-query`
-  - `/lic/web/api/plugin-sign`
+## Repository Layout
 
-### Key Compatibility Upgrades Added (vs older third-party versions)
+- `backend/` Go backend API service
+- `soybean-admin/` Admin frontend (built and served by backend)
+- `docker/` Container scripts and helpers
+- `docs/` Usage, ports, Docker, troubleshooting
+- `docker-compose.yaml` Compose example
+- `Dockerfile` Image build file
 
-- Address-book `note` field read/write + sync support
-- New address-book incremental update fields (`username`, `hostname`, `platform`, etc.)
-- Group panel request compatibility (`device-group/accessible`, accessible users/peers)
-- Minimal `devices/cli` write-back support (device/address-book related fields)
-- Minimal `record` upload protocol with local file persistence
-- Stable `sysinfo_ver` response to reduce unnecessary repeated `sysinfo` uploads
-- Audit note update compatibility (`PUT /api/audit`)
+## Quick Start
 
-## Not Full Official Pro Behavior
+### Option 1: Binary
 
-- `OIDC` endpoints return compatibility responses (full login flow not implemented)
-- `plugin-sign` is a compatibility placeholder (not the official signing service)
-- `device-group/accessible`, `users?accessible=`, and `peers?accessible=` are compatibility models, not the full official Pro permission model
+1. Build
 
-### Release Decision Guidance
+```powershell
+go build -o rustdesk-api-server-pro.exe .
+```
 
-- If your goal is "latest client main flows work": this version is release-ready
-- If your goal is "full official Pro parity": continue implementing OIDC, plugin signing, and the full permission model before release
+2. Prepare `backend/server.yaml`
 
-## Tech Stack
+3. Sync DB schema
 
-- Backend: Go (Iris)
-- Frontend: Vue 3 + Vite + Naive UI (`soybean-admin`)
-- Database: SQLite (default) / MySQL (optional)
+```powershell
+./rustdesk-api-server-pro.exe sync
+```
 
-## Project Structure
+4. Start
 
-- `backend/`: Go backend API server
-- `soybean-admin/`: Admin frontend
-- `docker/`: Container-related files
-- `img/`: README image assets
+```powershell
+./rustdesk-api-server-pro.exe start
+```
 
-## Recommended Pre-Release Checklist
+Admin UI: `http://<host>:<port>/`
 
-1. Sync database schema: `rustdesk-api-server-pro.exe sync`
-2. Restart the service
-3. Run a smoke test with the latest RustDesk client (login, address book, group panel, device list, audit)
+### Option 2: Docker Compose (Recommended)
 
-### Suggested Smoke Tests (Detailed)
+```bash
+mkdir -p /opt/rustdesk-api-server-pro/data
+cd /opt/rustdesk-api-server-pro
 
-- Login/logout and `currentUser` response
-- Address-book create/update/delete and note persistence
-- Group panel loads without errors (even if no real device groups exist)
-- Device list loads and renders expected fields
-- Audit logs are recorded and audit note update works
-- If recording upload is enabled: ensure `record_uploads/` is writable
+# Prepare server.yaml (copy from backend/server.yaml and edit)
 
-## Notes
+cat > docker-compose.yaml <<'YAML'
+services:
+  rustdesk-api-server-pro:
+    container_name: rustdesk-api-server-pro
+    image: ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
+    environment:
+      - "ADMIN_USER=admin"
+      - "ADMIN_PASS=ChangeMe123!"
+    volumes:
+      - ./server.yaml:/app/server.yaml
+      - ./data:/app/data
+    network_mode: host
+    restart: unless-stopped
+YAML
 
-- GitHub UI language (buttons/tabs/labels such as `README` or `Commits`) is controlled by GitHub/browser settings, not repository files.
-- This README describes the current branch status and compatibility scope.
+docker compose up -d
+```
+
+`ADMIN_USER` and `ADMIN_PASS` create the admin account on first boot only.
+
+## Configuration (server.yaml)
+
+Key file: `backend/server.yaml` (container runtime file is `/app/data/server.yaml`).
+
+Minimal reference:
+
+```yaml
+signKey: "please-change-this-sign-key"
+debugMode: false
+
+db:
+  driver: "sqlite"
+  dsn: "./server.db"
+  timeZone: "Asia/Shanghai"
+  showSql: false
+
+httpConfig:
+  printRequestLog: false
+  staticdir: "/app/dist"
+  port: ":12345"
+
+smtpConfig:
+  host: "127.0.0.1"
+  port: 1025
+  username: ""
+  password: ""
+  encryption: "none"
+  from: "noreply@example.com"
+```
+
+Important notes:
+
+- Always change `signKey`
+- `httpConfig.port` is the public HTTP port
+- `httpConfig.staticdir` is the admin UI static directory
+- SQLite database is stored as `server.db` under the runtime working directory
+- MySQL is supported by switching `db.driver` and `db.dsn`
+
+## Ports and Routes
+
+Single‑port layout (example `:12345`):
+
+- Admin UI: `/`
+- Client API: `/api/*`
+- Admin API: `/admin/*`
+- plugin‑sign compatibility: `/lic/web/api/plugin-sign`
+
+If `/api` works but `/` is 404, check `httpConfig.staticdir`.
+
+## Admin UI and Accounts
+
+- Admin UI entry: `http://<host>:<port>/`
+- Docker first boot can auto‑create admin with `ADMIN_USER` + `ADMIN_PASS`
+- For manual adjustments, use in‑container commands or update the database
+
+## Data and Persistence
+
+Persist `/app/data` to keep:
+
+- `server.db` (SQLite)
+- `server.yaml` (effective config)
+- `.init.lock` (first‑boot marker)
+- `record_uploads/` (recording uploads)
+
+Without persistence, data will be lost across restarts.
+
+## Production Recommendations
+
+- Change `signKey`
+- Pin `httpConfig.port`
+- Use a reverse proxy (Nginx/Caddy) for 80/443
+- Enable `printRequestLog` only for debugging
+- Run a quick smoke test with the latest RustDesk client
+
+## Upgrade and Migration
+
+Run on each upgrade:
+
+```bash
+rustdesk-api-server-pro sync
+```
+
+Then restart the service. Missing schema sync can break pages after login.
+
+## FAQ and Troubleshooting
+
+Q: Admin UI not accessible but `/api/*` works
+
+A: `httpConfig.staticdir` is incorrect or frontend not built. Point to `soybean-admin/dist`.
+
+Q: Pages break after upgrade (SQL missing field)
+
+A: Run `sync` and restart.
+
+Q: Client shows 404
+
+A: Enable `printRequestLog`, verify routes, and upgrade the server binary.
+
+Q: Record upload fails
+
+A: Ensure `record_uploads/` is writable and disk has space.
+
+Q: OIDC / plugin‑sign doesn’t work
+
+A: These are compatibility placeholders. Full implementation is required if you need them.
+
+## Screenshots
+
+![Admin UI](./img/1.png)
+
+## Documentation Index
+
+- Usage: `docs/USAGE.md`
+- Docker: `docs/DOCKER.md`
+- Ports: `docs/PORTS.md`
+- Troubleshooting: `docs/TROUBLESHOOTING.md`
+
+## License
+
+Licensed under AGPL‑3.0. See `LICENSE` for details.
