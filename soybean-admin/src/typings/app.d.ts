@@ -412,6 +412,9 @@ declare namespace App {
             validateSuccess: string;
             loginSuccess: string;
             welcomeBack: string;
+            thirdPartyLogin: string;
+            continueWith: string;
+            providerUnavailable: string;
           };
           pwdLogin: {
             title: string;

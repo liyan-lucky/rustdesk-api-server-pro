@@ -10,12 +10,14 @@ This is the English full README. It includes feature list, architecture, deploym
 
 - Overview
 - Features
+- Recent Updates
 - Architecture
 - Repository Layout
 - Quick Start
 - Configuration (server.yaml)
 - Ports and Routes
 - Admin UI and Accounts
+- Third-Party Login
 - Data and Persistence
 - Production Recommendations
 - Upgrade and Migration
@@ -46,6 +48,13 @@ SQLite is the default database, and MySQL is supported. Configuration lives in `
 - SMTP configuration placeholder for admin notifications/templates
 
 Note: some advanced capabilities are placeholders. See the FAQ section.
+
+## Recent Updates
+
+- Improved admin UI i18n coverage for the server configuration workflow
+- Moved the server connection configuration from the dashboard home page to the left menu under `System Management -> Server Config`
+- Added third‑party admin login groundwork with multi‑provider support
+- The login page can now render enabled providers dynamically from backend configuration
 
 ## Architecture
 
@@ -184,6 +193,66 @@ If `/api` works but `/` is 404, check `httpConfig.staticdir`.
 - Admin UI entry: `http://<host>:<port>/`
 - Docker first boot can auto‑create admin with `ADMIN_USER` + `ADMIN_PASS`
 - For manual adjustments, use in‑container commands or update the database
+
+## Third-Party Login
+
+The admin UI now supports third‑party login providers for administrator sign‑in.
+
+Supported modes:
+
+- Legacy single provider config: `oidc`
+- New multi‑provider config: `oauth.providers`
+- Built‑in provider types: `oidc`, `google`, `github`
+
+Behavior notes:
+
+- Legacy `oidc` config remains supported for backward compatibility
+- New deployments should prefer `oauth.providers`
+- Successful provider login still ends in the same backend admin token flow
+- `bindByEmail: true` tries to match an existing admin account by email
+- `autoCreateAdmin: true` allows creating a new admin account automatically when no match exists
+
+Example:
+
+```yaml
+oauth:
+  providers:
+    - type: "google"
+      name: "google"
+      displayName: "Google"
+      enabled: true
+      clientId: "YOUR_GOOGLE_CLIENT_ID"
+      clientSecret: "YOUR_GOOGLE_CLIENT_SECRET"
+      bindByEmail: true
+      autoCreateAdmin: false
+
+    - type: "github"
+      name: "github"
+      displayName: "GitHub"
+      enabled: true
+      clientId: "YOUR_GITHUB_CLIENT_ID"
+      clientSecret: "YOUR_GITHUB_CLIENT_SECRET"
+      bindByEmail: true
+      autoCreateAdmin: false
+
+    - type: "oidc"
+      name: "company-sso"
+      displayName: "Company SSO"
+      enabled: true
+      issuer: "https://sso.example.com"
+      clientId: "YOUR_OIDC_CLIENT_ID"
+      clientSecret: "YOUR_OIDC_CLIENT_SECRET"
+      scopes: ["openid", "profile", "email"]
+      bindByEmail: true
+      autoCreateAdmin: false
+```
+
+Callback URL rules:
+
+- Multi-provider flow: `/admin/auth/oauth/<provider>/callback`
+- Legacy OIDC flow: `/admin/auth/oidc/callback`
+
+If you serve the frontend with a reverse proxy, make sure the externally visible host and scheme match the callback URL used by the provider.
 
 ## Data and Persistence
 

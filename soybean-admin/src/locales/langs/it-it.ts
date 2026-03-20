@@ -181,7 +181,10 @@ const local: App.I18n.Schema = {
         back: 'Indietro',
         validateSuccess: 'Verifica riuscita',
         loginSuccess: 'Accesso effettuato con successo',
-        welcomeBack: 'Bentornato, {userName}!'
+        welcomeBack: 'Bentornato, {userName}!',
+        thirdPartyLogin: 'Accesso di terze parti',
+        continueWith: 'Continua con {provider}',
+        providerUnavailable: 'Accesso con {provider} non disponibile'
       },
       pwdLogin: {
         title: 'Accesso con password',

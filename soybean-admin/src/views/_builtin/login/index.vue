@@ -47,11 +47,36 @@ const bgColor = computed(() => {
 });
 
 onMounted(async () => {
+  let shouldReplaceQuery = false;
+  const q = { ...route.query };
+
+  const oauthError = route.query.oauth_error;
+  if (typeof oauthError === 'string' && oauthError) {
+    window.$message?.error(oauthError);
+    delete q.oauth_error;
+    shouldReplaceQuery = true;
+  }
+
+  const oauthTicket = route.query.oauth_ticket;
+  if (typeof oauthTicket === 'string' && oauthTicket) {
+    await authStore.loginByOAuthTicket(oauthTicket, true);
+    delete q.oauth_ticket;
+    delete q.oauth_provider;
+    delete q.oauth_error;
+    await router.replace({ query: q });
+    return;
+  }
+
   const ticket = route.query.oidc_ticket;
   if (typeof ticket === 'string' && ticket) {
     await authStore.loginByOidcTicket(ticket, true);
-    const q = { ...route.query };
     delete q.oidc_ticket;
+    delete q.oidc_error;
+    await router.replace({ query: q });
+    return;
+  }
+
+  if (shouldReplaceQuery) {
     await router.replace({ query: q });
   }
 });

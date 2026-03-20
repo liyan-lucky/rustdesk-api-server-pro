@@ -5,7 +5,7 @@ import { useLoading } from '@sa/hooks';
 import { SetupStoreId } from '@/enum';
 import { useRouterPush } from '@/hooks/common/router';
 import { fetchGetUserInfo, fetchLogin } from '@/service/api';
-import { fetchOidcTicketToken } from '@/service/api/auth';
+import { fetchOAuthTicketToken, fetchOidcTicketToken } from '@/service/api/auth';
 import { localStg } from '@/utils/storage';
 import { appendVersion, getVersionTag } from '@/utils/version';
 import { $t } from '@/locales';
@@ -125,6 +125,22 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     return error;
   }
 
+  async function loginByOAuthTicket(ticket: string, redirect = true) {
+    startLoading();
+    const { data, error } = await fetchOAuthTicketToken(ticket);
+    if (!error && data?.token) {
+      const pass = await applyTokenAndBootstrap(data);
+      if (pass) {
+        await routeStore.initAuthRoute();
+        if (redirect) {
+          await redirectFromLogin();
+        }
+      }
+    }
+    endLoading();
+    return error;
+  }
+
   async function getUserInfo() {
     const { data: info, error } = await fetchGetUserInfo();
 
@@ -159,6 +175,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     resetStore,
     login,
     loginByOidcTicket,
+    loginByOAuthTicket,
     initUserInfo
   };
 });

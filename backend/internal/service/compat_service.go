@@ -31,9 +31,9 @@ func NewCompatService(repo repository.CompatRepository, cfg *config.ServerConfig
 
 func (s *CompatService) LoginOptions() core.CompatLoginOptionsResult {
 	options := []string{}
-	oidcService := NewOIDCAuthService(s.cfg, s.db)
-	if oidcService.IsEnabled() {
-		options = append(options, "oidc")
+	oauthService := NewOAuthProviderService(s.cfg, s.db)
+	for _, provider := range oauthService.ListEnabledProviders() {
+		options = append(options, provider.Name)
 	}
 	return core.CompatLoginOptionsResult{Options: options}
 }

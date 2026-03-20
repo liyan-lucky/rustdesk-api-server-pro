@@ -54,6 +54,12 @@ declare namespace Api {
       url: string;
     }
 
+    interface OAuthProvider {
+      name: string;
+      displayName: string;
+      type: string;
+    }
+
     interface Captcha {
       id: string;
       img: string;

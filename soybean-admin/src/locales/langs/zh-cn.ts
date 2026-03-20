@@ -208,7 +208,10 @@ const local: App.I18n.Schema = {
         back: '返回',
         validateSuccess: '验证成功',
         loginSuccess: '登录成功',
-        welcomeBack: '欢迎回来，{userName}！'
+        welcomeBack: '欢迎回来，{userName}！',
+        thirdPartyLogin: '第三方登录',
+        continueWith: '使用 {provider} 登录',
+        providerUnavailable: '{provider} 登录暂不可用'
       },
       pwdLogin: {
         ...enUs.page.login.pwdLogin,

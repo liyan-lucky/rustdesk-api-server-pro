@@ -49,3 +49,35 @@ oidc:
   pictureClaim: "picture"
   prompt: ""
   allowedEmailDomains: []
+
+oauth:
+  # Custom OIDC provider example
+  # providers:
+  #   - type: "oidc"
+  #     name: "company-sso"
+  #     displayName: "Company SSO"
+  #     enabled: false
+  #     issuer: "https://sso.example.com"
+  #     clientId: ""
+  #     clientSecret: ""
+  #     redirectUrl: ""
+  #     scopes: ["openid", "profile", "email"]
+  #     bindByEmail: true
+  #     autoCreateAdmin: false
+  #
+  # Google provider example
+  #   - type: "google"
+  #     name: "google"
+  #     displayName: "Google"
+  #     enabled: false
+  #     clientId: ""
+  #     clientSecret: ""
+  #
+  # GitHub provider example
+  #   - type: "github"
+  #     name: "github"
+  #     displayName: "GitHub"
+  #     enabled: false
+  #     clientId: ""
+  #     clientSecret: ""
+  providers: []

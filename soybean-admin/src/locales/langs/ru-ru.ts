@@ -183,7 +183,10 @@ const local: App.I18n.Schema = {
         "back": "Назад",
         "validateSuccess": "Проверка пройдена",
         "loginSuccess": "Вход выполнен успешно",
-        "welcomeBack": "С возвращением, {userName}!"
+        "welcomeBack": "С возвращением, {userName}!",
+        "thirdPartyLogin": "Вход через сторонний сервис",
+        "continueWith": "Продолжить через {provider}",
+        "providerUnavailable": "Вход через {provider} сейчас недоступен"
       },
       "pwdLogin": {
         "title": "Вход по паролю",

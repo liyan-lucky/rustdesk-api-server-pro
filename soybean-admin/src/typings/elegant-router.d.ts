@@ -31,7 +31,8 @@ declare module "@elegant-router/types" {
     "system_mail": "/system/mail";
     "system_mail_logs": "/system/mail/logs";
     "system_mail_template": "/system/mail/template";
-    "system_server": "/system/server-config";
+    "system_server": "/system/server";
+    "system_server_config": "/system/server/config";
     "user": "/user";
     "user_list": "/user/list";
     "user_sessions": "/user/sessions";
@@ -103,7 +104,7 @@ declare module "@elegant-router/types" {
     | "home"
     | "system_mail_logs"
     | "system_mail_template"
-    | "system_server"
+    | "system_server_config"
     | "user_list"
     | "user_sessions"
   >;

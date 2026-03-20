@@ -37,6 +37,29 @@ export function fetchOidcTicketToken(ticket: string) {
   });
 }
 
+export function fetchOAuthProviders() {
+  return request<Api.Auth.OAuthProvider[]>({
+    url: '/auth/oauth/providers'
+  });
+}
+
+export function fetchOAuthLoginUrl(provider: string, redirect?: string) {
+  return request<Api.Auth.OidcLoginUrl>({
+    url: '/auth/oauth/url',
+    params: {
+      provider,
+      ...(redirect ? { redirect } : {})
+    }
+  });
+}
+
+export function fetchOAuthTicketToken(ticket: string) {
+  return request<Api.Auth.LoginToken>({
+    url: '/auth/oauth/token',
+    params: { ticket }
+  });
+}
+
 /** Get user info */
 export function fetchGetUserInfo() {
   return request<Api.Auth.UserInfo>({ url: '/userinfo' });

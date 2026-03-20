@@ -200,7 +200,10 @@ const local: App.I18n.Schema = {
           back: 'Retour',
           validateSuccess: 'V?rification r?ussie',
           loginSuccess: 'Connexion r?ussie',
-          welcomeBack: 'Bon retour, {userName} !'
+          welcomeBack: 'Bon retour, {userName} !',
+          thirdPartyLogin: 'Connexion tierce',
+          continueWith: 'Continuer avec {provider}',
+          providerUnavailable: 'La connexion {provider} est indisponible'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,
