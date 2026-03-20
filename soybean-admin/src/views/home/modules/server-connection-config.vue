@@ -275,7 +275,7 @@ const lastUpdatedText = computed(() => {
 const lastUpdatedAgeText = computed(() => {
   if (!lastLoadedAt.value) return '';
   const sec = Math.max(0, Math.floor((nowTick.value - lastLoadedAt.value) / 1000));
-  return `${sec}s`;
+  return t('page.home.serverConfig.ageSeconds', { seconds: sec });
 });
 
 const connectivityCheckSourceLabel = computed(() => {
@@ -285,7 +285,10 @@ const connectivityCheckSourceLabel = computed(() => {
 
 const cacheTtlHint = computed(
   () =>
-    `Cache TTL: config ${Math.floor(SERVER_CONFIG_CACHE_TTL_MS / 1000)}s, connectivity ${Math.floor(CONNECTIVITY_CACHE_TTL_MS / 1000)}s`
+    t('page.home.serverConfig.cacheTtlHint', {
+      configSeconds: Math.floor(SERVER_CONFIG_CACHE_TTL_MS / 1000),
+      connectivitySeconds: Math.floor(CONNECTIVITY_CACHE_TTL_MS / 1000)
+    })
 );
 
 const lastConnectivityCheckedText = computed(() => {
@@ -300,7 +303,7 @@ const lastConnectivityCheckedText = computed(() => {
 const lastConnectivityCheckedAgeText = computed(() => {
   if (!lastConnectivityCheckedAt.value) return '';
   const sec = Math.max(0, Math.floor((nowTick.value - lastConnectivityCheckedAt.value) / 1000));
-  return `${sec}s`;
+  return t('page.home.serverConfig.ageSeconds', { seconds: sec });
 });
 
 function getDisplayValue(item: ConfigItem) {

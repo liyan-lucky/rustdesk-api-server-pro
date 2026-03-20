@@ -164,6 +164,7 @@ const local: App.I18n.Schema = {
     "system_mail_template": "Шаблоны писем",
     "system_mail_logs": "Логи почты",
     "system_mail": "Управление почтой",
+    "system_server": "Конфигурация сервера",
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
     "devices": "Устройства"
@@ -236,6 +237,8 @@ const local: App.I18n.Schema = {
         "copyFailed": "Не удалось скопировать {label}",
         "fetchFailed": "Не удалось загрузить конфигурацию сервера",
         "cacheCleared": "Кэш очищен, повторная загрузка конфигурации сервера",
+        "cacheTtlHint": "TTL cache: config {configSeconds}s, connectivity {connectivitySeconds}s",
+        "ageSeconds": "{seconds}s ago",
         "sourceType": {
           "remote": "Удалённый источник",
           "memory-cache": "Кэш памяти",
