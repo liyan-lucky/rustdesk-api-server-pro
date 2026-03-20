@@ -26,7 +26,7 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   home: () => import("@/views/home/index.vue"),
   system_mail_logs: () => import("@/views/system/mail_logs/index.vue"),
   system_mail_template: () => import("@/views/system/mail_template/index.vue"),
-  system_server_config: () => import("@/views/system/server_config/index.vue"),
+  system_server: () => import("@/views/system/server/index.vue"),
   user_list: () => import("@/views/user/list/index.vue"),
   user_sessions: () => import("@/views/user/sessions/index.vue"),
 };
