@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   system: {
     title: 'Rustdesk Api Server',
-    updateTitle: '系统版本更新通知',
-    updateContent: '检测到系统有新版本发布，是否立即刷新页面？',
-    updateConfirm: '立即刷新',
-    updateCancel: '稍后再说'
+    updateTitle: 'System Version Update',
+    updateContent: 'A new system version is available. Refresh the page now?',
+    updateConfirm: 'Refresh Now',
+    updateCancel: 'Later'
   },
   common: {
     action: 'Action',
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     switch: 'Switch',
     tip: 'Tip',
     trigger: 'Trigger',
-    update: '更新',
-    updateSuccess: '更新成功',
+    update: 'Update',
+    updateSuccess: 'Update Success',
     userCenter: 'User Center',
     yesOrNo: {
       yes: 'Yes',
@@ -72,7 +72,7 @@ const local: App.I18n.Schema = {
       vertical: 'Vertical Menu Mode',
       horizontal: 'Horizontal Menu Mode',
       'vertical-mix': 'Vertical Mix Menu Mode',
-      'horizontal-mix': 'Horizontal Mix menu Mode',
+      'horizontal-mix': 'Horizontal Mix Menu Mode',
       reverseHorizontalMix: 'Reverse first level menus and child level menus position'
     },
     recommendColor: 'Apply Recommended Color Algorithm',
@@ -144,7 +144,7 @@ const local: App.I18n.Schema = {
     pageFunTitle: 'Page Function',
     configOperation: {
       copyConfig: 'Copy Config',
-      copySuccessMsg: 'Copy Success, Please replace the variable "themeSettings" in "src/theme/settings.ts"',
+      copySuccessMsg: 'Copy Success, please replace the variable "themeSettings" in "src/theme/settings.ts"',
       resetConfig: 'Reset Config',
       resetSuccessMsg: 'Reset Success'
     }
@@ -163,10 +163,11 @@ const local: App.I18n.Schema = {
     system: 'System Management',
     system_mail_template: 'Mail Template',
     system_mail_logs: 'Mail Logs',
-    system_mail: 'Mail Managment',
+    system_mail: 'Mail Management',
+    system_server: 'Server Config',
     audit_baselogs: 'Base Logs',
     audit_filetransferlogs: 'File Transfer Logs',
-    devices: 'Devices',
+    devices: 'Devices'
   },
   page: {
     login: {
@@ -182,7 +183,7 @@ const local: App.I18n.Schema = {
         back: 'Back',
         validateSuccess: 'Verification passed',
         loginSuccess: 'Login successfully',
-        welcomeBack: 'Welcome back, {userName} !'
+        welcomeBack: 'Welcome back, {userName}!'
       },
       pwdLogin: {
         title: 'Password Login',
@@ -226,8 +227,10 @@ const local: App.I18n.Schema = {
         copyTemplate: 'Copy RustDesk Template',
         refresh: 'Refresh',
         clearCacheReload: 'Clear Cache & Reload',
+        cacheTtlHint: 'Cache TTL: config {configSeconds}s, connectivity {connectivitySeconds}s',
         source: 'Source',
-        lastUpdated: '最后更新',
+        lastUpdated: 'Last Updated',
+        ageSeconds: '{seconds}s ago',
         show: 'Show',
         hide: 'Hide',
         missingTip: 'The following fields are empty, please configure them in container environment variables first: {fields}',
@@ -366,12 +369,12 @@ const local: App.I18n.Schema = {
       created_at: 'Created At'
     },
     device: {
-        username: 'Username',
-        hostname: 'Computer Name',
-        version: 'Rustdesk Version',
-        memory: 'Memory',
-        os: 'OS',
-        rustdesk_id: 'Rustdesk ID',
+      username: 'Username',
+      hostname: 'Computer Name',
+      version: 'Rustdesk Version',
+      memory: 'Memory',
+      os: 'OS',
+      rustdesk_id: 'Rustdesk ID'
     },
     audit: {
       username: 'Username',
@@ -430,15 +433,15 @@ const local: App.I18n.Schema = {
     UsernameEmpty: 'User name cannot be empty',
     PasswordEmpty: 'Password cannot be empty',
     UserAddSuccess: 'User created successfully',
-    DataError: 'data error',
-    UserUpdateSuccess: '用户修改成功',
+    DataError: 'Data error',
+    UserUpdateSuccess: 'User updated successfully',
     UserDeleteSuccess: 'User deleted successfully',
     SessionKillSuccess: 'Session killed successfully',
     MailTemplateNameEmpty: 'Name cannot be empty',
     MailTemplateSubjectEmpty: 'Subject cannot be empty',
     MailTemplateContentsEmpty: 'Contents cannot be empty',
     MailTemplateAddSuccess: 'Mail template created successfully',
-    MailTemplateUpdateSuccess: '邮件模板修改成功',
+    MailTemplateUpdateSuccess: 'Mail template updated successfully',
     NoEmailAddress: 'No e-mail address set',
     VerificationCodeError: 'Verification Code Error',
     UUIDEmpty: 'UUID cannot be empty'

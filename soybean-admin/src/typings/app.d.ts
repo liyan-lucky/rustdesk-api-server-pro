@@ -455,8 +455,10 @@ declare namespace App {
             copyTemplate: string;
             refresh: string;
             clearCacheReload: string;
+            cacheTtlHint: string;
             source: string;
             lastUpdated: string;
+            ageSeconds: string;
             show: string;
             hide: string;
             missingTip: string;

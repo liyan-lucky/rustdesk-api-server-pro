@@ -159,6 +159,16 @@ export const generatedRoutes: GeneratedRoute[] = [
             }
           }
         ]
+      },
+      {
+        name: 'system_server',
+        path: '/system/server-config',
+        component: 'view.system_server',
+        meta: {
+          title: 'system_server',
+          i18nKey: 'route.system_server',
+          icon: 'mdi:server-network'
+        }
       }
     ]
   },

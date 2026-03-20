@@ -186,6 +186,7 @@ const local: App.I18n.Schema = {
     system_mail_template: '邮件模板',
     system_mail_logs: '邮件日志',
     system_mail: '邮件管理',
+    system_server: '服务器配置',
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
     devices: '设备管理'
@@ -254,8 +255,10 @@ const local: App.I18n.Schema = {
         copyTemplate: '复制RustDesk模板',
         refresh: '刷新配置',
         clearCacheReload: '清缓存并重载',
+        cacheTtlHint: '缓存时长：配置 {configSeconds} 秒，连通性 {connectivitySeconds} 秒',
         source: '来源',
         lastUpdated: '最后更新',
+        ageSeconds: '{seconds} 秒前',
         show: '显示',
         hide: '隐藏',
         missingTip: '以下字段为空，请先在容器环境变量中配置：{fields}',
