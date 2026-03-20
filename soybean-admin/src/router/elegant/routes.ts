@@ -168,18 +168,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'system_server',
           i18nKey: 'route.system_server',
           icon: 'mdi:server-network'
-        },
-        children: [
-          {
-            name: 'system_server_config',
-            path: '/system/server/config',
-            component: 'view.system_server_config',
-            meta: {
-              title: 'system_server_config',
-              i18nKey: 'route.system_server_config'
-            }
-          }
-        ]
+        }
       }
     ]
   },
