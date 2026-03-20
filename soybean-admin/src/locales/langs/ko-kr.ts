@@ -164,6 +164,7 @@ const local: App.I18n.Schema = {
     "system_mail_template": "메일 템플릿",
     "system_mail_logs": "메일 로그",
     "system_mail": "메일 관리",
+    "system_server": "서버 설정",
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
     "devices": "장치"
@@ -226,8 +227,10 @@ const local: App.I18n.Schema = {
         "copyTemplate": "Copy RustDesk Template",
         "refresh": "Refresh",
         "clearCacheReload": "Clear Cache & Reload",
+        "cacheTtlHint": "Cache TTL: config {configSeconds}s, connectivity {connectivitySeconds}s",
         "source": "Source",
         "lastUpdated": "最后更新",
+        "ageSeconds": "{seconds}s ago",
         "show": "Show",
         "hide": "Hide",
         "missingTip": "The following fields are empty, please configure them in container environment variables first: {fields}",
