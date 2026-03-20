@@ -200,7 +200,10 @@ const local: App.I18n.Schema = {
           back: 'Volver',
           validateSuccess: 'Verificaci?n correcta',
           loginSuccess: 'Inicio de sesi?n correcto',
-          welcomeBack: 'Bienvenido de nuevo, {userName} !'
+          welcomeBack: 'Bienvenido de nuevo, {userName} !',
+          thirdPartyLogin: 'Inicio de sesi?n de terceros',
+          continueWith: 'Continuar con {provider}',
+          providerUnavailable: 'El inicio de sesi?n con {provider} no est? disponible'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,

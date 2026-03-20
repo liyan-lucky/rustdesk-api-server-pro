@@ -200,7 +200,10 @@ const local: App.I18n.Schema = {
           back: 'Zur?ck',
           validateSuccess: 'Pr?fung erfolgreich',
           loginSuccess: 'Anmeldung erfolgreich',
-          welcomeBack: 'Willkommen zur?ck, {userName} !'
+          welcomeBack: 'Willkommen zur?ck, {userName} !',
+          thirdPartyLogin: 'Drittanbieter-Anmeldung',
+          continueWith: 'Mit {provider} fortfahren',
+          providerUnavailable: '{provider}-Anmeldung ist derzeit nicht verf?gbar'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,

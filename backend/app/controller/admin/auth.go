@@ -21,6 +21,13 @@ type AuthController struct {
 	Cfg *config.ServerConfig
 }
 
+func (c *AuthController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "/auth/oauth/providers", "GetAuthOauthProviders")
+	b.Handle("GET", "/auth/oauth/url", "GetAuthOauthUrl")
+	b.Handle("GET", "/auth/oauth/token", "GetAuthOauthToken")
+	b.Handle("GET", "/auth/oauth/{provider:string}/callback", "HandleOauthCallback")
+}
+
 func (c *AuthController) PostAuthLogin() mvc.Result {
 	var loginForm admin.LoginForm
 	err := c.Ctx.ReadJSON(&loginForm)
@@ -118,6 +125,54 @@ func (c *AuthController) GetAuthOidcCallback() mvc.Result {
 	}
 
 	target := withQuery(redirectTo, "oidc_ticket", ticket)
+	c.Ctx.Redirect(target, iris.StatusFound)
+	return mvc.Response{}
+}
+
+func (c *AuthController) GetAuthOauthProviders() mvc.Result {
+	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	return c.Success(service.ListEnabledProviders(), "ok")
+}
+
+func (c *AuthController) GetAuthOauthUrl() mvc.Result {
+	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	provider := c.Ctx.URLParamDefault("provider", "")
+	redirect := c.Ctx.URLParamDefault("redirect", "")
+	authURL, enabled, err := service.BuildAdminAuthURL(provider, c.currentBaseURL(), redirect)
+	if err != nil {
+		return c.Error(nil, err.Error())
+	}
+	return c.Success(iris.Map{
+		"enabled": enabled,
+		"url":     authURL,
+	}, "ok")
+}
+
+func (c *AuthController) GetAuthOauthToken() mvc.Result {
+	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	ticket := c.Ctx.URLParamDefault("ticket", "")
+	token, err := service.ExchangeAdminTicket(ticket)
+	if err != nil {
+		return c.Error(nil, err.Error())
+	}
+	return c.Success(iris.Map{
+		"token": token,
+	}, "ok")
+}
+
+func (c *AuthController) HandleOauthCallback() mvc.Result {
+	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	provider := c.Ctx.Params().Get("provider")
+	code := c.Ctx.URLParamDefault("code", "")
+	state := c.Ctx.URLParamDefault("state", "")
+
+	ticket, redirectTo, err := service.ConsumeAdminCallback(provider, code, state)
+	if err != nil {
+		c.Ctx.Redirect(withQuery(redirectTo, "oauth_error", err.Error()), iris.StatusFound)
+		return mvc.Response{}
+	}
+
+	target := withQuery(withQuery(redirectTo, "oauth_provider", provider), "oauth_ticket", ticket)
 	c.Ctx.Redirect(target, iris.StatusFound)
 	return mvc.Response{}
 }

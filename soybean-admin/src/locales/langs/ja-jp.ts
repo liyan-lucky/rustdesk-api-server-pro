@@ -183,7 +183,10 @@ const local: App.I18n.Schema = {
         "back": "戻る",
         "validateSuccess": "検証に成功しました",
         "loginSuccess": "ログイン成功",
-        "welcomeBack": "おかえりなさい、{userName} さん！"
+        "welcomeBack": "おかえりなさい、{userName} さん！",
+        "thirdPartyLogin": "サードパーティーログイン",
+        "continueWith": "{provider} でログイン",
+        "providerUnavailable": "{provider} ログインは現在利用できません"
       },
       "pwdLogin": {
         "title": "パスワードログイン",

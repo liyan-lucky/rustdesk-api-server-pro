@@ -9,13 +9,14 @@ import (
 )
 
 type ServerConfig struct {
-	DebugMode  bool        `yaml:"debugMode"`
-	Db         *DbConfig   `yaml:"db"`
-	SignKey    string      `yaml:"signKey"`
-	HttpConfig *HttpConfig `yaml:"httpConfig"`
-	SmtpConfig *SmtpConfig `yaml:"smtpConfig"`
-	JobsConfig *JobsConfig `yaml:"jobsConfig"`
-	OIDC       *OIDCConfig `yaml:"oidc"`
+	DebugMode  bool         `yaml:"debugMode"`
+	Db         *DbConfig    `yaml:"db"`
+	SignKey    string       `yaml:"signKey"`
+	HttpConfig *HttpConfig  `yaml:"httpConfig"`
+	SmtpConfig *SmtpConfig  `yaml:"smtpConfig"`
+	JobsConfig *JobsConfig  `yaml:"jobsConfig"`
+	OIDC       *OIDCConfig  `yaml:"oidc"`
+	OAuth      *OAuthConfig `yaml:"oauth"`
 }
 
 type DbConfig struct {
@@ -70,6 +71,37 @@ type OIDCConfig struct {
 	AllowedEmailDomains []string `yaml:"allowedEmailDomains"`
 }
 
+type OAuthConfig struct {
+	Providers []OAuthProviderConfig `yaml:"providers"`
+}
+
+type OAuthProviderConfig struct {
+	Type                  string   `yaml:"type"`
+	Name                  string   `yaml:"name"`
+	DisplayName           string   `yaml:"displayName"`
+	Enabled               bool     `yaml:"enabled"`
+	Issuer                string   `yaml:"issuer"`
+	AuthorizationEndpoint string   `yaml:"authorizationEndpoint"`
+	TokenEndpoint         string   `yaml:"tokenEndpoint"`
+	UserinfoEndpoint      string   `yaml:"userinfoEndpoint"`
+	RedirectURL           string   `yaml:"redirectUrl"`
+	ClientID              string   `yaml:"clientId"`
+	ClientSecret          string   `yaml:"clientSecret"`
+	Scopes                []string `yaml:"scopes"`
+	BindByEmail           bool     `yaml:"bindByEmail"`
+	AutoCreateAdmin       bool     `yaml:"autoCreateAdmin"`
+	StateTTLSeconds       int      `yaml:"stateTtlSeconds"`
+	TicketTTLSeconds      int      `yaml:"ticketTtlSeconds"`
+	SuccessRedirect       string   `yaml:"successRedirect"`
+	FailureRedirect       string   `yaml:"failureRedirect"`
+	SubjectClaim          string   `yaml:"subjectClaim"`
+	EmailClaim            string   `yaml:"emailClaim"`
+	NameClaim             string   `yaml:"nameClaim"`
+	PictureClaim          string   `yaml:"pictureClaim"`
+	Prompt                string   `yaml:"prompt"`
+	AllowedEmailDomains   []string `yaml:"allowedEmailDomains"`
+}
+
 var (
 	wd, _    = os.Getwd()
 	yamlFile = path.Join(wd, "server.yaml")
@@ -109,6 +141,9 @@ func GetDefaultServerConfig() *ServerConfig {
 			NameClaim:        "name",
 			PictureClaim:     "picture",
 		},
+		OAuth: &OAuthConfig{
+			Providers: []OAuthProviderConfig{},
+		},
 	}
 }
 
@@ -131,4 +166,64 @@ func GetServerConfig() *ServerConfig {
 func WriteServerConfig(cfg *ServerConfig) {
 	bytes, _ := yaml.Marshal(cfg)
 	_ = os.WriteFile(yamlFile, bytes, 0755)
+}
+
+func (cfg *ServerConfig) OAuthProviders() []OAuthProviderConfig {
+	providers := []OAuthProviderConfig{}
+	seen := map[string]struct{}{}
+
+	if cfg != nil && cfg.OIDC != nil {
+		legacy := OAuthProviderConfig{
+			Type:                "oidc",
+			Name:                cfg.OIDC.ProviderName,
+			DisplayName:         "OIDC",
+			Enabled:             cfg.OIDC.Enabled,
+			Issuer:              cfg.OIDC.Issuer,
+			RedirectURL:         cfg.OIDC.RedirectURL,
+			ClientID:            cfg.OIDC.ClientID,
+			ClientSecret:        cfg.OIDC.ClientSecret,
+			Scopes:              cfg.OIDC.Scopes,
+			BindByEmail:         cfg.OIDC.BindByEmail,
+			AutoCreateAdmin:     cfg.OIDC.AutoCreateAdmin,
+			StateTTLSeconds:     cfg.OIDC.StateTTLSeconds,
+			TicketTTLSeconds:    cfg.OIDC.TicketTTLSeconds,
+			SuccessRedirect:     cfg.OIDC.SuccessRedirect,
+			FailureRedirect:     cfg.OIDC.FailureRedirect,
+			SubjectClaim:        cfg.OIDC.SubjectClaim,
+			EmailClaim:          cfg.OIDC.EmailClaim,
+			NameClaim:           cfg.OIDC.NameClaim,
+			PictureClaim:        cfg.OIDC.PictureClaim,
+			Prompt:              cfg.OIDC.Prompt,
+			AllowedEmailDomains: cfg.OIDC.AllowedEmailDomains,
+		}
+		if legacy.Name == "" {
+			legacy.Name = "oidc"
+		}
+		providers = append(providers, legacy)
+		seen[legacy.Name] = struct{}{}
+	}
+
+	if cfg != nil && cfg.OAuth != nil {
+		for _, provider := range cfg.OAuth.Providers {
+			name := provider.Name
+			if name == "" {
+				switch provider.Type {
+				case "google":
+					name = "google"
+				case "github":
+					name = "github"
+				default:
+					name = "oidc"
+				}
+			}
+			provider.Name = name
+			if _, ok := seen[name]; ok {
+				continue
+			}
+			providers = append(providers, provider)
+			seen[name] = struct{}{}
+		}
+	}
+
+	return providers
 }

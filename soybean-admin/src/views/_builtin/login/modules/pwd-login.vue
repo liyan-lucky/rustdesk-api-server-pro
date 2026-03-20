@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
-import { fetchCaptcha, fetchOidcLoginUrl } from '@/service/api/auth';
+import { fetchCaptcha, fetchOAuthLoginUrl, fetchOAuthProviders } from '@/service/api/auth';
 
 defineOptions({
   name: 'PwdLogin'
@@ -13,8 +13,8 @@ defineOptions({
 const authStore = useAuthStore();
 const route = useRoute();
 const { formRef, validate } = useNaiveForm();
-const oidcLoading = ref(false);
-const oidcEnabled = ref(false);
+const oauthProviders = ref<Api.Auth.OAuthProvider[]>([]);
+const activeProvider = ref('');
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -72,33 +72,33 @@ async function handleCaptcha() {
   model.captchaId = captcha.id || '';
 }
 
-async function checkOidcEnabled() {
+async function loadOAuthProviders() {
   try {
-    const { data } = await fetchOidcLoginUrl('/');
-    oidcEnabled.value = !!data?.enabled;
+    const { data } = await fetchOAuthProviders();
+    oauthProviders.value = data || [];
   } catch {
-    oidcEnabled.value = false;
+    oauthProviders.value = [];
   }
 }
 
-async function handleOidcLogin() {
-  oidcLoading.value = true;
+async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {
+  activeProvider.value = provider.name;
   try {
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/';
-    const { data, error } = await fetchOidcLoginUrl(redirect);
+    const { data, error } = await fetchOAuthLoginUrl(provider.name, redirect);
     if (!error && data?.enabled && data.url) {
       window.location.href = data.url;
       return;
     }
-    window.$message?.error(data?.enabled ? 'OIDC login url unavailable' : 'OIDC is disabled');
+    window.$message?.error($t('page.login.common.providerUnavailable', { provider: provider.displayName }));
   } finally {
-    oidcLoading.value = false;
+    activeProvider.value = '';
   }
 }
 
 onMounted(() => {
   handleCaptcha();
-  checkOidcEnabled();
+  loadOAuthProviders();
 });
 </script>
 
@@ -136,7 +136,17 @@ onMounted(() => {
       >
         {{ $t('common.confirm') }}
       </NButton>
-      <NButton v-if="oidcEnabled" tertiary block :loading="oidcLoading" @click="handleOidcLogin">OIDC Login</NButton>
+      <NDivider v-if="oauthProviders.length > 0">{{ $t('page.login.common.thirdPartyLogin') }}</NDivider>
+      <NButton
+        v-for="provider in oauthProviders"
+        :key="provider.name"
+        tertiary
+        block
+        :loading="activeProvider === provider.name"
+        @click="handleOAuthLogin(provider)"
+      >
+        {{ $t('page.login.common.continueWith', { provider: provider.displayName }) }}
+      </NButton>
     </NSpace>
   </NForm>
 </template>
