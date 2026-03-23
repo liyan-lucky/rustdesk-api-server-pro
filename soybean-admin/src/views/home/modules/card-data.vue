@@ -204,7 +204,7 @@ onMounted(async () => {
       </div>
     </DefineGradientBg>
 
-    <NGrid cols="s:1 m:2 l:4" responsive="screen" :x-gap="16" :y-gap="16">
+    <NGrid cols="2 m:2 l:4" responsive="screen" :x-gap="16" :y-gap="16" class="stat-grid">
       <NGi v-for="item in cardData" :key="item.key">
         <GradientBg
           :gradient-color="getGradientColor(item.color)"
@@ -366,6 +366,11 @@ onMounted(async () => {
 }
 
 @media (width <= 768px) {
+  .stat-grid {
+    --n-x-gap: 12px !important;
+    --n-y-gap: 12px !important;
+  }
+
   .stat-card {
     min-height: 84px;
     padding-right: 12px;
