@@ -635,10 +635,10 @@ func (s *OAuthProviderService) normalizeFailureRedirect(provider config.OAuthPro
 
 func normalizeOAuthRedirectTarget(target string) string {
 	if target == "" {
-		target = "/login"
+		target = "/#/login"
 	}
 	if strings.HasPrefix(target, "http://") || strings.HasPrefix(target, "https://") || strings.HasPrefix(target, "//") {
-		return "/login"
+		return "/#/login"
 	}
 	if !strings.HasPrefix(target, "/") {
 		target = "/" + target
@@ -909,10 +909,10 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		provider.TicketTTLSeconds = 180
 	}
 	if provider.SuccessRedirect == "" {
-		provider.SuccessRedirect = "/login"
+		provider.SuccessRedirect = "/#/login"
 	}
 	if provider.FailureRedirect == "" {
-		provider.FailureRedirect = "/login"
+		provider.FailureRedirect = "/#/login"
 	}
 	return provider
 }

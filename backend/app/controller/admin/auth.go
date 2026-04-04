@@ -195,11 +195,21 @@ func (c *AuthController) currentBaseURL() string {
 
 func withQuery(target, key, value string) string {
 	if target == "" {
-		target = "/login"
+		target = "/#/login"
 	}
 	u, err := url.Parse(target)
 	if err != nil {
-		return "/login"
+		return "/#/login"
+	}
+	if strings.HasPrefix(u.Fragment, "/") {
+		fragmentURL, fragmentErr := url.Parse(u.Fragment)
+		if fragmentErr == nil {
+			q := fragmentURL.Query()
+			q.Set(key, value)
+			fragmentURL.RawQuery = q.Encode()
+			u.Fragment = fragmentURL.String()
+			return u.String()
+		}
 	}
 	q := u.Query()
 	q.Set(key, value)
