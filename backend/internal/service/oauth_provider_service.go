@@ -59,6 +59,14 @@ type oauthStateEntry struct {
 	ExpiresAt    time.Time
 }
 
+type oauthSignedStatePayload struct {
+	ProviderName string `json:"providerName"`
+	RedirectTo   string `json:"redirectTo"`
+	CallbackURL  string `json:"callbackUrl"`
+	ExpiresAt    int64  `json:"expiresAt"`
+	Nonce        string `json:"nonce"`
+}
+
 type oauthTicketEntry struct {
 	Token     string
 	ExpiresAt time.Time
@@ -130,17 +138,19 @@ func (s *OAuthProviderService) BuildAdminAuthURL(providerName, requestBaseURL, r
 		return "", true, err
 	}
 
-	state := randomOAuthToken(32)
-	if state == "" {
-		return "", true, errors.New("failed to generate state")
-	}
-
-	s.setState(state, oauthStateEntry{
+	stateEntry := oauthStateEntry{
 		ProviderName: provider.Name,
 		RedirectTo:   s.normalizeSuccessRedirect(provider, redirectTo),
 		CallbackURL:  callbackURL,
 		ExpiresAt:    time.Now().Add(s.stateTTL(provider)),
-	})
+	}
+
+	state := s.buildSignedState(stateEntry)
+	if state == "" {
+		return "", true, errors.New("failed to generate state")
+	}
+
+	s.setState(state, stateEntry)
 
 	query := url.Values{}
 	query.Set("client_id", provider.ClientID)
@@ -170,6 +180,12 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 	}
 
 	stored, ok := s.popState(state)
+	if (!ok || stored.ProviderName != provider.Name) && state != "" {
+		if decoded, decodeErr := s.parseSignedState(state); decodeErr == nil {
+			stored = decoded
+			ok = stored.ProviderName == provider.Name
+		}
+	}
 	if !ok || stored.ProviderName != provider.Name {
 		return "", failureRedirect, errors.New("state invalid or expired")
 	}
@@ -748,6 +764,66 @@ func (s *OAuthProviderService) setCachedMetadata(issuer string, metadata oauthMe
 		Value:     metadata,
 		ExpiresAt: time.Now().Add(5 * time.Minute),
 	}
+}
+
+func (s *OAuthProviderService) buildSignedState(entry oauthStateEntry) string {
+	payload := oauthSignedStatePayload{
+		ProviderName: entry.ProviderName,
+		RedirectTo:   entry.RedirectTo,
+		CallbackURL:  entry.CallbackURL,
+		ExpiresAt:    entry.ExpiresAt.Unix(),
+		Nonce:        randomOAuthToken(12),
+	}
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return ""
+	}
+	encodedPayload := base64.RawURLEncoding.EncodeToString(data)
+	signature := util.HmacSha256(encodedPayload, s.cfg.SignKey)
+	if signature == "" {
+		return ""
+	}
+	return encodedPayload + "." + base64.RawURLEncoding.EncodeToString([]byte(signature))
+}
+
+func (s *OAuthProviderService) parseSignedState(state string) (oauthStateEntry, error) {
+	parts := strings.Split(state, ".")
+	if len(parts) != 2 {
+		return oauthStateEntry{}, errors.New("invalid state format")
+	}
+
+	expectedSignature := util.HmacSha256(parts[0], s.cfg.SignKey)
+	rawSignature, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return oauthStateEntry{}, err
+	}
+	if string(rawSignature) != expectedSignature {
+		return oauthStateEntry{}, errors.New("state signature mismatch")
+	}
+
+	payloadBytes, err := base64.RawURLEncoding.DecodeString(parts[0])
+	if err != nil {
+		return oauthStateEntry{}, err
+	}
+
+	var payload oauthSignedStatePayload
+	if err = json.Unmarshal(payloadBytes, &payload); err != nil {
+		return oauthStateEntry{}, err
+	}
+
+	entry := oauthStateEntry{
+		ProviderName: strings.TrimSpace(payload.ProviderName),
+		RedirectTo:   normalizeOAuthRedirectTarget(payload.RedirectTo),
+		CallbackURL:  strings.TrimSpace(payload.CallbackURL),
+		ExpiresAt:    time.Unix(payload.ExpiresAt, 0),
+	}
+	if entry.ProviderName == "" || entry.CallbackURL == "" {
+		return oauthStateEntry{}, errors.New("state payload incomplete")
+	}
+	if time.Now().After(entry.ExpiresAt) {
+		return oauthStateEntry{}, errors.New("state expired")
+	}
+	return entry, nil
 }
 
 func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthProviderConfig {

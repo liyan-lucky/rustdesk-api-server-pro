@@ -151,6 +151,77 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 	}
 }
 
+func TestOAuthProviderService_GithubTicketFlowWithoutInMemoryState(t *testing.T) {
+	provider := newMockGitHubOAuthProvider(t)
+	defer provider.Close()
+
+	engine, err := db.NewEngine(&config.DbConfig{
+		Driver:   "sqlite",
+		Dsn:      ":memory:",
+		TimeZone: "Asia/Shanghai",
+		ShowSql:  false,
+	})
+	if err != nil {
+		t.Fatalf("new engine: %v", err)
+	}
+	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount)); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+
+	cfg := &config.ServerConfig{
+		SignKey: "test-sign-key",
+		OAuth: &config.OAuthConfig{
+			Providers: []config.OAuthProviderConfig{
+				{
+					Type:                  "github",
+					Name:                  "github",
+					DisplayName:           "GitHub",
+					Enabled:               true,
+					ClientID:              "github-client-id",
+					ClientSecret:          "github-client-secret",
+					AuthorizationEndpoint: provider.URL + "/login/oauth/authorize",
+					TokenEndpoint:         provider.URL + "/login/oauth/access_token",
+					UserinfoEndpoint:      provider.URL + "/user",
+					BindByEmail:           true,
+					AutoCreateAdmin:       true,
+					SuccessRedirect:       "/login",
+					FailureRedirect:       "/login",
+				},
+			},
+		},
+	}
+
+	svc := NewOAuthProviderService(cfg, engine)
+	authURL, enabled, err := svc.BuildAdminAuthURL("github", "http://localhost:12345", "/login")
+	if err != nil {
+		t.Fatalf("build auth url: %v", err)
+	}
+	if !enabled {
+		t.Fatalf("expected github provider enabled")
+	}
+
+	u, err := url.Parse(authURL)
+	if err != nil {
+		t.Fatalf("parse auth url: %v", err)
+	}
+	state := u.Query().Get("state")
+	if state == "" {
+		t.Fatalf("state should not be empty")
+	}
+
+	globalOAuthRuntimeStore.mu.Lock()
+	globalOAuthRuntimeStore.states = map[string]oauthStateEntry{}
+	globalOAuthRuntimeStore.mu.Unlock()
+
+	ticket, _, err := svc.ConsumeAdminCallback("github", "github-code", state)
+	if err != nil {
+		t.Fatalf("consume callback without in-memory state: %v", err)
+	}
+	if ticket == "" {
+		t.Fatalf("ticket should not be empty")
+	}
+}
+
 func newMockGitHubOAuthProvider(t *testing.T) *httptest.Server {
 	t.Helper()
 
