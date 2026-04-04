@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"rustdesk-api-server-pro/app/model"
@@ -91,11 +92,25 @@ var globalOAuthRuntimeStore = &oauthRuntimeStore{
 }
 
 func NewOAuthProviderService(cfg *config.ServerConfig, db *xorm.Engine) *OAuthProviderService {
+	transport := &http.Transport{
+		Proxy:               http.ProxyFromEnvironment,
+		ForceAttemptHTTP2:   false,
+		MaxIdleConns:        20,
+		IdleConnTimeout:     30 * time.Second,
+		TLSHandshakeTimeout: 10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+		DialContext: (&net.Dialer{
+			Timeout:   10 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+	}
+
 	return &OAuthProviderService{
 		cfg: cfg,
 		db:  db,
 		httpClient: &http.Client{
-			Timeout: 15 * time.Second,
+			Timeout:   20 * time.Second,
+			Transport: transport,
 		},
 	}
 }
