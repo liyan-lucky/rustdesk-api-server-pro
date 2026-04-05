@@ -48,36 +48,38 @@ const bgColor = computed(() => {
 
 onMounted(async () => {
   let shouldReplaceQuery = false;
-  const q = { ...route.query };
+  const rawSearchQuery = Object.fromEntries(new URLSearchParams(window.location.search).entries());
+  const mergedQuery = { ...rawSearchQuery, ...route.query };
+  const q = { ...mergedQuery };
 
-  const oauthError = route.query.oauth_error;
+  const oauthError = mergedQuery.oauth_error;
   if (typeof oauthError === 'string' && oauthError) {
     window.$message?.error(oauthError);
     delete q.oauth_error;
     shouldReplaceQuery = true;
   }
 
-  const oauthTicket = route.query.oauth_ticket;
+  const oauthTicket = mergedQuery.oauth_ticket;
   if (typeof oauthTicket === 'string' && oauthTicket) {
     await authStore.loginByOAuthTicket(oauthTicket, true);
     delete q.oauth_ticket;
     delete q.oauth_provider;
     delete q.oauth_error;
-    await router.replace({ query: q });
+    await router.replace({ path: route.path, query: q, hash: route.hash });
     return;
   }
 
-  const ticket = route.query.oidc_ticket;
+  const ticket = mergedQuery.oidc_ticket;
   if (typeof ticket === 'string' && ticket) {
     await authStore.loginByOidcTicket(ticket, true);
     delete q.oidc_ticket;
     delete q.oidc_error;
-    await router.replace({ query: q });
+    await router.replace({ path: route.path, query: q, hash: route.hash });
     return;
   }
 
   if (shouldReplaceQuery) {
-    await router.replace({ query: q });
+    await router.replace({ path: route.path, query: q, hash: route.hash });
   }
 });
 </script>
