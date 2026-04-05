@@ -4,6 +4,7 @@ import type { Component } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getPaletteColorByNumber, mixColor } from '@sa/color';
 import { $t } from '@/locales';
+import { localStg } from '@/utils/storage';
 import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
 import { useThemeStore } from '@/store/modules/theme';
@@ -61,6 +62,13 @@ onMounted(async () => {
 
   const oauthTicket = mergedQuery.oauth_ticket;
   if (typeof oauthTicket === 'string' && oauthTicket) {
+    if (localStg.get('token')) {
+      delete q.oauth_ticket;
+      delete q.oauth_provider;
+      delete q.oauth_error;
+      await router.replace({ path: route.path, query: q, hash: route.hash });
+      return;
+    }
     await authStore.loginByOAuthTicket(oauthTicket, true);
     delete q.oauth_ticket;
     delete q.oauth_provider;
