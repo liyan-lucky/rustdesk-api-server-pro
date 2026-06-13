@@ -140,6 +140,16 @@ func (s *CompatService) HandleRecord(cmd core.CompatRecordCommand) error {
 	}
 }
 
+func (s *CompatService) HandleDeviceDeploy(cmd core.CompatDeviceDeployCommand) core.CompatDeviceDeployResult {
+	if strings.TrimSpace(cmd.RustdeskID) == "" || strings.TrimSpace(cmd.UUID) == "" || strings.TrimSpace(cmd.PublicKey) == "" {
+		return core.CompatDeviceDeployResult{Result: "INVALID_INPUT"}
+	}
+
+	// RustDesk 1.4.7 probes explicit deployment here. This API server does not
+	// maintain the hbbs deployment allowlist, so report that deployment is not required.
+	return core.CompatDeviceDeployResult{Result: "NOT_ENABLED"}
+}
+
 func sanitizeRecordFileName(name string) string {
 	name = strings.TrimSpace(name)
 	if name == "" {

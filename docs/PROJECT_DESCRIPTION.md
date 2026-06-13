@@ -303,6 +303,7 @@ jobsConfig:
 | `POST` | `/api/oidc/auth` | 客户端 OIDC 兼容响应 |
 | `GET` | `/api/oidc/auth-query` | 客户端 OIDC 查询兼容响应 |
 | `POST` | `/api/record` | 录屏上传最小兼容，支持 `new`、`part`、`tail`、`remove` |
+| `POST` | `/api/devices/deploy` | RustDesk 1.4.7 设备部署流程兼容响应，当前返回 `NOT_ENABLED` 表示服务端不要求显式部署 |
 
 `/api/record` 会将文件写入运行目录下的 `record_uploads/`。文件名经过 `filepath.Base` 和 `..` 清理，但仍应在生产环境中控制访问权限和磁盘容量。
 
@@ -623,12 +624,14 @@ docker build -t rustdesk-api-server-pro:local .
 - 后台 OAuth 多 Provider 登录骨架。
 - 设备分组、用户分组、策略的最小持久化兼容接口。
 - 录屏上传最小落盘。
+- RustDesk 1.4.7 设备部署兼容响应。
 - plugin-sign 响应结构兼容。
 
 需要注意的限制：
 
 - 客户端 OIDC 是兼容响应，不是完整客户端 OIDC 登录实现。
 - plugin-sign 不是官方真实签名服务。
+- `/api/devices/deploy` 仅返回官方客户端可识别的兼容状态，不会写入 hbbs 显式部署白名单。
 - 企业分组、策略、accessible 权限是最小兼容模型，不是完整官方权限模型。
 - 录屏上传只负责文件落盘，没有完整索引、归档、清理和权限控制。
 - 邮件能力依赖模板和 SMTP 配置，未配置时邮箱验证会失败。

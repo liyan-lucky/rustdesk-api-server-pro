@@ -41,3 +41,13 @@ type CompatRecordCommand struct {
 	Offset   int64
 	Body     []byte
 }
+
+type CompatDeviceDeployCommand struct {
+	RustdeskID string
+	UUID      string
+	PublicKey string
+}
+
+type CompatDeviceDeployResult struct {
+	Result string
+}

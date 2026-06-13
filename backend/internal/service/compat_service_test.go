@@ -106,3 +106,56 @@ func TestCompatServiceHandleRecordValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
+	svc := NewCompatService(nil, nil, nil)
+
+	tests := []struct {
+		name string
+		cmd  core.CompatDeviceDeployCommand
+		want string
+	}{
+		{
+			name: "missing id",
+			cmd: core.CompatDeviceDeployCommand{
+				UUID:      "uuid",
+				PublicKey: "pk",
+			},
+			want: "INVALID_INPUT",
+		},
+		{
+			name: "missing uuid",
+			cmd: core.CompatDeviceDeployCommand{
+				RustdeskID: "123456789",
+				PublicKey: "pk",
+			},
+			want: "INVALID_INPUT",
+		},
+		{
+			name: "missing public key",
+			cmd: core.CompatDeviceDeployCommand{
+				RustdeskID: "123456789",
+				UUID:      "uuid",
+			},
+			want: "INVALID_INPUT",
+		},
+		{
+			name: "deployment not required",
+			cmd: core.CompatDeviceDeployCommand{
+				RustdeskID: "123456789",
+				UUID:      "uuid",
+				PublicKey: "pk",
+			},
+			want: "NOT_ENABLED",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := svc.HandleDeviceDeploy(tt.cmd)
+			if got.Result != tt.want {
+				t.Fatalf("got result=%q, want %q", got.Result, tt.want)
+			}
+		})
+	}
+}

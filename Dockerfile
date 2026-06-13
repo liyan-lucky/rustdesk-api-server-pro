@@ -6,6 +6,8 @@ RUN go build
 
 FROM node:20-alpine AS node
 WORKDIR /frontend
+ARG APP_VERSION=latest
+ENV VITE_APP_VERSION=$APP_VERSION
 COPY ./soybean-admin .
 RUN rm -rf node_modules
 RUN npm install -g pnpm

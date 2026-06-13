@@ -9,6 +9,7 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
+	"github.com/tidwall/gjson"
 )
 
 // CompatPublicController provides compatibility endpoints used by newer RustDesk clients.
@@ -22,6 +23,7 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("POST", "oidc/auth", "HandleOidcAuth")
 	b.Handle("GET", "oidc/auth-query", "HandleOidcAuthQuery")
 	b.Handle("POST", "record", "HandleRecord")
+	b.Handle("POST", "devices/deploy", "HandleDevicesDeploy")
 }
 
 func (c *CompatPublicController) HandleSysinfoVer() mvc.Result {
@@ -68,4 +70,21 @@ func (c *CompatPublicController) HandleRecord() mvc.Result {
 		return c.fail(err)
 	}
 	return c.ok()
+}
+
+func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
+	body, err := c.readBodyBytes()
+	if err != nil {
+		return c.fail(err)
+	}
+	result := c.compatService().HandleDeviceDeploy(core.CompatDeviceDeployCommand{
+		RustdeskID: gjson.GetBytes(body, "id").String(),
+		UUID:      gjson.GetBytes(body, "uuid").String(),
+		PublicKey: gjson.GetBytes(body, "pk").String(),
+	})
+	return mvc.Response{
+		Object: iris.Map{
+			"result": result.Result,
+		},
+	}
 }

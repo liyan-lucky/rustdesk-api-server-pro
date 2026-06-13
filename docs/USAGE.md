@@ -141,6 +141,7 @@ pnpm build
 ### 6.3 兼容端点验证（按需）
 
 - `devices/cli`：客户端更新设备信息/备注后无报错
+- `devices/deploy`：RustDesk 1.4.7 设备部署流程返回 `NOT_ENABLED` 或有效错误，不应出现 404
 - `record`：启用录制时服务端 `record_uploads/` 可写入文件
 - `oidc`：如未使用，可接受返回“不支持”的兼容响应
 - `plugin-sign`：如未使用插件签名，可接受兼容占位返回

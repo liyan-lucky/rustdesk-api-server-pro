@@ -93,8 +93,10 @@ jobs:
 
             主要内容：
             - RustDesk 客户端兼容目标更新为 1.4.7，服务端兼容标识同步刷新。
+            - 补齐 RustDesk 1.4.7 设备部署接口兼容响应，避免新版客户端请求 `/api/devices/deploy` 时出现 404。
             - 管理后台“服务器连接配置”新增配置二维码，方便手机 App 扫码导入。
             - 生成 Linux、Windows、macOS 的 amd64 和 arm64 部署包。
+            - Docker 镜像发布工作流会同步推送 GHCR `latest`、版本标签和 sha 标签。
 
             升级提示：
             - 请同时替换后端程序和管理后台 dist 静态资源，并重启服务。

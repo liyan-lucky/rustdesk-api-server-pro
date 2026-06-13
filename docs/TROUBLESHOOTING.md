@@ -83,6 +83,7 @@ rustdesk-api-server-pro.exe sync
 - `/api/oidc/auth`
 - `/api/oidc/auth-query`
 - `/api/devices/cli`
+- `/api/devices/deploy`
 - `/api/record`
 - `/api/device-group/accessible`
 - `/lic/web/api/plugin-sign`
