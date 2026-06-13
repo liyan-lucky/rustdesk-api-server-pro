@@ -84,12 +84,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.build.outputs.tag_name }}
+          name: RustDesk API 1.4.7 兼容更新（${{ needs.build.outputs.tag_name }}）
           generate_release_notes: false
           body: |
-            本次发布已完成项目功能更新和构建产物生成。
+            本次发布已重新生成 RustDesk API 兼容更新包。
 
             主要内容：
-            - 更新 RustDesk 客户端兼容目标。
-            - 优化管理后台功能体验。
-            - 生成多平台部署包。
+            - RustDesk 客户端兼容目标更新为 1.4.7，服务端兼容标识同步刷新。
+            - 管理后台“服务器连接配置”新增配置二维码，方便手机 App 扫码导入。
+            - 生成 Linux、Windows、macOS 的 amd64 和 arm64 部署包。
+
+            升级提示：
+            - 请同时替换后端程序和管理后台 dist 静态资源，并重启服务。
+            - 浏览器仍显示旧更新日志或旧按钮时，请强制刷新页面或清理缓存后再确认。
           files: release-assets/*.zip
