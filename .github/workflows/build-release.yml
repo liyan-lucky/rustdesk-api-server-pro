@@ -50,6 +50,8 @@ jobs:
           cd soybean-admin && pnpm install --frozen-lockfile
       
       - name: 编译项目
+        env:
+          VITE_APP_VERSION: ${{ steps.tag.outputs.tag_name || github.ref_name }}
         run: |
           go env -w GOOS=${{matrix.os}}
           go env -w GOARCH=${{matrix.arch}}

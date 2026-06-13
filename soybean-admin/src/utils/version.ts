@@ -1,5 +1,5 @@
 export function getVersionTag() {
-  return 'latest';
+  return import.meta.env.VITE_APP_VERSION || 'latest';
 }
 
 export function appendVersion(content: string) {

@@ -15,6 +15,8 @@ declare namespace Env {
     readonly VITE_APP_TITLE: string;
     /** The description of the application */
     readonly VITE_APP_DESC: string;
+    /** The version tag injected by release build */
+    readonly VITE_APP_VERSION?: string;
     /** The router history mode */
     readonly VITE_ROUTER_HISTORY_MODE?: RouterHistoryMode;
     /** The prefix of the iconify icon */
