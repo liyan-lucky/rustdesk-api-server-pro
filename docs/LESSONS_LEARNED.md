@@ -20,3 +20,9 @@
 
 - RustDesk 官方客户端版本更新后，需要同步检查后端 `CompatSysinfoVersion`，并用最新客户端做登录、地址簿、设备列表、审计和扫码导入冒烟验证。
 - 版本字符串只表示已适配和验证的兼容目标，不等于完整实现官方 Pro 所有能力。
+
+## GHCR 镜像发布
+
+- GHCR package 如果已存在且未授权当前仓库 Actions 写入，即使 workflow 配置了 `packages: write` 也会在推送阶段返回 `write_package` 权限拒绝。
+- 默认 push 触发只做 Docker 镜像构建验证，不自动推送 GHCR，避免因为外部 Package 权限导致主分支红叉。
+- 需要发布 GHCR 镜像时，先在 GitHub Package 设置中授予本仓库写入权限，或配置带 `write:packages` 权限的有效发布令牌，再手动触发工作流并选择推送镜像。
