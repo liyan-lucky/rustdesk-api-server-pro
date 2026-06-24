@@ -3,10 +3,14 @@ services:
     container_name: rustdesk-api-server-pro
     image: ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
     environment:
-      - "ADMIN_USER=youruser" # optional
-      - "ADMIN_PASS=yourpassword" # optional
+      - "ADMIN_USER=youruser" # optional, only effective before /app/data/.init.lock exists
+      - "ADMIN_PASS=yourpassword" # optional, only effective before /app/data/.init.lock exists
     volumes:
-      - ./server.yaml:/app/server.yaml # startup script will copy to /app/data/server.yaml
+      - ./server.yaml:/app/server.yaml # startup script copies this to /app/data/server.yaml
       - ./data:/app/data # persist sqlite db, init lock, record_uploads and runtime config
     network_mode: host
     restart: unless-stopped
+    labels:
+      name: "RustDesk API Server Pro"
+      desc: "RustDesk API 增强服务端：管理后台前端、后端 API、第三方登录、SQLite 数据持久化"
+      ports: "12345/tcp"
