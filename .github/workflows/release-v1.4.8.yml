@@ -19,62 +19,6 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/rustdesk-api-server-pro
 
 jobs:
-  build-assets:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release v1.4.8')
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [linux, windows, darwin]
-        arch: [amd64, arm64]
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-
-      - name: 配置 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: 配置 Go 环境
-        uses: actions/setup-go@v5
-        with:
-          go-version: '>=1.23.1'
-          cache: false
-
-      - name: 安装构建依赖
-        run: |
-          sudo apt update
-          sudo apt install make zip -y
-          cd soybean-admin && pnpm install --frozen-lockfile
-
-      - name: 编译项目
-        env:
-          VITE_APP_VERSION: ${{ env.RELEASE_TAG }}
-        run: |
-          rm -rf build
-          go env -w GOOS=${{ matrix.os }}
-          go env -w GOARCH=${{ matrix.arch }}
-          go build -C backend -o ../build/
-          cd soybean-admin && pnpm build
-          cd .. && cp -R soybean-admin/dist build/
-          cp backend/server.yaml build/
-
-      - name: 打包文件
-        run: zip -r ${{ matrix.os }}-${{ matrix.arch }}.zip build
-
-      - name: 上传构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-${{ matrix.os }}-${{ matrix.arch }}
-          path: ${{ matrix.os }}-${{ matrix.arch }}.zip
-          if-no-files-found: error
-
   build-docker:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release v1.4.8')
     runs-on: ubuntu-latest
@@ -120,14 +64,8 @@ jobs:
   release:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release v1.4.8')
     runs-on: ubuntu-latest
-    needs: [build-assets, build-docker]
+    needs: [build-docker]
     steps:
-      - name: 下载全部构建产物
-        uses: actions/download-artifact@v4
-        with:
-          path: release-assets
-          merge-multiple: true
-
       - name: 创建 GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -150,4 +88,3 @@ jobs:
             - 当前镜像已内置管理后台前端，不再需要单独 `rustdesk-web` 容器。
             - 从旧部署升级时，建议删除或停用旧 `rustdesk-web`，避免旧 dist 干扰新版登录页。
             - OpenWrt 用户可直接执行文档中的一键脚本，默认数据目录为 `/mnt/docker/rustdesk-api`。
-          files: release-assets/*.zip
