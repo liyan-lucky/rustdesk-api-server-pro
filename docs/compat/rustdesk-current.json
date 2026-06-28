@@ -1,0 +1,39 @@
+{
+  "client": {
+    "name": "rustdesk",
+    "version": "1.4.8",
+    "tag": "1.4.8",
+    "release_date": "2026-06-21",
+    "source_repo": "rustdesk/rustdesk"
+  },
+  "server": {
+    "api_project": "rustdesk-api-server-pro",
+    "compat_server_version": "1.1.15",
+    "status": "compatibility-layer"
+  },
+  "sysinfo_version": "rustdesk-api-server-pro-compat-client-1.4.8-server-1.1.15-latest",
+  "focus": [
+    "windows_arm64_support",
+    "remote_toolbar_monitor_switch",
+    "privacy_mode_multi_monitor",
+    "remote_restart_autoconnect",
+    "oidc_microsoft_icon_compat"
+  ],
+  "validated_endpoints": [
+    "/api/status",
+    "/api/version",
+    "/api/features",
+    "/api/config",
+    "/api/server-config",
+    "/api/compat-target",
+    "/api/sysinfo_ver",
+    "/api/login-options",
+    "/api/currentUser",
+    "/api/logout",
+    "/api/ab/personal",
+    "/api/ab/settings",
+    "/api/devices/cli",
+    "/api/devices/current",
+    "/api/me"
+  ]
+}
