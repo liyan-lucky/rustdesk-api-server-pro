@@ -31,6 +31,13 @@ jobs:
             docs/compat/rustdesk-current.json \
             backend/internal/service/compat_service.go
 
+      - name: Generate upstream API hint report
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          bash scripts/compat/extract-api-hints.sh \
+            "${{ steps.check.outputs.latest_tag }}" \
+            docs/compat/reports
+
       - name: Build compatibility report
         if: steps.check.outputs.needs_update == 'true'
         run: |
@@ -43,10 +50,14 @@ jobs:
           - Current target before update: `${{ steps.check.outputs.current_version }}`
           - Latest upstream: `${{ steps.check.outputs.latest_tag }}`
 
+          Generated reports:
+
+          - `docs/compat/reports/api-hints-${{ steps.check.outputs.latest_tag }}.md`
+
           Suggested review checklist:
 
           - [ ] Review upstream release changelog.
-          - [ ] Compare client API probes with `docs/API_MATRIX.md`.
+          - [ ] Compare generated API hints with `docs/API_MATRIX.md`.
           - [ ] Run Docker image build.
           - [ ] Run `bash scripts/compat/smoke-api.sh http://127.0.0.1:12345`.
           - [ ] Run login/currentUser/logout smoke tests with `TOKEN` if available.
@@ -66,6 +77,6 @@ jobs:
             - Current target before update: `${{ steps.check.outputs.current_version }}`
             - Latest upstream: `${{ steps.check.outputs.latest_tag }}`
 
-            This PR was generated automatically. It updates the compatibility target constants and manifest, then creates a checklist report. It does not claim full behavioral compatibility by itself; run Docker/Go build and smoke tests before merging.
+            This PR was generated automatically. It updates the compatibility target constants and manifest, then creates checklist and upstream API hint reports. It does not claim full behavioral compatibility by itself; run Docker/Go build and smoke tests before merging.
           branch: "bot/rustdesk-${{ steps.check.outputs.latest_tag }}-compat"
           commit-message: "chore: align RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
