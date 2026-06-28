@@ -36,3 +36,19 @@ func (s *AuditService) CreateFileTransfer(cmd core.FileTransferCreateCommand) er
 func (s *AuditService) UpdateNoteByGuid(cmd core.AuditGuidNoteUpdateCommand) error {
 	return s.repo.UpdateAuditNoteByGuid(cmd)
 }
+
+func (s *AuditService) CreateAlarmAudit(cmd core.AlarmAuditCreateCommand) error {
+	return s.repo.InsertAlarmAudit(cmd)
+}
+
+func (s *AuditService) CreateSecurityAudit(cmd core.SecurityAuditCreateCommand) error {
+	return s.repo.InsertSecurityAudit(cmd)
+}
+
+func (s *AuditService) CreateOperationAudit(cmd core.OperationAuditCreateCommand) error {
+	return s.repo.InsertOperationAudit(cmd)
+}
+
+func (s *AuditService) CreateCompatAPIAudit(cmd core.CompatAPIAuditCreateCommand) error {
+	return s.repo.InsertCompatAPIAudit(cmd)
+}
