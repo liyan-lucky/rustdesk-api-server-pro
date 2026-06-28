@@ -1,0 +1,176 @@
+name: 清理运行记录和发布标签
+run-name: 清理运行记录和发布标签
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "仅预览，不实际删除"
+        required: true
+        default: true
+        type: boolean
+      clean_workflow_runs:
+        description: "清理 GitHub Actions 运行记录"
+        required: true
+        default: true
+        type: boolean
+      clean_releases:
+        description: "清理 GitHub Releases（不会自动删除 tag，除非同时开启 clean_tags）"
+        required: true
+        default: false
+        type: boolean
+      clean_tags:
+        description: "清理已发布标签 / Git tags（危险，默认不清理）"
+        required: true
+        default: false
+        type: boolean
+      tag_pattern:
+        description: "标签匹配前缀，留空表示全部 tag；例如 v1.4.8 或 v"
+        required: false
+        default: ""
+        type: string
+      confirm:
+        description: "实际删除时必须填写 CLEAN；清理 tag 时必须填写 CLEAN_TAGS"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 参数检查
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "dry_run=${{ inputs.dry_run }}"
+          echo "clean_workflow_runs=${{ inputs.clean_workflow_runs }}"
+          echo "clean_releases=${{ inputs.clean_releases }}"
+          echo "clean_tags=${{ inputs.clean_tags }}"
+          echo "tag_pattern=${{ inputs.tag_pattern }}"
+
+          if [[ "${{ inputs.dry_run }}" != "true" ]]; then
+            if [[ "${{ inputs.clean_tags }}" == "true" ]]; then
+              if [[ "${{ inputs.confirm }}" != "CLEAN_TAGS" ]]; then
+                echo "清理 tag 属于危险操作，confirm 必须填写 CLEAN_TAGS。"
+                exit 1
+              fi
+            else
+              if [[ "${{ inputs.confirm }}" != "CLEAN" ]]; then
+                echo "实际删除操作需要 confirm 填写 CLEAN。"
+                exit 1
+              fi
+            fi
+          fi
+
+      - name: 清理 GitHub Actions 运行记录
+        if: inputs.clean_workflow_runs == true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          CURRENT_RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          echo "读取 workflow runs..."
+          mapfile -t run_ids < <(gh api --paginate "repos/$REPO/actions/runs?per_page=100" --jq '.workflow_runs[].id')
+
+          echo "找到 ${#run_ids[@]} 条运行记录。"
+          for run_id in "${run_ids[@]}"; do
+            if [[ "$run_id" == "$CURRENT_RUN_ID" ]]; then
+              echo "跳过当前运行记录: $run_id"
+              continue
+            fi
+
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "[DRY-RUN] 将删除 workflow run: $run_id"
+            else
+              echo "删除 workflow run: $run_id"
+              gh api -X DELETE "repos/$REPO/actions/runs/$run_id" || true
+            fi
+          done
+
+      - name: 清理 GitHub Releases
+        if: inputs.clean_releases == true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          TAG_PATTERN: ${{ inputs.tag_pattern }}
+        run: |
+          set -euo pipefail
+
+          echo "读取 releases..."
+          mapfile -t releases < <(gh api --paginate "repos/$REPO/releases?per_page=100" --jq '.[] | [.id, .tag_name] | @tsv')
+
+          echo "找到 ${#releases[@]} 个 release。"
+          for item in "${releases[@]}"; do
+            release_id="${item%%$'\t'*}"
+            tag_name="${item#*$'\t'}"
+
+            if [[ -n "$TAG_PATTERN" && "$tag_name" != "$TAG_PATTERN"* ]]; then
+              echo "跳过 release: $tag_name，不匹配 tag_pattern=$TAG_PATTERN"
+              continue
+            fi
+
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "[DRY-RUN] 将删除 release: $tag_name ($release_id)"
+            else
+              echo "删除 release: $tag_name ($release_id)"
+              gh api -X DELETE "repos/$REPO/releases/$release_id" || true
+            fi
+          done
+
+      - name: 清理 Git tags
+        if: inputs.clean_tags == true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          TAG_PATTERN: ${{ inputs.tag_pattern }}
+        run: |
+          set -euo pipefail
+
+          echo "读取 tags..."
+          mapfile -t tags < <(gh api --paginate "repos/$REPO/tags?per_page=100" --jq '.[].name')
+
+          echo "找到 ${#tags[@]} 个 tag。"
+          for tag_name in "${tags[@]}"; do
+            if [[ -n "$TAG_PATTERN" && "$tag_name" != "$TAG_PATTERN"* ]]; then
+              echo "跳过 tag: $tag_name，不匹配 tag_pattern=$TAG_PATTERN"
+              continue
+            fi
+
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "[DRY-RUN] 将删除 tag: $tag_name"
+            else
+              echo "删除 tag: $tag_name"
+              gh api -X DELETE "repos/$REPO/git/refs/tags/$tag_name" || true
+            fi
+          done
+
+      - name: 完成提示
+        shell: bash
+        run: |
+          cat <<'EOF'
+          清理流程执行完成。
+
+          默认行为：
+          - dry_run=true：只预览，不删除。
+          - clean_workflow_runs=true：默认清理 Actions 运行记录。
+          - clean_releases=false：默认不清理 Release。
+          - clean_tags=false：默认不清理 tag。
+
+          实际删除：
+          - 普通删除：dry_run=false 且 confirm=CLEAN。
+          - 删除 tag：dry_run=false、clean_tags=true 且 confirm=CLEAN_TAGS。
+          EOF
