@@ -1,0 +1,34 @@
+RustDesk API Server Pro - Notices
+
+This project is an independent, community-maintained compatibility implementation for RustDesk client API workflows.
+
+Licensing
+---------
+This repository is licensed under the GNU Affero General Public License version 3.0 (AGPL-3.0-only). See LICENSE.
+
+Network Use / Source Availability
+---------------------------------
+Because this project is licensed under AGPL-3.0, if you modify the program and make it available for users to interact with over a network, you must provide those users access to the corresponding source code of the modified version under the AGPL-3.0 terms.
+
+Third-Party Components
+----------------------
+This project includes or depends on third-party open-source components. Important examples include:
+
+- Soybean Admin frontend template, MIT License, https://github.com/soybeanjs/soybean-admin
+- Vue and related frontend ecosystem packages, generally permissive open-source licenses
+- Go modules listed in backend/go.mod, generally permissive open-source licenses unless otherwise stated by their upstream projects
+- RustDesk-compatible client API concepts and paths are referenced only for interoperability and compatibility purposes
+
+Trademarks and Affiliation
+--------------------------
+RustDesk is a trademark/name of its respective owner. This project is not affiliated with, endorsed by, sponsored by, or officially approved by RustDesk or its maintainers.
+
+Huawei, HarmonyOS, OpenHarmony and related names are trademarks or registered trademarks of their respective owners. This project is not affiliated with, endorsed by, sponsored by, or officially approved by Huawei or the OpenHarmony project.
+
+Compatibility Disclaimer
+------------------------
+References to RustDesk, Huawei, HarmonyOS, OpenHarmony, GitHub, Google, OIDC, Docker, GHCR, OpenWrt or other third-party names are for descriptive, compatibility, deployment or interoperability purposes only.
+
+No Warranty
+-----------
+This project is provided without warranty, including without limitation any warranty of merchantability, fitness for a particular purpose, non-infringement, service availability, security, or compatibility with any third-party service or client version.
