@@ -64,7 +64,7 @@ jobs:
             type=sha,prefix=sha-
 
       - name: 构建镜像（linux/amd64）
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: ${{ env.PUSH_IMAGE == 'true' }}
