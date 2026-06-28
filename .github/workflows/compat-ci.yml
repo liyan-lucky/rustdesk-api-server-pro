@@ -45,6 +45,7 @@ jobs:
           bash -n scripts/compat/check-rustdesk-release.sh
           bash -n scripts/compat/update-compat-target.sh
           bash -n scripts/compat/smoke-api.sh
+          bash -n scripts/compat/extract-api-hints.sh
 
       - name: Validate compatibility manifest
         run: jq -e '.client.version and .sysinfo_version and .validated_endpoints' docs/compat/rustdesk-current.json
