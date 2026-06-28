@@ -23,6 +23,14 @@ jobs:
             docs/compat/rustdesk-current.json \
             docs/compat/rustdesk-latest-detected.json
 
+      - name: Auto-update compatibility target files
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          bash scripts/compat/update-compat-target.sh \
+            docs/compat/rustdesk-latest-detected.json \
+            docs/compat/rustdesk-current.json \
+            backend/internal/service/compat_service.go
+
       - name: Build compatibility report
         if: steps.check.outputs.needs_update == 'true'
         run: |
@@ -30,9 +38,9 @@ jobs:
           cat > docs/compat/reports/rustdesk-${{ steps.check.outputs.latest_tag }}.md <<'MD'
           # RustDesk compatibility update detected
 
-          A new upstream RustDesk release was detected.
+          A new upstream RustDesk release was detected and the compatibility target files were updated automatically.
 
-          - Current target: `${{ steps.check.outputs.current_version }}`
+          - Current target before update: `${{ steps.check.outputs.current_version }}`
           - Latest upstream: `${{ steps.check.outputs.latest_tag }}`
 
           Suggested review checklist:
@@ -40,27 +48,27 @@ jobs:
           - [ ] Review upstream release changelog.
           - [ ] Compare client API probes with `docs/API_MATRIX.md`.
           - [ ] Run Docker image build.
-          - [ ] Run login/currentUser/logout smoke tests.
+          - [ ] Run `bash scripts/compat/smoke-api.sh http://127.0.0.1:12345`.
+          - [ ] Run login/currentUser/logout smoke tests with `TOKEN` if available.
           - [ ] Run address book smoke tests.
           - [ ] Run audit/record smoke tests.
-          - [ ] Update `backend/internal/service/compat_service.go` target constants if validated.
-          - [ ] Update `docs/compat/rustdesk-current.json` after validation.
+          - [ ] Confirm whether any new upstream API behavior needs real code changes beyond version target update.
           MD
 
       - name: Create compatibility PR
         if: steps.check.outputs.needs_update == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          title: "chore: detect RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
+          title: "chore: align RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
           body: |
             RustDesk upstream published a new release.
 
-            - Current target: `${{ steps.check.outputs.current_version }}`
+            - Current target before update: `${{ steps.check.outputs.current_version }}`
             - Latest upstream: `${{ steps.check.outputs.latest_tag }}`
 
-            This PR is generated automatically. It does not claim full compatibility by itself; use the checklist in the generated report to validate API behavior before updating the main compatibility target.
+            This PR was generated automatically. It updates the compatibility target constants and manifest, then creates a checklist report. It does not claim full behavioral compatibility by itself; run Docker/Go build and smoke tests before merging.
           branch: "bot/rustdesk-${{ steps.check.outputs.latest_tag }}-compat"
-          commit-message: "chore: detect RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
+          commit-message: "chore: align RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
           labels: |
             compatibility
             automated
