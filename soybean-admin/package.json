@@ -100,7 +100,7 @@
     "@iconify/utils": "2.1.30",
     "@sa/scripts": "workspace:*",
     "@sa/uno-preset": "workspace:*",
-    "@soybeanjs/eslint-config": "1.4.0",
+    "@soybeanjs/eslint-config": "1.7.5",
     "@types/node": "22.2.0",
     "@types/nprogress": "0.2.3",
     "@types/qrcode": "^1.5.6",
