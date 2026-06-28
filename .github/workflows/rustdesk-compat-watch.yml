@@ -69,6 +69,3 @@ jobs:
             This PR was generated automatically. It updates the compatibility target constants and manifest, then creates a checklist report. It does not claim full behavioral compatibility by itself; run Docker/Go build and smoke tests before merging.
           branch: "bot/rustdesk-${{ steps.check.outputs.latest_tag }}-compat"
           commit-message: "chore: align RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
-          labels: |
-            compatibility
-            automated
