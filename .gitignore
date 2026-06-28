@@ -1,4 +1,57 @@
 .idea
+.vscode
 .DS_Store
+
+# Build outputs
 build
+dist
+release-assets
+*.zip
+*.tar.gz
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go / cache
 .gocache/
+backend/rustdesk-api-server-pro
+backend/rustdesk-api-server-pro.exe
+
+# Node
+node_modules/
+.pnpm-store/
+soybean-admin/node_modules/
+soybean-admin/dist/
+
+# Runtime data and databases
+server.db
+*.db
+*.sqlite
+*.sqlite3
+/app/data/
+data/
+record_uploads/
+
+# Logs
+*.log
+logs/
+
+# Local config and secrets
+.env
+.env.*
+!.env.example
+server.local.yaml
+server.prod.yaml
+server.production.yaml
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Docker local overrides
+docker-compose.override.yaml
+docker-compose.local.yaml
