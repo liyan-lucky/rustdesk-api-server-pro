@@ -31,18 +31,18 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 初始化 CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
-
       - name: 配置 Go
         if: matrix.language == 'go'
         uses: actions/setup-go@v5
         with:
           go-version: '>=1.23.1'
           cache: false
+
+      - name: 初始化 CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
 
       - name: 构建 Go 后端
         if: matrix.language == 'go'
