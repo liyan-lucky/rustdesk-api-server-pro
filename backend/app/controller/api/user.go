@@ -57,10 +57,6 @@ func (c *UserController) GetUsers() mvc.Result {
 	}
 }
 
-func (c *UserController) PostLogout() mvc.Result {
-	return c.HandleLogout()
-}
-
 func (c *UserController) HandleLogout() mvc.Result {
 	rustdeskID := c.Ctx.URLParamDefault("id", "")
 	if rustdeskID == "" {
