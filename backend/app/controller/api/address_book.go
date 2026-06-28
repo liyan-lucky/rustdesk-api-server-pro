@@ -13,6 +13,19 @@ type AddressBookController struct {
 	basicController
 }
 
+func (c *AddressBookController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "ab", "GetAb")
+	b.Handle("POST", "ab", "PostAb")
+	b.Handle("GET", "ab/personal", "HandleAbPersonal")
+	b.Handle("POST", "ab/personal", "HandleAbPersonal")
+	b.Handle("GET", "ab/settings", "HandleAbSettings")
+	b.Handle("POST", "ab/settings", "HandleAbSettings")
+	b.Handle("GET", "ab/shared-profiles", "HandleAbSharedProfiles")
+	b.Handle("POST", "ab/shared-profiles", "HandleAbSharedProfiles")
+	b.Handle("GET", "ab/shared_profiles", "HandleAbSharedProfiles")
+	b.Handle("POST", "ab/shared_profiles", "HandleAbSharedProfiles")
+}
+
 func (c *AddressBookController) GetAb() mvc.Result {
 	user := c.GetUser()
 	result, err := c.addressBookService().GetLegacyAddressBook(core.LegacyAddressBookGetQuery{
@@ -82,6 +95,10 @@ func (c *AddressBookController) PostAb() mvc.Result {
 }
 
 func (c *AddressBookController) PostAbPersonal() mvc.Result {
+	return c.HandleAbPersonal()
+}
+
+func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 	user := c.GetUser()
 	result, err := c.addressBookService().EnsurePersonalAddressBook(core.PersonalAddressBookEnsureCommand{
 		UserID:         user.Id,
@@ -97,6 +114,10 @@ func (c *AddressBookController) PostAbPersonal() mvc.Result {
 }
 
 func (c *AddressBookController) PostAbSettings() mvc.Result {
+	return c.HandleAbSettings()
+}
+
+func (c *AddressBookController) HandleAbSettings() mvc.Result {
 	user := c.GetUser()
 	result, err := c.addressBookService().GetSettings(core.AddressBookSettingsQuery{UserID: user.Id})
 	if err != nil {
@@ -106,6 +127,10 @@ func (c *AddressBookController) PostAbSettings() mvc.Result {
 }
 
 func (c *AddressBookController) PostAbSharedProfiles() mvc.Result {
+	return c.HandleAbSharedProfiles()
+}
+
+func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 10)
 	result, err := c.addressBookService().ListSharedProfiles(core.SharedAddressBookListQuery{
