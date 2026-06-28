@@ -1,7 +1,10 @@
 package api
 
 import (
+	"time"
+
 	"rustdesk-api-server-pro/app/form/api"
+	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"rustdesk-api-server-pro/internal/transport/httpdto"
@@ -14,7 +17,11 @@ type UserController struct {
 }
 
 func (c *UserController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "/currentUser", "HandleCurrentUser")
 	b.Handle("POST", "/currentUser", "HandleCurrentUser")
+	b.Handle("GET", "/logout", "HandleLogout")
+	b.Handle("POST", "/logout", "HandleLogout")
+	b.Handle("DELETE", "/logout", "HandleLogout")
 }
 
 func (c *UserController) HandleCurrentUser() mvc.Result {
@@ -51,14 +58,38 @@ func (c *UserController) GetUsers() mvc.Result {
 }
 
 func (c *UserController) PostLogout() mvc.Result {
-	var f api.LoginForm
-	err := c.readJSONBody(&f)
-	if err != nil {
-		return c.fail(err)
+	return c.HandleLogout()
+}
+
+func (c *UserController) HandleLogout() mvc.Result {
+	rustdeskID := c.Ctx.URLParamDefault("id", "")
+	if rustdeskID == "" {
+		rustdeskID = c.Ctx.URLParamDefault("rustdesk_id", "")
 	}
-	err = c.userService().LogoutByRustdeskID(f.RustdeskId)
-	if err != nil {
-		return c.fail(err)
+
+	if c.Ctx.GetContentLength() > 0 {
+		var f api.LoginForm
+		if err := c.readJSONBody(&f); err == nil && f.RustdeskId != "" {
+			rustdeskID = f.RustdeskId
+		}
 	}
+
+	if rustdeskID != "" {
+		if err := c.userService().LogoutByRustdeskID(rustdeskID); err != nil {
+			return c.fail(err)
+		}
+	} else {
+		token := c.GetToken()
+		if token != "" {
+			_, err := c.Db.Where("token = ?", token).Cols("expired", "status").Update(&model.AuthToken{
+				Expired: time.Now().Add(-time.Second),
+				Status:  0,
+			})
+			if err != nil {
+				return c.fail(err)
+			}
+		}
+	}
+
 	return c.okText("ok")
 }
