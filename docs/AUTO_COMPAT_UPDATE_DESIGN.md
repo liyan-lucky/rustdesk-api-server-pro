@@ -16,7 +16,7 @@ RustDesk 客户端版本更新后，可能出现：
 
 ## 2. 自动化目标
 
-分三层实现。
+分四层实现。
 
 ### 2.1 第一层：自动发现新版
 
@@ -40,9 +40,31 @@ https://api.github.com/repos/rustdesk/rustdesk/releases/latest
 - 一个 Pull Request 或 Issue
 - 兼容检查清单
 
-### 2.2 第二层：自动生成接口差异报告
+### 2.2 第二层：自动更新匹配对象
 
-后续可以增加脚本：
+本仓库已提供：
+
+```text
+scripts/compat/check-rustdesk-release.sh
+scripts/compat/update-compat-target.sh
+scripts/compat/smoke-api.sh
+.github/workflows/rustdesk-compat-watch.yml
+```
+
+自动流程：
+
+1. `check-rustdesk-release.sh` 读取官方最新 release。
+2. 发现新版本后生成 `docs/compat/rustdesk-latest-detected.json`。
+3. `update-compat-target.sh` 自动修改：
+   - `backend/internal/service/compat_service.go`
+   - `docs/compat/rustdesk-current.json`
+4. workflow 自动生成兼容报告。
+5. workflow 自动创建适配 PR。
+6. 维护者运行构建和 smoke test 后确认合并。
+
+### 2.3 第三层：自动生成接口差异报告
+
+后续可以继续增强脚本：
 
 ```text
 scripts/compat/diff-rustdesk-release.sh
@@ -64,14 +86,9 @@ scripts/compat/run-compat-smoke.sh
 - 需要人工验证的接口。
 - 自动 curl smoke test 结果。
 
-### 2.3 第三层：半自动生成适配 PR
+### 2.4 第四层：半自动生成行为适配 PR
 
-可以让 GitHub Actions 创建一个适配分支，并自动更新：
-
-- 兼容目标版本常量。
-- `docs/compat/rustdesk-current.json`。
-- `docs/API_MATRIX.md`。
-- 测试用例中的目标版本。
+对于只涉及版本目标的更新，脚本可以自动完成。
 
 对于真正的 API 行为变化，建议由 Codex/AI 或人工基于差异报告继续修改控制器和服务层。
 
@@ -92,7 +109,7 @@ scripts/compat/run-compat-smoke.sh
 | 官方变化 | API 影响 | 本项目处理 |
 | --- | --- | --- |
 | Windows ARM64 | sysinfo 可能出现新的 OS/arch/platform 字段 | 保留 Raw，兼容 platform/os 字段 |
-| 多显示器工具栏 | 可能触发连接/设备状态探测 | 保留 status/features/config 探测接口 |
+| 多显示器工具栏 | 可能触发连接/设备状态探测 | 保留 status/features/config/capabilities 探测接口 |
 | 隐私模式多显示器 | 可能影响审计字段和策略字段 | 审计 Raw 已落库，策略接口保留兼容 |
 | 远程重启自动连接 | 可能触发 devices/deploy、heartbeat、conn 审计 | devices/deploy GET/POST 返回稳定 NOT_ENABLED |
 | OIDC 图标调整 | 后台 OAuth 名称显示变化 | 保留 google/github/oidc，多 provider 架构继续可用 |
@@ -105,26 +122,44 @@ flowchart TD
   B --> C{是否新版本}
   C -->|否| D[结束]
   C -->|是| E[生成 rustdesk-latest-detected.json]
-  E --> F[生成兼容报告]
-  F --> G[创建 PR]
-  G --> H[运行 Go/Docker 构建]
-  H --> I{构建通过}
-  I -->|否| J[保留 PR 等待修复]
-  I -->|是| K[人工确认客户端测试]
-  K --> L[合并]
+  E --> F[自动更新 compat_service.go 和 manifest]
+  F --> G[生成兼容报告]
+  G --> H[创建 PR]
+  H --> I[运行 Go/Docker 构建]
+  I --> J{构建通过}
+  J -->|否| K[保留 PR 等待修复]
+  J -->|是| L[运行 smoke-api.sh]
+  L --> M[人工确认客户端测试]
+  M --> N[合并]
 ```
 
-## 5. 目录建议
+## 5. Smoke 测试
+
+公开接口测试：
+
+```bash
+bash scripts/compat/smoke-api.sh http://127.0.0.1:12345
+```
+
+带 token 测试认证接口：
+
+```bash
+TOKEN="你的 RustDesk API token" bash scripts/compat/smoke-api.sh http://127.0.0.1:12345
+```
+
+## 6. 目录建议
 
 ```text
 .github/workflows/rustdesk-compat-watch.yml
 scripts/compat/check-rustdesk-release.sh
+scripts/compat/update-compat-target.sh
+scripts/compat/smoke-api.sh
 docs/compat/rustdesk-current.json
 docs/compat/rustdesk-latest-detected.json
 docs/compat/reports/
 ```
 
-## 6. 安全边界
+## 7. 安全边界
 
 自动化可以做：
 
@@ -141,7 +176,7 @@ docs/compat/reports/
 - 修改登录、鉴权、授权逻辑后跳过人工审查。
 - 修改 license/plugin-sign 相关行为后直接发布。
 
-## 7. 后续增强方向
+## 8. 后续增强方向
 
 1. 保存真实 RustDesk 客户端请求样本，建立 `fixtures/compat/`。
 2. 增加 Go 集成测试，覆盖登录、currentUser、ab、devices、audit、record。
