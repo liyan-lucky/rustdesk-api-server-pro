@@ -1,0 +1,66 @@
+name: RustDesk Compatibility Watch
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-rustdesk-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check latest RustDesk release
+        id: check
+        run: |
+          bash scripts/compat/check-rustdesk-release.sh \
+            docs/compat/rustdesk-current.json \
+            docs/compat/rustdesk-latest-detected.json
+
+      - name: Build compatibility report
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          mkdir -p docs/compat/reports
+          cat > docs/compat/reports/rustdesk-${{ steps.check.outputs.latest_tag }}.md <<'MD'
+          # RustDesk compatibility update detected
+
+          A new upstream RustDesk release was detected.
+
+          - Current target: `${{ steps.check.outputs.current_version }}`
+          - Latest upstream: `${{ steps.check.outputs.latest_tag }}`
+
+          Suggested review checklist:
+
+          - [ ] Review upstream release changelog.
+          - [ ] Compare client API probes with `docs/API_MATRIX.md`.
+          - [ ] Run Docker image build.
+          - [ ] Run login/currentUser/logout smoke tests.
+          - [ ] Run address book smoke tests.
+          - [ ] Run audit/record smoke tests.
+          - [ ] Update `backend/internal/service/compat_service.go` target constants if validated.
+          - [ ] Update `docs/compat/rustdesk-current.json` after validation.
+          MD
+
+      - name: Create compatibility PR
+        if: steps.check.outputs.needs_update == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore: detect RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
+          body: |
+            RustDesk upstream published a new release.
+
+            - Current target: `${{ steps.check.outputs.current_version }}`
+            - Latest upstream: `${{ steps.check.outputs.latest_tag }}`
+
+            This PR is generated automatically. It does not claim full compatibility by itself; use the checklist in the generated report to validate API behavior before updating the main compatibility target.
+          branch: "bot/rustdesk-${{ steps.check.outputs.latest_tag }}-compat"
+          commit-message: "chore: detect RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
+          labels: |
+            compatibility
+            automated
