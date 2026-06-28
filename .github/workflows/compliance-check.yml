@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -nE "(BEGIN RSA|BEGIN OPENSSH|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9_]{30,}|clientSecret: ['\"][^'\"]+['\"]|password: ['\"][^'\"]+['\"])" -- . ':!COMPLIANCE.md' ':!SECURITY.md' ':!PRIVACY.md' ':!README.md' ':!docs/**'; then
+          if git grep -nE "(BEGIN RSA|BEGIN OPENSSH|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9_]{30,}|clientSecret: ['\"][^'\"]+['\"]|password: ['\"][^'\"]+['\"])" -- . ':!COMPLIANCE.md' ':!SECURITY.md' ':!PRIVACY.md' ':!README.md' ':!docs/**' ':!.github/workflows/compliance-check.yml'; then
             echo "Potential secret detected. Review before merging."
             exit 1
           fi
