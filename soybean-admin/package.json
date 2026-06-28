@@ -84,7 +84,7 @@
     "qrcode": "^1.5.4",
     "tailwind-merge": "2.5.2",
     "vue": "3.4.37",
-    "vue-draggable-plus": "0.5.3",
+    "vue-draggable-plus": "0.6.1",
     "vue-i18n": "9.13.1",
     "vue-router": "4.4.3"
   },
