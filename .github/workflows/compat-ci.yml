@@ -1,0 +1,50 @@
+name: Compatibility CI
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - 'scripts/compat/**'
+      - 'docs/compat/**'
+      - '.github/workflows/compat-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-compat:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.4'
+          cache-dependency-path: backend/go.sum
+
+      - name: Go test
+        run: go test ./...
+
+      - name: Go build
+        run: go build -o rustdesk-api-server-pro .
+
+  scripts-compat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check shell script syntax
+        run: |
+          bash -n scripts/compat/check-rustdesk-release.sh
+          bash -n scripts/compat/update-compat-target.sh
+          bash -n scripts/compat/smoke-api.sh
+
+      - name: Validate compatibility manifest
+        run: jq -e '.client.version and .sysinfo_version and .validated_endpoints' docs/compat/rustdesk-current.json
