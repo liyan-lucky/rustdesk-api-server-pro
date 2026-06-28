@@ -15,7 +15,7 @@ on:
         default: true
         type: boolean
       clean_releases:
-        description: "清理 GitHub Releases（不会自动删除 tag，除非同时开启 clean_tags）"
+        description: "清理 GitHub Releases（危险，默认不清理）"
         required: true
         default: false
         type: boolean
@@ -30,7 +30,7 @@ on:
         default: ""
         type: string
       confirm:
-        description: "实际删除时必须填写 CLEAN；清理 tag 时必须填写 CLEAN_TAGS"
+        description: "清理 Release 时填写 CLEAN；清理 tag 时填写 CLEAN_TAGS；只清理运行记录可留空"
         required: false
         default: ""
         type: string
@@ -60,11 +60,13 @@ jobs:
                 echo "清理 tag 属于危险操作，confirm 必须填写 CLEAN_TAGS。"
                 exit 1
               fi
-            else
+            elif [[ "${{ inputs.clean_releases }}" == "true" ]]; then
               if [[ "${{ inputs.confirm }}" != "CLEAN" ]]; then
-                echo "实际删除操作需要 confirm 填写 CLEAN。"
+                echo "清理 Release 属于危险操作，confirm 必须填写 CLEAN。"
                 exit 1
               fi
+            else
+              echo "仅清理 Actions 运行记录，不需要 confirm。"
             fi
           fi
 
@@ -171,6 +173,7 @@ jobs:
           - clean_tags=false：默认不清理 tag。
 
           实际删除：
-          - 普通删除：dry_run=false 且 confirm=CLEAN。
-          - 删除 tag：dry_run=false、clean_tags=true 且 confirm=CLEAN_TAGS。
+          - 只清理 Actions 运行记录：dry_run=false，可不填写 confirm。
+          - 清理 Release：dry_run=false、clean_releases=true 且 confirm=CLEAN。
+          - 清理 tag：dry_run=false、clean_tags=true 且 confirm=CLEAN_TAGS。
           EOF
