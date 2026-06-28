@@ -31,6 +31,12 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("POST", "server-config", "HandleClientConfig")
 	b.Handle("GET", "server_config", "HandleClientConfig")
 	b.Handle("POST", "server_config", "HandleClientConfig")
+	b.Handle("GET", "compat-target", "HandleCompatTarget")
+	b.Handle("POST", "compat-target", "HandleCompatTarget")
+	b.Handle("GET", "compat/target", "HandleCompatTarget")
+	b.Handle("POST", "compat/target", "HandleCompatTarget")
+	b.Handle("GET", "compat/version", "HandleCompatTarget")
+	b.Handle("POST", "compat/version", "HandleCompatTarget")
 	b.Handle("GET", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "oidc/auth", "HandleOidcAuth")
@@ -44,30 +50,38 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *CompatPublicController) HandleStatus() mvc.Result {
 	return mvc.Response{Object: iris.Map{
-		"ok":      true,
-		"status":  "ok",
-		"service": "rustdesk-api-server-pro",
-		"version": service.CompatSysinfoVersion,
+		"ok":            true,
+		"status":        "ok",
+		"service":       "rustdesk-api-server-pro",
+		"version":       service.CompatSysinfoVersion,
+		"compat_target": c.compatService().Target(),
 	}}
 }
 
 func (c *CompatPublicController) HandleVersion() mvc.Result {
 	return mvc.Response{Object: iris.Map{
-		"version": service.CompatSysinfoVersion,
-		"server":  "rustdesk-api-server-pro",
+		"version":       service.CompatSysinfoVersion,
+		"server":        "rustdesk-api-server-pro",
+		"compat_target": c.compatService().Target(),
 	}}
+}
+
+func (c *CompatPublicController) HandleCompatTarget() mvc.Result {
+	return mvc.Response{Object: c.compatService().Target()}
 }
 
 func (c *CompatPublicController) HandleFeatures() mvc.Result {
 	return mvc.Response{Object: iris.Map{
-		"address_book":       true,
-		"audit":              true,
-		"file_transfer_audit": true,
-		"alarm_audit":        true,
-		"device_group":       true,
-		"user_group":         true,
-		"strategy":           true,
-		"record":             true,
+		"address_book":           true,
+		"audit":                  true,
+		"file_transfer_audit":     true,
+		"alarm_audit":            true,
+		"device_group":           true,
+		"user_group":             true,
+		"strategy":               true,
+		"record":                 true,
+		"plugin_sign_passthrough": true,
+		"compat_target":          c.compatService().Target(),
 	}}
 }
 
@@ -77,6 +91,7 @@ func (c *CompatPublicController) HandleClientConfig() mvc.Result {
 			"name":    "rustdesk-api-server-pro",
 			"version": service.CompatSysinfoVersion,
 		},
+		"compat_target": c.compatService().Target(),
 		"features": iris.Map{
 			"address_book": true,
 			"audit":        true,
