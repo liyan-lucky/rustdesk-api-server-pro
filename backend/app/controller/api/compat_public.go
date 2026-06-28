@@ -13,17 +13,77 @@ import (
 )
 
 // CompatPublicController provides compatibility endpoints used by newer RustDesk clients.
-// Unsupported features return stable "error" payloads instead of 404.
+// Unsupported features return stable payloads instead of 404.
 type CompatPublicController struct {
 	basicController
 }
 
 func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "status", "HandleStatus")
+	b.Handle("POST", "status", "HandleStatus")
+	b.Handle("GET", "version", "HandleVersion")
+	b.Handle("POST", "version", "HandleVersion")
+	b.Handle("GET", "features", "HandleFeatures")
+	b.Handle("POST", "features", "HandleFeatures")
+	b.Handle("GET", "config", "HandleClientConfig")
+	b.Handle("POST", "config", "HandleClientConfig")
+	b.Handle("GET", "server-config", "HandleClientConfig")
+	b.Handle("POST", "server-config", "HandleClientConfig")
+	b.Handle("GET", "server_config", "HandleClientConfig")
+	b.Handle("POST", "server_config", "HandleClientConfig")
+	b.Handle("GET", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "oidc/auth", "HandleOidcAuth")
+	b.Handle("GET", "oidc/auth", "HandleOidcAuth")
 	b.Handle("GET", "oidc/auth-query", "HandleOidcAuthQuery")
+	b.Handle("POST", "oidc/auth-query", "HandleOidcAuthQuery")
 	b.Handle("POST", "record", "HandleRecord")
+	b.Handle("GET", "devices/deploy", "HandleDevicesDeploy")
 	b.Handle("POST", "devices/deploy", "HandleDevicesDeploy")
+}
+
+func (c *CompatPublicController) HandleStatus() mvc.Result {
+	return mvc.Response{Object: iris.Map{
+		"ok":      true,
+		"status":  "ok",
+		"service": "rustdesk-api-server-pro",
+		"version": service.CompatSysinfoVersion,
+	}}
+}
+
+func (c *CompatPublicController) HandleVersion() mvc.Result {
+	return mvc.Response{Object: iris.Map{
+		"version": service.CompatSysinfoVersion,
+		"server":  "rustdesk-api-server-pro",
+	}}
+}
+
+func (c *CompatPublicController) HandleFeatures() mvc.Result {
+	return mvc.Response{Object: iris.Map{
+		"address_book":       true,
+		"audit":              true,
+		"file_transfer_audit": true,
+		"alarm_audit":        true,
+		"device_group":       true,
+		"user_group":         true,
+		"strategy":           true,
+		"record":             true,
+	}}
+}
+
+func (c *CompatPublicController) HandleClientConfig() mvc.Result {
+	return mvc.Response{Object: iris.Map{
+		"server": iris.Map{
+			"name":    "rustdesk-api-server-pro",
+			"version": service.CompatSysinfoVersion,
+		},
+		"features": iris.Map{
+			"address_book": true,
+			"audit":        true,
+			"record":       true,
+		},
+		"login_options": c.compatService().LoginOptions().Options,
+	}}
 }
 
 func (c *CompatPublicController) HandleSysinfoVer() mvc.Result {
@@ -73,10 +133,11 @@ func (c *CompatPublicController) HandleRecord() mvc.Result {
 }
 
 func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
-	body, err := c.readBodyBytes()
-	if err != nil {
-		return c.fail(err)
+	if c.Ctx.Method() == iris.MethodGet {
+		return mvc.Response{Object: iris.Map{"result": "NOT_ENABLED"}}
 	}
+
+	body, _ := c.readBodyBytes()
 	result := c.compatService().HandleDeviceDeploy(core.CompatDeviceDeployCommand{
 		RustdeskID: gjson.GetBytes(body, "id").String(),
 		UUID:      gjson.GetBytes(body, "uuid").String(),

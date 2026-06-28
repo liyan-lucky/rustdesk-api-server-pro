@@ -24,18 +24,45 @@ func (r *XormAuditRepository) UpdateAuditConnNote(cmd core.AuditConnNoteCommand)
 }
 
 func (r *XormAuditRepository) InsertAuditConnOpen(cmd core.AuditConnOpenCommand) error {
+	status := cmd.Status
+	if status == "" {
+		status = "open"
+	}
+
+	now := time.Now()
 	_, err := r.DB.Insert(&model.Audit{
-		ConnId:     cmd.ConnID,
-		RustdeskId: cmd.RustdeskID,
-		IP:         cmd.IP,
-		SessionId:  cmd.SessionID,
-		Uuid:       cmd.UUID,
+		ConnId:        cmd.ConnID,
+		RustdeskId:    cmd.RustdeskID,
+		PeerId:        cmd.PeerID,
+		IP:            cmd.IP,
+		PeerIP:        cmd.PeerIP,
+		SessionId:     cmd.SessionID,
+		Uuid:          cmd.UUID,
+		Direction:     cmd.Direction,
+		Status:        status,
+		ClientVersion: cmd.ClientVersion,
+		Platform:      cmd.Platform,
+		Hostname:      cmd.Hostname,
+		Raw:           cmd.Raw,
+		StartedAt:     now,
 	})
 	return err
 }
 
 func (r *XormAuditRepository) CloseAuditConn(cmd core.AuditConnCloseCommand) error {
-	_, err := r.DB.Where("conn_id = ?", cmd.ConnID).Update(&model.Audit{ClosedAt: time.Now()})
+	var audit model.Audit
+	has, err := r.DB.Where("conn_id = ?", cmd.ConnID).Get(&audit)
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+	update := &model.Audit{ClosedAt: now, Status: "closed"}
+	if has && !audit.StartedAt.IsZero() {
+		update.DurationSeconds = int64(now.Sub(audit.StartedAt).Seconds())
+	}
+
+	_, err = r.DB.Where("conn_id = ?", cmd.ConnID).Update(update)
 	return err
 }
 
@@ -44,19 +71,32 @@ func (r *XormAuditRepository) UpdateAuditConnSession(cmd core.AuditConnSessionUp
 		SessionId: cmd.SessionID,
 		Type:      cmd.Type,
 		Peer:      cmd.Peer,
+		PeerId:    cmd.PeerID,
 	})
 	return err
 }
 
 func (r *XormAuditRepository) InsertFileTransfer(cmd core.FileTransferCreateCommand) error {
+	result := cmd.Result
+	if result == "" {
+		result = "unknown"
+	}
+
 	_, err := r.DB.Insert(&model.FileTransfer{
-		RustdeskId: cmd.RustdeskID,
-		Info:       cmd.Info,
-		IsFile:     cmd.IsFile,
-		Path:       cmd.Path,
-		PeerId:     cmd.PeerID,
-		Type:       cmd.Type,
-		Uuid:       cmd.UUID,
+		RustdeskId:   cmd.RustdeskID,
+		Info:         cmd.Info,
+		IsFile:       cmd.IsFile,
+		Path:         cmd.Path,
+		FileName:     cmd.FileName,
+		PeerId:       cmd.PeerID,
+		SessionId:    cmd.SessionID,
+		Type:         cmd.Type,
+		Uuid:         cmd.UUID,
+		Direction:    cmd.Direction,
+		SizeBytes:    cmd.SizeBytes,
+		Result:       result,
+		ErrorMessage: cmd.ErrorMessage,
+		Raw:          cmd.Raw,
 	})
 	return err
 }
@@ -75,4 +115,61 @@ func (r *XormAuditRepository) UpdateAuditNoteByGuid(cmd core.AuditGuidNoteUpdate
 		}
 	}
 	return nil
+}
+
+func (r *XormAuditRepository) InsertAlarmAudit(cmd core.AlarmAuditCreateCommand) error {
+	_, err := r.DB.Insert(&model.AlarmAudit{
+		RustdeskId: cmd.RustdeskID,
+		PeerId:     cmd.PeerID,
+		SessionId:  cmd.SessionID,
+		AlarmType:  cmd.AlarmType,
+		Severity:   cmd.Severity,
+		Message:    cmd.Message,
+		Raw:        cmd.Raw,
+	})
+	return err
+}
+
+func (r *XormAuditRepository) InsertSecurityAudit(cmd core.SecurityAuditCreateCommand) error {
+	_, err := r.DB.Insert(&model.SecurityAudit{
+		UserId:    cmd.UserID,
+		Username:  cmd.Username,
+		Event:     cmd.Event,
+		IP:        cmd.IP,
+		UserAgent: cmd.UserAgent,
+		Success:   cmd.Success,
+		Reason:    cmd.Reason,
+	})
+	return err
+}
+
+func (r *XormAuditRepository) InsertOperationAudit(cmd core.OperationAuditCreateCommand) error {
+	_, err := r.DB.Insert(&model.OperationAudit{
+		ActorUserId:   cmd.ActorUserID,
+		ActorUsername: cmd.ActorUsername,
+		Action:        cmd.Action,
+		ResourceType:  cmd.ResourceType,
+		ResourceId:    cmd.ResourceID,
+		BeforeData:    cmd.BeforeData,
+		AfterData:     cmd.AfterData,
+		IP:            cmd.IP,
+		UserAgent:     cmd.UserAgent,
+		Result:        cmd.Result,
+		ErrorMessage:  cmd.ErrorMessage,
+	})
+	return err
+}
+
+func (r *XormAuditRepository) InsertCompatAPIAudit(cmd core.CompatAPIAuditCreateCommand) error {
+	_, err := r.DB.Insert(&model.CompatAPIAudit{
+		Method:        cmd.Method,
+		Path:          cmd.Path,
+		ClientVersion: cmd.ClientVersion,
+		RustdeskId:    cmd.RustdeskID,
+		IsStub:        cmd.IsStub,
+		StatusCode:    cmd.StatusCode,
+		IP:            cmd.IP,
+		UserAgent:     cmd.UserAgent,
+	})
+	return err
 }

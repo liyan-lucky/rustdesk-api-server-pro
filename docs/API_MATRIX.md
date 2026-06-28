@@ -1,0 +1,105 @@
+# API 兼容矩阵
+
+本文档用于跟踪 RustDesk 客户端 API、管理后台 API、license/plugin-sign 兼容接口的实现状态。
+
+状态说明：
+
+- `完整`：已实现主要业务逻辑，并经过客户端验证。
+- `基础`：主流程可用，但字段或边界场景仍需补齐。
+- `占位`：避免客户端 404 或报错，暂未完整实现业务逻辑。
+- `待核验`：源码中可能已有实现，但需要用真实客户端重新验证。
+- `计划`：尚未实现。
+
+## 1. 客户端公开接口
+
+| 模块 | 方法 | 路径 | 鉴权 | 状态 | 说明 |
+| --- | --- | --- | --- | --- | --- |
+| 系统 | GET | `/api/` | 否 | 待核验 | 健康检查或基础信息 |
+| 登录 | POST | `/api/login` | 否 | 待核验 | 账号登录、token 返回 |
+| 审计 | POST | `/api/audit/conn` | 否/待核验 | 基础 | 连接开始、关闭、备注更新 |
+| 审计 | POST | `/api/audit/file` | 否/待核验 | 基础 | 文件传输日志 |
+| 审计 | POST | `/api/audit/alarm` | 否/待核验 | 占位 | 当前建议改为落库 |
+| 兼容 | * | `/api/*` | 否 | 待核验 | 公开兼容控制器 |
+
+## 2. 客户端鉴权接口
+
+| 模块 | 方法 | 路径 | 鉴权 | 状态 | 说明 |
+| --- | --- | --- | --- | --- | --- |
+| 用户 | GET/POST | `/api/user/*` | 是 | 待核验 | 用户信息、当前账号 |
+| 地址簿 | GET/POST | `/api/peers/*` | 是 | 基础 | 老接口地址簿兼容 |
+| 地址簿 | GET/POST | `/api/ab/*` | 是 | 基础 | 新地址簿主体 |
+| 地址簿标签 | GET/POST | `/api/ab/tags/*` | 是 | 基础 | 标签、颜色、备注兼容 |
+| 地址簿设备 | GET/POST | `/api/ab/peers/*` | 是 | 基础 | 地址簿设备条目 |
+| 设备组 | GET/POST | `/api/device-group/*` | 是 | 基础/待核验 | 企业设备组兼容 |
+| 企业兼容 | * | `/api/*` | 是 | 基础/占位 | 策略、组、企业字段兼容 |
+| 鉴权兼容 | * | `/api/*` | 是 | 基础/占位 | token、会话相关兼容 |
+
+## 3. 管理后台接口
+
+| 模块 | 路径 | 状态 | 建议 |
+| --- | --- | --- | --- |
+| 后台登录 | `/admin/auth/*` | 已有 | 增加登录安全审计 |
+| 仪表盘 | `/admin/dashboard/*` | 已有 | 增加审计概览 |
+| 用户管理 | `/admin/users/*` | 已有 | 增加操作审计 |
+| 会话管理 | `/admin/sessions/*` | 已有 | 增加 token 安全事件 |
+| 设备管理 | `/admin/devices/*` | 已有 | 增加设备变更审计 |
+| 审计日志 | `/admin/audit/*` | 已有 | 增加高级筛选、导出、报警审计 |
+| 邮件模板 | `/admin/mail-template/*` | 已有 | 增加修改审计 |
+| 邮件日志 | `/admin/mail-logs/*` | 已有 | 增加发送失败分析 |
+
+## 4. License / plugin-sign 兼容接口
+
+| 方法 | 路径 | 状态 | 建议 |
+| --- | --- | --- | --- |
+| * | `/lic/web/api/plugin-sign` | 基础/占位 | 增加配置化返回、调用审计 |
+| * | `/lic/web/api/*` | 待核验 | 建立真实客户端抓包验证样例 |
+
+## 5. 审计覆盖矩阵
+
+| 事件 | 是否已有 | 目标表 | 优先级 |
+| --- | --- | --- | --- |
+| 远程连接开始 | 是 | `audit` / `connection_audit` | P0 |
+| 远程连接关闭 | 是 | `audit` / `connection_audit` | P0 |
+| 连接备注修改 | 是 | `audit` | P0 |
+| 文件传输 | 是 | `file_transfer` | P0 |
+| 客户端报警 | 否，占位 | `alarm_audit` | P1 |
+| 登录成功 | 待补 | `security_audit` | P0 |
+| 登录失败 | 待补 | `security_audit` | P0 |
+| 退出登录 | 待补 | `security_audit` | P1 |
+| token 无效 | 待补 | `security_audit` | P1 |
+| 后台新增用户 | 待补 | `operation_audit` | P0 |
+| 后台修改用户 | 待补 | `operation_audit` | P0 |
+| 后台删除用户 | 待补 | `operation_audit` | P0 |
+| 修改设备 | 待补 | `operation_audit` | P1 |
+| 修改地址簿 | 待补 | `operation_audit` | P1 |
+| 修改策略 | 待补 | `operation_audit` | P2 |
+| 占位接口命中 | 待补 | `compat_api_audit` | P1 |
+
+## 6. 每个接口的记录模板
+
+后续每补齐一个接口，请按以下格式更新本文：
+
+```text
+模块：
+路径：
+方法：
+鉴权：是/否
+当前状态：完整/基础/占位/计划
+请求字段：
+响应字段：
+是否写审计：
+兼容客户端版本：
+SQLite 验证：通过/失败
+MySQL 验证：通过/失败
+备注：
+```
+
+## 7. 第一批建议开发任务
+
+1. `/api/audit/alarm` 落库。
+2. 扩展 `audit` 字段：`peer_id`、`direction`、`status`、`client_version`、`raw`、`duration_seconds`。
+3. 扩展 `file_transfer` 字段：`session_id`、`direction`、`size_bytes`、`result`、`error_message`、`raw`。
+4. 新增 `security_audit`，接入后台登录成功/失败。
+5. 新增 `operation_audit`，接入用户管理增删改。
+6. 新增 `compat_api_audit`，记录占位接口命中。
+7. 后台审计页面增加类型切换与高级筛选。
