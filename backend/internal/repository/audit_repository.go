@@ -10,4 +10,9 @@ type AuditRepository interface {
 
 	InsertFileTransfer(cmd core.FileTransferCreateCommand) error
 	UpdateAuditNoteByGuid(cmd core.AuditGuidNoteUpdateCommand) error
+
+	InsertAlarmAudit(cmd core.AlarmAuditCreateCommand) error
+	InsertSecurityAudit(cmd core.SecurityAuditCreateCommand) error
+	InsertOperationAudit(cmd core.OperationAuditCreateCommand) error
+	InsertCompatAPIAudit(cmd core.CompatAPIAuditCreateCommand) error
 }
