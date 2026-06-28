@@ -133,6 +133,10 @@ func (c *CompatPublicController) HandleRecord() mvc.Result {
 }
 
 func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
+	if c.Ctx.Method() == iris.MethodGet {
+		return mvc.Response{Object: iris.Map{"result": "NOT_ENABLED"}}
+	}
+
 	body, _ := c.readBodyBytes()
 	result := c.compatService().HandleDeviceDeploy(core.CompatDeviceDeployCommand{
 		RustdeskID: gjson.GetBytes(body, "id").String(),
