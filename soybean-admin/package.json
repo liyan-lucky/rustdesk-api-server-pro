@@ -85,7 +85,7 @@
     "tailwind-merge": "2.5.2",
     "vue": "3.4.37",
     "vue-draggable-plus": "0.5.3",
-    "vue-i18n": "9.13.1",
+    "vue-i18n": "11.4.6",
     "vue-router": "4.4.3"
   },
   "devDependencies": {
