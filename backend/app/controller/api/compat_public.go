@@ -21,16 +21,32 @@ type CompatPublicController struct {
 func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "status", "HandleStatus")
 	b.Handle("POST", "status", "HandleStatus")
+	b.Handle("GET", "health", "HandleHealth")
+	b.Handle("POST", "health", "HandleHealth")
+	b.Handle("GET", "ping", "HandleHealth")
+	b.Handle("POST", "ping", "HandleHealth")
+	b.Handle("GET", "info", "HandleVersion")
+	b.Handle("POST", "info", "HandleVersion")
 	b.Handle("GET", "version", "HandleVersion")
 	b.Handle("POST", "version", "HandleVersion")
 	b.Handle("GET", "features", "HandleFeatures")
 	b.Handle("POST", "features", "HandleFeatures")
+	b.Handle("GET", "capabilities", "HandleFeatures")
+	b.Handle("POST", "capabilities", "HandleFeatures")
+	b.Handle("GET", "compat/features", "HandleFeatures")
+	b.Handle("POST", "compat/features", "HandleFeatures")
 	b.Handle("GET", "config", "HandleClientConfig")
 	b.Handle("POST", "config", "HandleClientConfig")
+	b.Handle("GET", "client-config", "HandleClientConfig")
+	b.Handle("POST", "client-config", "HandleClientConfig")
+	b.Handle("GET", "client_config", "HandleClientConfig")
+	b.Handle("POST", "client_config", "HandleClientConfig")
 	b.Handle("GET", "server-config", "HandleClientConfig")
 	b.Handle("POST", "server-config", "HandleClientConfig")
 	b.Handle("GET", "server_config", "HandleClientConfig")
 	b.Handle("POST", "server_config", "HandleClientConfig")
+	b.Handle("GET", "server/info", "HandleVersion")
+	b.Handle("POST", "server/info", "HandleVersion")
 	b.Handle("GET", "compat-target", "HandleCompatTarget")
 	b.Handle("POST", "compat-target", "HandleCompatTarget")
 	b.Handle("GET", "compat/target", "HandleCompatTarget")
@@ -46,6 +62,14 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("POST", "record", "HandleRecord")
 	b.Handle("GET", "devices/deploy", "HandleDevicesDeploy")
 	b.Handle("POST", "devices/deploy", "HandleDevicesDeploy")
+}
+
+func (c *CompatPublicController) HandleHealth() mvc.Result {
+	return mvc.Response{Object: iris.Map{
+		"ok":      true,
+		"status":  "ok",
+		"service": "rustdesk-api-server-pro",
+	}}
 }
 
 func (c *CompatPublicController) HandleStatus() mvc.Result {
