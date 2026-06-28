@@ -162,6 +162,26 @@ func TestCompatServiceTargetContract(t *testing.T) {
 			t.Fatalf("expected feature %s to be enabled", key)
 		}
 	}
+
+	focus, ok := target["official_focus"].([]string)
+	if !ok {
+		t.Fatalf("official_focus should be []string")
+	}
+	for _, key := range []string{"windows_arm64_support", "remote_restart_autoconnect", "oidc_microsoft_icon_compat"} {
+		if !containsString(focus, key) {
+			t.Fatalf("expected official_focus to contain %s", key)
+		}
+	}
+
+	endpoints, ok := target["probe_endpoints"].([]string)
+	if !ok {
+		t.Fatalf("probe_endpoints should be []string")
+	}
+	for _, path := range []string{"/api/health", "/api/compat-target", "/api/server/info", "/api/devices/deploy"} {
+		if !containsString(endpoints, path) {
+			t.Fatalf("expected probe_endpoints to contain %s", path)
+		}
+	}
 }
 
 func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
@@ -211,8 +231,17 @@ func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := svc.HandleDeviceDeploy(tt.cmd)
 			if got.Result != tt.want {
-				t.Fatalf("got result=%q, want %q", got.Result, tt.want)
+				t.Fatalf("got result=%q, want %q", got.Result)
 			}
 		})
 	}
+}
+
+func containsString(values []string, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
 }
