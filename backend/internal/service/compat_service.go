@@ -14,9 +14,15 @@ import (
 	"xorm.io/xorm"
 )
 
+const CompatClientName = "rustdesk"
+const CompatClientVersion = "1.4.8"
+const CompatClientReleaseDate = "2026-06-21"
+const CompatServerVersion = "1.1.15"
+const CompatTargetStatus = "compatibility-layer"
+
 // CompatSysinfoVersion is exposed to admin dashboard and compatibility probes.
 // Keep this value aligned with the validated upstream RustDesk versions.
-const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-1.4.7-server-1.1.15-latest"
+const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-1.4.8-server-1.1.15-latest"
 const compatRecordDir = "record_uploads"
 
 type CompatService struct {
@@ -27,6 +33,50 @@ type CompatService struct {
 
 func NewCompatService(repo repository.CompatRepository, cfg *config.ServerConfig, db *xorm.Engine) *CompatService {
 	return &CompatService{repo: repo, cfg: cfg, db: db}
+}
+
+func (s *CompatService) Target() map[string]any {
+	return map[string]any{
+		"project": "rustdesk-api-server-pro",
+		"client": map[string]any{
+			"name":         CompatClientName,
+			"version":      CompatClientVersion,
+			"release_date": CompatClientReleaseDate,
+			"tag":          CompatClientVersion,
+		},
+		"server": map[string]any{
+			"version": CompatServerVersion,
+			"status":  CompatTargetStatus,
+		},
+		"sysinfo_version": CompatSysinfoVersion,
+		"features": map[string]bool{
+			"address_book":          true,
+			"audit":                 true,
+			"file_transfer_audit":    true,
+			"alarm_audit":           true,
+			"device_group":          true,
+			"user_group":            true,
+			"strategy":              true,
+			"record":                true,
+			"plugin_sign_passthrough": true,
+		},
+		"official_1_4_8_focus": []string{
+			"windows_arm64_support",
+			"remote_toolbar_monitor_switch",
+			"privacy_mode_multi_monitor",
+			"remote_restart_autoconnect",
+			"oidc_microsoft_icon_compat",
+		},
+		"probe_endpoints": []string{
+			"/api/status",
+			"/api/version",
+			"/api/features",
+			"/api/config",
+			"/api/server-config",
+			"/api/compat-target",
+			"/api/sysinfo_ver",
+		},
+	}
 }
 
 func (s *CompatService) LoginOptions() core.CompatLoginOptionsResult {
@@ -145,7 +195,7 @@ func (s *CompatService) HandleDeviceDeploy(cmd core.CompatDeviceDeployCommand) c
 		return core.CompatDeviceDeployResult{Result: "INVALID_INPUT"}
 	}
 
-	// RustDesk 1.4.7 probes explicit deployment here. This API server does not
+	// RustDesk 1.4.8 still probes explicit deployment. This API server does not
 	// maintain the hbbs deployment allowlist, so report that deployment is not required.
 	return core.CompatDeviceDeployResult{Result: "NOT_ENABLED"}
 }
