@@ -3,8 +3,10 @@ package api
 import (
 	"strings"
 
+	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
 
+	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"github.com/tidwall/gjson"
 )
@@ -15,7 +17,60 @@ type CompatAuthController struct {
 }
 
 func (c *CompatAuthController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "devices/cli", "HandleDevicesCliProbe")
 	b.Handle("POST", "devices/cli", "HandleDevicesCli")
+	b.Handle("GET", "devices/current", "HandleCurrentDevice")
+	b.Handle("POST", "devices/current", "HandleCurrentDevice")
+	b.Handle("GET", "me", "HandleMe")
+	b.Handle("POST", "me", "HandleMe")
+}
+
+func (c *CompatAuthController) HandleMe() mvc.Result {
+	user := c.GetUser()
+	return mvc.Response{Object: iris.Map{
+		"id":       user.Id,
+		"username": user.Username,
+		"name":     user.Name,
+		"email":    user.Email,
+		"note":     user.Note,
+		"status":   user.Status,
+		"is_admin": user.IsAdmin,
+	}}
+}
+
+func (c *CompatAuthController) HandleCurrentDevice() mvc.Result {
+	token := c.GetAuthToken()
+	if token == nil {
+		return c.failMsg("token required")
+	}
+
+	var device model.Device
+	has, err := c.Db.Where("rustdesk_id = ?", token.RustdeskId).Get(&device)
+	if err != nil {
+		return c.fail(err)
+	}
+
+	resp := iris.Map{
+		"id":          token.RustdeskId,
+		"rustdesk_id": token.RustdeskId,
+		"uuid":        token.Uuid,
+		"device_os":   token.DeviceOs,
+		"device_type": token.DeviceType,
+		"device_name": token.DeviceName,
+	}
+	if has {
+		resp["hostname"] = device.Hostname
+		resp["username"] = device.Username
+		resp["os"] = device.Os
+		resp["version"] = device.Version
+		resp["disabled"] = device.Disabled
+		resp["is_online"] = device.IsOnline
+	}
+	return mvc.Response{Object: resp}
+}
+
+func (c *CompatAuthController) HandleDevicesCliProbe() mvc.Result {
+	return mvc.Response{Text: ""}
 }
 
 func (c *CompatAuthController) HandleDevicesCli() mvc.Result {
@@ -25,6 +80,9 @@ func (c *CompatAuthController) HandleDevicesCli() mvc.Result {
 	}
 
 	rustdeskID := gjson.GetBytes(body, "id").String()
+	if rustdeskID == "" {
+		rustdeskID = gjson.GetBytes(body, "rustdesk_id").String()
+	}
 	if rustdeskID == "" {
 		return c.failMsg("id required")
 	}
