@@ -1,0 +1,41 @@
+name: Security hardening
+description: Suggest a non-sensitive security hardening improvement
+title: "[Security Hardening]: "
+labels: ["security", "hardening"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not disclose exploit details for unfixed vulnerabilities in public issues. Use SECURITY.md for sensitive reports.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Hardening proposal
+      description: Describe the improvement without exposing sensitive exploit details.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Authentication
+        - Authorization
+        - OAuth / OIDC
+        - File upload / recordings
+        - Database
+        - Docker image
+        - OpenWrt deployment
+        - Logging / privacy
+        - CI / release
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety checklist
+      options:
+        - label: I did not include working exploit code, secrets, tokens, databases, or private user data.
+          required: true
