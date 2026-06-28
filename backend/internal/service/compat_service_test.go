@@ -231,7 +231,7 @@ func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := svc.HandleDeviceDeploy(tt.cmd)
 			if got.Result != tt.want {
-				t.Fatalf("got result=%q, want %q", got.Result)
+				t.Fatalf("got result=%q, want %q", got.Result, tt.want)
 			}
 		})
 	}
