@@ -27,6 +27,10 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("POST", "features", "HandleFeatures")
 	b.Handle("GET", "config", "HandleClientConfig")
 	b.Handle("POST", "config", "HandleClientConfig")
+	b.Handle("GET", "server-config", "HandleClientConfig")
+	b.Handle("POST", "server-config", "HandleClientConfig")
+	b.Handle("GET", "server_config", "HandleClientConfig")
+	b.Handle("POST", "server_config", "HandleClientConfig")
 	b.Handle("GET", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "oidc/auth", "HandleOidcAuth")
@@ -34,6 +38,7 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "oidc/auth-query", "HandleOidcAuthQuery")
 	b.Handle("POST", "oidc/auth-query", "HandleOidcAuthQuery")
 	b.Handle("POST", "record", "HandleRecord")
+	b.Handle("GET", "devices/deploy", "HandleDevicesDeploy")
 	b.Handle("POST", "devices/deploy", "HandleDevicesDeploy")
 }
 
@@ -128,10 +133,7 @@ func (c *CompatPublicController) HandleRecord() mvc.Result {
 }
 
 func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
-	body, err := c.readBodyBytes()
-	if err != nil {
-		return c.fail(err)
-	}
+	body, _ := c.readBodyBytes()
 	result := c.compatService().HandleDeviceDeploy(core.CompatDeviceDeployCommand{
 		RustdeskID: gjson.GetBytes(body, "id").String(),
 		UUID:      gjson.GetBytes(body, "uuid").String(),
