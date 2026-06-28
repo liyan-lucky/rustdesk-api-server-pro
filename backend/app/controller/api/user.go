@@ -67,7 +67,7 @@ func (c *UserController) HandleLogout() mvc.Result {
 		rustdeskID = c.Ctx.URLParamDefault("rustdesk_id", "")
 	}
 
-	if c.Ctx.GetContentLength() > 0 {
+	if c.Ctx.Request().ContentLength > 0 {
 		var f api.LoginForm
 		if err := c.readJSONBody(&f); err == nil && f.RustdeskId != "" {
 			rustdeskID = f.RustdeskId
