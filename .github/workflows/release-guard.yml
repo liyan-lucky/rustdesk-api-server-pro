@@ -1,0 +1,76 @@
+name: 发布前检查
+run-name: 发布前检查：${{ github.ref_name }}
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 检查不能存在的一次性发布流程
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -f .github/workflows/release-v1.4.8.yml
+
+      - name: 检查必要发布文件
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            LICENSE
+            NOTICE
+            THIRD_PARTY_NOTICES.md
+            DISCLAIMER.md
+            SECURITY.md
+            PRIVACY.md
+            COMPLIANCE.md
+            CONTRIBUTING.md
+            CODE_OF_CONDUCT.md
+            SUPPORT.md
+            docs/LEGAL_COMPLIANCE.md
+            docs/RELEASE_PROCESS.md
+            docs/SECRET_HANDLING.md
+          )
+          for file in "${required[@]}"; do
+            test -f "$file" || { echo "Missing release compliance file: $file"; exit 1; }
+          done
+
+      - name: 检查运行数据和敏感文件未被跟踪
+        shell: bash
+        run: |
+          set -euo pipefail
+          forbidden='(^|/)(server\.db|.*\.sqlite|.*\.sqlite3|record_uploads|id_rsa|id_ed25519|.*\.p12|.*\.pfx|.*\.pem|.*\.key|\.env)$'
+          if git ls-files | grep -E "$forbidden"; then
+            echo "Release is blocked because runtime data or secret-like files are tracked."
+            exit 1
+          fi
+
+      - name: 检查发布工作流包含合规文件
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q "cp LICENSE build/" .github/workflows/build-release.yml
+          grep -q "cp NOTICE build/" .github/workflows/build-release.yml
+          grep -q "cp THIRD_PARTY_NOTICES.md build/" .github/workflows/build-release.yml
+          grep -q "cp SECURITY.md build/" .github/workflows/build-release.yml
+          grep -q "cp PRIVACY.md build/" .github/workflows/build-release.yml
+          grep -q "cp COMPLIANCE.md build/" .github/workflows/build-release.yml
+
+      - name: 检查非官方声明
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -qi "not affiliated" NOTICE
+          grep -qi "not affiliated" DISCLAIMER.md
+          grep -qi "AGPL" README.md
