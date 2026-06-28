@@ -15,10 +15,11 @@ if ! command -v git >/dev/null 2>&1; then
 fi
 
 mkdir -p "$OUT_DIR"
+OUT_DIR_ABS="$(cd "$OUT_DIR" && pwd)"
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
-REPORT="$OUT_DIR/api-hints-${TAG}.md"
+REPORT="$OUT_DIR_ABS/api-hints-${TAG}.md"
 
 cat > "$REPORT" <<MD
 # RustDesk ${TAG} API hint report
