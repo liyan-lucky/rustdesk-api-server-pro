@@ -14,8 +14,6 @@ type AddressBookController struct {
 }
 
 func (c *AddressBookController) BeforeActivation(b mvc.BeforeActivation) {
-	b.Handle("GET", "ab", "GetAb")
-	b.Handle("POST", "ab", "PostAb")
 	b.Handle("GET", "ab/personal", "HandleAbPersonal")
 	b.Handle("POST", "ab/personal", "HandleAbPersonal")
 	b.Handle("GET", "ab/settings", "HandleAbSettings")
@@ -94,10 +92,6 @@ func (c *AddressBookController) PostAb() mvc.Result {
 	return c.ok()
 }
 
-func (c *AddressBookController) PostAbPersonal() mvc.Result {
-	return c.HandleAbPersonal()
-}
-
 func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 	user := c.GetUser()
 	result, err := c.addressBookService().EnsurePersonalAddressBook(core.PersonalAddressBookEnsureCommand{
@@ -113,10 +107,6 @@ func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 	return mvc.Response{Object: httpdto.NewPersonalAddressBookResponse(result)}
 }
 
-func (c *AddressBookController) PostAbSettings() mvc.Result {
-	return c.HandleAbSettings()
-}
-
 func (c *AddressBookController) HandleAbSettings() mvc.Result {
 	user := c.GetUser()
 	result, err := c.addressBookService().GetSettings(core.AddressBookSettingsQuery{UserID: user.Id})
@@ -124,10 +114,6 @@ func (c *AddressBookController) HandleAbSettings() mvc.Result {
 		return c.fail(err)
 	}
 	return mvc.Response{Object: httpdto.NewAddressBookSettingsResponse(result)}
-}
-
-func (c *AddressBookController) PostAbSharedProfiles() mvc.Result {
-	return c.HandleAbSharedProfiles()
 }
 
 func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
