@@ -20,6 +20,7 @@ func ApiAuth(app *iris.Application) iris.Handler {
 		var authToken model.AuthToken
 		get, err := db.Where("token = ? and expired > ? and status = 1 and is_admin = 0", token, time.Now().Format(config.TimeFormat)).Get(&authToken)
 		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "api_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
 			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
 			return
 		}
@@ -27,6 +28,7 @@ func ApiAuth(app *iris.Application) iris.Handler {
 		var user model.User
 		get, err = db.Where("id = ? and status > 0", authToken.UserId).Get(&user)
 		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "api_token_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
 			context.StopWithText(iris.StatusNotAcceptable, "NotAcceptable")
 			return
 		}
@@ -46,6 +48,7 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		var authToken model.AuthToken
 		get, err := db.Where("token = ? and expired > ? and status = 1 and is_admin = 1", token, time.Now().Format(config.TimeFormat)).Get(&authToken)
 		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "admin_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
 			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
 			return
 		}
@@ -53,6 +56,7 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		var user model.User
 		get, err = db.Where("id = ? and status > 0 and is_admin = 1", authToken.UserId).Get(&user)
 		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "admin_token_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
 			context.StopWithText(iris.StatusNotAcceptable, "NotAcceptable")
 			return
 		}
@@ -68,4 +72,26 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		context.Values().Set(config.AdminAuthToken, &authToken)
 		context.Next()
 	}
+}
+
+func recordAuthSecurityAudit(db *xorm.Engine, context iris.Context, event string, userID int, username string, success bool, reason string) {
+	if db == nil || context == nil {
+		return
+	}
+	_, _ = db.Insert(&model.SecurityAudit{
+		UserId:    userID,
+		Username:  username,
+		Event:     event,
+		IP:        context.RemoteAddr(),
+		UserAgent: context.GetHeader("User-Agent"),
+		Success:   success,
+		Reason:    reason,
+	})
+}
+
+func authFailureReason(err error, fallback string) string {
+	if err != nil {
+		return err.Error()
+	}
+	return fallback
 }
