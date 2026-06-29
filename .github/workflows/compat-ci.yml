@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'backend/**'
+      - 'soybean-admin/**'
+      - 'docker/**'
+      - 'Dockerfile'
       - 'scripts/compat/**'
       - 'docs/compat/**'
       - '.github/workflows/compat-ci.yml'
@@ -50,3 +53,15 @@ jobs:
 
       - name: Validate compatibility manifest
         run: jq -e '.client.version and .sysinfo_version and .validated_endpoints' docs/compat/rustdesk-current.json
+
+      - name: Verify manifest and Go constants
+        run: bash scripts/compat/verify-compat-target.sh
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build --build-arg APP_VERSION=compat-ci -t rustdesk-api-server-pro:compat-ci .
