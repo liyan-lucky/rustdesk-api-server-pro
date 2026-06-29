@@ -65,6 +65,7 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 }
 
 func (c *CompatPublicController) HandleHealth() mvc.Result {
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: iris.Map{
 		"ok":      true,
 		"status":  "ok",
@@ -73,6 +74,7 @@ func (c *CompatPublicController) HandleHealth() mvc.Result {
 }
 
 func (c *CompatPublicController) HandleStatus() mvc.Result {
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: iris.Map{
 		"ok":            true,
 		"status":        "ok",
@@ -83,6 +85,7 @@ func (c *CompatPublicController) HandleStatus() mvc.Result {
 }
 
 func (c *CompatPublicController) HandleVersion() mvc.Result {
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: iris.Map{
 		"version":       service.CompatSysinfoVersion,
 		"server":        "rustdesk-api-server-pro",
@@ -91,10 +94,12 @@ func (c *CompatPublicController) HandleVersion() mvc.Result {
 }
 
 func (c *CompatPublicController) HandleCompatTarget() mvc.Result {
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: c.compatService().Target()}
 }
 
 func (c *CompatPublicController) HandleFeatures() mvc.Result {
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: iris.Map{
 		"address_book":           true,
 		"audit":                  true,
@@ -105,11 +110,13 @@ func (c *CompatPublicController) HandleFeatures() mvc.Result {
 		"strategy":               true,
 		"record":                 true,
 		"plugin_sign_passthrough": true,
+		"compat_api_audit":       true,
 		"compat_target":          c.compatService().Target(),
 	}}
 }
 
 func (c *CompatPublicController) HandleClientConfig() mvc.Result {
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: iris.Map{
 		"server": iris.Map{
 			"name":    "rustdesk-api-server-pro",
@@ -117,15 +124,17 @@ func (c *CompatPublicController) HandleClientConfig() mvc.Result {
 		},
 		"compat_target": c.compatService().Target(),
 		"features": iris.Map{
-			"address_book": true,
-			"audit":        true,
-			"record":       true,
+			"address_book":     true,
+			"audit":            true,
+			"record":           true,
+			"compat_api_audit": true,
 		},
 		"login_options": c.compatService().LoginOptions().Options,
 	}}
 }
 
 func (c *CompatPublicController) HandleSysinfoVer() mvc.Result {
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{
 		Text: service.CompatSysinfoVersion,
 	}
@@ -133,6 +142,12 @@ func (c *CompatPublicController) HandleSysinfoVer() mvc.Result {
 
 func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
 	result := c.compatService().OidcAuth()
+	isStub := !result.Enabled
+	auditResult := result.Error
+	if auditResult == "" {
+		auditResult = "ok"
+	}
+	c.recordCompatAPIAudit(isStub, 200, auditResult, "", nil)
 	return mvc.Response{
 		Object: iris.Map{
 			"error":   result.Error,
@@ -144,6 +159,12 @@ func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
 
 func (c *CompatPublicController) HandleOidcAuthQuery() mvc.Result {
 	result := c.compatService().OidcAuthQuery()
+	isStub := result.Error != ""
+	auditResult := result.Error
+	if auditResult == "" {
+		auditResult = "ok"
+	}
+	c.recordCompatAPIAudit(isStub, 200, auditResult, "", nil)
 	return mvc.Response{
 		Object: iris.Map{
 			"error":   result.Error,
@@ -157,6 +178,7 @@ func (c *CompatPublicController) HandleRecord() mvc.Result {
 	offset, _ := strconv.ParseInt(c.Ctx.URLParamDefault("offset", "0"), 10, 64)
 	body, err := c.readBodyBytes()
 	if err != nil {
+		c.recordCompatAPIAudit(true, 400, "error", err.Error(), nil)
 		return c.fail(err)
 	}
 	err = c.compatService().HandleRecord(core.CompatRecordCommand{
@@ -166,13 +188,16 @@ func (c *CompatPublicController) HandleRecord() mvc.Result {
 		Body:     body,
 	})
 	if err != nil {
+		c.recordCompatAPIAudit(true, 400, "error", err.Error(), body)
 		return c.fail(err)
 	}
+	c.recordCompatAPIAudit(false, 200, "ok", "", body)
 	return c.ok()
 }
 
 func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
 	if c.Ctx.Method() == iris.MethodGet {
+		c.recordCompatAPIAudit(true, 200, "NOT_ENABLED", "", nil)
 		return mvc.Response{Object: iris.Map{"result": "NOT_ENABLED"}}
 	}
 
@@ -182,6 +207,11 @@ func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
 		UUID:      gjson.GetBytes(body, "uuid").String(),
 		PublicKey: gjson.GetBytes(body, "pk").String(),
 	})
+	statusCode := 200
+	if result.Result == "INVALID_INPUT" {
+		statusCode = 400
+	}
+	c.recordCompatAPIAudit(true, statusCode, result.Result, "", body)
 	return mvc.Response{
 		Object: iris.Map{
 			"result": result.Result,
