@@ -14,12 +14,17 @@
 
 | 模块 | 方法 | 路径 | 鉴权 | 状态 | 说明 |
 | --- | --- | --- | --- | --- | --- |
-| 系统 | GET | `/api/` | 否 | 待核验 | 健康检查或基础信息 |
-| 登录 | POST | `/api/login` | 否 | 待核验 | 账号登录、token 返回 |
+| 系统 | GET/POST | `/api/health`、`/api/ping` | 否 | 基础 | 健康检查，已纳入 smoke 与兼容命中审计 |
+| 系统 | GET/POST | `/api/status`、`/api/version`、`/api/info` | 否 | 基础 | 返回版本与 `compat_target`，已纳入 smoke 与兼容命中审计 |
+| 系统 | GET/POST | `/api/features`、`/api/capabilities`、`/api/compat/features` | 否 | 基础 | 返回能力开关，包含 `compat_api_audit` |
+| 系统 | GET/POST | `/api/config`、`/api/client-config`、`/api/server-config` | 否 | 基础 | 返回客户端配置形状，已纳入 smoke 与兼容命中审计 |
+| 系统 | GET/POST | `/api/compat-target`、`/api/compat/target`、`/api/compat/version` | 否 | 基础 | 返回当前匹配对象，目标 RustDesk 1.4.8 |
+| 系统 | GET/POST | `/api/sysinfo_ver` | 否 | 基础 | 返回兼容 sysinfo 版本字符串 |
+| 登录 | POST | `/api/login` | 否 | 待核验 | 账号登录、token 返回，需要真实客户端继续验证字段兼容 |
 | 审计 | POST | `/api/audit/conn` | 否/待核验 | 基础 | 连接开始、关闭、备注更新 |
 | 审计 | POST | `/api/audit/file` | 否/待核验 | 基础 | 文件传输日志 |
-| 审计 | POST | `/api/audit/alarm` | 否/待核验 | 占位 | 当前建议改为落库 |
-| 兼容 | * | `/api/*` | 否 | 待核验 | 公开兼容控制器 |
+| 审计 | POST | `/api/audit/alarm` | 否/待核验 | 基础 | 已落库到 `alarm_audit` |
+| 兼容 | * | `/api/*` 公开探测别名 | 否 | 基础 | 公开兼容控制器已写入 `compat_api_audit`，用于发现新版客户端真实探测 |
 
 ## 2. 客户端鉴权接口
 
@@ -43,7 +48,7 @@
 | 用户管理 | `/admin/users/*` | 已有 | 增加操作审计 |
 | 会话管理 | `/admin/sessions/*` | 已有 | 增加 token 安全事件 |
 | 设备管理 | `/admin/devices/*` | 已有 | 增加设备变更审计 |
-| 审计日志 | `/admin/audit/*` | 已有 | 增加高级筛选、导出、报警审计 |
+| 审计日志 | `/admin/audit/*` | 已有 | 增加高级筛选、导出、报警审计、兼容探测审计视图 |
 | 邮件模板 | `/admin/mail-template/*` | 已有 | 增加修改审计 |
 | 邮件日志 | `/admin/mail-logs/*` | 已有 | 增加发送失败分析 |
 
@@ -51,7 +56,7 @@
 
 | 方法 | 路径 | 状态 | 建议 |
 | --- | --- | --- | --- |
-| * | `/lic/web/api/plugin-sign` | 基础/占位 | 增加配置化返回、调用审计 |
+| POST | `/lic/web/api/plugin-sign` | 基础/占位 | 已纳入 smoke 与 `compat_api_audit`；当前为稳定 JSON 形状 + 消息透传，不声明官方签名等价 |
 | * | `/lic/web/api/*` | 待核验 | 建立真实客户端抓包验证样例 |
 
 ## 5. 审计覆盖矩阵
@@ -62,7 +67,7 @@
 | 远程连接关闭 | 是 | `audit` / `connection_audit` | P0 |
 | 连接备注修改 | 是 | `audit` | P0 |
 | 文件传输 | 是 | `file_transfer` | P0 |
-| 客户端报警 | 否，占位 | `alarm_audit` | P1 |
+| 客户端报警 | 是 | `alarm_audit` | P1 |
 | 登录成功 | 待补 | `security_audit` | P0 |
 | 登录失败 | 待补 | `security_audit` | P0 |
 | 退出登录 | 待补 | `security_audit` | P1 |
@@ -73,7 +78,7 @@
 | 修改设备 | 待补 | `operation_audit` | P1 |
 | 修改地址簿 | 待补 | `operation_audit` | P1 |
 | 修改策略 | 待补 | `operation_audit` | P2 |
-| 占位接口命中 | 待补 | `compat_api_audit` | P1 |
+| 兼容/占位接口命中 | 是 | `compat_api_audit` | P1 |
 
 ## 6. 每个接口的记录模板
 
@@ -94,12 +99,10 @@ MySQL 验证：通过/失败
 备注：
 ```
 
-## 7. 第一批建议开发任务
+## 7. 下一批建议开发任务
 
-1. `/api/audit/alarm` 落库。
-2. 扩展 `audit` 字段：`peer_id`、`direction`、`status`、`client_version`、`raw`、`duration_seconds`。
-3. 扩展 `file_transfer` 字段：`session_id`、`direction`、`size_bytes`、`result`、`error_message`、`raw`。
-4. 新增 `security_audit`，接入后台登录成功/失败。
-5. 新增 `operation_audit`，接入用户管理增删改。
-6. 新增 `compat_api_audit`，记录占位接口命中。
-7. 后台审计页面增加类型切换与高级筛选。
+1. 后台审计页面增加 `compat_api_audit` 视图，按 path/method/is_stub/result/client_version 聚合。
+2. 新增 `security_audit` 接入后台登录成功/失败。
+3. 新增 `operation_audit` 接入用户管理增删改。
+4. 建立真实 RustDesk 客户端抓包样例目录，补齐官方接口字段差异。
+5. 对 `/lic/web/api/*` 继续做真实客户端验证，避免误以为 plugin-sign 透传等价于官方签名服务。
