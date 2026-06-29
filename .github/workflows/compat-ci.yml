@@ -57,7 +57,7 @@ jobs:
       - name: Verify manifest and Go constants
         run: bash scripts/compat/verify-compat-target.sh
 
-  docker-build:
+  docker-smoke:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -65,3 +65,30 @@ jobs:
 
       - name: Build Docker image
         run: docker build --build-arg APP_VERSION=compat-ci -t rustdesk-api-server-pro:compat-ci .
+
+      - name: Run Docker container
+        run: |
+          docker run -d \
+            --name rustdesk-api-compat-ci \
+            --network host \
+            -e ADMIN_USER=admin \
+            -e ADMIN_PASS=ChangeMe123! \
+            rustdesk-api-server-pro:compat-ci
+
+      - name: Wait for API
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:12345/api/health >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs rustdesk-api-compat-ci || true
+          exit 1
+
+      - name: Run public smoke tests
+        run: bash scripts/compat/smoke-api.sh http://127.0.0.1:12345
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs rustdesk-api-compat-ci || true
