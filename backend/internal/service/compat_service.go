@@ -87,6 +87,7 @@ func (s *CompatService) Target() map[string]any {
 			"/api/compat/target",
 			"/api/compat/version",
 			"/api/sysinfo_ver",
+			"/api/login-options",
 			"/api/devices/deploy",
 			"/lic/web/api/plugin-sign",
 		},
