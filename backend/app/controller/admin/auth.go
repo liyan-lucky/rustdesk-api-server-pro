@@ -6,6 +6,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/helper/captcha"
+	"rustdesk-api-server-pro/internal/core"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"rustdesk-api-server-pro/util"
 	"strconv"
@@ -32,24 +33,29 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 	var loginForm admin.LoginForm
 	err := c.Ctx.ReadJSON(&loginForm)
 	if err != nil {
+		c.recordAdminLoginAudit(0, "", false, "decode_error: "+err.Error())
 		return c.Error(nil, err.Error())
 	}
 
 	if !captcha.VerifyCode(loginForm.CaptchaId, loginForm.Code) {
+		c.recordAdminLoginAudit(0, loginForm.Username, false, "CaptchaError")
 		return c.Error(nil, "CaptchaError")
 	}
 
 	var user model.User
 	get, err := c.Db.Where("username = ? and is_admin = 1", loginForm.Username).Get(&user)
 	if err != nil {
+		c.recordAdminLoginAudit(0, loginForm.Username, false, err.Error())
 		return c.Error(nil, err.Error())
 	}
 
 	if !get {
+		c.recordAdminLoginAudit(0, loginForm.Username, false, "UserNotExists")
 		return c.Error(nil, "UserNotExists")
 	}
 
 	if !util.PasswordVerify(loginForm.Password, user.Password) {
+		c.recordAdminLoginAudit(user.Id, loginForm.Username, false, "UsernameOrPasswordError")
 		return c.Error(nil, "UsernameOrPasswordError")
 	}
 
@@ -72,9 +78,11 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 
 	_, err = c.Db.Insert(authToken)
 	if err != nil {
+		c.recordAdminLoginAudit(user.Id, loginForm.Username, false, err.Error())
 		return c.Error(nil, err.Error())
 	}
 
+	c.recordAdminLoginAudit(user.Id, loginForm.Username, true, "token")
 	return c.Success(iris.Map{
 		"token": token,
 	}, "ok")
@@ -191,6 +199,18 @@ func (c *AuthController) currentBaseURL() string {
 		host = c.Ctx.Host()
 	}
 	return scheme + "://" + host
+}
+
+func (c *AuthController) recordAdminLoginAudit(userID int, username string, success bool, reason string) {
+	_ = c.auditService().CreateSecurityAudit(core.SecurityAuditCreateCommand{
+		UserID:    userID,
+		Username:  username,
+		Event:     "admin_login",
+		IP:        c.Ctx.RemoteAddr(),
+		UserAgent: c.Ctx.GetHeader("User-Agent"),
+		Success:   success,
+		Reason:    reason,
+	})
 }
 
 func withQuery(target, key, value string) string {
