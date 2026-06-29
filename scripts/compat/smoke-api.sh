@@ -75,6 +75,7 @@ request GET  /api/compat-target "1.4.8"
 request GET  /api/compat/target "1.4.8"
 request GET  /api/compat/version "1.4.8"
 request GET  /api/sysinfo_ver "1.4.8"
+request GET  /api/login-options "["
 request GET  /api/devices/deploy "NOT_ENABLED"
 
 # License/plugin compatibility endpoint. It is a passthrough placeholder but should keep a stable JSON shape.
