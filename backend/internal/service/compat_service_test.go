@@ -178,7 +178,7 @@ func TestCompatServiceTargetContract(t *testing.T) {
 	if !ok {
 		t.Fatalf("probe_endpoints should be []string")
 	}
-	for _, path := range []string{"/api/health", "/api/compat-target", "/api/server/info", "/api/devices/deploy"} {
+	for _, path := range []string{"/api/health", "/api/compat-target", "/api/server/info", "/api/login-options", "/api/devices/deploy", "/lic/web/api/plugin-sign"} {
 		if !containsString(endpoints, path) {
 			t.Fatalf("expected probe_endpoints to contain %s", path)
 		}
