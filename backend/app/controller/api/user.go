@@ -58,6 +58,7 @@ func (c *UserController) GetUsers() mvc.Result {
 }
 
 func (c *UserController) HandleLogout() mvc.Result {
+	user := c.GetUser()
 	rustdeskID := c.Ctx.URLParamDefault("id", "")
 	if rustdeskID == "" {
 		rustdeskID = c.Ctx.URLParamDefault("rustdesk_id", "")
@@ -70,8 +71,11 @@ func (c *UserController) HandleLogout() mvc.Result {
 		}
 	}
 
+	logoutMode := "token"
 	if rustdeskID != "" {
+		logoutMode = "rustdesk_id"
 		if err := c.userService().LogoutByRustdeskID(rustdeskID); err != nil {
+			c.recordUserSecurityAudit(user, "api_logout", false, "logout_by_rustdesk_id: "+err.Error())
 			return c.fail(err)
 		}
 	} else {
@@ -82,10 +86,27 @@ func (c *UserController) HandleLogout() mvc.Result {
 				Status:  0,
 			})
 			if err != nil {
+				c.recordUserSecurityAudit(user, "api_logout", false, "logout_by_token: "+err.Error())
 				return c.fail(err)
 			}
 		}
 	}
 
+	c.recordUserSecurityAudit(user, "api_logout", true, logoutMode)
 	return c.okText("ok")
+}
+
+func (c *UserController) recordUserSecurityAudit(user *model.User, event string, success bool, reason string) {
+	cmd := core.SecurityAuditCreateCommand{
+		Event:     event,
+		IP:        c.Ctx.RemoteAddr(),
+		UserAgent: c.Ctx.GetHeader("User-Agent"),
+		Success:   success,
+		Reason:    reason,
+	}
+	if user != nil {
+		cmd.UserID = user.Id
+		cmd.Username = user.Username
+	}
+	_ = c.auditService().CreateSecurityAudit(cmd)
 }
