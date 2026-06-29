@@ -20,7 +20,8 @@
 | 系统 | GET/POST | `/api/config`、`/api/client-config`、`/api/server-config` | 否 | 基础 | 返回客户端配置形状，已纳入 smoke 与兼容命中审计 |
 | 系统 | GET/POST | `/api/compat-target`、`/api/compat/target`、`/api/compat/version` | 否 | 基础 | 返回当前匹配对象，目标 RustDesk 1.4.8 |
 | 系统 | GET/POST | `/api/sysinfo_ver` | 否 | 基础 | 返回兼容 sysinfo 版本字符串 |
-| 登录 | POST | `/api/login` | 否 | 待核验 | 账号登录、token 返回，需要真实客户端继续验证字段兼容 |
+| 登录 | GET/POST | `/api/login-options` | 否 | 基础 | 返回可用登录方式，已纳入公开 smoke 与兼容命中审计 |
+| 登录 | POST | `/api/login` | 否 | 基础/待核验 | 账号登录、token 返回；成功/失败/验证码或 2FA 中间态已写 `security_audit` |
 | 审计 | POST | `/api/audit/conn` | 否/待核验 | 基础 | 连接开始、关闭、备注更新 |
 | 审计 | POST | `/api/audit/file` | 否/待核验 | 基础 | 文件传输日志 |
 | 审计 | POST | `/api/audit/alarm` | 否/待核验 | 基础 | 已落库到 `alarm_audit` |
@@ -43,7 +44,7 @@
 
 | 模块 | 路径 | 状态 | 建议 |
 | --- | --- | --- | --- |
-| 后台登录 | `/admin/auth/*` | 已有 | 增加登录安全审计 |
+| 后台登录 | `/admin/auth/*` | 基础 | 管理员账号登录成功/失败已写 `security_audit`；OIDC/OAuth 回调审计待补 |
 | 仪表盘 | `/admin/dashboard/*` | 已有 | 增加审计概览 |
 | 用户管理 | `/admin/users/*` | 已有 | 增加操作审计 |
 | 会话管理 | `/admin/sessions/*` | 已有 | 增加 token 安全事件 |
@@ -68,8 +69,12 @@
 | 连接备注修改 | 是 | `audit` | P0 |
 | 文件传输 | 是 | `file_transfer` | P0 |
 | 客户端报警 | 是 | `alarm_audit` | P1 |
-| 登录成功 | 待补 | `security_audit` | P0 |
-| 登录失败 | 待补 | `security_audit` | P0 |
+| 客户端登录成功 | 是 | `security_audit` | P0 |
+| 客户端登录失败 | 是 | `security_audit` | P0 |
+| 客户端验证码/2FA 中间态 | 是 | `security_audit` | P1 |
+| 后台登录成功 | 是 | `security_audit` | P0 |
+| 后台登录失败 | 是 | `security_audit` | P0 |
+| OIDC/OAuth 回调失败 | 待补 | `security_audit` | P1 |
 | 退出登录 | 待补 | `security_audit` | P1 |
 | token 无效 | 待补 | `security_audit` | P1 |
 | 后台新增用户 | 待补 | `operation_audit` | P0 |
@@ -101,8 +106,8 @@ MySQL 验证：通过/失败
 
 ## 7. 下一批建议开发任务
 
-1. 后台审计页面增加 `compat_api_audit` 视图，按 path/method/is_stub/result/client_version 聚合。
-2. 新增 `security_audit` 接入后台登录成功/失败。
+1. 后台审计页面增加 `security_audit` / `compat_api_audit` 视图，按事件、path、method、is_stub、result、client_version 聚合。
+2. 新增 OIDC/OAuth 回调成功/失败审计。
 3. 新增 `operation_audit` 接入用户管理增删改。
 4. 建立真实 RustDesk 客户端抓包样例目录，补齐官方接口字段差异。
 5. 对 `/lic/web/api/*` 继续做真实客户端验证，避免误以为 plugin-sign 透传等价于官方签名服务。
