@@ -3,6 +3,8 @@ package admin
 import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/repository"
+	v2service "rustdesk-api-server-pro/internal/service"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -24,6 +26,10 @@ func (c *basicController) GetToken() string {
 
 func (c *basicController) GetAuthToken() *model.AuthToken {
 	return c.Ctx.Values().Get(config.AdminAuthToken).(*model.AuthToken)
+}
+
+func (c *basicController) auditService() *v2service.AuditService {
+	return v2service.NewAuditService(repository.NewXormAuditRepository(c.Db))
 }
 
 func (c *basicController) Success(data interface{}, message string) mvc.Result {
