@@ -1,0 +1,22 @@
+name: 安全回归检查
+run-name: 安全回归检查（${{ github.ref_name }}）
+
+on:
+  push:
+    branches: ["master", "main", "develop"]
+  pull_request:
+    branches: ["master", "main", "develop"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 执行安全回归检查
+        run: bash scripts/security/security-regression-check.sh
