@@ -165,7 +165,7 @@ func GetServerConfig() *ServerConfig {
 
 func WriteServerConfig(cfg *ServerConfig) {
 	bytes, _ := yaml.Marshal(cfg)
-	_ = os.WriteFile(yamlFile, bytes, 0755)
+	_ = os.WriteFile(yamlFile, bytes, 0600)
 }
 
 func (cfg *ServerConfig) OAuthProviders() []OAuthProviderConfig {
