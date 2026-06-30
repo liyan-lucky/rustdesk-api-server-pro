@@ -5,6 +5,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/util"
 
 	"github.com/spf13/cobra"
 )
@@ -50,8 +51,26 @@ var dbSyncCmd = &cobra.Command{
 			fmt.Println("Db init error:", err)
 			return
 		}
+		if err = migratePlaintextAuthTokens(engine); err != nil {
+			fmt.Println("Auth token migration warning:", err)
+		}
 		fmt.Println("Database tables sync success")
 	},
+}
+
+func migratePlaintextAuthTokens(engine db.EngineLike) error {
+	legacyTokens := make([]model.AuthToken, 0)
+	if err := engine.Where("token != '' and token_hash = ''").Find(&legacyTokens); err != nil {
+		return err
+	}
+	for _, token := range legacyTokens {
+		token.TokenHash = util.Sha256Hex(token.Token)
+		token.Token = ""
+		if _, err := engine.Where("id = ?", token.Id).Cols("token_hash", "token").Update(&token); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func init() {
