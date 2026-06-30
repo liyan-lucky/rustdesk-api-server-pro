@@ -128,7 +128,7 @@
     "vite-plugin-svg-icons": "2.0.1",
     "vite-plugin-vue-devtools": "7.3.8",
     "vue-eslint-parser": "9.4.3",
-    "vue-tsc": "2.0.29"
+    "vue-tsc": "3.3.5"
   },
   "simple-git-hooks": {},
   "lint-staged": {
