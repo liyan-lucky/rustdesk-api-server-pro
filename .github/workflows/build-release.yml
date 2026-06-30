@@ -79,7 +79,7 @@ jobs:
           zip -r ${{matrix.os}}-${{matrix.arch}}.zip build
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-${{ matrix.os }}-${{ matrix.arch }}
           path: ${{matrix.os}}-${{matrix.arch}}.zip
