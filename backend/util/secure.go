@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/subtle"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
@@ -63,6 +64,13 @@ func HmacSha256(data, key string) string {
 	mac.Write([]byte(data))
 	b := mac.Sum(nil)
 	return base64.URLEncoding.EncodeToString(b)
+}
+
+func ConstantTimeStringEqual(a, b string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	return subtle.ConstantTimeCompare([]byte(a), []byte(b)) == 1
 }
 
 func Sha256Hex(data string) string {
