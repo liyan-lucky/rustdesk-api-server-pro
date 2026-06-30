@@ -48,7 +48,7 @@
 | --- | --- | --- | --- |
 | 后台登录 | `/admin/auth/*` | 基础 | 管理员账号登录成功/失败、OIDC/OAuth 回调与 ticket 换 token、后台 token 无效已写 `security_audit` |
 | 仪表盘 | `/admin/dashboard/*` | 已有 | 增加审计概览 |
-| 用户管理 | `/admin/users/*` | 基础 | 新增、修改、删除用户已写 `operation_audit`；不记录密码和 2FA 密钥明文 |
+| 用户管理 | `/admin/users/*` | 基础 | 新增、修改、删除用户已写 `operation_audit`；不记录密码和 2FA 密钥明文；空删除列表会返回 `NoUserIds` 并记录失败审计 |
 | 会话管理 | `/admin/sessions/*` | 已有 | 增加 token 安全事件 |
 | 设备管理 | `/admin/devices/*` | 已有 | 增加设备变更审计 |
 | 审计日志 | `/admin/audit/*` | 已有 | 增加高级筛选、导出、报警审计、兼容探测审计视图 |
