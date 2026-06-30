@@ -10,15 +10,63 @@ on:
         default: true
         type: boolean
       clean_workflow_runs:
-        description: "清理 GitHub Actions 运行记录"
+        description: "清理 GitHub Actions 运行记录（默认不清理）"
         required: true
-        default: true
+        default: false
         type: boolean
+      workflow_name:
+        description: "仅清理指定 workflow 名称，留空表示全部 workflow"
+        required: false
+        default: ""
+        type: string
+      run_branch:
+        description: "仅清理指定分支的运行记录，留空表示全部分支"
+        required: false
+        default: ""
+        type: string
+      run_conclusion:
+        description: "仅清理指定结果的运行记录"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - success
+          - failure
+          - cancelled
+          - skipped
+          - timed_out
+          - action_required
+      older_than_days:
+        description: "仅清理 N 天前的运行记录；0 表示不限制时间"
+        required: true
+        default: "0"
+        type: string
+      keep_latest:
+        description: "匹配后保留最新 N 条运行记录；0 表示不额外保留"
+        required: true
+        default: "0"
+        type: string
+      max_delete:
+        description: "最多清理多少条；0 表示不限制"
+        required: true
+        default: "50"
+        type: string
       clean_releases:
         description: "清理 GitHub Releases（危险，默认不清理）"
         required: true
         default: false
         type: boolean
+      release_kind:
+        description: "Release 清理范围"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - draft
+          - prerelease
+          - stable
       clean_tags:
         description: "清理已发布标签 / Git tags（危险，默认不清理）"
         required: true
@@ -30,7 +78,7 @@ on:
         default: ""
         type: string
       confirm:
-        description: "清理 Release 时填写 CLEAN；清理 tag 时填写 CLEAN_TAGS；只清理运行记录可留空"
+        description: "实际清理 Release 填 CLEAN；实际清理 tag 填 CLEAN_TAGS；只清理运行记录可留空"
         required: false
         default: ""
         type: string
@@ -41,6 +89,7 @@ permissions:
 
 jobs:
   cleanup:
+    name: 清理任务
     runs-on: ubuntu-latest
     steps:
       - name: 参数检查
@@ -50,14 +99,33 @@ jobs:
 
           echo "dry_run=${{ inputs.dry_run }}"
           echo "clean_workflow_runs=${{ inputs.clean_workflow_runs }}"
+          echo "workflow_name=${{ inputs.workflow_name }}"
+          echo "run_branch=${{ inputs.run_branch }}"
+          echo "run_conclusion=${{ inputs.run_conclusion }}"
+          echo "older_than_days=${{ inputs.older_than_days }}"
+          echo "keep_latest=${{ inputs.keep_latest }}"
+          echo "max_delete=${{ inputs.max_delete }}"
           echo "clean_releases=${{ inputs.clean_releases }}"
+          echo "release_kind=${{ inputs.release_kind }}"
           echo "clean_tags=${{ inputs.clean_tags }}"
           echo "tag_pattern=${{ inputs.tag_pattern }}"
+
+          if [[ "${{ inputs.clean_workflow_runs }}" != "true" && "${{ inputs.clean_releases }}" != "true" && "${{ inputs.clean_tags }}" != "true" ]]; then
+            echo "未选择任何清理目标。默认不会清理任何内容。"
+            exit 0
+          fi
+
+          for value in "${{ inputs.older_than_days }}" "${{ inputs.keep_latest }}" "${{ inputs.max_delete }}"; do
+            if ! [[ "$value" =~ ^[0-9]+$ ]]; then
+              echo "数值参数必须是非负整数: $value"
+              exit 1
+            fi
+          done
 
           if [[ "${{ inputs.dry_run }}" != "true" ]]; then
             if [[ "${{ inputs.clean_tags }}" == "true" ]]; then
               if [[ "${{ inputs.confirm }}" != "CLEAN_TAGS" ]]; then
-                echo "清理 tag 属于危险操作，confirm 必须填写 CLEAN_TAGS。"
+                echo "清理 tag 属于高危操作，confirm 必须填写 CLEAN_TAGS。"
                 exit 1
               fi
             elif [[ "${{ inputs.clean_releases }}" == "true" ]]; then
@@ -78,26 +146,71 @@ jobs:
           REPO: ${{ github.repository }}
           DRY_RUN: ${{ inputs.dry_run }}
           CURRENT_RUN_ID: ${{ github.run_id }}
+          WORKFLOW_NAME: ${{ inputs.workflow_name }}
+          RUN_BRANCH: ${{ inputs.run_branch }}
+          RUN_CONCLUSION: ${{ inputs.run_conclusion }}
+          OLDER_THAN_DAYS: ${{ inputs.older_than_days }}
+          KEEP_LATEST: ${{ inputs.keep_latest }}
+          MAX_DELETE: ${{ inputs.max_delete }}
         run: |
           set -euo pipefail
 
-          echo "读取 workflow runs..."
-          mapfile -t run_ids < <(gh api --paginate "repos/$REPO/actions/runs?per_page=100" --jq '.workflow_runs[].id')
+          cutoff=""
+          if [[ "$OLDER_THAN_DAYS" != "0" ]]; then
+            cutoff="$(date -u -d "$OLDER_THAN_DAYS days ago" +%Y-%m-%dT%H:%M:%SZ)"
+            echo "仅匹配早于 $cutoff 的运行记录。"
+          fi
 
-          echo "找到 ${#run_ids[@]} 条运行记录。"
-          for run_id in "${run_ids[@]}"; do
+          echo "读取 workflow runs..."
+          mapfile -t runs < <(
+            gh api --paginate "repos/$REPO/actions/runs?per_page=100" \
+              --jq '.workflow_runs[] | [.id, (.name // ""), (.head_branch // ""), (.conclusion // ""), (.created_at // "")] | @tsv'
+          )
+
+          echo "读取到 ${#runs[@]} 条运行记录。"
+          matched=0
+          deleted=0
+
+          for item in "${runs[@]}"; do
+            IFS=$'\t' read -r run_id name branch conclusion created_at <<< "$item"
+
             if [[ "$run_id" == "$CURRENT_RUN_ID" ]]; then
               echo "跳过当前运行记录: $run_id"
               continue
             fi
+            if [[ -n "$WORKFLOW_NAME" && "$name" != "$WORKFLOW_NAME" ]]; then
+              continue
+            fi
+            if [[ -n "$RUN_BRANCH" && "$branch" != "$RUN_BRANCH" ]]; then
+              continue
+            fi
+            if [[ "$RUN_CONCLUSION" != "all" && "$conclusion" != "$RUN_CONCLUSION" ]]; then
+              continue
+            fi
+            if [[ -n "$cutoff" && "$created_at" > "$cutoff" ]]; then
+              continue
+            fi
+
+            matched=$((matched + 1))
+            if (( KEEP_LATEST > 0 && matched <= KEEP_LATEST )); then
+              echo "保留匹配范围内最新第 $matched 条: $run_id $name $branch $conclusion $created_at"
+              continue
+            fi
+            if (( MAX_DELETE > 0 && deleted >= MAX_DELETE )); then
+              echo "达到 max_delete=$MAX_DELETE，停止清理。"
+              break
+            fi
 
             if [[ "$DRY_RUN" == "true" ]]; then
-              echo "[DRY-RUN] 将删除 workflow run: $run_id"
+              echo "[DRY-RUN] 将清理 workflow run: $run_id $name $branch $conclusion $created_at"
             else
-              echo "删除 workflow run: $run_id"
+              echo "清理 workflow run: $run_id $name $branch $conclusion $created_at"
               gh api -X DELETE "repos/$REPO/actions/runs/$run_id" || true
             fi
+            deleted=$((deleted + 1))
           done
+
+          echo "匹配 $matched 条，计划/实际清理 $deleted 条。"
 
       - name: 清理 GitHub Releases
         if: inputs.clean_releases == true
@@ -107,29 +220,54 @@ jobs:
           REPO: ${{ github.repository }}
           DRY_RUN: ${{ inputs.dry_run }}
           TAG_PATTERN: ${{ inputs.tag_pattern }}
+          RELEASE_KIND: ${{ inputs.release_kind }}
+          MAX_DELETE: ${{ inputs.max_delete }}
         run: |
           set -euo pipefail
 
           echo "读取 releases..."
-          mapfile -t releases < <(gh api --paginate "repos/$REPO/releases?per_page=100" --jq '.[] | [.id, .tag_name] | @tsv')
+          mapfile -t releases < <(
+            gh api --paginate "repos/$REPO/releases?per_page=100" \
+              --jq '.[] | [.id, .tag_name, (.draft | tostring), (.prerelease | tostring)] | @tsv'
+          )
 
-          echo "找到 ${#releases[@]} 个 release。"
+          echo "读取到 ${#releases[@]} 个 release。"
+          deleted=0
           for item in "${releases[@]}"; do
-            release_id="${item%%$'\t'*}"
-            tag_name="${item#*$'\t'}"
+            IFS=$'\t' read -r release_id tag_name draft prerelease <<< "$item"
 
             if [[ -n "$TAG_PATTERN" && "$tag_name" != "$TAG_PATTERN"* ]]; then
               echo "跳过 release: $tag_name，不匹配 tag_pattern=$TAG_PATTERN"
               continue
             fi
+            case "$RELEASE_KIND" in
+              draft)
+                [[ "$draft" == "true" ]] || continue
+                ;;
+              prerelease)
+                [[ "$prerelease" == "true" ]] || continue
+                ;;
+              stable)
+                [[ "$draft" == "false" && "$prerelease" == "false" ]] || continue
+                ;;
+              all)
+                ;;
+            esac
+            if (( MAX_DELETE > 0 && deleted >= MAX_DELETE )); then
+              echo "达到 max_delete=$MAX_DELETE，停止清理。"
+              break
+            fi
 
             if [[ "$DRY_RUN" == "true" ]]; then
-              echo "[DRY-RUN] 将删除 release: $tag_name ($release_id)"
+              echo "[DRY-RUN] 将清理 release: $tag_name ($release_id) draft=$draft prerelease=$prerelease"
             else
-              echo "删除 release: $tag_name ($release_id)"
+              echo "清理 release: $tag_name ($release_id) draft=$draft prerelease=$prerelease"
               gh api -X DELETE "repos/$REPO/releases/$release_id" || true
             fi
+            deleted=$((deleted + 1))
           done
+
+          echo "计划/实际清理 $deleted 个 release。"
 
       - name: 清理 Git tags
         if: inputs.clean_tags == true
@@ -139,26 +277,35 @@ jobs:
           REPO: ${{ github.repository }}
           DRY_RUN: ${{ inputs.dry_run }}
           TAG_PATTERN: ${{ inputs.tag_pattern }}
+          MAX_DELETE: ${{ inputs.max_delete }}
         run: |
           set -euo pipefail
 
           echo "读取 tags..."
           mapfile -t tags < <(gh api --paginate "repos/$REPO/tags?per_page=100" --jq '.[].name')
 
-          echo "找到 ${#tags[@]} 个 tag。"
+          echo "读取到 ${#tags[@]} 个 tag。"
+          deleted=0
           for tag_name in "${tags[@]}"; do
             if [[ -n "$TAG_PATTERN" && "$tag_name" != "$TAG_PATTERN"* ]]; then
               echo "跳过 tag: $tag_name，不匹配 tag_pattern=$TAG_PATTERN"
               continue
             fi
+            if (( MAX_DELETE > 0 && deleted >= MAX_DELETE )); then
+              echo "达到 max_delete=$MAX_DELETE，停止清理。"
+              break
+            fi
 
             if [[ "$DRY_RUN" == "true" ]]; then
-              echo "[DRY-RUN] 将删除 tag: $tag_name"
+              echo "[DRY-RUN] 将清理 tag: $tag_name"
             else
-              echo "删除 tag: $tag_name"
+              echo "清理 tag: $tag_name"
               gh api -X DELETE "repos/$REPO/git/refs/tags/$tag_name" || true
             fi
+            deleted=$((deleted + 1))
           done
+
+          echo "计划/实际清理 $deleted 个 tag。"
 
       - name: 完成提示
         shell: bash
@@ -168,11 +315,23 @@ jobs:
 
           默认行为：
           - dry_run=true：只预览，不删除。
-          - clean_workflow_runs=true：默认清理 Actions 运行记录。
+          - clean_workflow_runs=false：默认不清理 Actions 运行记录。
           - clean_releases=false：默认不清理 Release。
           - clean_tags=false：默认不清理 tag。
+          - 不选择任何清理目标时，不会清理任何内容。
 
-          实际删除：
+          可选过滤：
+          - workflow_name：按 workflow 名称过滤运行记录。
+          - run_branch：按分支过滤运行记录。
+          - run_conclusion：按运行结果过滤。
+          - older_than_days：只清理 N 天前运行记录。
+          - keep_latest：保留匹配范围内最新 N 条运行记录。
+          - max_delete：限制最大清理数量。
+          - release_kind：按 draft / prerelease / stable 过滤 Release。
+          - tag_pattern：按 tag 前缀过滤 Release 或 tag。
+
+          实际清理：
+          - 先用 dry_run=true 预览。
           - 只清理 Actions 运行记录：dry_run=false，可不填写 confirm。
           - 清理 Release：dry_run=false、clean_releases=true 且 confirm=CLEAN。
           - 清理 tag：dry_run=false、clean_tags=true 且 confirm=CLEAN_TAGS。
