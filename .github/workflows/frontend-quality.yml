@@ -32,7 +32,7 @@ jobs:
         working-directory: soybean-admin
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
