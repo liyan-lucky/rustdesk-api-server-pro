@@ -1,11 +1,14 @@
 package admin
 
 import (
+	"encoding/json"
 	"rustdesk-api-server-pro/app/form/admin"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/core"
 	"rustdesk-api-server-pro/util"
+	"strconv"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -96,18 +99,21 @@ func (c *UsersController) HandleAdd() mvc.Result {
 	var form admin.UserForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_add", "", nil, sanitizeUserFormForAudit(form), "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
 
 	if form.Username == "" {
+		c.recordUserOperationAudit("admin_user_add", "", nil, sanitizeUserFormForAudit(form), "failure", "UsernameEmpty")
 		return c.Error(nil, "UsernameEmpty")
 	}
-	has, _ := c.Db.Where("username = ?", form.Username).Get(&model.User{})
-	if has {
+	if has, _ := c.Db.Where("username = ?", form.Username).Get(&model.User{}); has {
+		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "UserExists")
 		return c.Error(nil, "UserExists")
 	}
 
 	if form.Password == "" {
+		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "PasswordEmpty")
 		return c.Error(nil, "PasswordEmpty")
 	}
 
@@ -121,6 +127,7 @@ func (c *UsersController) HandleAdd() mvc.Result {
 
 	p, err := util.Password(form.Password)
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
 
@@ -139,6 +146,7 @@ func (c *UsersController) HandleAdd() mvc.Result {
 	// 要绑定2fa
 	if form.LoginVerify == model.LOGIN_TFA_CHECK {
 		if !totp.Validate(form.TwoFactorAuthCode, form.TwoFactorAuthSecret) {
+			c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "TFA_Validate_Err")
 			return c.Error(nil, "TFA_Validate_Err")
 		}
 		user.TwoFactorAuthSecret = form.TwoFactorAuthSecret
@@ -146,9 +154,12 @@ func (c *UsersController) HandleAdd() mvc.Result {
 
 	_, err = c.Db.Insert(user)
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
 
+	resourceID := strconv.Itoa(user.Id)
+	c.recordUserOperationAudit("admin_user_add", resourceID, nil, sanitizeUserForAudit(user), "success", "")
 	return c.Success(nil, "UserAddSuccess")
 }
 
@@ -156,10 +167,12 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	var form admin.UserForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_edit", "", nil, sanitizeUserFormForAudit(form), "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
 
 	if form.Id <= 0 {
+		c.recordUserOperationAudit("admin_user_edit", "", nil, sanitizeUserFormForAudit(form), "failure", "DataError")
 		return c.Error(nil, "DataError")
 	}
 
@@ -171,6 +184,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	if form.Password != "" {
 		p, err = util.Password(form.Password)
 		if err != nil {
+			c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), nil, sanitizeUserFormForAudit(form), "failure", err.Error())
 			return c.Error(nil, err.Error())
 		}
 	}
@@ -194,14 +208,21 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	}
 
 	var user model.User
-	_, err = c.Db.Where("id = ?", form.Id).Get(&user)
+	has, err := c.Db.Where("id = ?", form.Id).Get(&user)
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), nil, sanitizeUserFormForAudit(form), "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
+	if !has {
+		c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), nil, sanitizeUserFormForAudit(form), "failure", "UserNotExists")
+		return c.Error(nil, "UserNotExists")
+	}
+	beforeAudit := sanitizeUserForAudit(&user)
 
 	// 要绑定2fa
 	if form.LoginVerify == model.LOGIN_TFA_CHECK && form.TwoFactorAuthSecret != user.TwoFactorAuthSecret {
 		if !totp.Validate(form.TwoFactorAuthCode, form.TwoFactorAuthSecret) {
+			c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), beforeAudit, sanitizeUserFormForAudit(form), "failure", "TFA_Validate_Err")
 			return c.Error(nil, "TFA_Validate_Err")
 		}
 		newUser.TwoFactorAuthSecret = form.TwoFactorAuthSecret
@@ -209,9 +230,13 @@ func (c *UsersController) HandleEdit() mvc.Result {
 
 	_, err = c.Db.Where("id = ?", form.Id).MustCols("licensed_devices", "status", "is_admin").Update(newUser)
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), beforeAudit, sanitizeUserFormForAudit(form), "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
 
+	var updated model.User
+	_, _ = c.Db.Where("id = ?", form.Id).Get(&updated)
+	c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), beforeAudit, sanitizeUserForAudit(&updated), "success", "")
 	return c.Success(nil, "UserUpdateSuccess")
 }
 
@@ -222,13 +247,26 @@ func (c *UsersController) HandleDelete() mvc.Result {
 	var params deleteParams
 	err := c.Ctx.ReadJSON(&params)
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_delete", "", nil, iris.Map{"ids": params.Ids}, "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
 	ids := util.RemoveElement(params.Ids, 1)
+	beforeUsers := make([]model.User, 0)
+	if len(ids) > 0 {
+		_ = c.Db.In("id", ids).Find(&beforeUsers)
+	}
+	beforeAudit := make([]iris.Map, 0)
+	for _, u := range beforeUsers {
+		user := u
+		beforeAudit = append(beforeAudit, sanitizeUserForAudit(&user))
+	}
+
 	_, err = c.Db.In("id", ids).Delete(&model.User{})
 	if err != nil {
+		c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
+	c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "success", "")
 	return c.Success(nil, "UserDeleteSuccess")
 }
 
@@ -252,4 +290,80 @@ func (c *UsersController) HandleTOTP() mvc.Result {
 		"url": key.String(),
 		"key": key.Secret(),
 	}, "ok")
+}
+
+func (c *UsersController) recordUserOperationAudit(action string, resourceID string, beforeData interface{}, afterData interface{}, result string, errorMessage string) {
+	actor := c.GetUser()
+	cmd := core.OperationAuditCreateCommand{
+		Action:       action,
+		ResourceType: "user",
+		ResourceID:   resourceID,
+		BeforeData:   auditJSON(beforeData),
+		AfterData:    auditJSON(afterData),
+		IP:           c.Ctx.RemoteAddr(),
+		UserAgent:    c.Ctx.GetHeader("User-Agent"),
+		Result:       result,
+		ErrorMessage: errorMessage,
+	}
+	if actor != nil {
+		cmd.ActorUserID = actor.Id
+		cmd.ActorUsername = actor.Username
+	}
+	_ = c.auditService().CreateOperationAudit(cmd)
+}
+
+func sanitizeUserForAudit(user *model.User) iris.Map {
+	if user == nil {
+		return nil
+	}
+	return iris.Map{
+		"id":               user.Id,
+		"username":         user.Username,
+		"name":             user.Name,
+		"email":            user.Email,
+		"licensed_devices": user.LicensedDevices,
+		"note":             user.Note,
+		"login_verify":     user.LoginVerify,
+		"status":           user.Status,
+		"is_admin":         user.IsAdmin,
+		"has_2fa":          user.TwoFactorAuthSecret != "",
+	}
+}
+
+func sanitizeUserFormForAudit(form admin.UserForm) iris.Map {
+	return iris.Map{
+		"id":               form.Id,
+		"username":         form.Username,
+		"name":             form.Name,
+		"email":            form.Email,
+		"licensed_devices": form.LicensedDevices,
+		"note":             form.Note,
+		"login_verify":     form.LoginVerify,
+		"status":           form.Status,
+		"is_admin":         form.IsAdmin,
+		"password_changed":  form.Password != "",
+		"has_2fa_secret":   form.TwoFactorAuthSecret != "",
+	}
+}
+
+func auditJSON(value interface{}) string {
+	if value == nil {
+		return ""
+	}
+	data, err := json.Marshal(value)
+	if err != nil {
+		return ""
+	}
+	return string(data)
+}
+
+func auditIDsResource(ids []int) string {
+	if len(ids) == 0 {
+		return ""
+	}
+	data, err := json.Marshal(ids)
+	if err != nil {
+		return ""
+	}
+	return string(data)
 }
