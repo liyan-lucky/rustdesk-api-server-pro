@@ -40,6 +40,11 @@ if grep -n 'GetHeader("X-Forwarded-Host")\|GetHeader(\x27X-Forwarded-Host\x27)' 
   fail "OAuth/OIDC base URL must not read X-Forwarded-Host"
 fi
 grep -q 'oidc.redirectUrl or oauth.providers\[\].redirectUrl' backend/app/controller/admin/auth.go || fail "OAuth/OIDC redirectUrl operator guidance missing"
+if grep -n 'withQuery(redirectTo, "oidc_error", err.Error())\|withQuery(redirectTo, "oauth_error", err.Error())' backend/app/controller/admin/auth.go; then
+  fail "OAuth/OIDC redirect errors must not expose raw internal errors"
+fi
+grep -q 'withQuery(redirectTo, "oidc_error", "auth_failed")' backend/app/controller/admin/auth.go || fail "OIDC redirect error must use sanitized code"
+grep -q 'withQuery(redirectTo, "oauth_error", "auth_failed")' backend/app/controller/admin/auth.go || fail "OAuth redirect error must use sanitized code"
 
 # OIDC ID token fallback must verify signature and validate high-value claims before trusting payload data.
 grep -q 'verifyIDTokenSignature' backend/internal/service/oidc_auth_service.go || fail "OIDC ID token signature verification call missing"
