@@ -43,21 +43,25 @@ func (c *AddressBookController) PostAb() mvc.Result {
 	var abForm api.AbForm
 	err := c.readJSONBody(&abForm)
 	if err != nil {
+		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, nil, "failure", err.Error())
 		return c.fail(err)
 	}
 	var abData api.AbData
 	err = json.Unmarshal([]byte(abForm.Data), &abData)
 	if err != nil {
+		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, nil, "failure", err.Error())
 		return c.fail(err)
 	}
 	var tagColors map[string]int64
 	err = json.Unmarshal([]byte(abData.TagColors), &tagColors)
 	if err != nil {
+		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, sanitizeLegacyAddressBookForAudit(abData), "failure", err.Error())
 		return c.fail(err)
 	}
 
 	user := c.GetUser()
 	if user.LicensedDevices > 0 && len(abData.Peers) > user.LicensedDevices {
+		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, sanitizeLegacyAddressBookForAudit(abData), "failure", "Number of equipment in excess of licenses")
 		return c.failMsg("Number of equipment in excess of licenses")
 	}
 
@@ -84,11 +88,12 @@ func (c *AddressBookController) PostAb() mvc.Result {
 			Note:       peer.Note,
 		})
 	}
-	err = c.addressBookService().ReplaceLegacyAddressBookData(cmd)
-	if err != nil {
+	if err = c.addressBookService().ReplaceLegacyAddressBookData(cmd); err != nil {
+		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, sanitizeLegacyAddressBookForAudit(abData), "failure", err.Error())
 		return c.fail(err)
 	}
 
+	c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, sanitizeLegacyAddressBookForAudit(abData), "success", "")
 	return c.ok()
 }
 
@@ -128,5 +133,18 @@ func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 	}
 	return mvc.Response{
 		Object: httpdto.NewSharedAddressBookProfileListResponse(result),
+	}
+}
+
+func sanitizeLegacyAddressBookForAudit(data api.AbData) map[string]any {
+	peerIDs := make([]string, 0, len(data.Peers))
+	for _, peer := range data.Peers {
+		peerIDs = append(peerIDs, peer.Id)
+	}
+	return map[string]any{
+		"tag_count":  len(data.Tags),
+		"peer_count": len(data.Peers),
+		"tags":       data.Tags,
+		"peer_ids":   peerIDs,
 	}
 }
