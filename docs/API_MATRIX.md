@@ -52,7 +52,7 @@
 | 会话管理 | `/admin/sessions/*` | 基础 | 踢下线成功/失败已写 `operation_audit`；空会话 ID 列表会返回 `NoSessionIds` 并记录失败审计 |
 | 设备管理 | `/admin/devices/*` | 已有 | 当前只有列表查询，无写操作；后续如增加修改/删除再接 `operation_audit` |
 | 审计日志 | `/admin/audit/*` | 已有 | 增加高级筛选、导出、报警审计、兼容探测审计视图 |
-| 邮件模板 | `/admin/mail-template/*` | 已有 | 增加修改审计 |
+| 邮件模板 | `/admin/mail-template/*` | 基础 | 新增、修改已写 `operation_audit`；模板正文只记录长度和预览，避免审计日志过大 |
 | 邮件日志 | `/admin/mail-logs/*` | 已有 | 增加发送失败分析 |
 
 ## 4. License / plugin-sign 兼容接口
@@ -88,6 +88,8 @@
 | 后台修改用户 | 是 | `operation_audit` | P0 |
 | 后台删除用户 | 是 | `operation_audit` | P0 |
 | 后台踢下线会话 | 是 | `operation_audit` | P1 |
+| 后台新增邮件模板 | 是 | `operation_audit` | P1 |
+| 后台修改邮件模板 | 是 | `operation_audit` | P1 |
 | 修改设备 | 暂无写接口 | `operation_audit` | P1 |
 | 修改地址簿标签 | 是 | `operation_audit` | P1 |
 | 修改地址簿设备 | 是 | `operation_audit` | P1 |
