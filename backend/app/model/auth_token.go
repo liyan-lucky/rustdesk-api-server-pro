@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"rustdesk-api-server-pro/util"
+	"time"
+)
 
 type AuthToken struct {
 	Id         int       `xorm:"'id' int notnull pk autoincr"`
@@ -21,4 +24,22 @@ type AuthToken struct {
 
 func (m *AuthToken) TableName() string {
 	return "auth_token"
+}
+
+func (m *AuthToken) BeforeInsert() {
+	m.normalizeTokenHash()
+}
+
+func (m *AuthToken) BeforeUpdate() {
+	m.normalizeTokenHash()
+}
+
+func (m *AuthToken) normalizeTokenHash() {
+	if m == nil || m.Token == "" {
+		return
+	}
+	if m.TokenHash == "" {
+		m.TokenHash = util.Sha256Hex(m.Token)
+	}
+	m.Token = ""
 }
