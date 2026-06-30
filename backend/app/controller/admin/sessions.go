@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/core"
 	"rustdesk-api-server-pro/util"
 
 	"github.com/kataras/iris/v12"
@@ -77,14 +78,65 @@ func (c *SessionsController) HandleKill() mvc.Result {
 	var params killParams
 	err := c.Ctx.ReadJSON(&params)
 	if err != nil {
+		c.recordSessionOperationAudit("admin_session_kill", "", nil, iris.Map{"ids": params.Ids}, "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
 	ids := util.RemoveElement(params.Ids, 1)
+	if len(ids) == 0 {
+		c.recordSessionOperationAudit("admin_session_kill", "", nil, iris.Map{"ids": params.Ids}, "failure", "NoSessionIds")
+		return c.Error(nil, "NoSessionIds")
+	}
+
+	beforeSessions := make([]model.AuthToken, 0)
+	_ = c.Db.In("id", ids).Find(&beforeSessions)
+	beforeAudit := make([]iris.Map, 0)
+	for _, s := range beforeSessions {
+		session := s
+		beforeAudit = append(beforeAudit, sanitizeSessionForAudit(&session))
+	}
+
 	_, err = c.Db.In("id", ids).Cols("status").Update(&model.AuthToken{
 		Status: 0,
 	})
 	if err != nil {
+		c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids, "status": 0}, "failure", err.Error())
 		return c.Error(nil, err.Error())
 	}
+
+	c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids, "status": 0}, "success", "")
 	return c.Success(nil, "SessionKillSuccess")
+}
+
+func (c *SessionsController) recordSessionOperationAudit(action string, resourceID string, beforeData interface{}, afterData interface{}, result string, errorMessage string) {
+	actor := c.GetUser()
+	cmd := core.OperationAuditCreateCommand{
+		Action:       action,
+		ResourceType: "session",
+		ResourceID:   resourceID,
+		BeforeData:   auditJSON(beforeData),
+		AfterData:    auditJSON(afterData),
+		IP:           c.Ctx.RemoteAddr(),
+		UserAgent:    c.Ctx.GetHeader("User-Agent"),
+		Result:       result,
+		ErrorMessage: errorMessage,
+	}
+	if actor != nil {
+		cmd.ActorUserID = actor.Id
+		cmd.ActorUsername = actor.Username
+	}
+	_ = c.auditService().CreateOperationAudit(cmd)
+}
+
+func sanitizeSessionForAudit(session *model.AuthToken) iris.Map {
+	if session == nil {
+		return nil
+	}
+	return iris.Map{
+		"id":          session.Id,
+		"user_id":     session.UserId,
+		"rustdesk_id": session.RustdeskId,
+		"is_admin":    session.IsAdmin,
+		"status":      session.Status,
+		"expired":     session.Expired.Format(config.TimeFormat),
+	}
 }
