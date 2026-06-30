@@ -35,17 +35,20 @@ grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' backend/config/config.go || fail 
 grep -q 'generated_sign_key=' docker/start.sh || fail "Docker first-run signKey generation missing"
 grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' docker/start.sh || fail "Docker placeholder signKey detection missing"
 
-# 404 handling must not dump request headers or body to logs.
-if grep -n 'GetBody()\|Request().Header\|fmt.Println' backend/app/main.go; then
-  fail "404 handler must not log raw request headers or body"
+# 404 handling must not dump request headers, body, or query strings to logs.
+if grep -n 'GetBody()\|Request().Header\|fmt.Println\|RequestURI' backend/app/main.go; then
+  fail "404 handler must not log raw request headers, body, or query strings"
 fi
-grep -q 'Logger().Infof("(404)' backend/app/main.go || fail "404 handler should keep sanitized method/URI logging"
+grep -q 'Logger().Infof("(404)' backend/app/main.go || fail "404 handler should keep sanitized method/path logging"
+grep -q 'Request().URL.Path' backend/app/main.go || fail "404 handler must log URL.Path instead of RequestURI"
 
-# Request logger must not dump raw request headers or body, even in debug mode.
-if grep -n 'GetBody()\|Request().Header\|fmt.Println' backend/app/middleware/request_logger.go; then
-  fail "request logger must not log raw request headers or body"
+# Request logger must not dump raw request headers, body, or query strings, even in debug mode.
+if grep -n 'GetBody()\|Request().Header\|fmt.Println\|RequestURI' backend/app/middleware/request_logger.go; then
+  fail "request logger must not log raw request headers, body, or query strings"
 fi
-grep -q 'Logger().Infof("▶ %s:%s"' backend/app/middleware/request_logger.go || fail "request logger should keep sanitized method/URI logging"
+grep -q 'Logger().Infof("▶ %s:%s"' backend/app/middleware/request_logger.go || fail "request logger should keep sanitized method/path logging"
+grep -q 'Request().URL.Path' backend/app/middleware/request_logger.go || fail "request logger must log URL.Path instead of RequestURI"
+grep -q 'RequestLogger(cfg.DebugMode)' backend/app/main.go || fail "request logger must use startup config instead of reloading config per request"
 
 # OAuth/OIDC callback URL generation must not read X-Forwarded-Host from request headers.
 if grep -n 'GetHeader("X-Forwarded-Host")\|GetHeader(\x27X-Forwarded-Host\x27)' backend/app/controller/admin/auth.go; then
