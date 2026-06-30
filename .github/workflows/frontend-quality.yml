@@ -4,14 +4,8 @@ run-name: 前端质量检查（${{ github.ref_name }}）
 on:
   push:
     branches: ["master", "main", "develop"]
-    paths:
-      - "soybean-admin/**"
-      - ".github/workflows/frontend-quality.yml"
   pull_request:
     branches: ["master", "main", "develop"]
-    paths:
-      - "soybean-admin/**"
-      - ".github/workflows/frontend-quality.yml"
   schedule:
     - cron: "0 3 * * 1"
   workflow_dispatch:

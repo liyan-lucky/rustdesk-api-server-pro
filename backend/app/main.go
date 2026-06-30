@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"rustdesk-api-server-pro/app/middleware"
 	"rustdesk-api-server-pro/config"
@@ -43,6 +44,9 @@ func newApp(cfg *config.ServerConfig) (*iris.Application, error) {
 
 func StartServer() (bool, error) {
 	cfg := config.GetServerConfig()
+	if config.IsUnsafeSignKey(cfg.SignKey) {
+		return false, errors.New("unsafe signKey: set a unique random signKey with at least 32 characters before starting the server")
+	}
 
 	StartJobs(cfg)
 

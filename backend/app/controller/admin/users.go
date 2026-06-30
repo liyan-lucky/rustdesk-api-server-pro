@@ -81,7 +81,7 @@ func (c *UsersController) HandleList() mvc.Result {
 			"licensed_devices": u.LicensedDevices,
 			"note":             u.Note,
 			"login_verify":     u.LoginVerify,
-			"tfa_secret":       u.TwoFactorAuthSecret,
+			"has_2fa":          u.TwoFactorAuthSecret != "",
 			"status":           u.Status,
 			"is_admin":         u.IsAdmin,
 			"created_at":       u.CreatedAt.Format(config.TimeFormat),
@@ -343,7 +343,7 @@ func sanitizeUserFormForAudit(form admin.UserForm) iris.Map {
 		"login_verify":     form.LoginVerify,
 		"status":           form.Status,
 		"is_admin":         form.IsAdmin,
-		"password_changed":  form.Password != "",
+		"password_changed": form.Password != "",
 		"has_2fa_secret":   form.TwoFactorAuthSecret != "",
 	}
 }

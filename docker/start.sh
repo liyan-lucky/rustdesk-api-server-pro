@@ -19,7 +19,7 @@ cd /app/data
 #fi
 
 if [ ! -f /app/data/.init.lock ] && [ -n "$ADMIN_USER" ] && [ -n "$ADMIN_PASS" ]; then
-    /app/rustdesk-api-server-pro user add $ADMIN_USER $ADMIN_PASS --admin
+    /app/rustdesk-api-server-pro user add "$ADMIN_USER" "$ADMIN_PASS" --admin
     touch /app/data/.init.lock
 fi
 

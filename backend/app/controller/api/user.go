@@ -8,6 +8,7 @@ import (
 	"rustdesk-api-server-pro/internal/core"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"rustdesk-api-server-pro/internal/transport/httpdto"
+	"rustdesk-api-server-pro/util"
 
 	"github.com/kataras/iris/v12/mvc"
 )
@@ -81,12 +82,21 @@ func (c *UserController) HandleLogout() mvc.Result {
 	} else {
 		token := c.GetToken()
 		if token != "" {
-			_, err := c.Db.Where("token = ?", token).Cols("expired", "status").Update(&model.AuthToken{
+			_, err := c.Db.Where("token_hash = ?", util.Sha256Hex(token)).Cols("expired", "status").Update(&model.AuthToken{
 				Expired: time.Now().Add(-time.Second),
 				Status:  0,
 			})
 			if err != nil {
-				c.recordUserSecurityAudit(user, "api_logout", false, "logout_by_token: "+err.Error())
+				c.recordUserSecurityAudit(user, "api_logout", false, "logout_by_token_hash: "+err.Error())
+				return c.fail(err)
+			}
+			// Backward compatibility for sessions issued before token_hash existed.
+			_, err = c.Db.Where("token = ?", token).Cols("expired", "status").Update(&model.AuthToken{
+				Expired: time.Now().Add(-time.Second),
+				Status:  0,
+			})
+			if err != nil {
+				c.recordUserSecurityAudit(user, "api_logout", false, "logout_by_legacy_token: "+err.Error())
 				return c.fail(err)
 			}
 		}

@@ -166,7 +166,7 @@ func (service *UserService) GetLoginToken(loginForm api.LoginForm, userId int) s
 		DeviceOs:   loginForm.DeviceInfo.OS,
 		DeviceType: loginForm.DeviceInfo.Type,
 		DeviceName: loginForm.DeviceInfo.Name,
-		Token:      token,
+		TokenHash:  util.Sha256Hex(token),
 		Expired:    time.Now().Add(expired),
 		IsAdmin:    false,
 		Status:     1,

@@ -69,11 +69,11 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 	expired := 2 * time.Hour // 2 hours
 
 	authToken := &model.AuthToken{
-		UserId:  user.Id,
-		Token:   token,
-		Expired: time.Now().Add(expired),
-		IsAdmin: true,
-		Status:  1,
+		UserId:    user.Id,
+		TokenHash: util.Sha256Hex(token),
+		Expired:   time.Now().Add(expired),
+		IsAdmin:   true,
+		Status:    1,
 	}
 
 	_, err = c.Db.Insert(authToken)

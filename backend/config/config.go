@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"rustdesk-api-server-pro/util"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -165,7 +166,21 @@ func GetServerConfig() *ServerConfig {
 
 func WriteServerConfig(cfg *ServerConfig) {
 	bytes, _ := yaml.Marshal(cfg)
-	_ = os.WriteFile(yamlFile, bytes, 0755)
+	_ = os.WriteFile(yamlFile, bytes, 0600)
+}
+
+func IsUnsafeSignKey(signKey string) bool {
+	key := strings.TrimSpace(signKey)
+	if len(key) < 32 {
+		return true
+	}
+	unsafeKeys := map[string]struct{}{
+		"sercrethatmaycontainch@r$32chars":     {},
+		"CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET": {},
+		"please-change-this-sign-key":          {},
+	}
+	_, unsafe := unsafeKeys[key]
+	return unsafe
 }
 
 func (cfg *ServerConfig) OAuthProviders() []OAuthProviderConfig {

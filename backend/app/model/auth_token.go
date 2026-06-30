@@ -11,6 +11,7 @@ type AuthToken struct {
 	DeviceType string    `xorm:"'device_type' varchar(50)"`
 	DeviceName string    `xorm:"'device_name' varchar(255)"`
 	Token      string    `xorm:"'token' varchar(255)"`
+	TokenHash  string    `xorm:"'token_hash' varchar(64) index"`
 	Expired    time.Time `xorm:"'expired' datetime"`
 	IsAdmin    bool      `xorm:"'is_admin' tinyint"`
 	Status     int       `xorm:"'status' tinyint"`

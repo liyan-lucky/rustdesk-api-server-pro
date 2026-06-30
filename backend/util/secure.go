@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/pem"
 	"math/big"
 
@@ -62,6 +63,11 @@ func HmacSha256(data, key string) string {
 	mac.Write([]byte(data))
 	b := mac.Sum(nil)
 	return base64.URLEncoding.EncodeToString(b)
+}
+
+func Sha256Hex(data string) string {
+	sum := sha256.Sum256([]byte(data))
+	return hex.EncodeToString(sum[:])
 }
 
 func GetUUID() string {

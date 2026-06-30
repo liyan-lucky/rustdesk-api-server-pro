@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -24,6 +25,7 @@ const CompatTargetStatus = "compatibility-layer"
 // Keep this value aligned with the validated upstream RustDesk versions.
 const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-1.4.8-server-1.1.15-latest"
 const compatRecordDir = "record_uploads"
+const maxCompatRecordSize int64 = 512 * 1024 * 1024
 
 type CompatService struct {
 	repo repository.CompatRepository
@@ -168,7 +170,7 @@ func (s *CompatService) HandleRecord(cmd core.CompatRecordCommand) error {
 
 	switch op {
 	case "new":
-		f, err := os.OpenFile(fullPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+		f, err := os.OpenFile(fullPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
 		if err != nil {
 			return err
 		}
@@ -177,7 +179,10 @@ func (s *CompatService) HandleRecord(cmd core.CompatRecordCommand) error {
 		if cmd.Offset < 0 {
 			return errors.New("invalid offset")
 		}
-		f, err := os.OpenFile(fullPath, os.O_CREATE|os.O_WRONLY, 0644)
+		if err = ensureRecordWriteWithinLimit(cmd.Offset, int64(len(cmd.Body))); err != nil {
+			return err
+		}
+		f, err := os.OpenFile(fullPath, os.O_CREATE|os.O_WRONLY, 0600)
 		if err != nil {
 			return err
 		}
@@ -188,7 +193,14 @@ func (s *CompatService) HandleRecord(cmd core.CompatRecordCommand) error {
 		_, err = io.Copy(f, bytes.NewReader(cmd.Body))
 		return err
 	case "tail":
-		f, err := os.OpenFile(fullPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		size, err := currentFileSize(fullPath)
+		if err != nil {
+			return err
+		}
+		if err = ensureRecordWriteWithinLimit(size, int64(len(cmd.Body))); err != nil {
+			return err
+		}
+		f, err := os.OpenFile(fullPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 		if err != nil {
 			return err
 		}
@@ -228,8 +240,29 @@ func sanitizeRecordFileName(name string) string {
 
 func prepareRecordPath(fileName string) (string, error) {
 	dir := filepath.Join(".", compatRecordDir)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0700); err != nil {
 		return "", err
 	}
 	return filepath.Join(dir, fileName), nil
+}
+
+func ensureRecordWriteWithinLimit(offset, bodySize int64) error {
+	if bodySize < 0 || offset < 0 {
+		return errors.New("invalid record write size")
+	}
+	if offset+bodySize > maxCompatRecordSize {
+		return fmt.Errorf("record file exceeds max size %d bytes", maxCompatRecordSize)
+	}
+	return nil
+}
+
+func currentFileSize(path string) (int64, error) {
+	stat, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		return 0, err
+	}
+	return stat.Size(), nil
 }
