@@ -41,7 +41,7 @@ export function setupUnocss(viteEnv: Env.ImportMeta) {
           uil
         },
         warn: false
-      })
+      }) as any
     ]
   });
 }
