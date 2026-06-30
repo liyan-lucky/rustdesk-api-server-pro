@@ -58,6 +58,15 @@ grep -q 'GetLatestRelease(repo string) (\*Release, error)' backend/helper/github
 grep -q 'GetReleaseByTag(repo, tag string) (\*Release, error)' backend/helper/github/github.go || fail "github release by tag helper should return an error"
 grep -q 'GetReleases(repo string) (\*\[\]Release, error)' backend/helper/github/github.go || fail "github releases helper should return an error"
 
+# Zip extraction must not allow ZipSlip path traversal or unsafe permission defaults.
+grep -q 'safeZipDestination' backend/util/file.go || fail "zip extraction path validation missing"
+grep -q 'filepath.IsAbs(name)' backend/util/file.go || fail "zip extraction must reject absolute paths"
+grep -q 'strings.HasPrefix(target, cleanDst+string(os.PathSeparator))' backend/util/file.go || fail "zip extraction must enforce destination prefix"
+grep -q 'os.ModeSymlink' backend/util/file.go || fail "zip extraction must reject symlinks"
+if grep -n 'MkdirAll(.*os.ModePerm' backend/util/file.go; then
+  fail "zip extraction must not create world-writable directories"
+fi
+
 # OAuth/OIDC callback URL generation must not read X-Forwarded-Host from request headers.
 if grep -n 'GetHeader("X-Forwarded-Host")\|GetHeader(\x27X-Forwarded-Host\x27)' backend/app/controller/admin/auth.go; then
   fail "OAuth/OIDC base URL must not read X-Forwarded-Host"
