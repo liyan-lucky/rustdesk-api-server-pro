@@ -53,21 +53,7 @@ jobs:
         run: pnpm add -D typescript@6.0.3 --ignore-scripts
 
       - name: TypeScript 类型检查
-        id: typecheck
-        continue-on-error: true
-        run: pnpm typecheck > typecheck.log
-
-      - name: 上传 TypeScript 诊断日志
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-typecheck-log
-          path: soybean-admin/typecheck.log
-          if-no-files-found: warn
-
-      - name: 确认 TypeScript 类型检查结果
-        if: steps.typecheck.outcome != 'success'
-        run: exit 1
+        run: pnpm typecheck
 
       - name: i18n 质量检查（严格）
         run: pnpm i18n:check:strict
