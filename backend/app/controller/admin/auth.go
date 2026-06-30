@@ -194,17 +194,20 @@ func (c *AuthController) HandleOauthCallback() mvc.Result {
 }
 
 func (c *AuthController) currentBaseURL() string {
-	scheme := strings.TrimSpace(c.Ctx.GetHeader("X-Forwarded-Proto"))
-	if scheme == "" {
-		if c.Ctx.Request().TLS != nil {
-			scheme = "https"
-		} else {
-			scheme = "http"
-		}
+	scheme := "http"
+	if c.Ctx.Request().TLS != nil {
+		scheme = "https"
 	}
-	host := strings.TrimSpace(c.Ctx.GetHeader("X-Forwarded-Host"))
+	if forwardedProto := strings.TrimSpace(c.Ctx.GetHeader("X-Forwarded-Proto")); forwardedProto == "https" {
+		scheme = "https"
+	}
+
+	// Do not trust X-Forwarded-Host here. OAuth/OIDC callback URLs must not be
+	// derived from attacker-controlled forwarding headers. Operators that need a
+	// public reverse-proxy URL should set oidc.redirectUrl or oauth.providers[].redirectUrl.
+	host := strings.TrimSpace(c.Ctx.Host())
 	if host == "" {
-		host = c.Ctx.Host()
+		host = strings.TrimSpace(c.Ctx.Request().Host)
 	}
 	return scheme + "://" + host
 }
