@@ -37,6 +37,7 @@ type oauthMetadata struct {
 	AuthorizationEndpoint string `json:"authorization_endpoint"`
 	TokenEndpoint         string `json:"token_endpoint"`
 	UserinfoEndpoint      string `json:"userinfo_endpoint"`
+	JWKSURI               string `json:"jwks_uri"`
 }
 
 type oauthTokenResponse struct {
@@ -287,6 +288,7 @@ func (s *OAuthProviderService) getMetadata(provider config.OAuthProviderConfig) 
 			AuthorizationEndpoint: provider.AuthorizationEndpoint,
 			TokenEndpoint:         provider.TokenEndpoint,
 			UserinfoEndpoint:      provider.UserinfoEndpoint,
+			JWKSURI:               provider.JWKSURI,
 		}, nil
 	}
 
@@ -375,6 +377,13 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 	}
 
 	claims := map[string]interface{}{}
+	idTokenClaims := map[string]interface{}{}
+	if tokenResp.IDToken != "" {
+		if err = s.verifyOAuthIDToken(provider, metadata, tokenResp.IDToken, idTokenClaims); err != nil {
+			return nil, err
+		}
+	}
+
 	if metadata.UserinfoEndpoint != "" && tokenResp.AccessToken != "" {
 		if err = s.fillClaimsByUserinfo(metadata.UserinfoEndpoint, tokenResp.AccessToken, claims); err != nil {
 			return nil, err
@@ -385,9 +394,15 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 			return nil, err
 		}
 	}
-	if len(claims) == 0 && tokenResp.IDToken != "" {
-		if err = fillClaimsByOAuthIDToken(tokenResp.IDToken, claims); err != nil {
-			return nil, err
+	if len(claims) == 0 && len(idTokenClaims) > 0 {
+		claims = idTokenClaims
+	}
+	if len(claims) > 0 && len(idTokenClaims) > 0 {
+		subjectClaim := defaultIfEmpty(provider.SubjectClaim, "sub")
+		userinfoSubject := strings.TrimSpace(anyToOAuthString(claims[subjectClaim]))
+		idTokenSubject := strings.TrimSpace(anyToOAuthString(idTokenClaims[subjectClaim]))
+		if userinfoSubject != "" && idTokenSubject != "" && userinfoSubject != idTokenSubject {
+			return nil, errors.New("oauth userinfo subject mismatch")
 		}
 	}
 
@@ -405,6 +420,21 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 		return nil, errors.New("email domain not allowed")
 	}
 	return userClaims, nil
+}
+
+func (s *OAuthProviderService) verifyOAuthIDToken(provider config.OAuthProviderConfig, metadata *oauthMetadata, idToken string, claims map[string]interface{}) error {
+	expectedIssuer := strings.TrimRight(strings.TrimSpace(provider.Issuer), "/")
+	if expectedIssuer == "" {
+		return errors.New("oauth issuer required for id token")
+	}
+	if metadata == nil || strings.TrimSpace(metadata.JWKSURI) == "" {
+		return errors.New("oauth jwks_uri missing for id token")
+	}
+	oidcVerifier := &OIDCAuthService{httpClient: s.httpClient}
+	if err := oidcVerifier.verifyIDTokenSignature(idToken, &oidcMetadata{JWKSURI: metadata.JWKSURI}); err != nil {
+		return err
+	}
+	return fillClaimsByOAuthIDToken(idToken, expectedIssuer, provider.ClientID, claims)
 }
 
 func (s *OAuthProviderService) fillClaimsByUserinfo(userinfoEndpoint, accessToken string, claims map[string]interface{}) error {
@@ -470,16 +500,19 @@ func (s *OAuthProviderService) fillGithubEmail(accessToken string, claims map[st
 	return nil
 }
 
-func fillClaimsByOAuthIDToken(idToken string, claims map[string]interface{}) error {
+func fillClaimsByOAuthIDToken(idToken, expectedIssuer, expectedAudience string, claims map[string]interface{}) error {
 	parts := strings.Split(idToken, ".")
-	if len(parts) < 2 {
+	if len(parts) != 3 {
 		return errors.New("invalid id token")
 	}
 	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(payload, &claims)
+	if err = json.Unmarshal(payload, &claims); err != nil {
+		return err
+	}
+	return validateIDTokenClaims(claims, expectedIssuer, expectedAudience)
 }
 
 func (s *OAuthProviderService) resolveAdminUser(provider config.OAuthProviderConfig, claims *OAuthUserClaims) (*model.User, error) {
