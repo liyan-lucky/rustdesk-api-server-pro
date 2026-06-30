@@ -35,6 +35,12 @@ if grep -n 'X-Forwarded-Host' backend/app/controller/admin/auth.go; then
 fi
 grep -q 'oidc.redirectUrl or oauth.providers\[\].redirectUrl' backend/app/controller/admin/auth.go || fail "OAuth/OIDC redirectUrl operator guidance missing"
 
+# OIDC ID token fallback must validate high-value claims before trusting payload data.
+grep -q 'validateIDTokenClaims' backend/internal/service/oidc_auth_service.go || fail "OIDC ID token claim validation missing"
+grep -q 'id token issuer invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC issuer validation missing"
+grep -q 'id token audience invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC audience validation missing"
+grep -q 'id token expired' backend/internal/service/oidc_auth_service.go || fail "OIDC expiry validation missing"
+
 # Recording uploads must have a hard size limit and private directory permissions.
 grep -q 'maxCompatRecordSize' backend/internal/service/compat_service.go || fail "record upload size limit missing"
 grep -q 'os.MkdirAll(dir, 0700)' backend/internal/service/compat_service.go || fail "record upload directory permission must be 0700"
