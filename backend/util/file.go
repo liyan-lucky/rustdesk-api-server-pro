@@ -2,21 +2,18 @@ package util
 
 import (
 	"archive/zip"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 func FileExists(filePath string) bool {
-	_, err := os.Open(filePath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
-	return true
+	_, err := os.Stat(filePath)
+	return err == nil
 }
 
 func Unzip(file, dst string) error {
@@ -26,46 +23,95 @@ func Unzip(file, dst string) error {
 	}
 	defer zipFile.Close()
 
-	if !FileExists(dst) {
-		err := os.MkdirAll(dst, os.ModePerm)
-		if err != nil {
+	cleanDst, err := filepath.Abs(filepath.Clean(dst))
+	if err != nil {
+		return err
+	}
+
+	if !FileExists(cleanDst) {
+		if err := os.MkdirAll(cleanDst, 0755); err != nil {
 			return err
 		}
 	}
 
 	for _, f := range zipFile.File {
-		dstPath := filepath.Join(dst, f.Name)
+		dstPath, err := safeZipDestination(cleanDst, f.Name)
+		if err != nil {
+			return err
+		}
+		if f.FileInfo().Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("zip entry %q is a symlink", f.Name)
+		}
+
 		if f.FileInfo().IsDir() {
-			err := os.MkdirAll(dstPath, f.Mode())
-			if err != nil {
+			if err := os.MkdirAll(dstPath, safeDirMode(f.Mode())); err != nil {
 				return err
 			}
 			fmt.Println("unzipped", dstPath)
 			continue
 		}
-		if err := os.MkdirAll(filepath.Dir(dstPath), os.ModePerm); err != nil {
+		if err := os.MkdirAll(filepath.Dir(dstPath), 0755); err != nil {
 			return err
 		}
 
-		dstFile, err := os.OpenFile(dstPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, f.Mode())
+		dstFile, err := os.OpenFile(dstPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, safeFileMode(f.Mode()))
 		if err != nil {
 			return err
 		}
 		fileInArchive, err := f.Open()
 		if err != nil {
+			dstFile.Close()
 			return err
 		}
 
-		if _, err := io.Copy(dstFile, fileInArchive); err != nil {
-			return err
+		_, copyErr := io.Copy(dstFile, fileInArchive)
+		closeArchiveErr := fileInArchive.Close()
+		closeDstErr := dstFile.Close()
+		if copyErr != nil {
+			return copyErr
 		}
-
-		dstFile.Close()
-		fileInArchive.Close()
+		if closeArchiveErr != nil {
+			return closeArchiveErr
+		}
+		if closeDstErr != nil {
+			return closeDstErr
+		}
 
 		fmt.Println("unzipped", dstPath)
 	}
 	return nil
+}
+
+func safeZipDestination(dst, name string) (string, error) {
+	if strings.TrimSpace(name) == "" {
+		return "", errors.New("empty zip entry name")
+	}
+	if filepath.IsAbs(name) {
+		return "", fmt.Errorf("zip entry %q uses absolute path", name)
+	}
+
+	cleanDst := filepath.Clean(dst)
+	target := filepath.Clean(filepath.Join(cleanDst, name))
+	if target != cleanDst && !strings.HasPrefix(target, cleanDst+string(os.PathSeparator)) {
+		return "", fmt.Errorf("zip entry %q escapes destination", name)
+	}
+	return target, nil
+}
+
+func safeDirMode(mode os.FileMode) os.FileMode {
+	perm := mode.Perm()
+	if perm == 0 {
+		return 0755
+	}
+	return perm
+}
+
+func safeFileMode(mode os.FileMode) os.FileMode {
+	perm := mode.Perm()
+	if perm == 0 {
+		return 0644
+	}
+	return perm
 }
 
 func MoveFiles(src, dst string) error {
