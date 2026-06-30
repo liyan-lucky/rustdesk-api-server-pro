@@ -1,5 +1,5 @@
-signKey: "sercrethatmaycontainch@r$32chars" # this is the token signing key. change this before start server
-debugMode: false # debug mode (recommended false in production)
+signKey: "CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET" # token signing key; change before production use
+_debugMode: false # debug mode (recommended false in production)
 db:
   driver: "sqlite"
   dsn: "./server.db"
@@ -16,10 +16,10 @@ httpConfig:
 smtpConfig:
   host: "127.0.0.1"
   port: 1025
-  username: "test"
-  password: "test"
+  username: ""
+  password: ""
   encryption: "none" # none ssl/tls starttls
-  from: "test@localhost.com"
+  from: "noreply@example.com"
 
 jobsConfig:
   deviceCheckJob:
