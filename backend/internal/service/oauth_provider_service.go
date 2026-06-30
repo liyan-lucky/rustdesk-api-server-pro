@@ -93,11 +93,11 @@ var globalOAuthRuntimeStore = &oauthRuntimeStore{
 
 func NewOAuthProviderService(cfg *config.ServerConfig, db *xorm.Engine) *OAuthProviderService {
 	transport := &http.Transport{
-		Proxy:               http.ProxyFromEnvironment,
-		ForceAttemptHTTP2:   false,
-		MaxIdleConns:        20,
-		IdleConnTimeout:     30 * time.Second,
-		TLSHandshakeTimeout: 10 * time.Second,
+		Proxy:                 http.ProxyFromEnvironment,
+		ForceAttemptHTTP2:     false,
+		MaxIdleConns:          20,
+		IdleConnTimeout:       30 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
 		DialContext: (&net.Dialer{
 			Timeout:   10 * time.Second,
@@ -608,11 +608,11 @@ func (s *OAuthProviderService) issueAdminToken(user *model.User) (string, error)
 	signStr := fmt.Sprintf("%d_%s_%s", user.Id, user.Username, time.Now().String())
 	token := util.HmacSha256(signStr, s.cfg.SignKey)
 	authToken := &model.AuthToken{
-		UserId:  user.Id,
-		Token:   token,
-		Expired: time.Now().Add(2 * time.Hour),
-		IsAdmin: true,
-		Status:  1,
+		UserId:    user.Id,
+		TokenHash: util.Sha256Hex(token),
+		Expired:   time.Now().Add(2 * time.Hour),
+		IsAdmin:   true,
+		Status:    1,
 	}
 	_, err := s.db.Insert(authToken)
 	if err != nil {
@@ -812,7 +812,7 @@ func (s *OAuthProviderService) parseSignedState(state string) (oauthStateEntry, 
 	if err != nil {
 		return oauthStateEntry{}, err
 	}
-	if string(rawSignature) != expectedSignature {
+	if !util.ConstantTimeStringEqual(string(rawSignature), expectedSignature) {
 		return oauthStateEntry{}, errors.New("state signature mismatch")
 	}
 
@@ -867,15 +867,14 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 			provider.DisplayName = "OIDC"
 		}
 	}
-	switch provider.Type {
-	case "google":
+	if provider.Type == "google" {
 		if provider.Issuer == "" {
 			provider.Issuer = "https://accounts.google.com"
 		}
 		if len(provider.Scopes) == 0 {
 			provider.Scopes = []string{"openid", "profile", "email"}
 		}
-	case "github":
+	} else if provider.Type == "github" {
 		if provider.AuthorizationEndpoint == "" {
 			provider.AuthorizationEndpoint = "https://github.com/login/oauth/authorize"
 		}
@@ -900,7 +899,7 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		if provider.PictureClaim == "" {
 			provider.PictureClaim = "avatar_url"
 		}
-	default:
+	} else {
 		if len(provider.Scopes) == 0 {
 			provider.Scopes = []string{"openid", "profile", "email"}
 		}
