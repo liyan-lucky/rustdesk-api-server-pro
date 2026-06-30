@@ -1,5 +1,5 @@
 signKey: "CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET" # token signing key; change before production use
-_debugMode: false # debug mode (recommended false in production)
+debugMode: false # debug mode (recommended false in production)
 db:
   driver: "sqlite"
   dsn: "./server.db"
