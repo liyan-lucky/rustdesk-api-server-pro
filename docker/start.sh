@@ -22,10 +22,12 @@ cd /app/data
 # reusing a public example secret.
 if [ -f /app/data/server.yaml ]; then
     current_sign_key="$(grep -E '^signKey:' /app/data/server.yaml | head -n1 | sed 's/^signKey:[[:space:]]*//' | tr -d '"' || true)"
-    if [ -z "$current_sign_key" ] || [ "$current_sign_key" = "CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET" ] || [ "$current_sign_key" = "sercrethatmaycontainch@r$32chars" ]; then
-        generated_sign_key="$(head -c 32 /dev/urandom | base64 | tr -d '=+/\n' | cut -c1-48)"
-        sed -i "s|^signKey:.*|signKey: \"$generated_sign_key\"|" /app/data/server.yaml
-    fi
+    case "$current_sign_key" in
+        ""|"CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET"|'sercrethatmaycontainch@r$32chars')
+            generated_sign_key="$(head -c 48 /dev/urandom | base64 | tr -d '=+/\n' | cut -c1-48)"
+            sed -i "s|^signKey:.*|signKey: \"$generated_sign_key\"|" /app/data/server.yaml
+            ;;
+    esac
 fi
 
 #if [ ! -f /app/server.db ]; then # This is not good if one wants to upgrade instance
