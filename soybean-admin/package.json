@@ -72,7 +72,7 @@
     "@sa/hooks": "workspace:*",
     "@sa/materials": "workspace:*",
     "@sa/utils": "workspace:*",
-    "@vueuse/core": "10.11.1",
+    "@vueuse/core": "12.8.2",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "clipboard": "2.0.11",
