@@ -101,7 +101,7 @@
     "@sa/scripts": "workspace:*",
     "@sa/uno-preset": "workspace:*",
     "@soybeanjs/eslint-config": "1.4.0",
-    "@types/node": "22.2.0",
+    "@types/node": "26.0.1",
     "@types/nprogress": "0.2.3",
     "@types/qrcode": "^1.5.6",
     "@unocss/core": "0.62.1",
