@@ -8,6 +8,7 @@ import (
 	"rustdesk-api-server-pro/util"
 
 	"github.com/spf13/cobra"
+	"xorm.io/xorm"
 )
 
 var dbSyncCmd = &cobra.Command{
@@ -58,7 +59,7 @@ var dbSyncCmd = &cobra.Command{
 	},
 }
 
-func migratePlaintextAuthTokens(engine db.EngineLike) error {
+func migratePlaintextAuthTokens(engine *xorm.Engine) error {
 	legacyTokens := make([]model.AuthToken, 0)
 	if err := engine.Where("token != '' and token_hash = ''").Find(&legacyTokens); err != nil {
 		return err
