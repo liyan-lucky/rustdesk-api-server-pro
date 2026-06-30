@@ -35,11 +35,16 @@ if grep -n 'X-Forwarded-Host' backend/app/controller/admin/auth.go; then
 fi
 grep -q 'oidc.redirectUrl or oauth.providers\[\].redirectUrl' backend/app/controller/admin/auth.go || fail "OAuth/OIDC redirectUrl operator guidance missing"
 
-# OIDC ID token fallback must validate high-value claims before trusting payload data.
+# OIDC ID token fallback must verify signature and validate high-value claims before trusting payload data.
+grep -q 'verifyIDTokenSignature' backend/internal/service/oidc_auth_service.go || fail "OIDC ID token signature verification call missing"
+grep -q 'JWKSURI.*json:"jwks_uri"' backend/internal/service/oidc_auth_service.go || fail "OIDC jwks_uri metadata support missing"
+grep -q 'rsa.VerifyPKCS1v15' backend/internal/service/oidc_jwks_verify.go || fail "OIDC RS256 signature verification missing"
+grep -q 'unsupported id token alg' backend/internal/service/oidc_jwks_verify.go || fail "OIDC alg allowlist missing"
 grep -q 'validateIDTokenClaims' backend/internal/service/oidc_auth_service.go || fail "OIDC ID token claim validation missing"
 grep -q 'id token issuer invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC issuer validation missing"
 grep -q 'id token audience invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC audience validation missing"
 grep -q 'id token expired' backend/internal/service/oidc_auth_service.go || fail "OIDC expiry validation missing"
+grep -q 'id token issued-at invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC issued-at validation missing"
 
 # Recording uploads must have a hard size limit and private directory permissions.
 grep -q 'maxCompatRecordSize' backend/internal/service/compat_service.go || fail "record upload size limit missing"
