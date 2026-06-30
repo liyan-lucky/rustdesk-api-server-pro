@@ -3,12 +3,12 @@ run-name: 后端质量检查（${{ github.ref_name }}）
 
 on:
   push:
-    branches: ["master", "main"]
+    branches: ["master", "main", "develop"]
     paths:
       - "backend/**"
       - ".github/workflows/backend-quality.yml"
   pull_request:
-    branches: ["master", "main"]
+    branches: ["master", "main", "develop"]
     paths:
       - "backend/**"
       - ".github/workflows/backend-quality.yml"
