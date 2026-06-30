@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/helper"
+	"rustdesk-api-server-pro/util"
 	"time"
 
 	"github.com/golang-module/carbon/v2"
@@ -17,8 +18,7 @@ func ApiAuth(app *iris.Application) iris.Handler {
 		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
 		token := jwt.FromHeader(context)
 
-		var authToken model.AuthToken
-		get, err := db.Where("token = ? and expired > ? and status = 1 and is_admin = 0", token, time.Now().Format(config.TimeFormat)).Get(&authToken)
+		authToken, get, err := getActiveAuthToken(db, token, false)
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "api_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
 			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
@@ -45,8 +45,7 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
 		token := context.GetHeader("Authorization")
 
-		var authToken model.AuthToken
-		get, err := db.Where("token = ? and expired > ? and status = 1 and is_admin = 1", token, time.Now().Format(config.TimeFormat)).Get(&authToken)
+		authToken, get, err := getActiveAuthToken(db, token, true)
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "admin_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
 			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
@@ -72,6 +71,29 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		context.Values().Set(config.AdminAuthToken, &authToken)
 		context.Next()
 	}
+}
+
+func getActiveAuthToken(db *xorm.Engine, token string, isAdmin bool) (model.AuthToken, bool, error) {
+	var authToken model.AuthToken
+	if token == "" {
+		return authToken, false, nil
+	}
+
+	now := time.Now().Format(config.TimeFormat)
+	tokenHash := util.Sha256Hex(token)
+	get, err := db.Where("token_hash = ? and expired > ? and status = 1 and is_admin = ?", tokenHash, now, isAdmin).Get(&authToken)
+	if get || err != nil {
+		return authToken, get, err
+	}
+
+	// Backward compatibility for tokens issued before token_hash existed.
+	get, err = db.Where("token = ? and expired > ? and status = 1 and is_admin = ?", token, now, isAdmin).Get(&authToken)
+	if get && authToken.TokenHash == "" {
+		authToken.TokenHash = tokenHash
+		authToken.Token = ""
+		_, _ = db.Where("id = ?", authToken.Id).Cols("token_hash", "token").Update(&authToken)
+	}
+	return authToken, get, err
 }
 
 func recordAuthSecurityAudit(db *xorm.Engine, context iris.Context, event string, userID int, username string, success bool, reason string) {
