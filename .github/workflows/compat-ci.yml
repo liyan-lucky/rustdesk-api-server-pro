@@ -1,6 +1,17 @@
 name: Compatibility CI
 
 on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'backend/**'
+      - 'soybean-admin/**'
+      - 'docker/**'
+      - 'Dockerfile'
+      - 'scripts/compat/**'
+      - 'docs/compat/**'
+      - '.github/workflows/compat-ci.yml'
   pull_request:
     paths:
       - 'backend/**'
