@@ -131,7 +131,7 @@ func (c *AuthController) GetAuthOidcCallback() mvc.Result {
 	ticket, redirectTo, err := service.ConsumeAdminCallback(code, state)
 	if err != nil {
 		c.recordAdminSecurityAudit("admin_oidc_callback", false, err.Error())
-		c.Ctx.Redirect(withQuery(redirectTo, "oidc_error", err.Error()), iris.StatusFound)
+		c.Ctx.Redirect(withQuery(redirectTo, "oidc_error", "auth_failed"), iris.StatusFound)
 		return mvc.Response{}
 	}
 
@@ -183,7 +183,7 @@ func (c *AuthController) HandleOauthCallback() mvc.Result {
 	ticket, redirectTo, err := service.ConsumeAdminCallback(provider, code, state)
 	if err != nil {
 		c.recordAdminSecurityAudit("admin_oauth_callback", false, provider+": "+err.Error())
-		c.Ctx.Redirect(withQuery(redirectTo, "oauth_error", err.Error()), iris.StatusFound)
+		c.Ctx.Redirect(withQuery(redirectTo, "oauth_error", "auth_failed"), iris.StatusFound)
 		return mvc.Response{}
 	}
 
