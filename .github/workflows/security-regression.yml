@@ -4,8 +4,18 @@ run-name: 安全回归检查（${{ github.ref_name }}）
 on:
   push:
     branches: ["master", "main", "develop"]
+    paths:
+      - 'backend/**'
+      - 'docker/**'
+      - 'scripts/security/**'
+      - '.github/workflows/security-regression.yml'
   pull_request:
     branches: ["master", "main", "develop"]
+    paths:
+      - 'backend/**'
+      - 'docker/**'
+      - 'scripts/security/**'
+      - '.github/workflows/security-regression.yml'
   workflow_dispatch:
 
 permissions:
