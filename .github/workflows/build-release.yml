@@ -97,7 +97,7 @@ jobs:
           merge-multiple: true
 
       - name: 创建发布
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.build.outputs.tag_name }}
           name: RustDesk API Server Pro（${{ needs.build.outputs.tag_name }}）
