@@ -97,8 +97,14 @@ var rustdeskInstallCmd = &cobra.Command{
 			fmt.Println("rustdesk-server move files error:", err)
 			os.Exit(1)
 		}
-		_ = os.Remove(matchedAsset.Name)
-		_ = os.RemoveAll(src)
+		if err = os.Remove(matchedAsset.Name); err != nil {
+			fmt.Println("rustdesk-server cleanup archive error:", err)
+			os.Exit(1)
+		}
+		if err = os.RemoveAll(src); err != nil {
+			fmt.Println("rustdesk-server cleanup extracted dir error:", err)
+			os.Exit(1)
+		}
 		fmt.Println("The rustdesk-server has been initialized.")
 	},
 }
