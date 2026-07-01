@@ -41,7 +41,9 @@ func StartServer() (bool, error) {
 		return false, errors.New("unsafe signKey: set a unique random signKey with at least 32 characters before starting the server")
 	}
 
-	StartJobs(cfg)
+	if err := StartJobs(cfg); err != nil {
+		return false, err
+	}
 
 	app, err := newApp(cfg)
 	if err != nil {
