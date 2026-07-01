@@ -35,6 +35,25 @@ grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' backend/config/config.go || fail 
 grep -q 'generated_sign_key=' docker/start.sh || fail "Docker first-run signKey generation missing"
 grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' docker/start.sh || fail "Docker placeholder signKey detection missing"
 
+# Process helpers must return errors instead of panicking.
+if grep -n 'panic(err)' backend/util/process.go; then
+  fail "process helper must return errors instead of panicking"
+fi
+grep -q 'StartProcess(name string, attr \*ProcessAttr) (\*exec.Cmd, error)' backend/util/process.go || fail "StartProcess must return an error"
+grep -q 'return nil, err' backend/util/process.go || fail "StartProcess must return start errors"
+
+# RustDesk process lifecycle must avoid unsafe pid permissions and nil process panics.
+grep -q 'writePidFile(pidFile string, pid int) error' backend/helper/rustdesk/server.go || fail "rustdesk pid writer helper missing"
+grep -q 'os.WriteFile(pidFile, \[\]byte(strconv.Itoa(pid)), 0644)' backend/helper/rustdesk/server.go || fail "rustdesk pid files must use 0644 permissions"
+grep -q 'killProcessByPID' backend/helper/rustdesk/server.go || fail "rustdesk process kill helper missing"
+grep -q 'isProcessRunning' backend/helper/rustdesk/server.go || fail "rustdesk process status helper missing"
+grep -q 'proc == nil' backend/helper/rustdesk/server.go || fail "rustdesk process helpers must guard nil process values"
+grep -q 'os.Remove(hbbrPidFile)' backend/helper/rustdesk/server.go || fail "rustdesk startup failure/stop must clean hbbr pid file"
+grep -q 'os.Remove(hbbsPidFile)' backend/helper/rustdesk/server.go || fail "rustdesk stop must clean hbbs pid file"
+if grep -n 'os.ModePerm' backend/helper/rustdesk/server.go; then
+  fail "rustdesk server helper must not use world-writable permissions"
+fi
+
 # HTTP helpers must reject error statuses, bound response sizes, and write downloads safely.
 grep -q 'maxHTTPStringSize' backend/util/http.go || fail "HTTP string response size limit missing"
 grep -q 'maxDownloadSize' backend/util/http.go || fail "download size limit missing"
