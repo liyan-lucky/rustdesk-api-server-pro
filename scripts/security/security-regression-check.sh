@@ -74,6 +74,11 @@ grep -q 'return nil, err' backend/util/process.go || fail "StartProcess must ret
 # RustDesk CLI must not ignore install/start errors or reveal private keys by default.
 grep -q 'if err = util.MoveFiles(src, rustdesk.GetRustdeskServerBinDir()); err != nil' backend/cmd/rustdesk.go || fail "rustdesk install must handle MoveFiles errors"
 grep -q 'rustdesk-server move files error' backend/cmd/rustdesk.go || fail "rustdesk install move error message missing"
+grep -q 'if err = os.Remove(matchedAsset.Name); err != nil' backend/cmd/rustdesk.go || fail "rustdesk install must handle archive cleanup errors"
+grep -q 'if err = os.RemoveAll(src); err != nil' backend/cmd/rustdesk.go || fail "rustdesk install must handle extracted dir cleanup errors"
+if grep -n '_ = os.Remove(matchedAsset.Name)\|_ = os.RemoveAll(src)' backend/cmd/rustdesk.go; then
+  fail "rustdesk install must not ignore cleanup errors"
+fi
 grep -q 'private key: hidden' backend/cmd/rustdesk.go || fail "rustdesk private key must be hidden by default"
 grep -q 'show-private' backend/cmd/rustdesk.go || fail "rustdesk private key reveal must require explicit flag"
 
