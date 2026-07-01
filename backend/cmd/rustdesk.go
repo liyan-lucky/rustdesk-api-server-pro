@@ -160,16 +160,14 @@ var rustdeskKeysCmd = &cobra.Command{
 	Short:                 "Show rustdesk-server public key",
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		public, private := rustdesk.Keys()
-
 		fmt.Println("public key:")
-		fmt.Println(public)
+		fmt.Println(rustdesk.PublicKey())
 
 		showPrivate, _ := cmd.Flags().GetBool("show-private")
 		if showPrivate {
 			fmt.Println("")
 			fmt.Println("private key:")
-			fmt.Println(private)
+			fmt.Println(rustdesk.PrivateKey())
 		} else {
 			fmt.Println("")
 			fmt.Println("private key: hidden; use --show-private only when you explicitly need to reveal it")
