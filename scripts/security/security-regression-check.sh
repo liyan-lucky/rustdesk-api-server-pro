@@ -35,6 +35,21 @@ grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' backend/config/config.go || fail 
 grep -q 'generated_sign_key=' docker/start.sh || fail "Docker first-run signKey generation missing"
 grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' docker/start.sh || fail "Docker placeholder signKey detection missing"
 
+# Scheduler startup must return errors instead of panicking or silently ignoring job creation failures.
+if grep -n 'panic(err)' backend/app/jobs.go; then
+  fail "scheduler startup must return errors instead of panicking"
+fi
+grep -q 'func StartJobs(cfg \*config.ServerConfig) error' backend/app/jobs.go || fail "StartJobs must return an error"
+grep -q 'return fmt.Errorf("create job db engine:' backend/app/jobs.go || fail "StartJobs must return DB engine errors"
+grep -q 'return fmt.Errorf("create scheduler:' backend/app/jobs.go || fail "StartJobs must return scheduler creation errors"
+grep -q 's.NewJob' backend/app/jobs.go || fail "device check job creation missing"
+grep -q 'return fmt.Errorf("create device check job:' backend/app/jobs.go || fail "StartJobs must return job creation errors"
+grep -q 'jobDuration <= 0' backend/app/jobs.go || fail "StartJobs must validate job duration"
+grep -q 'if err := StartJobs(cfg); err != nil' backend/app/main.go || fail "server startup must fail when jobs fail"
+if grep -n 'Logger().Fatal' backend/app/main.go; then
+  fail "app initialization must return errors instead of fatal-exiting"
+fi
+
 # Process helpers must return errors instead of panicking.
 if grep -n 'panic(err)' backend/util/process.go; then
   fail "process helper must return errors instead of panicking"
