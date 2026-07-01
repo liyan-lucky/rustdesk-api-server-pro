@@ -7,15 +7,13 @@ import (
 	"rustdesk-api-server-pro/db"
 
 	"github.com/kataras/iris/v12"
+	"xorm.io/xorm"
 )
 
-func newApp(cfg *config.ServerConfig) (*iris.Application, error) {
+func newApp(cfg *config.ServerConfig, dbEngine *xorm.Engine) (*iris.Application, error) {
 	app := iris.Default()
-
-	dbEngine, err := db.NewEngine(cfg.Db)
-	if err != nil {
-		app.Logger().Error("Db Engine create error:", err)
-		return nil, err
+	if dbEngine == nil {
+		return nil, errors.New("db engine is nil")
 	}
 	app.RegisterDependency(dbEngine, cfg)
 
@@ -41,12 +39,17 @@ func StartServer() (bool, error) {
 		return false, errors.New("unsafe signKey: set a unique random signKey with at least 32 characters before starting the server")
 	}
 
-	if err := StartJobs(cfg); err != nil {
+	dbEngine, err := db.NewEngine(cfg.Db)
+	if err != nil {
 		return false, err
 	}
 
-	app, err := newApp(cfg)
+	app, err := newApp(cfg, dbEngine)
 	if err != nil {
+		return false, err
+	}
+
+	if err := StartJobs(cfg, dbEngine); err != nil {
 		return false, err
 	}
 
