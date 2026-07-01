@@ -92,14 +92,21 @@ func safeZipDestination(dst, name string) (string, error) {
 
 	cleanDst := filepath.Clean(dst)
 	target := filepath.Clean(filepath.Join(cleanDst, name))
-	if target != cleanDst && !strings.HasPrefix(target, cleanDst+string(os.PathSeparator)) {
+	rel, err := filepath.Rel(cleanDst, target)
+	if err != nil {
+		return "", err
+	}
+	if rel == "." || rel == "" {
+		return target, nil
+	}
+	if rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
 		return "", fmt.Errorf("zip entry %q escapes destination", name)
 	}
 	return target, nil
 }
 
 func safeDirMode(mode os.FileMode) os.FileMode {
-	perm := mode.Perm()
+	perm := mode.Perm() & 0755
 	if perm == 0 {
 		return 0755
 	}
@@ -107,7 +114,7 @@ func safeDirMode(mode os.FileMode) os.FileMode {
 }
 
 func safeFileMode(mode os.FileMode) os.FileMode {
-	perm := mode.Perm()
+	perm := mode.Perm() & 0755
 	if perm == 0 {
 		return 0644
 	}
