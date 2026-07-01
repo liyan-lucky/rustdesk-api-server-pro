@@ -35,6 +35,24 @@ grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' backend/config/config.go || fail 
 grep -q 'generated_sign_key=' docker/start.sh || fail "Docker first-run signKey generation missing"
 grep -q 'CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET' docker/start.sh || fail "Docker placeholder signKey detection missing"
 
+# HTTP helpers must reject error statuses, bound response sizes, and write downloads safely.
+grep -q 'maxHTTPStringSize' backend/util/http.go || fail "HTTP string response size limit missing"
+grep -q 'maxDownloadSize' backend/util/http.go || fail "download size limit missing"
+grep -q 'resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices' backend/util/http.go || fail "HTTP status validation missing"
+grep -q 'io.LimitReader(resp.Body, maxHTTPStringSize+1)' backend/util/http.go || fail "HTTP string response limit reader missing"
+grep -q 'io.LimitReader(resp.Body, maxDownloadSize+1)' backend/util/http.go || fail "download limit reader missing"
+grep -q 'os.CreateTemp' backend/util/http.go || fail "download must write to a temporary file first"
+grep -q 'tmpFile.Chmod(0644)' backend/util/http.go || fail "downloaded file permission must be 0644"
+grep -q 'os.Rename(tmpName, filename)' backend/util/http.go || fail "download must atomically rename completed temporary file"
+grep -q 'Timeout: 60 \* time.Second' backend/util/http.go || fail "HTTP client timeout missing"
+test -f backend/util/http_test.go || fail "HTTP helper security tests missing"
+grep -q 'TestHttpGetStringRejectsErrorStatus' backend/util/http_test.go || fail "HTTP error status test missing"
+grep -q 'TestDownloadFileRejectsErrorStatusAndLeavesNoFile' backend/util/http_test.go || fail "download error cleanup test missing"
+grep -q 'TestDownloadFileUsesSafePermissionsAndTruncatesOldFile' backend/util/http_test.go || fail "download permission/truncation test missing"
+if grep -n 'OpenFile(filename,.*os.ModePerm\|os.Create(filename)' backend/util/http.go; then
+  fail "download must not write directly to final path with unsafe permissions"
+fi
+
 # 404 handling must not dump request headers, body, or query strings to logs.
 if grep -n 'GetBody()\|Request().Header\|fmt.Println\|RequestURI' backend/app/main.go; then
   fail "404 handler must not log raw request headers, body, or query strings"
