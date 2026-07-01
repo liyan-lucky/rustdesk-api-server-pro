@@ -1,0 +1,49 @@
+name: 强制覆盖 backup 分支
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 输入 YES 才会把 main 强制覆盖到 backup
+        required: true
+        default: "NO"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  overwrite-backup:
+    name: main 强制覆盖 backup
+    runs-on: ubuntu-latest
+    steps:
+      - name: 校验确认参数
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event.inputs.confirm }}" != "YES" ]; then
+            echo "未输入 YES，取消执行。"
+            exit 1
+          fi
+
+      - name: 检出 main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 显示即将备份的提交
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "main commit:"
+          git rev-parse HEAD
+          git log -1 --oneline
+
+      - name: 强制覆盖 backup 分支
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push --force origin HEAD:backup
+          echo "backup 已被 main 当前提交强制覆盖。"
