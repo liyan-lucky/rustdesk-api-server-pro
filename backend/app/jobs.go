@@ -1,20 +1,20 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
-	"rustdesk-api-server-pro/db"
 	"time"
 
 	"github.com/go-co-op/gocron/v2"
 	"github.com/golang-module/carbon/v2"
+	"xorm.io/xorm"
 )
 
-func StartJobs(cfg *config.ServerConfig) error {
-	dbEngine, err := db.NewEngine(cfg.Db)
-	if err != nil {
-		return fmt.Errorf("create job db engine: %w", err)
+func StartJobs(cfg *config.ServerConfig, dbEngine *xorm.Engine) error {
+	if dbEngine == nil {
+		return errors.New("job db engine is nil")
 	}
 
 	s, err := gocron.NewScheduler()
