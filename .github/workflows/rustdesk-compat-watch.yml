@@ -95,7 +95,7 @@ jobs:
           MD
 
       - name: Create compatibility PR
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           title: "chore: align RustDesk ${{ steps.check.outputs.latest_tag }} compatibility target"
           body: |
