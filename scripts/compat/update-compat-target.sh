@@ -46,7 +46,7 @@ text = re.sub(r'const CompatClientVersion = "[^"]+"', f'const CompatClientVersio
 text = re.sub(r'const CompatClientReleaseDate = "[^"]+"', f'const CompatClientReleaseDate = "{release_date}"', text)
 text = re.sub(
     r'const CompatSysinfoVersion = "[^"]+"',
-    f'const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-{version}-server-1.1.15-latest"',
+    f'const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-{version}-server-1.1.16-latest"',
     text,
 )
 path.write_text(text, encoding="utf-8")
@@ -56,7 +56,7 @@ tmp="$(mktemp)"
 jq \
   --arg version "$LATEST_TAG" \
   --arg release_date "$RELEASE_DATE" \
-  --arg sysinfo "rustdesk-api-server-pro-compat-client-${LATEST_TAG}-server-1.1.15-latest" \
+  --arg sysinfo "rustdesk-api-server-pro-compat-client-${LATEST_TAG}-server-1.1.16-latest" \
   '.client.version = $version
    | .client.tag = $version
    | .client.release_date = $release_date

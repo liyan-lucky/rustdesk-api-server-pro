@@ -11,7 +11,7 @@ ENV VITE_APP_VERSION=$APP_VERSION
 COPY ./soybean-admin .
 RUN rm -rf node_modules
 RUN npm install -g pnpm
-RUN pnpm i && pnpm build
+RUN pnpm install --frozen-lockfile && pnpm build
 
 FROM alpine:3.20.3
 ENV ADMIN_USER=

@@ -168,7 +168,7 @@ func TestCompatServiceTargetContract(t *testing.T) {
 	if !ok {
 		t.Fatalf("official_focus should be []string")
 	}
-	for _, key := range []string{"windows_arm64_support", "remote_restart_autoconnect", "oidc_microsoft_icon_compat"} {
+	for _, key := range []string{"insecure_connection_warning", "file_transfer_conflict_handling", "custom_client_incoming_only_fix", "terminal_auto_close_on_exit", "android_input_service_state"} {
 		if !containsString(focus, key) {
 			t.Fatalf("expected official_focus to contain %s", key)
 		}

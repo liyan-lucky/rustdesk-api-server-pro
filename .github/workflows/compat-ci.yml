@@ -41,7 +41,7 @@ jobs:
       - name: 配置 Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21.4'
+          go-version: '1.23.x'
           cache-dependency-path: backend/go.sum
 
       - name: 后端测试

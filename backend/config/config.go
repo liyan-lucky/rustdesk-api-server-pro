@@ -2,7 +2,7 @@ package config
 
 import (
 	"os"
-	"path"
+	"path/filepath"
 	"rustdesk-api-server-pro/util"
 	"strings"
 
@@ -106,7 +106,7 @@ type OAuthProviderConfig struct {
 
 var (
 	wd, _    = os.Getwd()
-	yamlFile = path.Join(wd, "server.yaml")
+	yamlFile = filepath.Join(wd, "server.yaml")
 )
 
 func GetDefaultServerConfig() *ServerConfig {
