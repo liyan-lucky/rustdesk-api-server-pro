@@ -16,14 +16,14 @@ import (
 )
 
 const CompatClientName = "rustdesk"
-const CompatClientVersion = "1.4.8"
-const CompatClientReleaseDate = "2026-06-21"
-const CompatServerVersion = "1.1.15"
+const CompatClientVersion = "1.4.9"
+const CompatClientReleaseDate = "2026-07-06"
+const CompatServerVersion = "1.1.16"
 const CompatTargetStatus = "compatibility-layer"
 
 // CompatSysinfoVersion is exposed to admin dashboard and compatibility probes.
 // Keep this value aligned with the validated upstream RustDesk versions.
-const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-1.4.8-server-1.1.15-latest"
+const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-1.4.9-server-1.1.16-latest"
 const compatRecordDir = "record_uploads"
 const maxCompatRecordSize int64 = 512 * 1024 * 1024
 
@@ -64,11 +64,11 @@ func (s *CompatService) Target() map[string]any {
 			"plugin_sign_passthrough": true,
 		},
 		"official_focus": []string{
-			"windows_arm64_support",
-			"remote_toolbar_monitor_switch",
-			"privacy_mode_multi_monitor",
-			"remote_restart_autoconnect",
-			"oidc_microsoft_icon_compat",
+			"insecure_connection_warning",
+			"file_transfer_conflict_handling",
+			"custom_client_incoming_only_fix",
+			"terminal_auto_close_on_exit",
+			"android_input_service_state",
 		},
 		"probe_endpoints": []string{
 			"/api/health",

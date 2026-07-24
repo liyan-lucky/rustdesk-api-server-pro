@@ -71,15 +71,15 @@ request GET  /api/client_config "compat_target"
 request GET  /api/server-config "compat_target"
 request GET  /api/server_config "compat_target"
 request GET  /api/server/info "compat_target"
-request GET  /api/compat-target "1.4.8"
-request GET  /api/compat/target "1.4.8"
-request GET  /api/compat/version "1.4.8"
-request GET  /api/sysinfo_ver "1.4.8"
+request GET  /api/compat-target "1.4.9"
+request GET  /api/compat/target "1.4.9"
+request GET  /api/compat/version "1.4.9"
+request GET  /api/sysinfo_ver "1.4.9"
 request GET  /api/login-options "["
 request GET  /api/devices/deploy "NOT_ENABLED"
 
 # License/plugin compatibility endpoint. It is a passthrough placeholder but should keep a stable JSON shape.
-request_json POST /lic/web/api/plugin-sign '{"plugin_id":"compat-smoke","version":"1.4.8","msg":"c21va2U="}' "signed_msg"
+request_json POST /lic/web/api/plugin-sign '{"plugin_id":"compat-smoke","version":"1.4.9","msg":"c21va2U="}' "signed_msg"
 
 if [ -n "$TOKEN" ]; then
   request GET  /api/currentUser "data"
