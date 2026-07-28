@@ -21,7 +21,7 @@ const appVersion = getVersionTag();
 const logs = computed<LogItem[]>(() => [
   {
     id: 1,
-    content: 'RustDesk API 兼容能力已更新，支持客户端 1.4.7 主流程',
+    content: 'RustDesk API 兼容能力已更新，支持客户端 1.4.9 主流程',
     version: `${compatVersion.value} / ${appVersion}`,
     time: new Date().toISOString().slice(0, 10)
   }
