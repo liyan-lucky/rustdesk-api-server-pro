@@ -10,7 +10,8 @@ mkdir -p /app/data
 
 # Make mounted config at /app/server.yaml effective, because the binary reads server.yaml from CWD.
 # The process runs in /app/data, so keep /app/data/server.yaml in sync with /app/server.yaml.
-if [ -f /app/server.yaml ]; then
+# Only copy when /app/data/server.yaml does not exist yet, to avoid overwriting user edits.
+if [ -f /app/server.yaml ] && [ ! -f /app/data/server.yaml ]; then
     cp /app/server.yaml /app/data/server.yaml
 fi
 
@@ -21,7 +22,7 @@ cd /app/data
 # the persisted /app/data/server.yaml so a fresh container can start safely without
 # reusing a public example secret.
 if [ -f /app/data/server.yaml ]; then
-    current_sign_key="$(grep -E '^signKey:' /app/data/server.yaml | head -n1 | sed 's/^signKey:[[:space:]]*//' | tr -d '"' || true)"
+    current_sign_key="$(grep -E '^signKey:' /app/data/server.yaml | head -n1 | sed 's/#.*//' | sed 's/^signKey:[[:space:]]*//' | tr -d '"' | tr -d "'" | sed 's/[[:space:]]*$//' || true)"
     case "$current_sign_key" in
         ""|"CHANGE_ME_TO_A_RANDOM_32_BYTE_SECRET"|'sercrethatmaycontainch@r$32chars')
             generated_sign_key="$(head -c 48 /dev/urandom | base64 | tr -d '=+/\n' | cut -c1-48)"
