@@ -17,6 +17,17 @@ fi
 
 cd /app/data
 
+# Allow PORT env var to override the listening port (e.g. Docker -p 21114:21114 -e PORT=21114).
+# The Go binary also reads PORT env var directly, but updating server.yaml ensures
+# config display and health probes are consistent.
+if [ -n "${PORT:-}" ]; then
+    port_val="$PORT"
+    case "$port_val" in :*) ;; *) port_val=":$port_val" ;; esac
+    if [ -f /app/data/server.yaml ]; then
+        sed -i "s|^\([[:space:]]*port:\).*|  port: \"$port_val\"|" /app/data/server.yaml
+    fi
+fi
+
 # Harden first-run Docker defaults. The image contains a sample server.yaml, but the
 # server refuses unsafe placeholder signKey values. Generate a stable random key in
 # the persisted /app/data/server.yaml so a fresh container can start safely without

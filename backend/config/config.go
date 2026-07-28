@@ -162,6 +162,14 @@ func GetServerConfig() *ServerConfig {
 		WriteServerConfig(cfg)
 		return cfg
 	}
+
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		if !strings.HasPrefix(envPort, ":") {
+			envPort = ":" + envPort
+		}
+		cfg.HttpConfig.Port = envPort
+	}
+
 	return cfg
 }
 
