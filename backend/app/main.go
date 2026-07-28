@@ -1,7 +1,9 @@
 package app
 
 import (
+	"context"
 	"errors"
+
 	"rustdesk-api-server-pro/app/middleware"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
@@ -34,6 +36,10 @@ func newApp(cfg *config.ServerConfig, dbEngine *xorm.Engine) (*iris.Application,
 }
 
 func StartServer() (bool, error) {
+	return StartServerWithContext(context.Background())
+}
+
+func StartServerWithContext(ctx context.Context) (bool, error) {
 	cfg := config.GetServerConfig()
 	if config.IsUnsafeSignKey(cfg.SignKey) {
 		return false, errors.New("unsafe signKey: set a unique random signKey with at least 32 characters before starting the server")
@@ -53,7 +59,10 @@ func StartServer() (bool, error) {
 		return false, err
 	}
 
-	err = app.Listen(cfg.HttpConfig.Port, iris.WithoutBodyConsumptionOnUnmarshal)
+	err = app.Listen(cfg.HttpConfig.Port, iris.WithoutBodyConsumptionOnUnmarshal, iris.Context(ctx))
+	if err != nil && ctx.Err() != nil {
+		return true, nil
+	}
 	if err != nil {
 		return false, err
 	}
