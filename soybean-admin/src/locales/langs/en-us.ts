@@ -216,7 +216,7 @@ const local: App.I18n.Schema = {
       },
       serverConfig: {
         title: 'Client Connection Config',
-        tip: 'Copy the following values into the RustDesk client. KEY is read from RUSTDESK_KEY env var first, then auto-detected from id_ed25519.pub files.',
+        tip: 'Copy the following values into the RustDesk client. KEY is read from RUSTDESK_KEY env var first, then auto-detected from id_ed25519.pub in mounted directories.',
         idServer: 'ID Server',
         relayServer: 'Relay Server',
         apiServer: 'API Server',
@@ -224,7 +224,7 @@ const local: App.I18n.Schema = {
         idServerPlaceholder: 'e.g. your.domain.com',
         relayServerPlaceholder: 'e.g. your.domain.com',
         apiServerPlaceholder: 'e.g. https://your.domain.com',
-        keyPlaceholder: 'Auto-detected or via RUSTDESK_KEY env var',
+        keyPlaceholder: 'Auto-detected or via RUSTDESK_KEY / RUSTDESK_HBBS_DIR',
         copy: 'Copy',
         copyAll: 'Copy All',
         copyTemplate: 'Copy RustDesk Template',

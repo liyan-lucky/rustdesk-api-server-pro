@@ -17,6 +17,7 @@ FROM alpine:3.20.3
 ENV ADMIN_USER=
 ENV ADMIN_PASS=
 ENV PORT=
+ENV RUSTDESK_HBBS_DIR=
 WORKDIR /app
 COPY ./docker/start.sh .
 COPY --from=golang /backend/rustdesk-api-server-pro .

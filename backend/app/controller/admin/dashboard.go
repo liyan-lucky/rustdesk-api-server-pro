@@ -465,16 +465,16 @@ func resolveRustdeskKey() (string, string) {
 	}
 
 	searchDirs := []string{}
+
+	if hbbsDir := strings.TrimSpace(os.Getenv("RUSTDESK_HBBS_DIR")); hbbsDir != "" {
+		searchDirs = append(searchDirs, hbbsDir)
+	}
+
 	if wd, err := os.Getwd(); err == nil {
 		searchDirs = append(searchDirs, wd)
 	}
-	if dataDir := filepath.Join("/", "app", "data"); dataDir != "" {
-		searchDirs = append(searchDirs, dataDir)
-	}
-	if homeDir, err := os.UserHomeDir(); err == nil {
-		searchDirs = append(searchDirs, homeDir)
-	}
-	searchDirs = append(searchDirs, "/etc/rustdesk", "/opt/rustdesk-server")
+
+	searchDirs = append(searchDirs, "/app/data")
 
 	pubNames := []string{"id_ed25519.pub", "id_rsa.pub"}
 
