@@ -51,4 +51,4 @@ if [ ! -f /app/data/.init.lock ] && [ -n "${ADMIN_USER:-}" ] && [ -n "${ADMIN_PA
     touch /app/data/.init.lock
 fi
 
-/app/rustdesk-api-server-pro start
+exec /app/rustdesk-api-server-pro start
