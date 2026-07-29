@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	v2service "rustdesk-api-server-pro/internal/service"
@@ -225,7 +226,7 @@ func (c *DashboardController) GetDashboardServerConfig() mvc.Result {
 		os.Getenv("RUSTDESK_API_SERVER"),
 		inferredAPIServer,
 	)
-	key, keySource := resolveConfigValue(os.Getenv("RUSTDESK_KEY"), "")
+	key, keySource := resolveRustdeskKey()
 
 	return c.Success(iris.Map{
 		"idServer":    idServer,
@@ -258,7 +259,7 @@ func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
 	idServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
 	relayServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
 	apiServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_API_SERVER"), inferredAPIServer)
-	key, _ := resolveConfigValue(os.Getenv("RUSTDESK_KEY"), "")
+	key, _ := resolveRustdeskKey()
 	targetKey := strings.TrimSpace(c.Ctx.URLParamDefault("target", ""))
 
 	if targetKey != "" {
@@ -453,6 +454,41 @@ func resolveConfigValue(envValue, fallbackValue string) (string, string) {
 	fallbackValue = strings.TrimSpace(fallbackValue)
 	if fallbackValue != "" {
 		return fallbackValue, "inferred"
+	}
+
+	return "", "empty"
+}
+
+func resolveRustdeskKey() (string, string) {
+	if envKey := strings.TrimSpace(os.Getenv("RUSTDESK_KEY")); envKey != "" {
+		return envKey, "env"
+	}
+
+	searchDirs := []string{}
+	if wd, err := os.Getwd(); err == nil {
+		searchDirs = append(searchDirs, wd)
+	}
+	if dataDir := filepath.Join("/", "app", "data"); dataDir != "" {
+		searchDirs = append(searchDirs, dataDir)
+	}
+	if homeDir, err := os.UserHomeDir(); err == nil {
+		searchDirs = append(searchDirs, homeDir)
+	}
+	searchDirs = append(searchDirs, "/etc/rustdesk", "/opt/rustdesk-server")
+
+	pubNames := []string{"id_ed25519.pub", "id_rsa.pub"}
+
+	for _, dir := range searchDirs {
+		for _, name := range pubNames {
+			pubPath := filepath.Join(dir, name)
+			data, err := os.ReadFile(pubPath)
+			if err == nil {
+				key := strings.TrimSpace(string(data))
+				if key != "" {
+					return key, "auto:" + pubPath
+				}
+			}
+		}
 	}
 
 	return "", "empty"

@@ -244,7 +244,7 @@ const local: App.I18n.Schema = {
       serverConfig: {
         ...enUs.page.home.serverConfig,
         title: '客户端连接配置',
-        tip: '复制以下配置后可直接填写到 RustDesk 客户端。如 KEY 为空，请在容器环境变量中设置 `RUSTDESK_KEY`。',
+        tip: '复制以下配置后可直接填写到 RustDesk 客户端。KEY 优先读取环境变量 RUSTDESK_KEY，其次自动检索 id_ed25519.pub 文件。',
         idServer: 'ID服务器',
         relayServer: '中继服务器',
         apiServer: 'API服务器',
@@ -252,7 +252,7 @@ const local: App.I18n.Schema = {
         idServerPlaceholder: '例如 your.domain.com',
         relayServerPlaceholder: '例如 your.domain.com',
         apiServerPlaceholder: '例如 https://your.domain.com',
-        keyPlaceholder: '可通过环境变量 RUSTDESK_KEY 提供',
+        keyPlaceholder: '自动检测或通过 RUSTDESK_KEY 提供',
         copy: '复制',
         copyAll: '复制全部',
         copyTemplate: '复制RustDesk模板',

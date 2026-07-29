@@ -216,7 +216,7 @@ const local: App.I18n.Schema = {
       },
       serverConfig: {
         title: 'Client Connection Config',
-        tip: 'Copy the following values into the RustDesk client. If KEY is empty, set the `RUSTDESK_KEY` container environment variable.',
+        tip: 'Copy the following values into the RustDesk client. KEY is read from RUSTDESK_KEY env var first, then auto-detected from id_ed25519.pub files.',
         idServer: 'ID Server',
         relayServer: 'Relay Server',
         apiServer: 'API Server',
@@ -224,7 +224,7 @@ const local: App.I18n.Schema = {
         idServerPlaceholder: 'e.g. your.domain.com',
         relayServerPlaceholder: 'e.g. your.domain.com',
         apiServerPlaceholder: 'e.g. https://your.domain.com',
-        keyPlaceholder: 'Provide via RUSTDESK_KEY environment variable',
+        keyPlaceholder: 'Auto-detected or via RUSTDESK_KEY env var',
         copy: 'Copy',
         copyAll: 'Copy All',
         copyTemplate: 'Copy RustDesk Template',
