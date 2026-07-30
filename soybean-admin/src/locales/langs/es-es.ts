@@ -182,7 +182,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Registros base',
     audit_filetransferlogs: 'Registros de transferencia',
     devices: 'Dispositivos',
-    'my-devices': 'My Sync Devices'
+    'my-devices': 'Mis dispositivos sincronizados'
   },
   page: {
     ...enUs.page,
@@ -210,11 +210,11 @@ const local: App.I18n.Schema = {
           ...enUs.page.login.pwdLogin,
           title: 'Inicio con contrase?a',
           rememberMe: 'Recordarme',
-          switchToUser: 'User Login'
-        },
-        userLogin: {
-          title: 'User Login',
-          switchToAdmin: 'Admin Login'
+          switchToUser: 'Inicio de sesión de usuario'
+         },
+         userLogin: {
+           title: 'Inicio de sesión de usuario',
+           switchToAdmin: 'Inicio de sesión de admin'
         }
       },
     home: {
@@ -279,7 +279,7 @@ const local: App.I18n.Schema = {
           env: 'Entorno',
           inferred: 'Inferido',
           empty: 'Vac?o',
-          auto: 'Auto-detected'
+           auto: 'Auto-detectado'
         },
         sourceHint: {
           ...enUs.page.home.serverConfig.sourceHint,
@@ -356,14 +356,14 @@ const local: App.I18n.Schema = {
       }
     },
     myDevices: {
-      title: 'My Sync Devices',
-      welcome: 'Welcome, {userName}',
-      status: 'Status',
-      online: 'Online',
-      offline: 'Offline',
-      conns: 'Connections',
-      lastSync: 'Last Sync',
-      logout: 'Logout'
+      title: 'Mis dispositivos sincronizados',
+      welcome: 'Bienvenido, {userName}',
+      status: 'Estado',
+      online: 'En línea',
+      offline: 'Desconectado',
+      conns: 'Conexiones',
+      lastSync: 'Última sincronización',
+      logout: 'Cerrar sesión'
     }
   },
   dataMap: {

@@ -168,7 +168,7 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "基本ログ",
     "audit_filetransferlogs": "ファイル転送ログ",
     "devices": "デバイス",
-    "my-devices": "My Sync Devices"
+    "my-devices": "マイ同期デバイス"
   },
   "page": {
     "login": {
@@ -192,11 +192,11 @@ const local: App.I18n.Schema = {
       "pwdLogin": {
         "title": "パスワードログイン",
         "rememberMe": "ログイン状態を保持",
-        "switchToUser": "User Login"
+        "switchToUser": "ユーザーログイン"
       },
       "userLogin": {
-        "title": "User Login",
-        "switchToAdmin": "Admin Login"
+        "title": "ユーザーログイン",
+        "switchToAdmin": "管理者ログイン"
       }
     },
     "home": {
@@ -260,7 +260,7 @@ const local: App.I18n.Schema = {
           "env": "Env",
           "inferred": "Inferred",
           "empty": "Empty",
-          "auto": "Auto-detected"
+          "auto": "自動検出"
         },
         "sourceHint": {
           "env": "This value comes from the container environment variable.",
@@ -333,14 +333,14 @@ const local: App.I18n.Schema = {
       }
     },
     "myDevices": {
-      "title": "My Sync Devices",
-      "welcome": "Welcome, {userName}",
-      "status": "Status",
-      "online": "Online",
-      "offline": "Offline",
-      "conns": "Connections",
-      "lastSync": "Last Sync",
-      "logout": "Logout"
+      "title": "マイ同期デバイス",
+      "welcome": "ようこそ、{userName}",
+      "status": "ステータス",
+      "online": "オンライン",
+      "offline": "オフライン",
+      "conns": "接続数",
+      "lastSync": "最終同期",
+      "logout": "ログアウト"
     }
   },
   "dropdown": {

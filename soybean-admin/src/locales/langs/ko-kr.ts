@@ -168,7 +168,7 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
     "devices": "장치",
-    "my-devices": "My Sync Devices"
+    "my-devices": "내 동기화 기기"
   },
   "page": {
     "login": {
@@ -192,11 +192,11 @@ const local: App.I18n.Schema = {
       "pwdLogin": {
         "title": "비밀번호 로그인",
         "rememberMe": "로그인 상태 유지",
-        "switchToUser": "User Login"
+        "switchToUser": "사용자 로그인"
       },
       "userLogin": {
-        "title": "User Login",
-        "switchToAdmin": "Admin Login"
+        "title": "사용자 로그인",
+        "switchToAdmin": "관리자 로그인"
       }
     },
     "home": {
@@ -260,7 +260,7 @@ const local: App.I18n.Schema = {
           "env": "Env",
           "inferred": "Inferred",
           "empty": "Empty",
-          "auto": "Auto-detected"
+          "auto": "자동 감지"
         },
         "sourceHint": {
           "env": "This value comes from the container environment variable.",
@@ -333,14 +333,14 @@ const local: App.I18n.Schema = {
       }
     },
     "myDevices": {
-      "title": "My Sync Devices",
-      "welcome": "Welcome, {userName}",
-      "status": "Status",
-      "online": "Online",
-      "offline": "Offline",
-      "conns": "Connections",
-      "lastSync": "Last Sync",
-      "logout": "Logout"
+      "title": "내 동기화 기기",
+      "welcome": "환영합니다, {userName}",
+      "status": "상태",
+      "online": "온라인",
+      "offline": "오프라인",
+      "conns": "연결 수",
+      "lastSync": "마지막 동기화",
+      "logout": "로그아웃"
     }
   },
   "dropdown": {

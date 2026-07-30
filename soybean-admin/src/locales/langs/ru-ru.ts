@@ -168,7 +168,7 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
     "devices": "Устройства",
-    "my-devices": "My Sync Devices"
+    "my-devices": "Мои синхронизированные устройства"
   },
   "page": {
     "login": {
@@ -192,11 +192,11 @@ const local: App.I18n.Schema = {
       "pwdLogin": {
         "title": "Вход по паролю",
         "rememberMe": "Запомнить меня",
-        "switchToUser": "User Login"
+        "switchToUser": "Вход пользователя"
       },
       "userLogin": {
-        "title": "User Login",
-        "switchToAdmin": "Admin Login"
+        "title": "Вход пользователя",
+        "switchToAdmin": "Вход администратора"
       }
     },
     "home": {
@@ -260,7 +260,7 @@ const local: App.I18n.Schema = {
           "env": "Переменная окружения",
           "inferred": "Автоопределение",
           "empty": "Пусто",
-          "auto": "Auto-detected"
+          "auto": "Автообнаружение"
         },
         "sourceHint": {
           "env": "Это значение получено из переменной окружения контейнера.",
@@ -333,14 +333,14 @@ const local: App.I18n.Schema = {
       }
     },
     "myDevices": {
-      "title": "My Sync Devices",
-      "welcome": "Welcome, {userName}",
-      "status": "Status",
-      "online": "Online",
-      "offline": "Offline",
-      "conns": "Connections",
-      "lastSync": "Last Sync",
-      "logout": "Logout"
+      "title": "Мои синхронизированные устройства",
+      "welcome": "Добро пожаловать, {userName}",
+      "status": "Статус",
+      "online": "В сети",
+      "offline": "Не в сети",
+      "conns": "Соединения",
+      "lastSync": "Последняя синхронизация",
+      "logout": "Выход"
     }
   },
   "dropdown": {
