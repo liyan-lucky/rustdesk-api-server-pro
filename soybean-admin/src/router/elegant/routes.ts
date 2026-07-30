@@ -86,12 +86,12 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'my-devices',
     path: '/my-devices',
-    component: 'layout.blank$view.my-devices',
+    component: 'layout.base$view.my-devices',
     meta: {
       title: 'my-devices',
       i18nKey: 'route.my-devices',
-      constant: true,
-      hideInMenu: true
+      icon: 'mdi:cellphone-link',
+      order: 6
     }
   },
   {

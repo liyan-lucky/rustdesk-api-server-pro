@@ -1,18 +1,17 @@
 <script setup lang="tsx">
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { NTag } from 'naive-ui';
 import { $t } from '@/locales';
+import { useAppStore } from '@/store/modules/app';
 import { localStg } from '@/utils/storage';
-import { fetchMyDevices, fetchUserPortalInfo } from '@/service/api/user-portal';
+import { fetchMyDevices } from '@/service/api/user-portal';
 
-const router = useRouter();
+const appStore = useAppStore();
 const loading = ref(false);
 const devices = ref<Api.Devices.Device[]>([]);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
-const userInfo = ref<{ userId: string; userName: string; email?: string } | null>(null);
 
 const columns = [
   { key: 'rustdesk_id', title: $t('dataMap.device.rustdesk_id'), align: 'center' as const },
@@ -51,13 +50,6 @@ async function loadData() {
   }
 }
 
-async function loadUserInfo() {
-  const { data, error } = await fetchUserPortalInfo();
-  if (!error && data) {
-    userInfo.value = { userId: String(data.userId), userName: data.userName };
-  }
-}
-
 function handlePageChange(page: number) {
   currentPage.value = page;
   loadData();
@@ -69,42 +61,25 @@ function handlePageSizeChange(size: number) {
   loadData();
 }
 
-function handleLogout() {
-  localStg.remove('token');
-  localStg.remove('userType');
-  router.push('/login/user-login');
-}
-
 onMounted(() => {
   const token = localStg.get('token');
   if (!token) {
-    router.push('/login/user-login');
+    window.location.href = '/#/login/user-login';
     return;
   }
-  loadUserInfo();
   loadData();
 });
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col p-24px">
-    <div class="flex justify-between items-center mb-24px">
-      <div>
-        <h2 class="text-24px font-600 text-primary">{{ $t('page.myDevices.title') }}</h2>
-        <p v-if="userInfo" class="text-14px mt-4px text-gray-500">
-          {{ $t('page.myDevices.welcome', { userName: userInfo.userName || userInfo.userId }) }}
-        </p>
-      </div>
-      <NButton type="error" ghost @click="handleLogout">
-        {{ $t('page.myDevices.logout') }}
-      </NButton>
-    </div>
-
-    <NCard :bordered="false" size="small" class="flex-1-hidden card-wrapper">
+  <div class="min-h-500px flex-col-stretch gap-'16px overflow-hidden lt-sm:overflow-auto">
+    <NCard :title="$t('route.my-devices')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <NDataTable
         :columns="columns"
         :data="devices"
         size="small"
+        :flex-height="!appStore.isMobile"
+        :scroll-x="962"
         :loading="loading"
         remote
         :row-key="(row: any) => row.rustdesk_id"
@@ -117,6 +92,7 @@ onMounted(() => {
           onChange: handlePageChange,
           onUpdatePageSize: handlePageSizeChange
         }"
+        class="sm:h-full"
       />
     </NCard>
   </div>
