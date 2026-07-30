@@ -336,6 +336,24 @@ docker rm -f rustdesk-api-server-pro
 - 容器日志中无文件写入报错
 - 宿主机磁盘空间充足
 
+### 8.6 docker pull ghcr.io 报 TLS 错误
+
+**现象**：`http: server gave HTTP response to HTTPS client` 或 `SSL routines::wrong version number`
+
+**原因**：Clash/Surge 代理的 fake-ip 模式缓存失效，DNS 返回 `198.18.x.x` 假地址
+
+**处理**：
+
+1. 重启 Clash 通常可恢复
+2. 或开启 fake-ip 持久化：`uci set openclash.config.store_fakeip='1' && uci commit openclash`
+3. 或给 Docker 配代理：`mkdir -p /etc/systemd/system/docker.service.d && cat > /etc/systemd/system/docker.service.d/proxy.conf << 'EOF' [Service] Environment="HTTPS_PROXY=http://127.0.0.1:7890" EOF && systemctl daemon-reload && systemctl restart docker`
+
+### 8.7 更新镜像后 Web 页面 404
+
+**原因**：旧容器残留的 `/app/data/server.yaml` 被保留（新版不再覆盖），但该文件可能已被 PORT sed 损坏
+
+**处理**：删除 `/app/data/server.yaml`，重新创建容器
+
 ## 9. GHCR `denied` 排查
 
 如果执行下面命令报错：

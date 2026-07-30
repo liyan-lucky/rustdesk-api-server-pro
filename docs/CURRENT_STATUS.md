@@ -51,3 +51,8 @@
 2. Docker / OpenWrt 命令应保持 host 网络、`/mnt/docker` 数据目录、中文 label 和端口 label 风格。
 3. 生产环境必须修改 `signKey`，并在升级时保持固定。
 4. 不要在仓库中提交数据库、密钥、token、真实账号密码、OAuth secret 或生产配置。
+5. YAML 配置文件中安全相关字段不要加行尾注释（会导致 shell 脚本解析失败）。
+6. 启动脚本最后一行必须用 `exec`（确保 Go 进程成为 PID 1）。
+7. sed 替换 YAML 值时必须限定段范围（避免误改其他段的同名字段）。
+8. 新增前端 i18n key 时必须同步更新 `app.d.ts` 的 TypeScript 类型定义。
+9. 修改测试期望值后必须同步提交测试文件。
