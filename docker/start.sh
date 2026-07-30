@@ -24,7 +24,7 @@ if [ -n "${PORT:-}" ]; then
     port_val="$PORT"
     case "$port_val" in :*) ;; *) port_val=":$port_val" ;; esac
     if [ -f /app/data/server.yaml ]; then
-        sed -i "s|^\([[:space:]]*port:\).*|  port: \"$port_val\"|" /app/data/server.yaml
+        sed -i "/^httpConfig:/,/^[^ ]/ s|^\([[:space:]]*port:\).*|  port: \"$port_val\"|" /app/data/server.yaml
     fi
 fi
 

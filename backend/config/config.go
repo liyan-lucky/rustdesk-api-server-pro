@@ -120,7 +120,7 @@ func GetDefaultServerConfig() *ServerConfig {
 		},
 		HttpConfig: &HttpConfig{
 			Port:      ":8080",
-			StaticDir: "dist",
+			StaticDir: "/app/dist",
 		},
 		SignKey: util.RandomString(32),
 		JobsConfig: &JobsConfig{
@@ -159,7 +159,6 @@ func GetServerConfig() *ServerConfig {
 
 	err = yaml.Unmarshal(bytes, cfg)
 	if err != nil {
-		WriteServerConfig(cfg)
 		return cfg
 	}
 
