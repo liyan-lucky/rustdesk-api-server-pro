@@ -35,6 +35,28 @@
 - `staticdir` 指向不存在目录（导致后台页面 404）
 - Docker 端口映射未配置或映射错
 
+### v1.1.16 特有问题：signKey 启动失败
+
+**现象**：容器启动后立即退出，日志显示 `unsafe signKey: set a unique random signKey with at least 32 characters`
+
+**原因**：`server.yaml` 中 signKey 行尾注释导致启动脚本解析失败，无法自动替换默认值。
+
+**处理**：删除容器内 `/app/data/server.yaml`，重新创建容器让新镜像配置生效。
+
+### v1.1.16 特有问题：更新后 Web 页面 404
+
+**现象**：API 接口正常但访问管理后台返回 404
+
+**原因**：`PORT` 环境变量 sed 替换误改了 `smtpConfig.port`（整数→字符串），导致 YAML 解析失败，程序用默认值覆盖配置，默认 `staticdir` 为相对路径 `dist`，在 `/app/data` 下找不到前端文件。
+
+**处理**：删除 `/app/data/server.yaml`，重新创建容器。v1.1.16 已修复 sed 仅作用于 `httpConfig` 段，且解析失败不再覆盖文件。
+
+### v1.1.16 特有问题：容器停止报错
+
+**原因**：旧版 `start.sh` 中 Go 进程不是 PID 1，Shell 不转发 SIGTERM，Docker 超时后 SIGKILL 强杀。
+
+**处理**：v1.1.16 已修复：`exec` 替换 Shell 为 PID 1，Go 进程直接接收信号优雅关闭。
+
 ## 3. 登录成功但部分页面/接口报错（尤其升级后）
 
 ### 现象

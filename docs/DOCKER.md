@@ -121,11 +121,13 @@ docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
 
 1. 建立可执行文件软链接（如需要）
 2. 创建 `/app/data`
-3. 将挂载的 `/app/server.yaml` 复制到 `/app/data/server.yaml`
+3. 若 `/app/data/server.yaml` 不存在，将挂载的 `/app/server.yaml` 复制过去（避免覆盖用户修改）
 4. 切换工作目录到 `/app/data`
-5. 执行 `rustdesk-api-server-pro sync`
-6. 若首次启动且设置了 `ADMIN_USER` / `ADMIN_PASS`，自动创建管理员
-7. 执行 `rustdesk-api-server-pro start`
+5. 若设置了 `PORT` 环境变量，更新 `httpConfig.port`（仅修改 httpConfig 段）
+6. 检测并替换不安全的默认 signKey
+7. 执行 `rustdesk-api-server-pro sync`
+8. 若首次启动且设置了 `ADMIN_USER` / `ADMIN_PASS`，自动创建管理员
+9. 通过 `exec` 启动 `rustdesk-api-server-pro start`（Go 进程成为 PID 1，可接收 SIGTERM 优雅关闭）
 
 程序读取配置文件的位置是当前工作目录下的 `server.yaml`。容器内进程实际在 `/app/data` 下运行，所以最终生效的配置文件是 `/app/data/server.yaml`。启动脚本会把你挂载到 `/app/server.yaml` 的配置复制到 `/app/data/server.yaml`。
 
@@ -195,6 +197,27 @@ jobsConfig:
 
 - `ADMIN_USER`：首次启动自动创建管理员用户名（可选）
 - `ADMIN_PASS`：首次启动自动创建管理员密码（可选）
+- `PORT`：覆盖 `server.yaml` 中的监听端口，如 `PORT=21114`（可选）
+- `RUSTDESK_HBBS_DIR`：指定 hbbs 数据目录，用于自动读取 `id_ed25519.pub` 获取 KEY（可选）
+
+### KEY 自动检测
+
+管理后台的 KEY 字段按以下优先级获取：
+
+1. `RUSTDESK_KEY` 环境变量（最高优先级）
+2. `RUSTDESK_HBBS_DIR` 环境变量指向的目录中的 `id_ed25519.pub`
+3. 当前工作目录（Docker 中即 `/app/data`）中的 `id_ed25519.pub`
+4. `/app/data/id_ed25519.pub`
+
+Docker 部署时，将 hbbs 数据目录挂载到 `/app/data` 即可自动获取 KEY，无需手动设置。
+
+### 端口配置
+
+Docker 的 `-p` 端口映射只是 NAT 转发，不改变应用实际监听端口。设置 `PORT` 环境变量可同时修改应用监听端口和配置文件：
+
+```bash
+docker run -e PORT=21114 -p 21114:21114 ...
+```
 
 生效条件：
 

@@ -1,6 +1,6 @@
 # 当前仓库状态
 
-更新时间：2026-07-01
+更新时间：2026-07-30
 
 ## 定位
 
@@ -8,13 +8,15 @@
 
 ## 当前架构
 
-- 后端：`backend/`，Go 1.21.4。
+- 后端：`backend/`，Go 1.21.4（CI 使用 1.23.x）。
 - 前端：`soybean-admin/`，Vue 3 / Vite / TypeScript / Naive UI。
 - 默认数据库：SQLite。
 - 可选数据库：MySQL。
 - 默认配置文件：`backend/server.yaml`；容器内持久化配置为 `/app/data/server.yaml`。
-- 默认端口：`12345/tcp`。
+- 默认端口：`12345/tcp`，可通过 `PORT` 环境变量覆盖。
 - Docker 镜像：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`。
+- RustDesk 兼容版本：1.4.9。
+- 服务端版本：1.1.16。
 
 ## 当前能力边界
 
