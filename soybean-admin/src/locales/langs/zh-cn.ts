@@ -281,7 +281,8 @@ const local: App.I18n.Schema = {
           'memory-cache': '内存缓存',
           'session-cache': '会话缓存',
           env: '环境变量',
-          inferred: '自动推断',
+          inferred: '自动检测',
+          auto: '自动检测',
           empty: '未配置'
         },
         sourceHint: {

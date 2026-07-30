@@ -485,7 +485,7 @@ func resolveRustdeskKey() (string, string) {
 			if err == nil {
 				key := strings.TrimSpace(string(data))
 				if key != "" {
-					return key, "auto:" + pubPath
+					return key, "inferred"
 				}
 			}
 		}

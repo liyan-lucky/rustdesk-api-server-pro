@@ -253,11 +253,12 @@ const local: App.I18n.Schema = {
           'session-cache': 'Session Cache',
           env: 'Env',
           inferred: 'Inferred',
+          auto: 'Auto-detected',
           empty: 'Empty'
         },
         sourceHint: {
           env: 'This value comes from the container environment variable.',
-          inferred: 'This value is auto-inferred from the current access address.',
+          inferred: 'This value is auto-inferred or auto-detected from the container.',
           empty: 'No value is configured or inferred yet.'
         },
         connectivity: {
