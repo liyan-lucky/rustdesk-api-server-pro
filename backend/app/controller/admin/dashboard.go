@@ -474,7 +474,7 @@ func resolveRustdeskKey() (string, string) {
 		searchDirs = append(searchDirs, wd)
 	}
 
-	searchDirs = append(searchDirs, "/app/data")
+	searchDirs = append(searchDirs, "/app/data", "/root")
 
 	pubNames := []string{"id_ed25519.pub", "id_rsa.pub"}
 
