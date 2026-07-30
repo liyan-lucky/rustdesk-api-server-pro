@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -28,15 +29,17 @@ func (c *DevicesController) HandleMyDevices() mvc.Result {
 	}
 	idRows := make([]idRow, 0)
 	if err := c.Db.Table(&model.AuthToken{}).
-		Where("user_id = ? and is_admin = 0", user.Id).
+		Where("user_id = ? and is_admin = 0 and status = 1 and expired > ?", user.Id, time.Now().Format(config.TimeFormat)).
 		Cols("rustdesk_id").
 		Find(&idRows); err != nil {
 		return c.Error(nil, err.Error())
 	}
 
 	myRustdeskIds := make([]string, 0, len(idRows))
+	seen := make(map[string]bool)
 	for _, r := range idRows {
-		if r.RustdeskId != "" {
+		if r.RustdeskId != "" && !seen[r.RustdeskId] {
+			seen[r.RustdeskId] = true
 			myRustdeskIds = append(myRustdeskIds, r.RustdeskId)
 		}
 	}
@@ -57,7 +60,7 @@ func (c *DevicesController) HandleMyDevices() mvc.Result {
 	pagination := db.NewPagination(currentPage, pageSize)
 	deviceList := make([]model.Device, 0)
 
-	err := pagination.Paginate(query, &model.Audit{}, &deviceList)
+	err := pagination.Paginate(query, &model.Device{}, &deviceList)
 	if err != nil {
 		return c.Error(nil, err.Error())
 	}

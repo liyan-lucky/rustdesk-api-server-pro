@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, reactive } from 'vue';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
-import { useAuthStore } from '@/store/modules/auth';
 import { fetchCaptcha, fetchUserLogin } from '@/service/api/auth';
 import { localStg } from '@/utils/storage';
 
@@ -11,8 +9,6 @@ defineOptions({
   name: 'UserLogin'
 });
 
-const authStore = useAuthStore();
-const router = useRouter();
 const { formRef, validate } = useNaiveForm();
 
 const model: Api.Form.LoginForm = reactive({
@@ -62,8 +58,7 @@ async function handleSubmit() {
   if (!error && data?.token) {
     localStg.set('token', data.token);
     localStg.set('userType', 'user');
-    authStore.token = data.token;
-    router.push('/my-devices');
+    window.location.href = '/#/my-devices';
   } else if (error?.response?.data?.message === 'CaptchaError') {
     handleCaptcha();
   }
@@ -111,7 +106,7 @@ onMounted(() => {
       >
         {{ $t('common.confirm') }}
       </NButton>
-      <NButton text type="primary" @click="router.push('/login/pwd-login')">
+      <NButton text type="primary" @click="window.location.href = '/#/login/pwd-login'">
         {{ $t('page.login.userLogin.switchToAdmin') }}
       </NButton>
     </NSpace>

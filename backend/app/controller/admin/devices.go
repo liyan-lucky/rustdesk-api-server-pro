@@ -43,7 +43,7 @@ func (c *DevicesController) HandleList() mvc.Result {
 	pagination := db.NewPagination(currentPage, pageSize)
 	deviceList := make([]model.Device, 0)
 
-	err := pagination.Paginate(query, &model.Audit{}, &deviceList)
+	err := pagination.Paginate(query, &model.Device{}, &deviceList)
 	if err != nil {
 		return c.Error(nil, err.Error())
 	}

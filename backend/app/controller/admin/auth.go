@@ -92,24 +92,29 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 	var loginForm admin.LoginForm
 	err := c.Ctx.ReadJSON(&loginForm)
 	if err != nil {
+		c.recordUserLoginAudit(0, "", false, "decode_error: "+err.Error())
 		return c.Error(nil, err.Error())
 	}
 
 	if !captcha.VerifyCode(loginForm.CaptchaId, loginForm.Code) {
+		c.recordUserLoginAudit(0, loginForm.Username, false, "CaptchaError")
 		return c.Error(nil, "CaptchaError")
 	}
 
 	var user model.User
 	get, err := c.Db.Where("username = ? and is_admin = 0 and status > 0", loginForm.Username).Get(&user)
 	if err != nil {
+		c.recordUserLoginAudit(0, loginForm.Username, false, err.Error())
 		return c.Error(nil, err.Error())
 	}
 
 	if !get {
+		c.recordUserLoginAudit(0, loginForm.Username, false, "UserNotExists")
 		return c.Error(nil, "UserNotExists")
 	}
 
 	if !util.PasswordVerify(loginForm.Password, user.Password) {
+		c.recordUserLoginAudit(user.Id, loginForm.Username, false, "UsernameOrPasswordError")
 		return c.Error(nil, "UsernameOrPasswordError")
 	}
 
@@ -131,12 +136,26 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 
 	_, err = c.Db.Insert(authToken)
 	if err != nil {
+		c.recordUserLoginAudit(user.Id, loginForm.Username, false, err.Error())
 		return c.Error(nil, err.Error())
 	}
 
+	c.recordUserLoginAudit(user.Id, loginForm.Username, true, "token")
 	return c.Success(iris.Map{
 		"token": token,
 	}, "ok")
+}
+
+func (c *AuthController) recordUserLoginAudit(userID int, username string, success bool, reason string) {
+	_ = c.auditService().CreateSecurityAudit(core.SecurityAuditCreateCommand{
+		UserId:    userID,
+		Username:  username,
+		Event:     "web_user_login",
+		IP:        c.Ctx.RemoteAddr(),
+		UserAgent: c.Ctx.GetHeader("User-Agent"),
+		Success:   success,
+		Reason:    reason,
+	})
 }
 
 func (c *AuthController) GetAuthCaptcha() mvc.Result {

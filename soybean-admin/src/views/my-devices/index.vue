@@ -11,7 +11,7 @@ const devices = ref<Api.Devices.Device[]>([]);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
-const userInfo = ref<{ userId: number; userName: string; email: string } | null>(null);
+const userInfo = ref<{ userId: string; userName: string; email?: string } | null>(null);
 
 const columns = [
   { key: 'rustdesk_id', title: $t('dataMap.device.rustdesk_id'), align: 'center' as const },
@@ -53,7 +53,7 @@ async function loadData() {
 async function loadUserInfo() {
   const { data, error } = await fetchUserPortalInfo();
   if (!error && data) {
-    userInfo.value = data as any;
+    userInfo.value = { userId: String(data.userId), userName: data.userName };
   }
 }
 

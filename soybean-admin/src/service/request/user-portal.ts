@@ -1,5 +1,4 @@
 import { createFlatRequest, BACKEND_ERROR_CODE } from '@sa/axios';
-import { useAuthStore } from '@/store/modules/auth';
 import { $t } from '@/locales';
 import { localStg } from '@/utils/storage';
 import { showErrorMsg } from './shared';
@@ -31,6 +30,12 @@ export const userPortalRequest = createFlatRequest<App.Service.Response, Request
       return { data: response.data.data, message: response.data.message };
     },
     onError(error) {
+      if (error.response?.status === 401) {
+        localStg.remove('token');
+        localStg.remove('userType');
+        window.location.href = '/#/login/user-login';
+        return;
+      }
       let message = error.message;
       if (error.code === BACKEND_ERROR_CODE) {
         message = error.response?.data?.message || message;
