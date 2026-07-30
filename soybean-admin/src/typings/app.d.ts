@@ -622,6 +622,25 @@ declare namespace App {
         os: string,
         rustdesk_id: string,
         };
+        ab: {
+          rustdesk_id: string;
+          username: string;
+          hostname: string;
+          tags: string;
+          alias: string;
+          hash: string;
+          owner: string;
+          name: string;
+          user_id: string;
+          guid: string;
+          rule: string;
+          max_peer: string;
+          shared: string;
+          ab_id: string;
+          tagName: string;
+          tagColor: string;
+          updated_at: string;
+        };
         audit: {
           username: string;
           type: string;

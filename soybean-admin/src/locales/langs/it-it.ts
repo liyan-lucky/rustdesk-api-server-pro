@@ -166,7 +166,11 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Log di base',
     audit_filetransferlogs: 'Log trasferimenti file',
     devices: 'Dispositivi',
-    'my-devices': 'I miei dispositivi sincronizzati'
+    'my-devices': 'I miei dispositivi sincronizzati',
+    address_book: 'Address Book',
+    address_book_peers: 'My Peers',
+    address_book_manage: 'Address Book Mgmt',
+    address_book_tags: 'Tag Management'
   },
   page: {
     login: {
@@ -446,6 +450,25 @@ const local: App.I18n.Schema = {
         ok: 'Successo',
         err: 'Errore'
       }
+    },
+    ab: {
+      rustdesk_id: 'Rustdesk ID',
+      username: 'Username',
+      hostname: 'Hostname',
+      tags: 'Tags',
+      alias: 'Alias',
+      hash: 'Hash',
+      owner: 'Owner',
+      name: 'Address Book Name',
+      user_id: 'User ID',
+      guid: 'GUID',
+      rule: 'Rule',
+      max_peer: 'Max Peers',
+      shared: 'Shared',
+      ab_id: 'Address Book ID',
+      tagName: 'Name',
+      tagColor: 'Color',
+      updated_at: 'Updated At'
     }
   },
   api: {

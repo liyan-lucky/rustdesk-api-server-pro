@@ -182,7 +182,11 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Journaux de base',
     audit_filetransferlogs: 'Journaux de transfert de fichiers',
     devices: 'Appareils',
-    'my-devices': 'Mes appareils synchronisés'
+    'my-devices': 'Mes appareils synchronisés',
+    address_book: 'Address Book',
+    address_book_peers: 'My Peers',
+    address_book_manage: 'Address Book Mgmt',
+    address_book_tags: 'Tag Management'
   },
   page: {
     ...enUs.page,
@@ -402,11 +406,30 @@ const local: App.I18n.Schema = {
     device: {
       ...enUs.dataMap.device,
       username: 'Nom utilisateur',
-      hostname: 'Nom de l’hôte',
+      hostname: 'Nom de l'hôte',
       version: 'Version RustDesk',
         memory: 'M?moire',
       os: 'OS',
       rustdesk_id: 'Rustdesk ID'
+    },
+    ab: {
+      rustdesk_id: 'Rustdesk ID',
+      username: 'Username',
+      hostname: 'Hostname',
+      tags: 'Tags',
+      alias: 'Alias',
+      hash: 'Hash',
+      owner: 'Owner',
+      name: 'Address Book Name',
+      user_id: 'User ID',
+      guid: 'GUID',
+      rule: 'Rule',
+      max_peer: 'Max Peers',
+      shared: 'Shared',
+      ab_id: 'Address Book ID',
+      tagName: 'Name',
+      tagColor: 'Color',
+      updated_at: 'Updated At'
     },
     audit: {
       ...enUs.dataMap.audit,

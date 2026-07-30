@@ -190,7 +190,11 @@ const local: App.I18n.Schema = {
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
     devices: '设备管理',
-    'my-devices': '我的同步设备'
+    'my-devices': '我的同步设备',
+    address_book: '通讯录',
+    address_book_peers: '地址簿',
+    address_book_manage: '地址簿管理',
+    address_book_tags: '标签管理'
   },
   page: {
     ...enUs.page,
@@ -505,6 +509,26 @@ const local: App.I18n.Schema = {
         ok: '成功',
         err: '失败'
       }
+    },
+    ab: {
+      ...enUs.dataMap.ab,
+      rustdesk_id: 'RustdeskID',
+      username: '用户名',
+      hostname: '主机名',
+      tags: '标签',
+      alias: '别名',
+      hash: '哈希',
+      owner: '所有者',
+      name: '地址簿名称',
+      user_id: '用户ID',
+      guid: 'GUID',
+      rule: '权限',
+      max_peer: '最大节点数',
+      shared: '共享',
+      ab_id: '地址簿ID',
+      tagName: '名称',
+      tagColor: '颜色',
+      updated_at: '更新时间'
     }
   },
   api: {

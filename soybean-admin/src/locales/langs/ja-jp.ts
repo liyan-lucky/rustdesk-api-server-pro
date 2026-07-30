@@ -168,7 +168,11 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "基本ログ",
     "audit_filetransferlogs": "ファイル転送ログ",
     "devices": "デバイス",
-    "my-devices": "マイ同期デバイス"
+    "my-devices": "マイ同期デバイス",
+    "address_book": "Address Book",
+    "address_book_peers": "My Peers",
+    "address_book_manage": "Address Book Mgmt",
+    "address_book_tags": "Tag Management"
   },
   "page": {
     "login": {
@@ -448,6 +452,25 @@ const local: App.I18n.Schema = {
         "ok": "成功",
         "err": "失敗"
       }
+    },
+    "ab": {
+      "rustdesk_id": "Rustdesk ID",
+      "username": "Username",
+      "hostname": "Hostname",
+      "tags": "Tags",
+      "alias": "Alias",
+      "hash": "Hash",
+      "owner": "Owner",
+      "name": "Address Book Name",
+      "user_id": "User ID",
+      "guid": "GUID",
+      "rule": "Rule",
+      "max_peer": "Max Peers",
+      "shared": "Shared",
+      "ab_id": "Address Book ID",
+      "tagName": "Name",
+      "tagColor": "Color",
+      "updated_at": "Updated At"
     }
   },
   "api": {

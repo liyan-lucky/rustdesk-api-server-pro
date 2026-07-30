@@ -171,6 +171,45 @@ declare namespace Api {
     >;
   }
 
+  namespace AddressBook {
+    type Peer = Common.CommonRecord<{
+      rustdesk_id: string;
+      hash: string;
+      username: string;
+      hostname: string;
+      platform: string;
+      alias: string;
+      tags: string;
+      note: string;
+      ab_id: number;
+    }>;
+    type PeerList = Common.PaginatingQueryRecord<Peer>;
+    type PeerSearchParams = CommonType.RecordNullable<
+      Pick<Api.AddressBook.Peer, 'username' | 'hostname' | 'rustdesk_id'> &
+        Api.Common.CommonSearchParams
+    >;
+
+    type AddressBook = Common.CommonRecord<{
+      user_id: number;
+      guid: string;
+      name: string;
+      owner: string;
+      note: string;
+      rule: number;
+      max_peer: number;
+      shared: boolean;
+    }>;
+    type AddressBookList = Common.PaginatingQueryRecord<AddressBook>;
+
+    type Tag = Common.CommonRecord<{
+      user_id: number;
+      ab_id: number;
+      name: string;
+      color: number;
+    }>;
+    type TagList = Common.PaginatingQueryRecord<Tag>;
+  }
+
   namespace Audit {
     type AuditLog = Common.CommonRecord<{
       username: string;

@@ -168,7 +168,11 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
     "devices": "장치",
-    "my-devices": "내 동기화 기기"
+    "my-devices": "내 동기화 기기",
+    "address_book": "Address Book",
+    "address_book_peers": "My Peers",
+    "address_book_manage": "Address Book Mgmt",
+    "address_book_tags": "Tag Management"
   },
   "page": {
     "login": {
@@ -448,6 +452,25 @@ const local: App.I18n.Schema = {
         "ok": "성공",
         "err": "실패"
       }
+    },
+    "ab": {
+      "rustdesk_id": "Rustdesk ID",
+      "username": "Username",
+      "hostname": "Hostname",
+      "tags": "Tags",
+      "alias": "Alias",
+      "hash": "Hash",
+      "owner": "Owner",
+      "name": "Address Book Name",
+      "user_id": "User ID",
+      "guid": "GUID",
+      "rule": "Rule",
+      "max_peer": "Max Peers",
+      "shared": "Shared",
+      "ab_id": "Address Book ID",
+      "tagName": "Name",
+      "tagColor": "Color",
+      "updated_at": "Updated At"
     }
   },
   "api": {
