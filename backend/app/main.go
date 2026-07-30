@@ -59,7 +59,12 @@ func StartServerWithContext(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	err = app.Listen(cfg.HttpConfig.Port, iris.WithoutBodyConsumptionOnUnmarshal, iris.Context(ctx))
+	go func() {
+		<-ctx.Done()
+		_ = app.Shutdown(ctx)
+	}()
+
+	err = app.Listen(cfg.HttpConfig.Port, iris.WithoutBodyConsumptionOnUnmarshal)
 	if err != nil && ctx.Err() != nil {
 		return true, nil
 	}
