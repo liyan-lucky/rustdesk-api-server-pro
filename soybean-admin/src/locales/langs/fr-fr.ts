@@ -406,7 +406,7 @@ const local: App.I18n.Schema = {
     device: {
       ...enUs.dataMap.device,
       username: 'Nom utilisateur',
-      hostname: 'Nom de l'hôte',
+      hostname: "Nom de l'hôte",
       version: 'Version RustDesk',
         memory: 'M?moire',
       os: 'OS',
