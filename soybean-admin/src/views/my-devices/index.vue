@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { NTag } from 'naive-ui';
 import { $t } from '@/locales';
 import { localStg } from '@/utils/storage';
 import { fetchMyDevices, fetchUserPortalInfo } from '@/service/api/user-portal';

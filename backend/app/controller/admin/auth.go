@@ -148,7 +148,7 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 
 func (c *AuthController) recordUserLoginAudit(userID int, username string, success bool, reason string) {
 	_ = c.auditService().CreateSecurityAudit(core.SecurityAuditCreateCommand{
-		UserId:    userID,
+		UserID:    userID,
 		Username:  username,
 		Event:     "web_user_login",
 		IP:        c.Ctx.RemoteAddr(),

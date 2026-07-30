@@ -167,7 +167,8 @@ const local: App.I18n.Schema = {
     "system_server": "Конфигурация сервера",
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
-    "devices": "Устройства"
+    "devices": "Устройства",
+    "my-devices": "My Sync Devices"
   },
   "page": {
     "login": {
@@ -190,7 +191,12 @@ const local: App.I18n.Schema = {
       },
       "pwdLogin": {
         "title": "Вход по паролю",
-        "rememberMe": "Запомнить меня"
+        "rememberMe": "Запомнить меня",
+        "switchToUser": "User Login"
+      },
+      "userLogin": {
+        "title": "User Login",
+        "switchToAdmin": "Admin Login"
       }
     },
     "home": {
@@ -253,7 +259,8 @@ const local: App.I18n.Schema = {
           "session-cache": "Кэш сессии",
           "env": "Переменная окружения",
           "inferred": "Автоопределение",
-          "empty": "Пусто"
+          "empty": "Пусто",
+          "auto": "Auto-detected"
         },
         "sourceHint": {
           "env": "Это значение получено из переменной окружения контейнера.",
@@ -324,6 +331,16 @@ const local: App.I18n.Schema = {
       "mailLog": {
         "info": "Подробности"
       }
+    },
+    "myDevices": {
+      "title": "My Sync Devices",
+      "welcome": "Welcome, {userName}",
+      "status": "Status",
+      "online": "Online",
+      "offline": "Offline",
+      "conns": "Connections",
+      "lastSync": "Last Sync",
+      "logout": "Logout"
     }
   },
   "dropdown": {

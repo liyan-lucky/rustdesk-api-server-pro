@@ -166,6 +166,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Log di base',
     audit_filetransferlogs: 'Log trasferimenti file',
     devices: 'Dispositivi',
+    'my-devices': 'My Sync Devices'
   },
   page: {
     login: {
@@ -188,7 +189,12 @@ const local: App.I18n.Schema = {
       },
       pwdLogin: {
         title: 'Accesso con password',
-        rememberMe: 'Ricordami'
+        rememberMe: 'Ricordami',
+        switchToUser: 'User Login'
+      },
+      userLogin: {
+        title: 'User Login',
+        switchToAdmin: 'Admin Login'
       }
     },
     home: {
@@ -251,7 +257,8 @@ const local: App.I18n.Schema = {
           'session-cache': 'Cache sessione',
           env: 'Variabile env',
           inferred: 'Dedotto',
-          empty: 'Vuoto'
+          empty: 'Vuoto',
+          auto: 'Auto-detected'
         },
         sourceHint: {
           env: 'Questo valore proviene da una variabile d’ambiente del container.',
@@ -322,6 +329,16 @@ const local: App.I18n.Schema = {
       mailLog: {
         info: 'Informazioni'
       }
+    },
+    myDevices: {
+      title: 'My Sync Devices',
+      welcome: 'Welcome, {userName}',
+      status: 'Status',
+      online: 'Online',
+      offline: 'Offline',
+      conns: 'Connections',
+      lastSync: 'Last Sync',
+      logout: 'Logout'
     }
   },
   dropdown: {

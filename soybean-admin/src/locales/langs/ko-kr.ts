@@ -167,7 +167,8 @@ const local: App.I18n.Schema = {
     "system_server": "서버 설정",
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
-    "devices": "장치"
+    "devices": "장치",
+    "my-devices": "My Sync Devices"
   },
   "page": {
     "login": {
@@ -190,7 +191,12 @@ const local: App.I18n.Schema = {
       },
       "pwdLogin": {
         "title": "비밀번호 로그인",
-        "rememberMe": "로그인 상태 유지"
+        "rememberMe": "로그인 상태 유지",
+        "switchToUser": "User Login"
+      },
+      "userLogin": {
+        "title": "User Login",
+        "switchToAdmin": "Admin Login"
       }
     },
     "home": {
@@ -253,7 +259,8 @@ const local: App.I18n.Schema = {
           "session-cache": "Session Cache",
           "env": "Env",
           "inferred": "Inferred",
-          "empty": "Empty"
+          "empty": "Empty",
+          "auto": "Auto-detected"
         },
         "sourceHint": {
           "env": "This value comes from the container environment variable.",
@@ -324,6 +331,16 @@ const local: App.I18n.Schema = {
       "mailLog": {
         "info": "상세"
       }
+    },
+    "myDevices": {
+      "title": "My Sync Devices",
+      "welcome": "Welcome, {userName}",
+      "status": "Status",
+      "online": "Online",
+      "offline": "Offline",
+      "conns": "Connections",
+      "lastSync": "Last Sync",
+      "logout": "Logout"
     }
   },
   "dropdown": {

@@ -167,7 +167,8 @@ const local: App.I18n.Schema = {
     "system_server": "サーバー設定",
     "audit_baselogs": "基本ログ",
     "audit_filetransferlogs": "ファイル転送ログ",
-    "devices": "デバイス"
+    "devices": "デバイス",
+    "my-devices": "My Sync Devices"
   },
   "page": {
     "login": {
@@ -190,7 +191,12 @@ const local: App.I18n.Schema = {
       },
       "pwdLogin": {
         "title": "パスワードログイン",
-        "rememberMe": "ログイン状態を保持"
+        "rememberMe": "ログイン状態を保持",
+        "switchToUser": "User Login"
+      },
+      "userLogin": {
+        "title": "User Login",
+        "switchToAdmin": "Admin Login"
       }
     },
     "home": {
@@ -253,7 +259,8 @@ const local: App.I18n.Schema = {
           "session-cache": "Session Cache",
           "env": "Env",
           "inferred": "Inferred",
-          "empty": "Empty"
+          "empty": "Empty",
+          "auto": "Auto-detected"
         },
         "sourceHint": {
           "env": "This value comes from the container environment variable.",
@@ -324,6 +331,16 @@ const local: App.I18n.Schema = {
       "mailLog": {
         "info": "詳細"
       }
+    },
+    "myDevices": {
+      "title": "My Sync Devices",
+      "welcome": "Welcome, {userName}",
+      "status": "Status",
+      "online": "Online",
+      "offline": "Offline",
+      "conns": "Connections",
+      "lastSync": "Last Sync",
+      "logout": "Logout"
     }
   },
   "dropdown": {

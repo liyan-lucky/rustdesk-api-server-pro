@@ -419,6 +419,11 @@ declare namespace App {
           pwdLogin: {
             title: string;
             rememberMe: string;
+            switchToUser: string;
+          };
+          userLogin: {
+            title: string;
+            switchToAdmin: string;
           };
         };
         home: {
@@ -553,6 +558,16 @@ declare namespace App {
           mailLog: {
             info: string;
           };
+        };
+        myDevices: {
+          title: string;
+          welcome: string;
+          status: string;
+          online: string;
+          offline: string;
+          conns: string;
+          lastSync: string;
+          logout: string;
         };
       };
       dropdown: Record<Global.DropdownKey, string>;

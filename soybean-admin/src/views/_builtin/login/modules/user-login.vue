@@ -71,6 +71,10 @@ async function handleCaptcha() {
   model.captchaId = captcha.id || '';
 }
 
+function switchToAdmin() {
+  window.location.href = '/#/login/pwd-login';
+}
+
 onMounted(() => {
   handleCaptcha();
 });
@@ -106,7 +110,7 @@ onMounted(() => {
       >
         {{ $t('common.confirm') }}
       </NButton>
-      <NButton text type="primary" @click="window.location.href = '/#/login/pwd-login'">
+      <NButton text type="primary" @click="switchToAdmin">
         {{ $t('page.login.userLogin.switchToAdmin') }}
       </NButton>
     </NSpace>

@@ -181,7 +181,8 @@ const local: App.I18n.Schema = {
     system_mail: 'Correo',
     audit_baselogs: 'Registros base',
     audit_filetransferlogs: 'Registros de transferencia',
-    devices: 'Dispositivos'
+    devices: 'Dispositivos',
+    'my-devices': 'My Sync Devices'
   },
   page: {
     ...enUs.page,
@@ -208,7 +209,12 @@ const local: App.I18n.Schema = {
         pwdLogin: {
           ...enUs.page.login.pwdLogin,
           title: 'Inicio con contrase?a',
-          rememberMe: 'Recordarme'
+          rememberMe: 'Recordarme',
+          switchToUser: 'User Login'
+        },
+        userLogin: {
+          title: 'User Login',
+          switchToAdmin: 'Admin Login'
         }
       },
     home: {
@@ -272,7 +278,8 @@ const local: App.I18n.Schema = {
           'session-cache': 'Cach? de sesi?n',
           env: 'Entorno',
           inferred: 'Inferido',
-          empty: 'Vac?o'
+          empty: 'Vac?o',
+          auto: 'Auto-detected'
         },
         sourceHint: {
           ...enUs.page.home.serverConfig.sourceHint,
@@ -347,6 +354,16 @@ const local: App.I18n.Schema = {
         ...enUs.page.system.mailLog,
         info: 'Detalle'
       }
+    },
+    myDevices: {
+      title: 'My Sync Devices',
+      welcome: 'Welcome, {userName}',
+      status: 'Status',
+      online: 'Online',
+      offline: 'Offline',
+      conns: 'Connections',
+      lastSync: 'Last Sync',
+      logout: 'Logout'
     }
   },
   dataMap: {
