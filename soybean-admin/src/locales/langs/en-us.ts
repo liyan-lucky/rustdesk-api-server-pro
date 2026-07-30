@@ -167,7 +167,8 @@ const local: App.I18n.Schema = {
     system_server: 'Server Config',
     audit_baselogs: 'Base Logs',
     audit_filetransferlogs: 'File Transfer Logs',
-    devices: 'Devices'
+    devices: 'Devices',
+    'my-devices': 'My Sync Devices'
   },
   page: {
     login: {
@@ -190,7 +191,12 @@ const local: App.I18n.Schema = {
       },
       pwdLogin: {
         title: 'Password Login',
-        rememberMe: 'Remember me'
+        rememberMe: 'Remember me',
+        switchToUser: 'User Login'
+      },
+      userLogin: {
+        title: 'User Login',
+        switchToAdmin: 'Admin Login'
       }
     },
     home: {
@@ -325,6 +331,16 @@ const local: App.I18n.Schema = {
       mailLog: {
         info: 'Info'
       }
+    },
+    myDevices: {
+      title: 'My Sync Devices',
+      welcome: 'Welcome, {userName}',
+      status: 'Status',
+      online: 'Online',
+      offline: 'Offline',
+      conns: 'Connections',
+      lastSync: 'Last Sync',
+      logout: 'Logout'
     }
   },
   dropdown: {

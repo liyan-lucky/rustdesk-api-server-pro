@@ -11,6 +11,7 @@ import { useAuthStore } from '@/store/modules/auth';
 import { useThemeStore } from '@/store/modules/theme';
 import { loginModuleRecord } from '@/constants/app';
 import PwdLogin from './modules/pwd-login.vue';
+import UserLogin from './modules/user-login.vue';
 
 interface Props {
   /** The login module */
@@ -31,7 +32,8 @@ interface LoginModule {
 }
 
 const moduleMap: Record<UnionKey.LoginModule, LoginModule> = {
-  'pwd-login': { label: loginModuleRecord['pwd-login'], component: PwdLogin }
+  'pwd-login': { label: loginModuleRecord['pwd-login'], component: PwdLogin },
+  'user-login': { label: loginModuleRecord['user-login'], component: UserLogin }
 };
 
 const activeModule = computed(() => moduleMap[props.module || 'pwd-login']);

@@ -3,6 +3,7 @@ package app
 import (
 	"rustdesk-api-server-pro/app/controller/admin"
 	"rustdesk-api-server-pro/app/controller/api"
+	"rustdesk-api-server-pro/app/controller/userportal"
 	"rustdesk-api-server-pro/app/middleware"
 
 	"github.com/kataras/iris/v12"
@@ -51,5 +52,13 @@ func SetRoute(app *iris.Application) {
 		adminWithAuthMvc.Handle(new(admin.MailTemplateController))
 		adminWithAuthMvc.Handle(new(admin.MaiLogsController))
 		adminWithAuthMvc.Handle(new(admin.DevicesController))
+	}
+
+	userPortalWithAuthParty := app.Party("/user-portal")
+	userPortalWithAuthParty.Use(middleware.UserAuth(app))
+	{
+		userPortalMvc := mvc.New(userPortalWithAuthParty)
+		userPortalMvc.Handle(new(userportal.IndexController))
+		userPortalMvc.Handle(new(userportal.DevicesController))
 	}
 }

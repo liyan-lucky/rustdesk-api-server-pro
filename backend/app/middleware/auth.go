@@ -96,6 +96,39 @@ func getActiveAuthToken(db *xorm.Engine, token string, isAdmin bool) (model.Auth
 	return authToken, get, err
 }
 
+func UserAuth(app *iris.Application) iris.Handler {
+	return func(context iris.Context) {
+		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
+		token := context.GetHeader("Authorization")
+
+		authToken, get, err := getActiveAuthToken(db, token, false)
+		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "web_user_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
+			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
+			return
+		}
+
+		var user model.User
+		get, err = db.Where("id = ? and status > 0 and is_admin = 0", authToken.UserId).Get(&user)
+		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "web_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
+			context.StopWithText(iris.StatusNotAcceptable, "NotAcceptable")
+			return
+		}
+
+		s := carbon.Now().DiffInSeconds(carbon.Parse(authToken.Expired.Format(config.TimeFormat)))
+		if s <= 60*5 {
+			authToken.Expired = carbon.Parse(authToken.Expired.Format(config.TimeFormat)).AddHours(2).ToStdTime()
+			db.Where("id = ?", authToken.Id).Cols("expired").Update(&authToken)
+		}
+
+		context.Values().Set(config.WebUserKey, &user)
+		context.Values().Set(config.WebAuthTokenString, token)
+		context.Values().Set(config.WebAuthToken, &authToken)
+		context.Next()
+	}
+}
+
 func recordAuthSecurityAudit(db *xorm.Engine, context iris.Context, event string, userID int, username string, success bool, reason string) {
 	if db == nil || context == nil {
 		return

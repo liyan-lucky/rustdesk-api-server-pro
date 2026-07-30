@@ -64,3 +64,16 @@ export function fetchOAuthTicketToken(ticket: string) {
 export function fetchGetUserInfo() {
   return request<Api.Auth.UserInfo>({ url: '/userinfo' });
 }
+
+export function fetchUserLogin(model: Api.Form.LoginForm) {
+  return request<Api.Auth.LoginToken>({
+    url: '/auth/user-login',
+    method: 'post',
+    data: {
+      username: model.username,
+      password: model.password,
+      code: model.code,
+      captchaId: model.captchaId
+    }
+  });
+}

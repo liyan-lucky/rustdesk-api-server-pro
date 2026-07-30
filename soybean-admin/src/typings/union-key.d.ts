@@ -9,7 +9,7 @@ declare namespace UnionKey {
    * - reset-pwd: reset password
    * - bind-wechat: bind wechat
    */
-  type LoginModule = 'pwd-login';
+   type LoginModule = 'pwd-login' | 'user-login';
 
   /** Theme scheme */
   type ThemeScheme = 'light' | 'dark' | 'auto';

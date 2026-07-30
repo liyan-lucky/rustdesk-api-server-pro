@@ -13,7 +13,8 @@ export const themeSchemaRecord: Record<UnionKey.ThemeScheme, App.I18n.I18nKey> =
 export const themeSchemaOptions = transformRecordToOption(themeSchemaRecord);
 
 export const loginModuleRecord: Record<UnionKey.LoginModule, App.I18n.I18nKey> = {
-  'pwd-login': 'page.login.pwdLogin.title'
+  'pwd-login': 'page.login.pwdLogin.title',
+  'user-login': 'page.login.userLogin.title'
 };
 
 export const themeLayoutModeRecord: Record<UnionKey.ThemeLayoutMode, App.I18n.I18nKey> = {

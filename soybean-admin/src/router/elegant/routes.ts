@@ -84,6 +84,17 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'my-devices',
+    path: '/my-devices',
+    component: 'layout.blank$view.my-devices',
+    meta: {
+      title: 'my-devices',
+      i18nKey: 'route.my-devices',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
     name: 'home',
     path: '/home',
     component: 'layout.base$view.home',

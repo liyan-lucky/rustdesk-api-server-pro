@@ -189,7 +189,8 @@ const local: App.I18n.Schema = {
     system_server: '服务器配置',
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
-    devices: '设备管理'
+    devices: '设备管理',
+    'my-devices': '我的同步设备'
   },
   page: {
     ...enUs.page,
@@ -216,7 +217,12 @@ const local: App.I18n.Schema = {
       pwdLogin: {
         ...enUs.page.login.pwdLogin,
         title: '密码登录',
-        rememberMe: '记住我'
+        rememberMe: '记住我',
+        switchToUser: '普通用户登录'
+      },
+      userLogin: {
+        title: '普通用户登录',
+        switchToAdmin: '管理员登录'
       }
     },
     home: {
@@ -366,6 +372,16 @@ const local: App.I18n.Schema = {
         ...enUs.page.system.mailLog,
         info: '详情'
       }
+    },
+    myDevices: {
+      title: '我的同步设备',
+      welcome: '欢迎，{userName}',
+      status: '状态',
+      online: '在线',
+      offline: '离线',
+      conns: '连接数',
+      lastSync: '最后同步',
+      logout: '退出登录'
     }
   },
   dropdown: {

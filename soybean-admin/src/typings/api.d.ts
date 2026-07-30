@@ -151,9 +151,14 @@ declare namespace Api {
       hostname: string;
       username: string;
       uuid: string;
-      version:string;
-      os:string;
-      memory:string;
+      version: string;
+      os: string;
+      cpu?: string;
+      memory: string;
+      disabled?: boolean;
+      is_online?: boolean;
+      conns?: number;
+      updated_at?: string;
       created_at: string;
     }>;
     type DevicesList = Common.PaginatingQueryRecord<Device>;

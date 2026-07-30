@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
-import { fetchCaptcha, fetchOAuthLoginUrl, fetchOAuthProviders } from '@/service/api/auth';
+import { fetchCaptcha, fetchUserLogin } from '@/service/api/auth';
+import { localStg } from '@/utils/storage';
 
 defineOptions({
-  name: 'PwdLogin'
+  name: 'UserLogin'
 });
 
 const authStore = useAuthStore();
-const route = useRoute();
 const router = useRouter();
 const { formRef, validate } = useNaiveForm();
-const oauthProviders = ref<Api.Auth.OAuthProvider[]>([]);
-const activeProvider = ref('');
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -60,8 +58,13 @@ const rules = computed<Record<keyof Api.Form.LoginForm, App.Global.FormRule[]>>(
 
 async function handleSubmit() {
   await validate();
-  const err = await authStore.login(model);
-  if (err?.response?.data.message === 'CaptchaError') {
+  const { data, error } = await fetchUserLogin(model);
+  if (!error && data?.token) {
+    localStg.set('token', data.token);
+    localStg.set('userType', 'user');
+    authStore.token = data.token;
+    router.push('/my-devices');
+  } else if (error?.response?.data?.message === 'CaptchaError') {
     handleCaptcha();
   }
 }
@@ -73,34 +76,8 @@ async function handleCaptcha() {
   model.captchaId = captcha.id || '';
 }
 
-async function loadOAuthProviders() {
-  try {
-    const { data } = await fetchOAuthProviders();
-    oauthProviders.value = data || [];
-  } catch {
-    oauthProviders.value = [];
-  }
-}
-
-async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {
-  activeProvider.value = provider.name;
-  try {
-    const redirect =
-      typeof route.query.redirect === 'string' && route.query.redirect !== '/' ? route.query.redirect : '/#/login';
-    const { data, error } = await fetchOAuthLoginUrl(provider.name, redirect);
-    if (!error && data?.enabled && data.url) {
-      window.location.href = data.url;
-      return;
-    }
-    window.$message?.error($t('page.login.common.providerUnavailable', { provider: provider.displayName }));
-  } finally {
-    activeProvider.value = '';
-  }
-}
-
 onMounted(() => {
   handleCaptcha();
-  loadOAuthProviders();
 });
 </script>
 
@@ -123,34 +100,19 @@ onMounted(() => {
         <img width="152" height="40" class="cursor-pointer" :src="captcha.img" @click="handleCaptcha" />
       </div>
     </NFormItem>
-    <NSpace vertical :size="24">
-      <div class="flex-y-center justify-between">
-        <NCheckbox>{{ $t('page.login.pwdLogin.rememberMe') }}</NCheckbox>
-      </div>
+    <NSpace vertical :size="16">
       <NButton
         attr-type="submit"
         type="primary"
         size="large"
         round
         block
-        :loading="authStore.loginLoading"
         @click="handleSubmit"
       >
         {{ $t('common.confirm') }}
       </NButton>
-      <NDivider v-if="oauthProviders.length > 0">{{ $t('page.login.common.thirdPartyLogin') }}</NDivider>
-      <NButton
-        v-for="provider in oauthProviders"
-        :key="provider.name"
-        tertiary
-        block
-        :loading="activeProvider === provider.name"
-        @click="handleOAuthLogin(provider)"
-      >
-        {{ $t('page.login.common.continueWith', { provider: provider.displayName }) }}
-      </NButton>
-      <NButton text type="primary" @click="router.push('/login/user-login')">
-        {{ $t('page.login.pwdLogin.switchToUser') }}
+      <NButton text type="primary" @click="router.push('/login/pwd-login')">
+        {{ $t('page.login.userLogin.switchToAdmin') }}
       </NButton>
     </NSpace>
   </NForm>
