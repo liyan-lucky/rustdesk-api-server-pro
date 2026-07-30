@@ -481,6 +481,7 @@ declare namespace App {
               'session-cache': string;
               env: string;
               inferred: string;
+              auto: string;
               empty: string;
             };
             sourceHint: {
