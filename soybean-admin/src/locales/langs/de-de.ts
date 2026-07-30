@@ -183,10 +183,10 @@ const local: App.I18n.Schema = {
     audit_filetransferlogs: 'Dateiuebertragungsprotokolle',
     devices: 'Geraete',
     'my-devices': 'Meine synchronisierten Geräte',
-    address_book: 'Address Book',
-    address_book_peers: 'My Peers',
-    address_book_manage: 'Address Book Mgmt',
-    address_book_tags: 'Tag Management'
+    address_book: 'Adressbuch',
+    address_book_peers: 'Meine Kontakte',
+    address_book_manage: 'Adressbuchverwaltung',
+    address_book_tags: 'Tag-Verwaltung'
   },
   page: {
     ...enUs.page,
@@ -414,22 +414,22 @@ const local: App.I18n.Schema = {
     },
     ab: {
       rustdesk_id: 'Rustdesk ID',
-      username: 'Username',
+      username: 'Benutzername',
       hostname: 'Hostname',
-      tags: 'Tags',
+      tags: 'Schlagwörter',
       alias: 'Alias',
       hash: 'Hash',
-      owner: 'Owner',
-      name: 'Address Book Name',
-      user_id: 'User ID',
+      owner: 'Eigentümer',
+      name: 'Adressbuchname',
+      user_id: 'Benutzer-ID',
       guid: 'GUID',
-      rule: 'Rule',
-      max_peer: 'Max Peers',
-      shared: 'Shared',
-      ab_id: 'Address Book ID',
+      rule: 'Berechtigung',
+      max_peer: 'Max. Kontakte',
+      shared: 'Geteilt',
+      ab_id: 'Adressbuch-ID',
       tagName: 'Name',
-      tagColor: 'Color',
-      updated_at: 'Updated At'
+      tagColor: 'Farbe',
+      updated_at: 'Aktualisiert am'
     },
     audit: {
       ...enUs.dataMap.audit,
