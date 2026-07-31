@@ -30,7 +30,7 @@ declare module "@elegant-router/types" {
     "address_book_manage": "/my-devices/manage";
     "address_book_tags": "/my-devices/tags";
     "iframe-page": "/iframe-page/:url";
-    "login": "/login/:module(user-login)?";
+    "login": "/login/:module(pwd-login)?";
     "system": "/system";
     "system_mail": "/system/mail";
     "system_mail_logs": "/system/mail/logs";
@@ -109,7 +109,6 @@ declare module "@elegant-router/types" {
     | "audit_filetransferlogs"
     | "devices"
     | "home"
-    | "my-devices"
     | "system_mail_logs"
     | "system_mail_template"
     | "system_server"

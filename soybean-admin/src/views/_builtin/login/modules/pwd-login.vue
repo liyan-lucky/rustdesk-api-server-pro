@@ -149,9 +149,6 @@ onMounted(() => {
       >
         {{ $t('page.login.common.continueWith', { provider: provider.displayName }) }}
       </NButton>
-      <NButton text type="primary" @click="router.push('/login/user-login')">
-        {{ $t('page.login.pwdLogin.switchToUser') }}
-      </NButton>
     </NSpace>
   </NForm>
 </template>

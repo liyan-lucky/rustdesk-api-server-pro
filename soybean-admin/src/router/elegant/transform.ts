@@ -176,7 +176,7 @@ const routeMap: RouteMap = {
   "address_book_manage": "/my-devices/manage",
   "address_book_tags": "/my-devices/tags",
   "iframe-page": "/iframe-page/:url",
-  "login": "/login/:module(user-login)?",
+  "login": "/login/:module(pwd-login)?",
   "system": "/system",
   "system_mail": "/system/mail",
   "system_mail_logs": "/system/mail/logs",

@@ -94,10 +94,11 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function applyTokenAndBootstrap(loginToken: Api.Auth.LoginToken) {
-    // 1. stored in the localStorage, the later requests need it in headers
     localStg.set('token', loginToken.token);
+    if (loginToken.isAdmin !== undefined) {
+      localStg.set('isAdmin', loginToken.isAdmin);
+    }
 
-    // 2. get user info
     const pass = await getUserInfo();
 
     if (pass) {

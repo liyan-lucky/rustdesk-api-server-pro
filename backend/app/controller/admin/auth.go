@@ -43,7 +43,7 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 	}
 
 	var user model.User
-	get, err := c.Db.Where("username = ? and is_admin = 1", loginForm.Username).Get(&user)
+	get, err := c.Db.Where("username = ? and status > 0", loginForm.Username).Get(&user)
 	if err != nil {
 		c.recordAdminLoginAudit(0, loginForm.Username, false, err.Error())
 		return c.Error(nil, err.Error())
@@ -56,65 +56,6 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 
 	if !util.PasswordVerify(loginForm.Password, user.Password) {
 		c.recordAdminLoginAudit(user.Id, loginForm.Username, false, "UsernameOrPasswordError")
-		return c.Error(nil, "UsernameOrPasswordError")
-	}
-
-	// make other tokens expired
-	_, _ = c.Db.Where("user_id = ? and status = 1 and is_admin = 1", user.Id).Cols("status").Update(&model.AuthToken{
-		Status: 0,
-	})
-
-	signStr := strconv.Itoa(user.Id) + user.Username + time.Now().String()
-	token := util.HmacSha256(signStr, c.Cfg.SignKey)
-	expired := 2 * time.Hour // 2 hours
-
-	authToken := &model.AuthToken{
-		UserId:    user.Id,
-		TokenHash: util.Sha256Hex(token),
-		Expired:   time.Now().Add(expired),
-		IsAdmin:   true,
-		Status:    1,
-	}
-
-	_, err = c.Db.Insert(authToken)
-	if err != nil {
-		c.recordAdminLoginAudit(user.Id, loginForm.Username, false, err.Error())
-		return c.Error(nil, err.Error())
-	}
-
-	c.recordAdminLoginAudit(user.Id, loginForm.Username, true, "token")
-	return c.Success(iris.Map{
-		"token": token,
-	}, "ok")
-}
-
-func (c *AuthController) PostUserLogin() mvc.Result {
-	var loginForm admin.LoginForm
-	err := c.Ctx.ReadJSON(&loginForm)
-	if err != nil {
-		c.recordUserLoginAudit(0, "", false, "decode_error: "+err.Error())
-		return c.Error(nil, err.Error())
-	}
-
-	if !captcha.VerifyCode(loginForm.CaptchaId, loginForm.Code) {
-		c.recordUserLoginAudit(0, loginForm.Username, false, "CaptchaError")
-		return c.Error(nil, "CaptchaError")
-	}
-
-	var user model.User
-	get, err := c.Db.Where("username = ? and status > 0", loginForm.Username).Get(&user)
-	if err != nil {
-		c.recordUserLoginAudit(0, loginForm.Username, false, err.Error())
-		return c.Error(nil, err.Error())
-	}
-
-	if !get {
-		c.recordUserLoginAudit(0, loginForm.Username, false, "UserNotExists")
-		return c.Error(nil, "UserNotExists")
-	}
-
-	if !util.PasswordVerify(loginForm.Password, user.Password) {
-		c.recordUserLoginAudit(user.Id, loginForm.Username, false, "UsernameOrPasswordError")
 		return c.Error(nil, "UsernameOrPasswordError")
 	}
 
@@ -136,14 +77,18 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 
 	_, err = c.Db.Insert(authToken)
 	if err != nil {
-		c.recordUserLoginAudit(user.Id, loginForm.Username, false, err.Error())
+		c.recordAdminLoginAudit(user.Id, loginForm.Username, false, err.Error())
 		return c.Error(nil, err.Error())
 	}
 
-	c.recordUserLoginAudit(user.Id, loginForm.Username, true, "token")
+	if user.IsAdmin {
+		c.recordAdminLoginAudit(user.Id, loginForm.Username, true, "token")
+	} else {
+		c.recordUserLoginAudit(user.Id, loginForm.Username, true, "token")
+	}
 	return c.Success(iris.Map{
-		"token":    token,
-		"isAdmin":  user.IsAdmin,
+		"token":   token,
+		"isAdmin": user.IsAdmin,
 	}, "ok")
 }
 

@@ -152,7 +152,7 @@ export const generatedRoutes: GeneratedRoute[] = [
   },
   {
     name: 'login',
-    path: '/login/:module(user-login)?',
+    path: '/login/:module(pwd-login)?',
     component: 'layout.blank$view.login',
     props: true,
     meta: {
