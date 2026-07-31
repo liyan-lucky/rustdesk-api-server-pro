@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { $t } from '@/locales';
 import { fetchStat } from '@/service/api/home';
-import { getVersionTag } from '@/utils/version';
+import { getVersionTag, getBuildTime } from '@/utils/version';
 
 defineOptions({
   name: 'ChangeLogs'
@@ -16,14 +16,17 @@ interface LogItem {
 }
 
 const compatVersion = ref('latest');
+const serverVersion = ref('');
+const buildTime = ref('');
 const appVersion = getVersionTag();
+const frontendBuildTime = getBuildTime();
 
 const logs = computed<LogItem[]>(() => [
   {
     id: 1,
     content: 'RustDesk API 兼容能力已更新，支持客户端 1.4.9 主流程',
-    version: `${compatVersion.value} / ${appVersion}`,
-    time: new Date().toISOString().slice(0, 10)
+    version: `${compatVersion.value} / ${serverVersion.value || appVersion}`,
+    time: buildTime.value || frontendBuildTime || new Date().toISOString().slice(0, 10)
   }
 ]);
 
@@ -31,6 +34,12 @@ onMounted(async () => {
   const stat = (await fetchStat()).data;
   if (stat?.compatVersion) {
     compatVersion.value = stat.compatVersion;
+  }
+  if (stat?.serverVersion) {
+    serverVersion.value = stat.serverVersion;
+  }
+  if (stat?.buildTime) {
+    buildTime.value = stat.buildTime;
   }
 });
 </script>

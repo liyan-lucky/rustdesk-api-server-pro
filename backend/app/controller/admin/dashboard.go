@@ -53,6 +53,8 @@ func (c *DashboardController) GetDashboardStat() mvc.Result {
 		"onlineCount":   onlineCount,
 		"visitsCount":   visitsCount,
 		"compatVersion": v2service.CompatSysinfoVersion(),
+		"serverVersion": v2service.CompatServerVersion,
+		"buildTime":     os.Getenv("BUILD_TIME"),
 	}, "ok")
 }
 

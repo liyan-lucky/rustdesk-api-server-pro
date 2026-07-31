@@ -49,6 +49,10 @@ jobs:
             echo "tag_name=v${VERSION}" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: 记录构建时间
+        id: build_time
+        run: echo "value=$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
       - name: 安装构建依赖
         run: |
           sudo apt update
@@ -58,11 +62,13 @@ jobs:
       - name: 编译项目
         env:
           VITE_APP_VERSION: ${{ steps.tag.outputs.tag_name || github.ref_name }}
+          VITE_BUILD_TIME: ${{ steps.build_time.outputs.value }}
           APP_VERSION: ${{ steps.tag.outputs.tag_name || github.ref_name }}
+          BUILD_TIME: ${{ steps.build_time.outputs.value }}
         run: |
           go env -w GOOS=${{matrix.os}}
           go env -w GOARCH=${{matrix.arch}}
-          go build -C backend -ldflags "-X main.appVersion=${APP_VERSION}" -o ../build/
+          go build -C backend -ldflags "-X main.appVersion=${APP_VERSION} -X main.buildTime=${BUILD_TIME}" -o ../build/
           cd soybean-admin && pnpm build 
           cd .. && cp -R soybean-admin/dist build/
           cp backend/server.yaml build/

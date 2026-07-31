@@ -58,6 +58,8 @@ jobs:
         id: version
         shell: bash
         run: |
+          BUILD_TIME=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+          echo "build_time=${BUILD_TIME}" >> "$GITHUB_OUTPUT"
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             echo "app_version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           elif [[ -n "${{ steps.bump.outputs.app_version }}" ]]; then
@@ -96,5 +98,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             APP_VERSION=${{ steps.version.outputs.app_version }}
+            BUILD_TIME=${{ steps.version.outputs.build_time }}
 
 
