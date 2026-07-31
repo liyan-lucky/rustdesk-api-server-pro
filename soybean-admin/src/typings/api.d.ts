@@ -80,6 +80,8 @@ declare namespace Api {
       onlineCount: number;
       visitsCount: number;
       compatVersion?: string;
+      serverVersion?: string;
+      buildTime?: string;
     }
 
     interface ServerConfig {
