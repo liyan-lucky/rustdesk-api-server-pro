@@ -117,6 +117,26 @@ docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
 
 ## 1. 容器镜像与启动行为
 
+### 版本系统
+
+镜像版本由仓库根目录的 `VERSION` 文件控制（单一事实来源）。CI 每次推送到 main 分支时自动递增 PATCH 版本号（如 `1.1.16` → `1.1.17`），并通过 Go ldflags 和 Vite 环境变量注入到后端和前端。
+
+- 后端：`main.appVersion` 和 `main.buildTime` 通过 ldflags 注入，运行时设置 `APP_VERSION` 和 `BUILD_TIME` 环境变量
+- 前端：`VITE_APP_VERSION` 和 `VITE_BUILD_TIME` 在构建时注入
+- 首页更新日志区域显示：`兼容版本 / 服务端版本` 和构建时间
+
+### 镜像标签
+
+每次推送到 main 分支，CI 自动构建并推送以下标签到 GHCR：
+
+- `latest`：最新构建
+- `main`：main 分支最新
+- `sha-xxxxxxx`：对应 commit SHA
+
+打 tag（如 `v1.1.17`）时额外推送版本号标签（如 `1.1.17`）。
+
+### 启动流程
+
 容器启动时会执行以下流程：
 
 1. 建立可执行文件软链接（如需要）
@@ -199,6 +219,8 @@ jobsConfig:
 - `ADMIN_PASS`：首次启动自动创建管理员密码（可选）
 - `PORT`：覆盖 `server.yaml` 中的监听端口，如 `PORT=21114`（可选）
 - `RUSTDESK_HBBS_DIR`：指定 hbbs 数据目录，用于自动读取 `id_ed25519.pub` 获取 KEY（可选）
+- `APP_VERSION`：服务端版本号（Dockerfile 构建时注入，通常无需手动设置）
+- `BUILD_TIME`：构建时间（Dockerfile 构建时注入，通常无需手动设置）
 
 ### KEY 自动检测
 

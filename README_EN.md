@@ -38,11 +38,15 @@ SQLite is the default database, and MySQL is supported. Configuration lives in `
 
 ## Features
 
-- Compatibility‑enhanced RustDesk client API
+- Compatibility‑enhanced RustDesk client API (compatible with 1.4.9)
 - Address book read/write with `note` field compatibility
 - Device list, user list, and audit logs
+- My Synced Devices: admin views all devices, regular users view their own
+- Address Book: peers, address book management, tag management
 - Minimal compatibility for heartbeat, sysinfo, devices/cli
 - Minimal record upload flow for `/api/record` (`new/part/tail/remove`)
+- Auto‑increment version system: CI bumps PATCH version on each build
+- Dashboard shows server version and build time
 - Admin UI (`soybean-admin`) served as static files
 - OIDC and plugin‑sign placeholder endpoints to avoid 404
 - SMTP configuration placeholder for admin notifications/templates
@@ -51,10 +55,15 @@ Note: some advanced capabilities are placeholders. See the FAQ section.
 
 ## Recent Updates
 
-- Improved admin UI i18n coverage for the server configuration workflow
-- Moved the server connection configuration from the dashboard home page to the left menu under `System Management -> Server Config`
+- Compatible with RustDesk client 1.4.9
+- Added "My Synced Devices" menu for both admin and regular users
+- Added "Address Book" menu with peers, management, and tags sub-pages
+- Added auto‑increment version system (VERSION file as single source of truth)
+- Dashboard change-logs card shows server version and build time
+- Docker image is now pushed to GHCR on every push to main
+- Fixed `/userinfo` API not returning `roles` for admin menu filtering
+- Fixed `CompatSysinfoVersion()` missing call parentheses causing `/api/status` 400
 - Added third‑party admin login groundwork with multi‑provider support
-- The login page can now render enabled providers dynamically from backend configuration
 
 ## Architecture
 

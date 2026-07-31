@@ -20,12 +20,28 @@
 
 ### 1. 新版客户端 API 兼容增强
 
-- 补齐新版 RustDesk 客户端常见 API 路径与字段兼容。
+- 兼容 RustDesk 客户端 1.4.9 主流程 API。
 - 地址簿新旧接口并存，支持备注 `note` 字段。
 - 增量同步字段兼容（`username` / `hostname` / `platform` / `note`）。
 - 用户/设备列表响应字段补齐（如 `display_name`、`device_group_name`）。
 
-### 2. 客户端附加兼容端点
+### 2. 新增菜单与页面
+
+- **我的同步设备**：管理员可查看所有设备，普通用户通过用户门户登录查看自己的同步设备。
+- **通讯录**：含地址簿、地址簿管理、标签管理三个子页面。
+
+### 3. 版本自动递增系统
+
+- `VERSION` 文件为单一事实来源，CI 每次构建自动递增 PATCH 版本号。
+- Go ldflags 注入 `appVersion` 和 `buildTime`，Vite 注入 `VITE_APP_VERSION` 和 `VITE_BUILD_TIME`。
+- 首页更新日志区域显示服务端版本与构建时间，方便确认是否更新成功。
+
+### 4. Docker 镜像自动推送
+
+- 每次推送到 main 分支，CI 自动构建并推送镜像到 GHCR（`latest` + `main` + `sha-xxx` 标签）。
+- 打 tag 时额外推送版本号标签。
+
+### 5. 客户端附加兼容端点
 
 - `POST /api/devices/cli`：由 no-op 升级为最小可用写入。
 - `POST /api/record`：支持最小落盘协议（`new/part/tail/remove`）。

@@ -19,7 +19,7 @@ permissions:
   packages: write
 
 env:
-  PUSH_IMAGE: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && github.event.inputs.push_image == 'true') }}
+  PUSH_IMAGE: ${{ (github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.push_image == 'true') }}
 
 jobs:
   build-image:
@@ -85,6 +85,7 @@ jobs:
           tags: |
             type=raw,value=latest,enable=${{ env.PUSH_IMAGE == 'true' }}
             type=ref,event=tag
+            type=ref,event=branch
             type=sha,prefix=sha-
 
       - name: 构建镜像（linux/amd64）

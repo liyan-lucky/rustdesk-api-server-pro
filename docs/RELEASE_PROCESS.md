@@ -7,10 +7,21 @@ Use the original tag-based workflows for releases:
 
 Do not create one-off release workflows unless absolutely necessary.
 
-## Standard Release Steps
+## Continuous Delivery (main branch)
+
+Every push to `main` automatically:
+
+1. Bumps the PATCH version in `VERSION` file (e.g., `1.1.16` → `1.1.17`)
+2. Builds and pushes Docker image to GHCR with tags: `latest`, `main`, `sha-xxxxxxx`
+3. Injects `APP_VERSION` and `BUILD_TIME` via ldflags (backend) and Vite env vars (frontend)
+
+No manual steps needed for continuous delivery testing.
+
+## Standard Release Steps (tag-based)
 
 1. Ensure `main` is clean and all intended changes are merged.
-2. Confirm compliance files are present:
+2. Confirm the `VERSION` file reflects the desired release version.
+3. Confirm compliance files are present:
    - `LICENSE`
    - `NOTICE`
    - `THIRD_PARTY_NOTICES.md`
@@ -21,24 +32,16 @@ Do not create one-off release workflows unless absolutely necessary.
    - `CONTRIBUTING.md`
    - `CODE_OF_CONDUCT.md`
    - `SUPPORT.md`
-3. Confirm no secrets or runtime data are tracked:
-   - `server.db`
-   - `*.sqlite`
-   - production `server.yaml`
-   - OAuth secrets
-   - SMTP passwords
-   - private keys
-   - logs
-   - `record_uploads/`
-4. Push a semantic tag matching `v*.*.*`.
+4. Confirm no secrets or runtime data are tracked.
+5. Push a semantic tag matching `v*.*.*`.
 
 Example:
 
 ```bash
 git checkout main
 git pull origin main
-git tag v1.4.8
-git push origin v1.4.8
+git tag v1.1.17
+git push origin v1.1.17
 ```
 
 ## Expected Workflows
@@ -46,7 +49,7 @@ git push origin v1.4.8
 Tag push should trigger:
 
 - `build-release.yml`: builds Linux, Windows and macOS packages for amd64 and arm64, then uploads zip assets to GitHub Release.
-- `ghcr-docker.yml`: builds and pushes GHCR image tags, including `latest`, version tag and `sha-*`.
+- `ghcr-docker.yml`: builds and pushes GHCR image tags, including `latest`, version tag (e.g., `1.1.17`) and `sha-*`.
 
 ## Do Not Include in Release Assets
 
@@ -72,8 +75,8 @@ If a tag or release is partially created:
 Example:
 
 ```bash
-git tag -d v1.4.8 || true
-git push origin :refs/tags/v1.4.8 || true
-git tag v1.4.8
-git push origin v1.4.8
+git tag -d v1.1.17 || true
+git push origin :refs/tags/v1.1.17 || true
+git tag v1.1.17
+git push origin v1.1.17
 ```

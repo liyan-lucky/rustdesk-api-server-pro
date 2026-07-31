@@ -10,15 +10,19 @@ RustDesk API Server Pro 是一个面向 RustDesk 客户端的第三方 API 服�
 
 ## 最近更新
 
+- 兼容 RustDesk 客户端 1.4.9 主流程 API
+- 新增"我的同步设备"菜单：管理员可查看所有设备，普通用户可登录查看自己的同步设备
+- 新增"通讯录"菜单：含地址簿、地址簿管理、标签管理三个子页面
+- 新增版本自动递增系统：每次 CI 构建自动递增 PATCH 版本号（VERSION 文件为单一事实来源）
+- 首页更新日志区域显示服务端版本号与构建时间，方便确认是否更新成功
+- Docker 镜像每次推送到 main 分支自动构建并推送到 GHCR（`latest` + `main` + `sha-xxx` 标签）
+- 修复管理员 `/userinfo` API 未返回 `roles` 导致前端菜单过滤异常的问题
+- 修复 `CompatSysinfoVersion` 从常量改为函数后 `/api/status` 缺少调用括号返回 400 的问题
+- 修复 `start.sh` 未导出 `BUILD_TIME` 环境变量的问题
 - 补充 OpenWrt / x86 软路由一体化部署与对齐更新脚本，默认使用 host 网络、`/mnt/docker` 数据目录、中文 label 与端口 label
 - 刷新 Docker 文档，明确当前推荐为单容器一体化部署，旧 `rustdesk-web` 前端容器不再是必需组件
-- 修正 Docker 文档中的示例配置下载地址，统一使用默认分支 `main`
-- 优化管理后台多语言词条，补齐“服务器配置”相关界面的翻译缺口
-- 将“服务器获取的配置”从首页调整到左侧菜单：`系统管理 -> 服务器配置`
-- 统一服务器配置页面中的缓存提示、时间文案等文本走 i18n，减少切换语言后的残留英文
-- 修复英文语言包中的部分乱码与回退异常，提升多语言兜底显示质量
 - 新增后台第三方登录支持：`oidc`、`google`、`github`
-- 修复第三方登录在反向代理或多入口环境下可能出现的 `state invalid or expired` 问题，改为签名 state 校验，降低对内存态的依赖
+- 修复第三方登录在反向代理或多入口环境下可能出现的 `state invalid or expired` 问题
 
 ## 目录
 
@@ -53,11 +57,15 @@ RustDesk API Server Pro 是一个面向 RustDesk 客户端的第三方 API 服�
 
 ## 功能清单
 
-- RustDesk 客户端主流程 API 兼容增强
+- RustDesk 客户端主流程 API 兼容增强（兼容 1.4.9）
 - 地址簿读写与备注字段 `note` 兼容
 - 设备列表、用户列表、审计日志基础能力
+- 我的同步设备：管理员查看所有设备，普通用户查看自己的设备
+- 通讯录：地址簿、地址簿管理、标签管理
 - 心跳、sysinfo、devices/cli 的最小兼容实现
 - 录屏上传 `record` 的最小落盘流程（`new/part/tail/remove`）
+- 版本自动递增：CI 每次构建 PATCH 版本号 +1，VERSION 文件为单一事实来源
+- 首页显示服务端版本与构建时间
 - 管理后台前端（`soybean-admin`）静态页面
 - OIDC 与 plugin-sign 兼容占位接口（用于避免 404）
 - SMTP 配置预留（用于后台通知/模板邮件场景）
