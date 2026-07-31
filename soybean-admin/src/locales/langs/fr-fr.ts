@@ -428,20 +428,20 @@ const local: App.I18n.Schema = {
       ab_id: 'ID carnet',
       tagName: 'Nom',
       tagColor: 'Couleur',
+      updated_at: 'Mis à jour le'
+    },
     token: {
-      device_os: 'Device OS',
-      device_name: 'Device Name',
+      device_os: 'SE appareil',
+      device_name: 'Nom appareil',
       is_admin: 'Admin',
-      status: 'Active'
+      status: 'Actif'
     },
     oauth: {
-      provider: 'Provider',
-      subject: 'Subject',
-      email: 'Email',
-      name: 'Name',
-      last_login_at: 'Last Login'
-    },
-      updated_at: 'Mis à jour le'
+      provider: 'Fournisseur',
+      subject: 'Sujet',
+      email: 'Courriel',
+      name: 'Nom',
+      last_login_at: 'Dernière connexion'
     },
     audit: {
       ...enUs.dataMap.audit,

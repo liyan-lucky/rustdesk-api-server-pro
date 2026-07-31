@@ -472,6 +472,19 @@ const local: App.I18n.Schema = {
       "tagName": "Name",
       "tagColor": "Color",
       "updated_at": "Updated At"
+    },
+    "token": {
+      "device_os": "디바이스 OS",
+      "device_name": "디바이스 이름",
+      "is_admin": "관리자",
+      "status": "활성"
+    },
+    "oauth": {
+      "provider": "제공자",
+      "subject": "주체",
+      "email": "이메일",
+      "name": "이름",
+      "last_login_at": "마지막 로그인"
     }
   },
   "api": {

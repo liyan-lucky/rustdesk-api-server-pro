@@ -472,6 +472,19 @@ const local: App.I18n.Schema = {
       "tagName": "Name",
       "tagColor": "Color",
       "updated_at": "Updated At"
+    },
+    "token": {
+      "device_os": "ОС устройства",
+      "device_name": "Имя устройства",
+      "is_admin": "Админ",
+      "status": "Активен"
+    },
+    "oauth": {
+      "provider": "Провайдер",
+      "subject": "Субъект",
+      "email": "Почта",
+      "name": "Имя",
+      "last_login_at": "Последний вход"
     }
   },
   "api": {

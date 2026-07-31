@@ -428,20 +428,20 @@ const local: App.I18n.Schema = {
       ab_id: 'ID de libreta',
       tagName: 'Nombre',
       tagColor: 'Color',
+      updated_at: 'Actualizado el'
+    },
     token: {
-      device_os: 'Device OS',
-      device_name: 'Device Name',
+      device_os: 'SO del dispositivo',
+      device_name: 'Nombre del dispositivo',
       is_admin: 'Admin',
-      status: 'Active'
+      status: 'Activo'
     },
     oauth: {
-      provider: 'Provider',
-      subject: 'Subject',
-      email: 'Email',
-      name: 'Name',
-      last_login_at: 'Last Login'
-    },
-      updated_at: 'Actualizado el'
+      provider: 'Proveedor',
+      subject: 'Sujeto',
+      email: 'Correo',
+      name: 'Nombre',
+      last_login_at: 'Último inicio'
     },
     audit: {
       ...enUs.dataMap.audit,

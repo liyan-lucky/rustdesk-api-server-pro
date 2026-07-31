@@ -428,20 +428,20 @@ const local: App.I18n.Schema = {
       ab_id: 'Adressbuch-ID',
       tagName: 'Name',
       tagColor: 'Farbe',
+      updated_at: 'Aktualisiert am'
+    },
     token: {
-      device_os: 'Device OS',
-      device_name: 'Device Name',
+      device_os: 'Gerätebetriebssystem',
+      device_name: 'Gerätename',
       is_admin: 'Admin',
-      status: 'Active'
+      status: 'Aktiv'
     },
     oauth: {
-      provider: 'Provider',
-      subject: 'Subject',
-      email: 'Email',
+      provider: 'Anbieter',
+      subject: 'Subjekt',
+      email: 'E-Mail',
       name: 'Name',
-      last_login_at: 'Last Login'
-    },
-      updated_at: 'Aktualisiert am'
+      last_login_at: 'Letzte Anmeldung'
     },
     audit: {
       ...enUs.dataMap.audit,
