@@ -469,6 +469,19 @@ const local: App.I18n.Schema = {
       ab_id: 'Address Book ID',
       tagName: 'Name',
       tagColor: 'Color',
+    token: {
+      device_os: 'Device OS',
+      device_name: 'Device Name',
+      is_admin: 'Admin',
+      status: 'Active'
+    },
+    oauth: {
+      provider: 'Provider',
+      subject: 'Subject',
+      email: 'Email',
+      name: 'Name',
+      last_login_at: 'Last Login'
+    },
       updated_at: 'Updated At'
     }
   },
