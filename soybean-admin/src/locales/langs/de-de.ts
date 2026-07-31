@@ -185,7 +185,10 @@ const local: App.I18n.Schema = {
     'my-devices': 'Kontakte',
     'my-devices_peers': 'Meine Kontakte',
     'my-devices_manage': 'Adressbuchverwaltung',
-    'my-devices_tags': 'Tag-Verwaltung'
+    'my-devices_tags': 'Tag-Verwaltung',
+    system_server: 'Serverkonfiguration',
+    system_tokens: 'Benutzer-Token',
+    system_oauth: 'OAuth-Verwaltung'
   },
   page: {
     ...enUs.page,
