@@ -52,5 +52,6 @@ if [ ! -f /app/data/.init.lock ] && [ -n "${ADMIN_USER:-}" ] && [ -n "${ADMIN_PA
 fi
 
 export APP_VERSION="${APP_VERSION:-latest}"
+export BUILD_TIME="${BUILD_TIME:-}"
 
 exec /app/rustdesk-api-server-pro start
