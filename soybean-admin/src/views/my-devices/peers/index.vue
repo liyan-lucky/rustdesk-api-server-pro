@@ -21,9 +21,8 @@ const columns = [
     title: $t('dataMap.ab.tags'),
     align: 'center' as const,
     render: (row: Api.AddressBook.Peer) => {
-      if (!row.tags) return '-';
-      const tags = typeof row.tags === 'string' ? row.tags.split(',').filter(Boolean) : row.tags;
-      return tags.map((tag: string) => <NTag size="small" class="mr-4px">{tag}</NTag>);
+      if (!row.tags || row.tags.length === 0) return '-';
+      return row.tags.map((tag: string) => <NTag size="small" class="mr-4px">{tag}</NTag>);
     }
   },
   { key: 'alias', title: $t('dataMap.ab.alias'), align: 'center' as const },
