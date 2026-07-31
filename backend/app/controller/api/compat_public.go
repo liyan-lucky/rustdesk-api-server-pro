@@ -79,7 +79,7 @@ func (c *CompatPublicController) HandleStatus() mvc.Result {
 		"ok":            true,
 		"status":        "ok",
 		"service":       "rustdesk-api-server-pro",
-		"version":       service.CompatSysinfoVersion,
+		"version":       service.CompatSysinfoVersion(),
 		"compat_target": c.compatService().Target(),
 	}}
 }

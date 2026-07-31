@@ -25,8 +25,8 @@ manifest_sysinfo="$(jq -r '.sysinfo_version' "$CURRENT_FILE")"
 
 service_client_version="$(grep -E '^const CompatClientVersion = ' "$SERVICE_FILE" | sed -E 's/.*"([^"]+)".*/\1/')"
 service_release_date="$(grep -E '^const CompatClientReleaseDate = ' "$SERVICE_FILE" | sed -E 's/.*"([^"]+)".*/\1/')"
-service_server_version="$(grep -E '^const CompatServerVersion = ' "$SERVICE_FILE" | sed -E 's/.*"([^"]+)".*/\1/')"
-service_sysinfo="$(grep -E '^const CompatSysinfoVersion = ' "$SERVICE_FILE" | sed -E 's/.*"([^"]+)".*/\1/')"
+service_server_version="$(grep -E '^var CompatServerVersion = ' "$SERVICE_FILE" | sed -E 's/.*"([^"]+)".*/\1/')"
+service_sysinfo="rustdesk-api-server-pro-compat-client-${service_client_version}-server-${service_server_version}-latest"
 
 check_equal() {
   local name="$1"
