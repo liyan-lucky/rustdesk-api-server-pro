@@ -165,6 +165,8 @@ const local: App.I18n.Schema = {
     "system_mail_logs": "Логи почты",
     "system_mail": "Управление почтой",
     "system_server": "Конфигурация сервера",
+    "system_tokens": "?????? ?????????????",
+    "system_oauth": "?????????? OAuth",
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
     "devices": "Устройства",

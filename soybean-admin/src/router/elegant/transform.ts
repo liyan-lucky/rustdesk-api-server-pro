@@ -182,6 +182,8 @@ const routeMap: RouteMap = {
   "system_mail_logs": "/system/mail/logs",
   "system_mail_template": "/system/mail/template",
   "system_server": "/system/server",
+  "system_tokens": "/system/tokens",
+  "system_oauth": "/system/oauth",
   "user": "/user",
   "user_list": "/user/list",
   "user_sessions": "/user/sessions"

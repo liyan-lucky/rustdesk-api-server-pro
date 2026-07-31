@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { NTag, NButton, NSpace, NPopconfirm } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { fetchAbPeers, fetchAbPeerDelete } from '@/service/api/address-book';
+import { fetchAbPeers, fetchAbPeerDelete, fetchAbPersonal } from '@/service/api/address-book';
 
 const appStore = useAppStore();
 const loading = ref(false);
@@ -11,6 +11,7 @@ const data = ref<Api.AddressBook.Peer[]>([]);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
+const personalGuid = ref('');
 
 const columns = [
   { key: 'id', title: $t('dataMap.ab.rustdesk_id'), align: 'center' as const },
@@ -55,14 +56,19 @@ async function loadData() {
 }
 
 async function handleDelete(row: Api.AddressBook.Peer) {
-  await fetchAbPeerDelete('personal', [row.id]);
+  const guid = personalGuid.value || 'personal';
+  await fetchAbPeerDelete(guid, [row.id]);
   loadData();
 }
 
 function handlePageChange(page: number) { currentPage.value = page; loadData(); }
 function handlePageSizeChange(size: number) { pageSize.value = size; currentPage.value = 1; loadData(); }
 
-onMounted(() => { loadData(); });
+onMounted(async () => {
+  const { data: res } = await fetchAbPersonal();
+  if (res) personalGuid.value = res.guid;
+  loadData();
+});
 </script>
 
 <template>

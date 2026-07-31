@@ -36,6 +36,8 @@ declare module "@elegant-router/types" {
     "system_mail_logs": "/system/mail/logs";
     "system_mail_template": "/system/mail/template";
     "system_server": "/system/server";
+    "system_tokens": "/system/tokens";
+    "system_oauth": "/system/oauth";
     "user": "/user";
     "user_list": "/user/list";
     "user_sessions": "/user/sessions";
@@ -112,6 +114,8 @@ declare module "@elegant-router/types" {
     | "system_mail_logs"
     | "system_mail_template"
     | "system_server"
+    | "system_tokens"
+    | "system_oauth"
     | "user_list"
     | "user_sessions"
   >;

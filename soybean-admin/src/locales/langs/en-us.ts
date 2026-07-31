@@ -165,6 +165,8 @@ const local: App.I18n.Schema = {
     system_mail_logs: 'Mail Logs',
     system_mail: 'Mail Management',
     system_server: 'Server Config',
+    system_tokens: 'User Tokens',
+    system_oauth: 'OAuth Management',
     audit_baselogs: 'Base Logs',
     audit_filetransferlogs: 'File Transfer Logs',
     devices: 'Devices',
@@ -470,6 +472,19 @@ const local: App.I18n.Schema = {
       tagName: 'Name',
       tagColor: 'Color',
       updated_at: 'Updated At'
+    },
+    token: {
+      device_os: 'Device OS',
+      device_name: 'Device Name',
+      is_admin: 'Admin',
+      status: 'Active'
+    },
+    oauth: {
+      provider: 'Provider',
+      subject: 'Subject',
+      email: 'Email',
+      name: 'Name',
+      last_login_at: 'Last Login'
     }
   },
   api: {

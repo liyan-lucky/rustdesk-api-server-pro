@@ -47,7 +47,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'audit',
       icon: 'ph:warning-bold',
       i18nKey: 'route.audit',
-      order: 3
+      order: 4
     },
     children: [
       {
@@ -80,7 +80,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'devices',
       i18nKey: 'route.devices',
       icon: 'mdi:desktop-classic',
-      order: 5
+      order: 6
     }
   },
   {
@@ -91,7 +91,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'my-devices',
       i18nKey: 'route.my-devices',
       icon: 'mdi:book-open-variant',
-      order: 6
+      order: 3
     },
     children: [
       {
@@ -170,7 +170,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'system',
       i18nKey: 'route.system',
       icon: 'hugeicons:system-update-01',
-      order: 4
+      order: 5
     },
     children: [
       {
@@ -211,6 +211,26 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'system_server',
           i18nKey: 'route.system_server',
           icon: 'mdi:server-network'
+        }
+      },
+      {
+        name: 'system_tokens',
+        path: '/system/tokens',
+        component: 'view.system_tokens',
+        meta: {
+          title: 'system_tokens',
+          i18nKey: 'route.system_tokens',
+          icon: 'mdi:key-*variant'
+        }
+      },
+      {
+        name: 'system_oauth',
+        path: '/system/oauth',
+        component: 'view.system_oauth',
+        meta: {
+          title: 'system_oauth',
+          i18nKey: 'route.system_oauth',
+          icon: 'mdi:shield-lock'
         }
       }
     ]

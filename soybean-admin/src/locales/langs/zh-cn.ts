@@ -187,6 +187,8 @@ const local: App.I18n.Schema = {
     system_mail_logs: '邮件日志',
     system_mail: '邮件管理',
     system_server: '服务器配置',
+    system_tokens: '用户Token',
+    system_oauth: 'OAuth管理',
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
     devices: '设备管理',
@@ -528,6 +530,19 @@ const local: App.I18n.Schema = {
       tagName: '名称',
       tagColor: '颜色',
       updated_at: '更新时间'
+    },
+    token: {
+      device_os: '设备系统',
+      device_name: '设备名称',
+      is_admin: '管理员',
+      status: '有效'
+    },
+    oauth: {
+      provider: '提供方',
+      subject: '主体标识',
+      email: '邮箱',
+      name: '名称',
+      last_login_at: '最后登录'
     }
   },
   api: {

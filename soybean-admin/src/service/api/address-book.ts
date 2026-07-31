@@ -8,6 +8,14 @@ export function fetchAbList(params: any) {
   return request<Api.AddressBook.AddressBookList>({ url: '/ab/shared-profiles', params });
 }
 
+export function fetchAbPersonal() {
+  return request<{ guid: string }>({ url: '/ab/personal' });
+}
+
+export function fetchAbAllList() {
+  return request<Api.AddressBook.AddressBook[]>({ url: '/ab/list' });
+}
+
 export function fetchAbTags(abGuid: string) {
   return request({ url: `/ab/tags/${abGuid}`, method: 'post' });
 }

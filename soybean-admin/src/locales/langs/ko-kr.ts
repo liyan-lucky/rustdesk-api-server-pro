@@ -165,6 +165,8 @@ const local: App.I18n.Schema = {
     "system_mail_logs": "메일 로그",
     "system_mail": "메일 관리",
     "system_server": "서버 설정",
+    "system_tokens": "??? ??",
+    "system_oauth": "OAuth ??",
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
     "devices": "장치",

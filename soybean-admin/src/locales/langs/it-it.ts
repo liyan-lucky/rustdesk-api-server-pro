@@ -163,6 +163,8 @@ const local: App.I18n.Schema = {
     system_mail_logs: 'Log email',
     system_mail: 'Gestione email',
     system_server: 'Configurazione server',
+    system_tokens: 'Token utente',
+    system_oauth: 'Gestione OAuth',
     audit_baselogs: 'Log di base',
     audit_filetransferlogs: 'Log trasferimenti file',
     devices: 'Dispositivi',

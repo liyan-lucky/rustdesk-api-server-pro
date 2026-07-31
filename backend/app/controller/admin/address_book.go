@@ -23,6 +23,8 @@ type AddressBookController struct {
 func (c *AddressBookController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/ab/peers", "HandleAbPeers")
 	b.Handle("GET", "/ab/shared-profiles", "HandleAbSharedProfiles")
+	b.Handle("GET", "/ab/personal", "HandleAbPersonal")
+	b.Handle("GET", "/ab/list", "HandleAbList")
 	b.Handle("POST", "/ab/tags/{guid:string}", "HandleAbTags")
 	b.Handle("DELETE", "/ab/peer/{guid:string}", "HandleAbPeerDelete")
 	b.Handle("DELETE", "/ab/tag/{guid:string}", "HandleAbTagDelete")
@@ -134,6 +136,50 @@ func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 		"current": current,
 		"size":    pageSize,
 	}, "ok")
+}
+
+func (c *AddressBookController) HandleAbPersonal() mvc.Result {
+	user := c.GetUser()
+	result, err := c.addressBookService().EnsurePersonalAddressBook(core.PersonalAddressBookEnsureCommand{
+		UserID:         user.Id,
+		Username:       user.Username,
+		DefaultNote:    "default address book",
+		DefaultRule:    3,
+		DefaultMaxPeer: 0,
+	})
+	if err != nil {
+		return c.Error(nil, err.Error())
+	}
+	return c.Success(iris.Map{"guid": result.Guid}, "ok")
+}
+
+func (c *AddressBookController) HandleAbList() mvc.Result {
+	user := c.GetUser()
+	list := make([]model.AddressBook, 0)
+	if user.IsAdmin {
+		if err := c.Db.Find(&list); err != nil {
+			return c.Error(nil, err.Error())
+		}
+	} else {
+		if err := c.Db.Where("user_id = ?", user.Id).Find(&list); err != nil {
+			return c.Error(nil, err.Error())
+		}
+	}
+	records := make([]iris.Map, 0, len(list))
+	for _, ab := range list {
+		records = append(records, iris.Map{
+			"id":       ab.Id,
+			"user_id":  ab.UserId,
+			"guid":     ab.Guid,
+			"name":     ab.Name,
+			"owner":    ab.Owner,
+			"note":     ab.Note,
+			"rule":     ab.Rule,
+			"max_peer": ab.MaxPeer,
+			"shared":   ab.Shared,
+		})
+	}
+	return c.Success(records, "ok")
 }
 
 func (c *AddressBookController) HandleAbTags() mvc.Result {
