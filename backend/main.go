@@ -16,7 +16,7 @@ func main() {
 	if buildTime != "" {
 		os.Setenv("BUILD_TIME", buildTime)
 	}
-	if err := cmd.RootCmdBExecute(); err != nil {
+	if err := cmd.RootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
