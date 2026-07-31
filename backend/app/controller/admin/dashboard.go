@@ -52,7 +52,7 @@ func (c *DashboardController) GetDashboardStat() mvc.Result {
 		"deviceCount":   deviceCount,
 		"onlineCount":   onlineCount,
 		"visitsCount":   visitsCount,
-		"compatVersion": v2service.CompatSysinfoVersion,
+		"compatVersion": v2service.CompatSysinfoVersion(),
 	}, "ok")
 }
 

@@ -87,7 +87,7 @@ func (c *CompatPublicController) HandleStatus() mvc.Result {
 func (c *CompatPublicController) HandleVersion() mvc.Result {
 	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: iris.Map{
-		"version":       service.CompatSysinfoVersion,
+		"version":       service.CompatSysinfoVersion(),
 		"server":        "rustdesk-api-server-pro",
 		"compat_target": c.compatService().Target(),
 	}}
@@ -120,7 +120,7 @@ func (c *CompatPublicController) HandleClientConfig() mvc.Result {
 	return mvc.Response{Object: iris.Map{
 		"server": iris.Map{
 			"name":    "rustdesk-api-server-pro",
-			"version": service.CompatSysinfoVersion,
+		"version":       service.CompatSysinfoVersion(),
 		},
 		"compat_target": c.compatService().Target(),
 		"features": iris.Map{
@@ -136,7 +136,7 @@ func (c *CompatPublicController) HandleClientConfig() mvc.Result {
 func (c *CompatPublicController) HandleSysinfoVer() mvc.Result {
 	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{
-		Text: service.CompatSysinfoVersion,
+		Text: service.CompatSysinfoVersion(),
 	}
 }
 

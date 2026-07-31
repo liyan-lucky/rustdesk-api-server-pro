@@ -48,7 +48,7 @@ jobs:
         run: go test ./...
 
       - name: 后端构建
-        run: go build -o rustdesk-api-server-pro .
+        run: go build -ldflags "-X main.appVersion=compat-ci" -o rustdesk-api-server-pro .
 
   scripts-compat:
     name: 兼容脚本检查

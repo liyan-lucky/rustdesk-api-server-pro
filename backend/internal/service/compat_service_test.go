@@ -114,7 +114,7 @@ func TestCompatServiceTargetContract(t *testing.T) {
 	if got := target["project"]; got != "rustdesk-api-server-pro" {
 		t.Fatalf("unexpected project: %v", got)
 	}
-	if got := target["sysinfo_version"]; got != CompatSysinfoVersion {
+	if got := target["sysinfo_version"]; got != CompatSysinfoVersion() {
 		t.Fatalf("unexpected sysinfo_version: %v", got)
 	}
 

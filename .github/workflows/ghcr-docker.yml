@@ -15,7 +15,7 @@ on:
         type: boolean
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 env:
@@ -27,6 +27,26 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 自动递增版本号
+        if: github.ref_type != 'tag'
+        id: bump
+        shell: bash
+        run: |
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          PATCH=$((PATCH + 1))
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "${NEW_VERSION}" > VERSION
+          echo "app_version=v${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Bumped version: ${VERSION} -> ${NEW_VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add VERSION
+          git commit -m "chore: bump version to ${NEW_VERSION} [skip ci]"
+          git push
 
       - name: 配置 QEMU
         uses: docker/setup-qemu-action@v3
@@ -40,6 +60,8 @@ jobs:
         run: |
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             echo "app_version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${{ steps.bump.outputs.app_version }}" ]]; then
+            echo "app_version=${{ steps.bump.outputs.app_version }}" >> "$GITHUB_OUTPUT"
           else
             echo "app_version=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
           fi

@@ -18,12 +18,19 @@ import (
 const CompatClientName = "rustdesk"
 const CompatClientVersion = "1.4.9"
 const CompatClientReleaseDate = "2026-07-06"
-const CompatServerVersion = "1.1.16"
 const CompatTargetStatus = "compatibility-layer"
 
-// CompatSysinfoVersion is exposed to admin dashboard and compatibility probes.
-// Keep this value aligned with the validated upstream RustDesk versions.
-const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-1.4.9-server-1.1.16-latest"
+var CompatServerVersion = "1.1.16"
+
+func init() {
+	if v := os.Getenv("APP_VERSION"); v != "" {
+		CompatServerVersion = v
+	}
+}
+
+func CompatSysinfoVersion() string {
+	return fmt.Sprintf("rustdesk-api-server-pro-compat-client-%s-server-%s-latest", CompatClientVersion, CompatServerVersion)
+}
 const compatRecordDir = "record_uploads"
 const maxCompatRecordSize int64 = 512 * 1024 * 1024
 
@@ -50,7 +57,7 @@ func (s *CompatService) Target() map[string]any {
 			"version": CompatServerVersion,
 			"status":  CompatTargetStatus,
 		},
-		"sysinfo_version": CompatSysinfoVersion,
+		"sysinfo_version": CompatSysinfoVersion(),
 		"features": map[string]bool{
 			"address_book":            true,
 			"audit":                   true,

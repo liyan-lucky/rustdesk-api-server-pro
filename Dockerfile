@@ -1,7 +1,9 @@
 FROM golang:alpine AS golang
 WORKDIR /backend
+ARG APP_VERSION=latest
+ENV APP_VERSION=$APP_VERSION
 COPY ./backend .
-RUN go build
+RUN go build -ldflags "-X main.appVersion=${APP_VERSION}"
 
 
 FROM node:20-alpine AS node
@@ -18,6 +20,8 @@ ENV ADMIN_USER=
 ENV ADMIN_PASS=
 ENV PORT=
 ENV RUSTDESK_HBBS_DIR=
+ARG APP_VERSION=latest
+ENV APP_VERSION=$APP_VERSION
 WORKDIR /app
 COPY ./docker/start.sh .
 COPY --from=golang /backend/rustdesk-api-server-pro .
