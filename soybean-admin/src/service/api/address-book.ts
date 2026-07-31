@@ -1,7 +1,7 @@
 import { request } from '../request';
 
 export function fetchAbPeers(params: any) {
-  return request<Api.AddressBook.PeerList>({ url: '/ab/peers', method: 'post', data: params });
+  return request<Api.AddressBook.PeerList>({ url: '/ab/peers', params });
 }
 
 export function fetchAbList(params: any) {

@@ -175,20 +175,19 @@ declare namespace Api {
   }
 
   namespace AddressBook {
-    type Peer = Common.CommonRecord<{
-      rustdesk_id: string;
+    type Peer = {
+      id: string;
       hash: string;
       username: string;
       hostname: string;
       platform: string;
       alias: string;
-      tags: string;
+      tags: string[];
       note: string;
-      ab_id: number;
-    }>;
+    };
     type PeerList = Common.PaginatingQueryRecord<Peer>;
     type PeerSearchParams = CommonType.RecordNullable<
-      Pick<Api.AddressBook.Peer, 'username' | 'hostname' | 'rustdesk_id'> &
+      Pick<Api.AddressBook.Peer, 'username' | 'hostname' | 'id'> &
         Api.Common.CommonSearchParams
     >;
 

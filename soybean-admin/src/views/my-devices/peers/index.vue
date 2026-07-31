@@ -13,8 +13,7 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 
 const columns = [
-  { key: 'id', title: 'ID', align: 'center' as const },
-  { key: 'rustdesk_id', title: $t('dataMap.ab.rustdesk_id'), align: 'center' as const },
+  { key: 'id', title: $t('dataMap.ab.rustdesk_id'), align: 'center' as const },
   { key: 'username', title: $t('dataMap.ab.username'), align: 'center' as const },
   { key: 'hostname', title: $t('dataMap.ab.hostname'), align: 'center' as const },
   {

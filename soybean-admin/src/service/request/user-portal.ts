@@ -32,8 +32,8 @@ export const userPortalRequest = createFlatRequest<App.Service.Response, Request
     onError(error) {
       if (error.response?.status === 401) {
         localStg.remove('token');
-        localStg.remove('userType');
-        window.location.href = '/#/login/user-login';
+        localStg.remove('isAdmin');
+        window.location.href = '/#/login/pwd-login';
         return;
       }
       let message = error.message;
