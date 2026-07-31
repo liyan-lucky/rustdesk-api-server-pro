@@ -168,7 +168,10 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
     "devices": "장치",
-    "my-devices": "연락처"
+    "my-devices": "연락처",
+    "address_book_peers": "내 피어",
+    "address_book_manage": "주소록 관리",
+    "address_book_tags": "태그 관리"
   },
   "page": {
     "login": {

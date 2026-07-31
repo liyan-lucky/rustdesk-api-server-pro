@@ -168,7 +168,10 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
     "devices": "Устройства",
-    "my-devices": "Контакты"
+    "my-devices": "Контакты",
+    "address_book_peers": "Мои пиры",
+    "address_book_manage": "Управление адресной книгой",
+    "address_book_tags": "Управление тегами"
   },
   "page": {
     "login": {

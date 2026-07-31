@@ -61,7 +61,7 @@ async function handleSubmit() {
     if (data.isAdmin) {
       window.location.href = '/#/home';
     } else {
-      window.location.href = '/#/my-devices';
+      window.location.href = '/#/my-devices/peers';
     }
   } else if (error?.response?.data?.message === 'CaptchaError') {
     handleCaptcha();

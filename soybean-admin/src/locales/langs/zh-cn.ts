@@ -190,7 +190,10 @@ const local: App.I18n.Schema = {
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
     devices: '设备管理',
-    'my-devices': '通讯录'
+    'my-devices': '通讯录',
+    address_book_peers: '地址簿',
+    address_book_manage: '地址簿管理',
+    address_book_tags: '标签管理'
   },
   page: {
     ...enUs.page,

@@ -86,13 +86,45 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'my-devices',
     path: '/my-devices',
-    component: 'layout.base$view.my-devices',
+    component: 'layout.base',
     meta: {
       title: 'my-devices',
       i18nKey: 'route.my-devices',
       icon: 'mdi:book-open-variant',
       order: 6
-    }
+    },
+    children: [
+      {
+        name: 'address_book_peers',
+        path: '/my-devices/peers',
+        component: 'view.address_book_peers',
+        meta: {
+          title: 'address_book_peers',
+          i18nKey: 'route.address_book_peers',
+          icon: 'mdi:account-multiple'
+        }
+      },
+      {
+        name: 'address_book_manage',
+        path: '/my-devices/manage',
+        component: 'view.address_book_manage',
+        meta: {
+          title: 'address_book_manage',
+          i18nKey: 'route.address_book_manage',
+          icon: 'mdi:book-cog'
+        }
+      },
+      {
+        name: 'address_book_tags',
+        path: '/my-devices/tags',
+        component: 'view.address_book_tags',
+        meta: {
+          title: 'address_book_tags',
+          i18nKey: 'route.address_book_tags',
+          icon: 'mdi:tag-multiple'
+        }
+      }
+    ]
   },
   {
     name: 'home',

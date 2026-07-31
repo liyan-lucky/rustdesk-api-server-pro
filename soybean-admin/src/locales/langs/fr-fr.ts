@@ -182,7 +182,10 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Journaux de base',
     audit_filetransferlogs: 'Journaux de transfert de fichiers',
     devices: 'Appareils',
-    'my-devices': 'Contacts'
+    'my-devices': 'Contacts',
+    address_book_peers: 'Mes contacts',
+    address_book_manage: 'Gestion des carnets',
+    address_book_tags: 'Gestion des tags'
   },
   page: {
     ...enUs.page,

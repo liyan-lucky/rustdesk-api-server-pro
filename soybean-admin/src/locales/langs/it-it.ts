@@ -166,7 +166,10 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Log di base',
     audit_filetransferlogs: 'Log trasferimenti file',
     devices: 'Dispositivi',
-    'my-devices': 'Contatti'
+    'my-devices': 'Contatti',
+    address_book_peers: 'I miei contatti',
+    address_book_manage: 'Gestione rubrica',
+    address_book_tags: 'Gestione tag'
   },
   page: {
     login: {
