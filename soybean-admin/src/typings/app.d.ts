@@ -689,6 +689,19 @@ declare namespace App {
             err: string;
           };
         };
+        token: {
+          device_os: string;
+          device_name: string;
+          is_admin: string;
+          status: string;
+        };
+        oauth: {
+          provider: string;
+          subject: string;
+          email: string;
+          name: string;
+          last_login_at: string;
+        };
       };
       api: {
         CaptchaError: string;
