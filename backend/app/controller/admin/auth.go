@@ -102,7 +102,7 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 	}
 
 	var user model.User
-	get, err := c.Db.Where("username = ? and is_admin = 0 and status > 0", loginForm.Username).Get(&user)
+	get, err := c.Db.Where("username = ? and status > 0", loginForm.Username).Get(&user)
 	if err != nil {
 		c.recordUserLoginAudit(0, loginForm.Username, false, err.Error())
 		return c.Error(nil, err.Error())
@@ -118,7 +118,7 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 		return c.Error(nil, "UsernameOrPasswordError")
 	}
 
-	_, _ = c.Db.Where("user_id = ? and status = 1 and is_admin = 0", user.Id).Cols("status").Update(&model.AuthToken{
+	_, _ = c.Db.Where("user_id = ? and status = 1 and is_admin = ?", user.Id, user.IsAdmin).Cols("status").Update(&model.AuthToken{
 		Status: 0,
 	})
 
@@ -130,7 +130,7 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 		UserId:    user.Id,
 		TokenHash: util.Sha256Hex(token),
 		Expired:   time.Now().Add(expired),
-		IsAdmin:   false,
+		IsAdmin:   user.IsAdmin,
 		Status:    1,
 	}
 
@@ -142,7 +142,8 @@ func (c *AuthController) PostUserLogin() mvc.Result {
 
 	c.recordUserLoginAudit(user.Id, loginForm.Username, true, "token")
 	return c.Success(iris.Map{
-		"token": token,
+		"token":    token,
+		"isAdmin":  user.IsAdmin,
 	}, "ok")
 }
 

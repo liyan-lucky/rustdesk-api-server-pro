@@ -31,7 +31,7 @@ declare module "@elegant-router/types" {
     "home": "/home";
     "my-devices": "/my-devices";
     "iframe-page": "/iframe-page/:url";
-    "login": "/login/:module(pwd-login)?";
+    "login": "/login/:module(user-login)?";
     "system": "/system";
     "system_mail": "/system/mail";
     "system_mail_logs": "/system/mail/logs";

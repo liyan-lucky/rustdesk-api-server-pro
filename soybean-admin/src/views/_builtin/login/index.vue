@@ -36,7 +36,7 @@ const moduleMap: Record<UnionKey.LoginModule, LoginModule> = {
   'user-login': { label: loginModuleRecord['user-login'], component: UserLogin }
 };
 
-const activeModule = computed(() => moduleMap[props.module || 'pwd-login']);
+const activeModule = computed(() => moduleMap[props.module || 'user-login']);
 
 const bgThemeColor = computed(() =>
   themeStore.darkMode ? getPaletteColorByNumber(themeStore.themeColor, 600) : themeStore.themeColor

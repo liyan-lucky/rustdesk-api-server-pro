@@ -47,6 +47,7 @@ declare namespace Api {
   namespace Auth {
     interface LoginToken {
       token: string;
+      isAdmin?: boolean;
     }
 
     interface OidcLoginUrl {

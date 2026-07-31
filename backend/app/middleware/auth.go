@@ -103,13 +103,16 @@ func UserAuth(app *iris.Application) iris.Handler {
 
 		authToken, get, err := getActiveAuthToken(db, token, false)
 		if !get || err != nil {
+			authToken, get, err = getActiveAuthToken(db, token, true)
+		}
+		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "web_user_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
 			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
 			return
 		}
 
 		var user model.User
-		get, err = db.Where("id = ? and status > 0 and is_admin = 0", authToken.UserId).Get(&user)
+		get, err = db.Where("id = ? and status > 0", authToken.UserId).Get(&user)
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "web_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
 			context.StopWithText(iris.StatusNotAcceptable, "NotAcceptable")

@@ -58,7 +58,11 @@ async function handleSubmit() {
   if (!error && data?.token) {
     localStg.set('token', data.token);
     localStg.set('userType', 'user');
-    window.location.href = '/#/my-devices';
+    if (data.isAdmin) {
+      window.location.href = '/#/home';
+    } else {
+      window.location.href = '/#/my-devices';
+    }
   } else if (error?.response?.data?.message === 'CaptchaError') {
     handleCaptcha();
   }
