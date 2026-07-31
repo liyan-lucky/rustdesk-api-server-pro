@@ -168,11 +168,7 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
     "devices": "Устройства",
-    "my-devices": "Мои синхронизированные устройства",
-    "address_book": "Address Book",
-    "address_book_peers": "My Peers",
-    "address_book_manage": "Address Book Mgmt",
-    "address_book_tags": "Tag Management"
+    "my-devices": "Контакты"
   },
   "page": {
     "login": {
@@ -337,7 +333,7 @@ const local: App.I18n.Schema = {
       }
     },
     "myDevices": {
-      "title": "Мои синхронизированные устройства",
+      "title": "Контакты",
       "welcome": "Добро пожаловать, {userName}",
       "status": "Статус",
       "online": "В сети",

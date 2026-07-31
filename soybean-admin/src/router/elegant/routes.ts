@@ -84,56 +84,13 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
-    name: 'address_book',
-    path: '/address-book',
-    component: 'layout.base',
-    meta: {
-      title: 'address_book',
-      i18nKey: 'route.address_book',
-      icon: 'mdi:book-open-variant',
-      order: 7
-    },
-    children: [
-      {
-        name: 'address_book_peers',
-        path: '/address-book/peers',
-        component: 'view.address_book_peers',
-        meta: {
-          title: 'address_book_peers',
-          i18nKey: 'route.address_book_peers',
-          icon: 'mdi:account-multiple'
-        }
-      },
-      {
-        name: 'address_book_manage',
-        path: '/address-book/manage',
-        component: 'view.address_book_manage',
-        meta: {
-          title: 'address_book_manage',
-          i18nKey: 'route.address_book_manage',
-          icon: 'mdi:book-cog'
-        }
-      },
-      {
-        name: 'address_book_tags',
-        path: '/address-book/tags',
-        component: 'view.address_book_tags',
-        meta: {
-          title: 'address_book_tags',
-          i18nKey: 'route.address_book_tags',
-          icon: 'mdi:tag-multiple'
-        }
-      }
-    ]
-  },
-  {
     name: 'my-devices',
     path: '/my-devices',
     component: 'layout.base$view.my-devices',
     meta: {
       title: 'my-devices',
       i18nKey: 'route.my-devices',
-      icon: 'mdi:cellphone-link',
+      icon: 'mdi:book-open-variant',
       order: 6
     }
   },

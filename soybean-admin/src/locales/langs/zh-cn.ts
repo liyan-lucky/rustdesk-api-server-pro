@@ -190,11 +190,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
     devices: '设备管理',
-    'my-devices': '我的同步设备',
-    address_book: '通讯录',
-    address_book_peers: '地址簿',
-    address_book_manage: '地址簿管理',
-    address_book_tags: '标签管理'
+    'my-devices': '通讯录'
   },
   page: {
     ...enUs.page,
@@ -378,7 +374,7 @@ const local: App.I18n.Schema = {
       }
     },
     myDevices: {
-      title: '我的同步设备',
+      title: '通讯录',
       welcome: '欢迎，{userName}',
       status: '状态',
       online: '在线',

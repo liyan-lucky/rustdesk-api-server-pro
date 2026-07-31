@@ -166,11 +166,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Log di base',
     audit_filetransferlogs: 'Log trasferimenti file',
     devices: 'Dispositivi',
-    'my-devices': 'I miei dispositivi sincronizzati',
-    address_book: 'Address Book',
-    address_book_peers: 'My Peers',
-    address_book_manage: 'Address Book Mgmt',
-    address_book_tags: 'Tag Management'
+    'my-devices': 'Contatti'
   },
   page: {
     login: {
@@ -335,7 +331,7 @@ const local: App.I18n.Schema = {
       }
     },
     myDevices: {
-      title: 'I miei dispositivi sincronizzati',
+      title: 'Contatti',
       welcome: 'Benvenuto, {userName}',
       status: 'Stato',
       online: 'Online',

@@ -182,11 +182,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Registros base',
     audit_filetransferlogs: 'Registros de transferencia',
     devices: 'Dispositivos',
-    'my-devices': 'Mis dispositivos sincronizados',
-    address_book: 'Libreta de direcciones',
-    address_book_peers: 'Mis contactos',
-    address_book_manage: 'Gestión de libretas',
-    address_book_tags: 'Gestión de etiquetas'
+    'my-devices': 'Contactos'
   },
   page: {
     ...enUs.page,
@@ -360,7 +356,7 @@ const local: App.I18n.Schema = {
       }
     },
     myDevices: {
-      title: 'Mis dispositivos sincronizados',
+      title: 'Contactos',
       welcome: 'Bienvenido, {userName}',
       status: 'Estado',
       online: 'En línea',

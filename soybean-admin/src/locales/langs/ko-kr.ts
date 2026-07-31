@@ -168,11 +168,7 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
     "devices": "장치",
-    "my-devices": "내 동기화 기기",
-    "address_book": "Address Book",
-    "address_book_peers": "My Peers",
-    "address_book_manage": "Address Book Mgmt",
-    "address_book_tags": "Tag Management"
+    "my-devices": "연락처"
   },
   "page": {
     "login": {
@@ -337,7 +333,7 @@ const local: App.I18n.Schema = {
       }
     },
     "myDevices": {
-      "title": "내 동기화 기기",
+      "title": "연락처",
       "welcome": "환영합니다, {userName}",
       "status": "상태",
       "online": "온라인",

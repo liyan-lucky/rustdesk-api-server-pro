@@ -168,11 +168,7 @@ const local: App.I18n.Schema = {
     "audit_baselogs": "基本ログ",
     "audit_filetransferlogs": "ファイル転送ログ",
     "devices": "デバイス",
-    "my-devices": "マイ同期デバイス",
-    "address_book": "Address Book",
-    "address_book_peers": "My Peers",
-    "address_book_manage": "Address Book Mgmt",
-    "address_book_tags": "Tag Management"
+    "my-devices": "連絡先"
   },
   "page": {
     "login": {
@@ -337,7 +333,7 @@ const local: App.I18n.Schema = {
       }
     },
     "myDevices": {
-      "title": "マイ同期デバイス",
+      "title": "連絡先",
       "welcome": "ようこそ、{userName}",
       "status": "ステータス",
       "online": "オンライン",
