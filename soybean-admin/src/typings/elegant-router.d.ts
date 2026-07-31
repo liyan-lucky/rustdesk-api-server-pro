@@ -26,9 +26,9 @@ declare module "@elegant-router/types" {
     "devices": "/devices";
     "home": "/home";
     "my-devices": "/my-devices";
-    "address_book_peers": "/my-devices/peers";
-    "address_book_manage": "/my-devices/manage";
-    "address_book_tags": "/my-devices/tags";
+    "my-devices_peers": "/my-devices/peers";
+    "my-devices_manage": "/my-devices/manage";
+    "my-devices_tags": "/my-devices/tags";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login)?";
     "system": "/system";
@@ -102,9 +102,9 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
-    | "address_book_peers"
-    | "address_book_manage"
-    | "address_book_tags"
+    | "my-devices_peers"
+    | "my-devices_manage"
+    | "my-devices_tags"
     | "audit_baselogs"
     | "audit_filetransferlogs"
     | "devices"

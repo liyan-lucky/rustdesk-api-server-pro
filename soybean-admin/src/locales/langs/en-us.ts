@@ -169,9 +169,9 @@ const local: App.I18n.Schema = {
     audit_filetransferlogs: 'File Transfer Logs',
     devices: 'Devices',
     'my-devices': 'Contacts',
-    address_book_peers: 'My Peers',
-    address_book_manage: 'Address Book Mgmt',
-    address_book_tags: 'Tag Management'
+    'my-devices_peers': 'My Peers',
+    'my-devices_manage': 'Address Book Mgmt',
+    'my-devices_tags': 'Tag Management'
   },
   page: {
     login: {

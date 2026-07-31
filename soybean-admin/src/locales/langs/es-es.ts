@@ -183,9 +183,9 @@ const local: App.I18n.Schema = {
     audit_filetransferlogs: 'Registros de transferencia',
     devices: 'Dispositivos',
     'my-devices': 'Contactos',
-    address_book_peers: 'Mis contactos',
-    address_book_manage: 'Gestión de libretas',
-    address_book_tags: 'Gestión de etiquetas'
+    'my-devices_peers': 'Mis contactos',
+    'my-devices_manage': 'Gestión de libretas',
+    'my-devices_tags': 'Gestión de etiquetas'
   },
   page: {
     ...enUs.page,

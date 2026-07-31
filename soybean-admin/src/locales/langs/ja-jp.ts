@@ -169,9 +169,9 @@ const local: App.I18n.Schema = {
     "audit_filetransferlogs": "ファイル転送ログ",
     "devices": "デバイス",
     "my-devices": "連絡先",
-    "address_book_peers": "マイピア",
-    "address_book_manage": "アドレス帳管理",
-    "address_book_tags": "タグ管理"
+    "my-devices_peers": "マイピア",
+    "my-devices_manage": "アドレス帳管理",
+    "my-devices_tags": "タグ管理"
   },
   "page": {
     "login": {

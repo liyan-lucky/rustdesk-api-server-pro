@@ -95,32 +95,32 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
-        name: 'address_book_peers',
+        name: 'my-devices_peers',
         path: '/my-devices/peers',
-        component: 'view.address_book_peers',
+        component: 'view.my-devices_peers',
         meta: {
-          title: 'address_book_peers',
-          i18nKey: 'route.address_book_peers',
+          title: 'my-devices_peers',
+          i18nKey: 'route.my-devices_peers',
           icon: 'mdi:account-multiple'
         }
       },
       {
-        name: 'address_book_manage',
+        name: 'my-devices_manage',
         path: '/my-devices/manage',
-        component: 'view.address_book_manage',
+        component: 'view.my-devices_manage',
         meta: {
-          title: 'address_book_manage',
-          i18nKey: 'route.address_book_manage',
+          title: 'my-devices_manage',
+          i18nKey: 'route.my-devices_manage',
           icon: 'mdi:book-cog'
         }
       },
       {
-        name: 'address_book_tags',
+        name: 'my-devices_tags',
         path: '/my-devices/tags',
-        component: 'view.address_book_tags',
+        component: 'view.my-devices_tags',
         meta: {
-          title: 'address_book_tags',
-          i18nKey: 'route.address_book_tags',
+          title: 'my-devices_tags',
+          i18nKey: 'route.my-devices_tags',
           icon: 'mdi:tag-multiple'
         }
       }
