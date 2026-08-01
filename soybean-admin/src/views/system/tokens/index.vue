@@ -18,6 +18,7 @@ const columns = [
   { key: 'rustdesk_id', title: 'RustDesk ID', align: 'center' as const },
   { key: 'device_os', title: $t('dataMap.token.device_os'), align: 'center' as const },
   { key: 'device_name', title: $t('dataMap.token.device_name'), align: 'center' as const },
+  { key: 'token_hash', title: $t('dataMap.token.token_hash'), align: 'center' as const, ellipsis: { tooltip: true } },
   {
     key: 'is_admin',
     title: $t('dataMap.token.is_admin'),

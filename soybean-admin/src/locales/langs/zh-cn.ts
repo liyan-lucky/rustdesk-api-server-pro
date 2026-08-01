@@ -191,6 +191,7 @@ const local: App.I18n.Schema = {
     system_oauth: 'OAuth管理',
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
+    audit_loginlogs: '登录日志',
     devices: '设备管理',
     'my-devices': '通讯录',
     'my-devices_peers': '地址簿',
@@ -534,6 +535,7 @@ const local: App.I18n.Schema = {
     token: {
       device_os: '设备系统',
       device_name: '设备名称',
+      token_hash: 'Token哈希',
       is_admin: '管理员',
       status: '有效'
     },
@@ -543,6 +545,13 @@ const local: App.I18n.Schema = {
       email: '邮箱',
       name: '名称',
       last_login_at: '最后登录'
+    },
+    loginLog: {
+      allEvents: '全部事件',
+      event: '事件',
+      userAgent: '用户代理',
+      success: '成功',
+      reason: '原因'
     }
   },
   api: {

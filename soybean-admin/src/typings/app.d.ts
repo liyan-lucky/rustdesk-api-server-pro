@@ -692,6 +692,7 @@ declare namespace App {
         token: {
           device_os: string;
           device_name: string;
+          token_hash: string;
           is_admin: string;
           status: string;
         };
@@ -701,6 +702,13 @@ declare namespace App {
           email: string;
           name: string;
           last_login_at: string;
+        };
+        loginLog: {
+          allEvents: string;
+          event: string;
+          userAgent: string;
+          success: string;
+          reason: string;
         };
       };
       api: {

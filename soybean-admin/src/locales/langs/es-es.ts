@@ -181,6 +181,7 @@ const local: App.I18n.Schema = {
     system_mail: 'Correo',
     audit_baselogs: 'Registros base',
     audit_filetransferlogs: 'Registros de transferencia',
+    audit_loginlogs: 'Registros de inicio de sesión',
     devices: 'Dispositivos',
     'my-devices': 'Contactos',
     'my-devices_peers': 'Mis contactos',
@@ -433,6 +434,7 @@ const local: App.I18n.Schema = {
     token: {
       device_os: 'SO del dispositivo',
       device_name: 'Nombre del dispositivo',
+      token_hash: 'Hash de Token',
       is_admin: 'Admin',
       status: 'Activo'
     },
@@ -442,6 +444,13 @@ const local: App.I18n.Schema = {
       email: 'Correo',
       name: 'Nombre',
       last_login_at: 'Último inicio'
+    },
+    loginLog: {
+      allEvents: 'Todos los eventos',
+      event: 'Evento',
+      userAgent: 'Agente de usuario',
+      success: 'Éxito',
+      reason: 'Razón'
     },
     audit: {
       ...enUs.dataMap.audit,

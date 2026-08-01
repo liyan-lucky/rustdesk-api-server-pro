@@ -69,6 +69,16 @@ export const generatedRoutes: GeneratedRoute[] = [
           i18nKey: 'route.audit_filetransferlogs',
           icon: 'solar:square-transfer-horizontal-linear'
         }
+      },
+      {
+        name: 'audit_loginlogs',
+        path: '/audit/loginlogs',
+        component: 'view.audit_loginlogs',
+        meta: {
+          title: 'audit_loginlogs',
+          i18nKey: 'route.audit_loginlogs',
+          icon: 'ic:baseline-login'
+        }
       }
     ]
   },

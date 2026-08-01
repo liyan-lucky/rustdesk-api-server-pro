@@ -23,6 +23,7 @@ declare module "@elegant-router/types" {
     "audit": "/audit";
     "audit_baselogs": "/audit/baselogs";
     "audit_filetransferlogs": "/audit/filetransferlogs";
+    "audit_loginlogs": "/audit/loginlogs";
     "devices": "/devices";
     "home": "/home";
     "my-devices": "/my-devices";
@@ -109,6 +110,7 @@ declare module "@elegant-router/types" {
     | "my-devices_tags"
     | "audit_baselogs"
     | "audit_filetransferlogs"
+    | "audit_loginlogs"
     | "devices"
     | "home"
     | "system_mail_logs"

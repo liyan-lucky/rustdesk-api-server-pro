@@ -169,6 +169,7 @@ const local: App.I18n.Schema = {
     "system_oauth": "Управление OAuth",
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
+    "audit_loginlogs": "Логи входа",
     "devices": "Устройства",
     "my-devices": "Контакты",
     "my-devices_peers": "Мои пиры",
@@ -476,6 +477,7 @@ const local: App.I18n.Schema = {
     "token": {
       "device_os": "ОС устройства",
       "device_name": "Имя устройства",
+      "token_hash": "Хеш токена",
       "is_admin": "Админ",
       "status": "Активен"
     },
@@ -485,6 +487,13 @@ const local: App.I18n.Schema = {
       "email": "Почта",
       "name": "Имя",
       "last_login_at": "Последний вход"
+    },
+    "loginLog": {
+      "allEvents": "Все события",
+      "event": "Событие",
+      "userAgent": "Агент пользователя",
+      "success": "Успех",
+      "reason": "Причина"
     }
   },
   "api": {

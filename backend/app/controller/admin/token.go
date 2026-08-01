@@ -56,6 +56,7 @@ func (c *TokenController) HandleList() mvc.Result {
 			"device_os":   t.AuthToken.DeviceOs,
 			"device_type": t.AuthToken.DeviceType,
 			"device_name": t.AuthToken.DeviceName,
+			"token_hash":  t.AuthToken.TokenHash,
 			"is_admin":    t.AuthToken.IsAdmin,
 			"status":      t.AuthToken.Status,
 			"expired":     t.AuthToken.Expired.Format(config.TimeFormat),

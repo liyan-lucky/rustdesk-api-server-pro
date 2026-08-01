@@ -169,6 +169,7 @@ const routeMap: RouteMap = {
   "audit": "/audit",
   "audit_baselogs": "/audit/baselogs",
   "audit_filetransferlogs": "/audit/filetransferlogs",
+  "audit_loginlogs": "/audit/loginlogs",
   "devices": "/devices",
   "home": "/home",
   "my-devices": "/my-devices",

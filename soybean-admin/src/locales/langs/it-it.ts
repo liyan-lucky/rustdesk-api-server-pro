@@ -167,6 +167,7 @@ const local: App.I18n.Schema = {
     system_oauth: 'Gestione OAuth',
     audit_baselogs: 'Log di base',
     audit_filetransferlogs: 'Log trasferimenti file',
+    audit_loginlogs: 'Log accessi',
     devices: 'Dispositivi',
     'my-devices': 'Contatti',
     'my-devices_peers': 'I miei contatti',
@@ -474,6 +475,7 @@ const local: App.I18n.Schema = {
     token: {
       device_os: 'SO dispositivo',
       device_name: 'Nome dispositivo',
+      token_hash: 'Hash Token',
       is_admin: 'Admin',
       status: 'Attivo'
     },
@@ -483,6 +485,13 @@ const local: App.I18n.Schema = {
       email: 'Email',
       name: 'Nome',
       last_login_at: 'Ultimo accesso'
+    },
+    loginLog: {
+      allEvents: 'Tutti gli eventi',
+      event: 'Evento',
+      userAgent: 'Agente utente',
+      success: 'Successo',
+      reason: 'Motivo'
     }
   },
   api: {

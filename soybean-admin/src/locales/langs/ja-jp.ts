@@ -169,6 +169,7 @@ const local: App.I18n.Schema = {
     "system_oauth": "OAuth管理",
     "audit_baselogs": "基本ログ",
     "audit_filetransferlogs": "ファイル転送ログ",
+    "audit_loginlogs": "ログインログ",
     "devices": "デバイス",
     "my-devices": "連絡先",
     "my-devices_peers": "マイピア",
@@ -476,6 +477,7 @@ const local: App.I18n.Schema = {
     "token": {
       "device_os": "デバイスOS",
       "device_name": "デバイス名",
+      "token_hash": "トークンハッシュ",
       "is_admin": "管理者",
       "status": "有効"
     },
@@ -485,6 +487,13 @@ const local: App.I18n.Schema = {
       "email": "メール",
       "name": "名前",
       "last_login_at": "最終ログイン"
+    },
+    "loginLog": {
+      "allEvents": "全イベント",
+      "event": "イベント",
+      "userAgent": "ユーザーエージェント",
+      "success": "成功",
+      "reason": "理由"
     }
   },
   "api": {

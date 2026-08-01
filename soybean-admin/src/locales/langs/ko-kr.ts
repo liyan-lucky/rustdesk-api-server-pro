@@ -169,6 +169,7 @@ const local: App.I18n.Schema = {
     "system_oauth": "OAuth 관리",
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
+    "audit_loginlogs": "로그인 로그",
     "devices": "장치",
     "my-devices": "연락처",
     "my-devices_peers": "내 피어",
@@ -476,6 +477,7 @@ const local: App.I18n.Schema = {
     "token": {
       "device_os": "디바이스 OS",
       "device_name": "디바이스 이름",
+      "token_hash": "토큰 해시",
       "is_admin": "관리자",
       "status": "활성"
     },
@@ -485,6 +487,13 @@ const local: App.I18n.Schema = {
       "email": "이메일",
       "name": "이름",
       "last_login_at": "마지막 로그인"
+    },
+    "loginLog": {
+      "allEvents": "모든 이벤트",
+      "event": "이벤트",
+      "userAgent": "사용자 에이전트",
+      "success": "성공",
+      "reason": "사유"
     }
   },
   "api": {

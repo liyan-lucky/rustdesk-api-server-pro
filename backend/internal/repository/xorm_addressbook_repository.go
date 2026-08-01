@@ -21,6 +21,8 @@ func NewXormAddressBookRepository(dbEngine *xorm.Engine) *XormAddressBookReposit
 }
 
 func (r *XormAddressBookRepository) GetLegacyAddressBook(query core.LegacyAddressBookGetQuery) (core.LegacyAddressBookGetResult, error) {
+	abID := r.ensurePersonalABID(query.UserID)
+
 	tagList := make([]model.Tags, 0)
 	if err := r.DB.Where("user_id = ?", query.UserID).Find(&tagList); err != nil {
 		return core.LegacyAddressBookGetResult{}, err
@@ -37,9 +39,25 @@ func (r *XormAddressBookRepository) GetLegacyAddressBook(query core.LegacyAddres
 		tagColors[tag.Tag] = colorCode
 	}
 
+	if abID > 0 && len(tagList) == 0 {
+		abTagList := make([]model.AddressBookTag, 0)
+		if err := r.DB.Where("user_id = ? and ab_id = ?", query.UserID, abID).Find(&abTagList); err == nil {
+			for _, t := range abTagList {
+				tags = append(tags, t.Name)
+				tagColors[t.Name] = t.Color
+			}
+		}
+	}
+
 	peerList := make([]model.Peer, 0)
-	if err := r.DB.Where("user_id = ?", query.UserID).Find(&peerList); err != nil {
-		return core.LegacyAddressBookGetResult{}, err
+	if abID > 0 {
+		if err := r.DB.Where("user_id = ? and ab_id = ?", query.UserID, abID).Find(&peerList); err != nil {
+			return core.LegacyAddressBookGetResult{}, err
+		}
+	} else {
+		if err := r.DB.Where("user_id = ?", query.UserID).Find(&peerList); err != nil {
+			return core.LegacyAddressBookGetResult{}, err
+		}
 	}
 
 	peers := make([]core.LegacyAddressBookPeerEntry, 0, len(peerList))
@@ -299,6 +317,8 @@ func (r *XormAddressBookRepository) DeleteAddressBookPeers(cmd core.AddressBookP
 }
 
 func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.LegacyAddressBookReplaceCommand) error {
+	abID := r.ensurePersonalABID(cmd.UserID)
+
 	session := r.DB.NewSession()
 	defer session.Close()
 
@@ -310,9 +330,16 @@ func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.Legacy
 		_ = session.Rollback()
 		return err
 	}
-	if _, err := session.Where("user_id = ?", cmd.UserID).Delete(&model.Peer{}); err != nil {
-		_ = session.Rollback()
-		return err
+	if abID > 0 {
+		if _, err := session.Where("user_id = ? and ab_id = ?", cmd.UserID, abID).Delete(&model.Peer{}); err != nil {
+			_ = session.Rollback()
+			return err
+		}
+	} else {
+		if _, err := session.Where("user_id = ?", cmd.UserID).Delete(&model.Peer{}); err != nil {
+			_ = session.Rollback()
+			return err
+		}
 	}
 
 	tags := make([]*model.Tags, 0, len(cmd.Tags))
@@ -330,6 +357,24 @@ func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.Legacy
 		}
 	}
 
+	if abID > 0 {
+		abTags := make([]*model.AddressBookTag, 0, len(cmd.Tags))
+		for _, tag := range cmd.Tags {
+			abTags = append(abTags, &model.AddressBookTag{
+				UserId: cmd.UserID,
+				AbId:   abID,
+				Name:   tag.Name,
+				Color:  tag.Color,
+			})
+		}
+		if len(abTags) > 0 {
+			if _, err := session.Insert(abTags); err != nil {
+				_ = session.Rollback()
+				return err
+			}
+		}
+	}
+
 	peers := make([]*model.Peer, 0, len(cmd.Peers))
 	for _, peer := range cmd.Peers {
 		peerTags := "[]"
@@ -338,6 +383,7 @@ func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.Legacy
 		}
 		peers = append(peers, &model.Peer{
 			UserId:     cmd.UserID,
+			AbId:       abID,
 			RustdeskId: peer.RustdeskID,
 			Hash:       peer.Hash,
 			Username:   peer.Username,
@@ -356,4 +402,13 @@ func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.Legacy
 	}
 
 	return session.Commit()
+}
+
+func (r *XormAddressBookRepository) ensurePersonalABID(userID int) int {
+	var ab model.AddressBook
+	has, err := r.DB.Where("user_id = ?", userID).Get(&ab)
+	if err != nil || !has {
+		return 0
+	}
+	return ab.Id
 }
