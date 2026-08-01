@@ -64,9 +64,9 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		}
 
 		s := carbon.Now().DiffInSeconds(carbon.Parse(authToken.Expired.Format(config.TimeFormat)))
-		if s <= 60*5 {
+		if s > 0 && s <= 60*5 {
 			authToken.Expired = carbon.Parse(authToken.Expired.Format(config.TimeFormat)).AddHours(2).ToStdTime()
-			db.Where("id = ?", authToken.Id).Cols("expired").Update(&authToken)
+			_, _ = db.Where("id = ?", authToken.Id).Cols("expired").Update(&authToken)
 		}
 
 		context.Values().Set(config.AdminUserKey, &user)
@@ -123,9 +123,9 @@ func UserAuth(app *iris.Application) iris.Handler {
 		}
 
 		s := carbon.Now().DiffInSeconds(carbon.Parse(authToken.Expired.Format(config.TimeFormat)))
-		if s <= 60*5 {
+		if s > 0 && s <= 60*5 {
 			authToken.Expired = carbon.Parse(authToken.Expired.Format(config.TimeFormat)).AddHours(2).ToStdTime()
-			db.Where("id = ?", authToken.Id).Cols("expired").Update(&authToken)
+			_, _ = db.Where("id = ?", authToken.Id).Cols("expired").Update(&authToken)
 		}
 
 		context.Values().Set(config.WebUserKey, &user)

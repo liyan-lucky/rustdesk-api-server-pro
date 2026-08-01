@@ -1,4 +1,4 @@
-import enUs from './en-us';
+﻿import enUs from './en-us';
 
 const local: App.I18n.Schema = {
   ...enUs,
@@ -7,39 +7,39 @@ const local: App.I18n.Schema = {
     ...enUs.common,
     action: 'Action',
     add: 'Ajouter',
-    addSuccess: 'Ajout r?ussi',
+    addSuccess: 'Ajout réussi',
     backToHome: 'Retour ? l\'accueil',
     batchDelete: 'Suppression par lot',
     cancel: 'Annuler',
     close: 'Fermer',
-    check: 'V?rifier',
-    expandColumn: 'D?velopper la colonne',
-    columnSetting: 'Param?tres des colonnes',
+    check: 'vérifier',
+    expandColumn: 'Développer la colonne',
+    columnSetting: 'Paramètres des colonnes',
     config: 'Configuration',
     confirm: 'Confirmer',
     delete: 'Supprimer',
-    deleteSuccess: 'Suppression r?ussie',
+    deleteSuccess: 'Suppression réussie',
     confirmDelete: 'Voulez-vous vraiment supprimer ?',
     edit: 'Modifier',
     look: 'Voir',
     warning: 'Avertissement',
     error: 'Erreur',
     index: 'Index',
-    keywordSearch: 'Veuillez saisir un mot-cl?',
-    logout: 'Se d?connecter',
-    logoutConfirm: 'Voulez-vous vraiment vous d?connecter ?',
-    lookForward: 'Bient?t disponible',
+    keywordSearch: 'Veuillez saisir un mot-clé',
+    logout: 'Se déconnecter',
+    logoutConfirm: 'Voulez-vous vraiment vous déconnecter ?',
+    lookForward: 'Bientôt disponible',
     modify: 'Modifier',
-    modifySuccess: 'Modification r?ussie',
-    noData: 'Aucune donn?e',
-    operate: 'Op?ration',
-    pleaseCheckValue: 'Veuillez v?rifier si la valeur est valide',
+    modifySuccess: 'Modification réussie',
+    noData: 'Aucune donnée',
+    operate: 'opération',
+    pleaseCheckValue: 'Veuillez vérifier si la valeur est valide',
     refresh: 'Actualiser',
-    reset: 'R?initialiser',
+    reset: 'Réinitialiser',
     search: 'Rechercher',
     switch: 'Basculer',
     tip: 'Conseil',
-    trigger: 'D?clencher',
+    trigger: 'Déclencher',
     update: '更新',
     updateSuccess: '更新成功',
     userCenter: 'Centre utilisateur',
@@ -50,24 +50,24 @@ const local: App.I18n.Schema = {
   },
   request: {
     ...enUs.request,
-    logout: 'D?connecter l?utilisateur apr?s ?chec de requ?te',
-    logoutMsg: '?tat utilisateur invalide, veuillez vous reconnecter',
-    logoutWithModal: 'Afficher une fen?tre apr?s ?chec de requ?te puis d?connecter',
-    logoutWithModalMsg: '?tat utilisateur invalide, veuillez vous reconnecter',
+    logout: 'déconnecter l’utilisateur après échec de requête',
+    logoutMsg: 'État utilisateur invalide, veuillez vous reconnecter',
+    logoutWithModal: 'Afficher une fenêtre après échec de requête puis déconnecter',
+    logoutWithModalMsg: 'État utilisateur invalide, veuillez vous reconnecter',
     refreshToken: 'Le jeton a expir?, actualisation du jeton',
-    tokenExpired: 'Le jeton de la requ?te a expir?'
+    tokenExpired: 'Le jeton de la requête a expir?'
   },
   theme: {
     ...enUs.theme,
     themeSchema: {
       ...enUs.theme.themeSchema,
-      title: 'Sch?ma de th?me',
+      title: 'Schéma de thème',
       light: 'Clair',
       dark: 'Sombre',
-      auto: 'Suivre le syst?me'
+      auto: 'Suivre le système'
     },
     grayscale: 'Niveaux de gris',
-    colourWeakness: 'D?ficience des couleurs',
+    colourWeakness: 'Déficience des couleurs',
     layoutMode: {
       ...enUs.theme.layoutMode,
       title: 'Mode de mise en page',
@@ -77,21 +77,21 @@ const local: App.I18n.Schema = {
       'horizontal-mix': 'Mode mixte horizontal',
       reverseHorizontalMix: 'Inverser la position des menus de niveau 1 et enfants'
     },
-    recommendColor: 'Appliquer l?algorithme de couleur recommand?',
-    recommendColorDesc: 'L?algorithme de couleur recommand? fait r?f?rence ?',
+    recommendColor: 'Appliquer l’algorithme de couleur recommandé',
+    recommendColorDesc: "L'algorithme de couleur recommandé fait référence à",
     themeColor: {
       ...enUs.theme.themeColor,
-      title: 'Couleur du th?me',
+      title: 'Couleur du thème',
       primary: 'Primaire',
       info: 'Info',
-      success: 'Succ?s',
+      success: 'Succès',
       warning: 'Avertissement',
       error: 'Erreur',
       followPrimary: 'Suivre la couleur primaire'
     },
     scrollMode: {
       ...enUs.theme.scrollMode,
-      title: 'Mode de d?filement',
+      title: 'Mode de défilement',
       wrapper: 'Conteneur',
       content: 'Contenu'
     },
@@ -100,24 +100,24 @@ const local: App.I18n.Schema = {
       animate: 'Animation de page',
       mode: {
         ...enUs.theme.page.mode,
-        title: 'Mode d?animation',
+        title: 'Mode d’animation',
         fade: 'Fondu',
         'fade-slide': 'Glisser',
         'fade-bottom': 'Fondu zoom',
-        'fade-scale': 'Fondu ?chelle',
+        'fade-scale': 'Fondu échelle',
         'zoom-fade': 'Zoom fondu',
-        'zoom-out': 'Zoom arri?re',
+        'zoom-out': 'Zoom arrière',
         none: 'Aucun'
       }
     },
-    fixedHeaderAndTab: 'En-t?te et onglets fixes',
+    fixedHeaderAndTab: 'En-tête et onglets fixes',
     header: {
       ...enUs.theme.header,
-      height: 'Hauteur de l?en-t?te',
+      height: 'Hauteur de l?En-tête',
       breadcrumb: {
         ...enUs.theme.header.breadcrumb,
-        visible: 'Fil d?Ariane visible',
-        showIcon: 'Ic?ne du fil d?Ariane visible'
+        visible: 'Fil d’Ariane visible',
+        showIcon: 'Icône du fil d’Ariane visible'
       }
     },
     tab: {
@@ -134,11 +134,11 @@ const local: App.I18n.Schema = {
     },
     sider: {
       ...enUs.theme.sider,
-      inverted: 'Barre lat?rale sombre',
-      width: 'Largeur de la barre lat?rale',
-      collapsedWidth: 'Largeur repli?e',
+      inverted: 'Barre latérale sombre',
+      width: 'Largeur de la barre latérale',
+      collapsedWidth: 'Largeur repliée',
       mixWidth: 'Largeur mixte',
-      mixCollapsedWidth: 'Largeur mixte repli?e',
+      mixCollapsedWidth: 'Largeur mixte repliée',
       mixChildMenuWidth: 'Largeur du sous-menu mixte'
     },
     footer: {
@@ -150,23 +150,23 @@ const local: App.I18n.Schema = {
     },
     watermark: {
       ...enUs.theme.watermark,
-      visible: 'Filigrane visible en plein ?cran',
+      visible: 'Filigrane visible en plein écran',
       text: 'Texte du filigrane'
     },
-    themeDrawerTitle: 'Configuration du th?me',
+    themeDrawerTitle: 'Configuration du thème',
     pageFunTitle: 'Fonctions de page',
     configOperation: {
       ...enUs.theme.configOperation,
       copyConfig: 'Copier la configuration',
-      copySuccessMsg: 'Copie r?ussie, veuillez remplacer la variable "themeSettings" dans "src/theme/settings.ts"',
-      resetConfig: 'R?initialiser la configuration',
-      resetSuccessMsg: 'R?initialisation r?ussie'
+      copySuccessMsg: 'Copie réussie, veuillez remplacer la variable "themeSettings" dans "src/theme/settings.ts"',
+      resetConfig: 'Réinitialiser la configuration',
+      resetSuccessMsg: 'Réinitialisation réussie'
     }
   },
   route: {
     ...enUs.route,
-    login: 'Connexion',
-    403: 'Acc?s refus?',
+    login: 'connexion',
+    403: 'Accès refusé',
     404: 'Page introuvable',
     500: 'Erreur serveur',
     'iframe-page': 'Iframe',
@@ -176,7 +176,7 @@ const local: App.I18n.Schema = {
     user_list: 'Liste des utilisateurs',
     user_sessions: 'Sessions',
     system: 'Gestion systeme',
-    system_mail_template: 'Mod?les e-mail',
+    system_mail_template: 'Modèles e-mail',
     system_mail_logs: 'Logs e-mail',
     system_mail: 'E-mail',
     audit_baselogs: 'Journaux de base',
@@ -194,31 +194,31 @@ const local: App.I18n.Schema = {
         ...enUs.page.login,
         common: {
           ...enUs.page.login.common,
-          loginOrRegister: 'Connexion / Inscription',
-          userNamePlaceholder: 'Veuillez saisir le nom d?utilisateur',
-          phonePlaceholder: 'Veuillez saisir le num?ro de t?l?phone',
-          codePlaceholder: 'Veuillez saisir le code de v?rification',
+          loginOrRegister: 'connexion / Inscription',
+          userNamePlaceholder: 'Veuillez saisir le nom d’utilisateur',
+          phonePlaceholder: 'Veuillez saisir le numéro de téléphone',
+          codePlaceholder: 'Veuillez saisir le code de vérification',
           passwordPlaceholder: 'Veuillez saisir le mot de passe',
           confirmPasswordPlaceholder: 'Veuillez saisir ? nouveau le mot de passe',
-          codeLogin: 'Connexion par code',
+          codeLogin: 'connexion par code',
           confirm: 'Confirmer',
           back: 'Retour',
-          validateSuccess: 'V?rification r?ussie',
-          loginSuccess: 'Connexion r?ussie',
+          validateSuccess: 'Vérification réussie',
+          loginSuccess: 'connexion réussie',
           welcomeBack: 'Bon retour, {userName} !',
-          thirdPartyLogin: 'Connexion tierce',
+          thirdPartyLogin: 'connexion tierce',
           continueWith: 'Continuer avec {provider}',
           providerUnavailable: 'La connexion {provider} est indisponible'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,
-          title: 'Connexion par mot de passe',
+          title: 'connexion par mot de passe',
           rememberMe: 'Se souvenir de moi',
-          switchToUser: 'Connexion utilisateur'
+          switchToUser: 'connexion utilisateur'
          },
          userLogin: {
-           title: 'Connexion utilisateur',
-           switchToAdmin: 'Connexion admin'
+           title: 'connexion utilisateur',
+           switchToAdmin: 'connexion admin'
         }
       },
     home: {
@@ -246,7 +246,7 @@ const local: App.I18n.Schema = {
       serverConfig: {
         ...enUs.page.home.serverConfig,
         title: 'Configuration de connexion client',
-        tip: 'Copiez les valeurs suivantes dans le client RustDesk. Si KEY est vide, d?finissez `RUSTDESK_KEY` dans les variables d?environnement du conteneur.',
+        tip: 'Copiez les valeurs suivantes dans le client RustDesk. Si KEY est vide, définissez `RUSTDESK_KEY` dans les variables d’environnement du conteneur.',
         idServer: 'Serveur ID',
         relayServer: 'Serveur relais',
         apiServer: 'Serveur API',
@@ -257,7 +257,7 @@ const local: App.I18n.Schema = {
         keyPlaceholder: 'Fournir via la variable RUSTDESK_KEY',
         copy: 'Copier',
         copyAll: 'Tout copier',
-        copyTemplate: 'Copier le mod?le RustDesk',
+        copyTemplate: 'Copier le modèle RustDesk',
         showQr: '生成二维码',
         qrTitle: 'RustDesk 导入二维码',
         qrTip: '手机端 RustDesk 可扫描此二维码导入配置，二维码内容与“复制RustDesk模板”完全一致。',
@@ -269,43 +269,43 @@ const local: App.I18n.Schema = {
         lastUpdated: 'Derniere mise a jour',
         show: 'Afficher',
         hide: 'Masquer',
-        missingTip: 'Les champs suivants sont vides. Veuillez d?abord les configurer dans les variables d?environnement du conteneur : {fields}',
-        copyEmpty: '{label} est vide et ne peut pas ?tre copi?',
-        copySuccess: '{label} copi?',
-        copyFailed: '?chec de la copie de {label}',
-        fetchFailed: '?chec du chargement de la configuration serveur',
+        missingTip: 'Les champs suivants sont vides. Veuillez d’abord les configurer dans les variables d’environnement du conteneur : {fields}',
+        copyEmpty: '{label} est vide et ne peut pas être copié',
+        copySuccess: '{label} copié',
+        copyFailed: 'échec de la copie de {label}',
+        fetchFailed: 'échec du chargement de la configuration serveur',
         cacheCleared: 'Cache vid?, rechargement de la configuration serveur',
         sourceType: {
           ...enUs.page.home.serverConfig.sourceType,
           remote: 'Distant',
-          'memory-cache': 'Cache m?moire',
+          'memory-cache': 'Cache mémoire',
           'session-cache': 'Cache session',
           env: 'Env',
-          inferred: 'D?duit',
+          inferred: 'Déduit',
           empty: 'Vide',
            auto: 'Auto-détecté'
         },
         sourceHint: {
           ...enUs.page.home.serverConfig.sourceHint,
-          env: 'Cette valeur provient d?une variable d?environnement du conteneur.',
-          inferred: 'Cette valeur est d?duite automatiquement de l?adresse d?acc?s actuelle.',
-          empty: 'Aucune valeur configur?e ni d?duite pour le moment.'
+          env: 'Cette valeur provient d’une variable d’environnement du conteneur.',
+          inferred: 'Cette valeur est déduite automatiquement de l’adresse d’accès actuelle.',
+          empty: 'Aucune valeur configurée ni déduite pour le moment.'
         },
         connectivity: {
           ...enUs.page.home.serverConfig.connectivity,
-          clear: 'Effacer les r?sultats',
-          check: 'Tester la connectivit?',
+          clear: 'Effacer les résultats',
+          check: 'Tester la connectivité',
           checkOne: 'Tester',
-          checked: 'V?rification de connectivit? termin?e',
-          checkedOne: 'Connectivit? de {field} v?rifi?e',
-          checkedCached: 'R?sultat r?cent de connectivit? utilis? (cache)',
-          checkFailed: '?chec de la v?rification de connectivit?',
-          cleared: 'R?sultats de connectivit? effac?s',
-          source: 'Source de v?rification',
-          lastChecked: 'Derni?re v?rification',
+          checked: 'Vérification de connectivité terminée',
+          checkedOne: 'Connectivit? de {field} vérifiée',
+          checkedCached: 'Résultat récent de connectivité utilisé (cache)',
+          checkFailed: 'échec de la vérification de connectivité',
+          cleared: 'Résultats de connectivité effacés',
+          source: 'Source de vérification',
+          lastChecked: 'Dernière vérification',
           target: 'Cible',
-          duration: 'Dur?e',
-          notChecked: 'Pas encore v?rifi?',
+          duration: 'Durée',
+          notChecked: 'Pas encore vérifié',
           checkSourceType: {
             ...enUs.page.home.serverConfig.connectivity.checkSourceType,
             remote: 'Distant',
@@ -313,10 +313,10 @@ const local: App.I18n.Schema = {
           },
           status: {
             ...enUs.page.home.serverConfig.connectivity.status,
-            idle: 'Non v?rifi?',
+            idle: 'Non vérifié',
             ok: 'Accessible',
-            error: '?chec',
-            skip: 'Ignor?'
+            error: 'échec',
+            skip: 'ignoré'
           }
         }
       }
@@ -365,7 +365,7 @@ const local: App.I18n.Schema = {
       status: 'Statut',
       online: 'En ligne',
       offline: 'Hors ligne',
-      conns: 'Connexions',
+      conns: 'connexions',
       lastSync: 'Dernière synchro',
       logout: 'Déconnexion'
     }
@@ -408,7 +408,7 @@ const local: App.I18n.Schema = {
       username: 'Nom utilisateur',
       hostname: "Nom de l'hôte",
       version: 'Version RustDesk',
-        memory: 'M?moire',
+        memory: 'Mémoire',
       os: 'OS',
       rustdesk_id: 'Rustdesk ID'
     },
@@ -463,7 +463,7 @@ const local: App.I18n.Schema = {
         session_id: 'ID de session',
         uuid: 'UUID',
       created_at: 'Créé le',
-        closed_at: 'Ferm? le',
+        closed_at: 'fermé le',
       typeLabel: {
         ...enUs.dataMap.audit.typeLabel,
         remote_control: 'Contrôle à distance',
@@ -533,7 +533,7 @@ const local: App.I18n.Schema = {
   },
   dropdown: {
     ...enUs.dropdown,
-    closeCurrent: 'Fermer l?onglet courant',
+    closeCurrent: 'Fermer l'onglet courant',
     closeOther: 'Fermer les autres',
     closeLeft: 'Fermer ? gauche',
     closeRight: 'Fermer ? droite',
@@ -541,20 +541,20 @@ const local: App.I18n.Schema = {
   },
   icon: {
     ...enUs.icon,
-    themeConfig: 'Configuration du th?me',
-    themeSchema: 'Sch?ma de th?me',
+    themeConfig: 'Configuration du thème',
+    themeSchema: 'Schéma de thème',
     lang: 'Changer de langue',
-    fullscreen: 'Plein ?cran',
-    fullscreenExit: 'Quitter le plein ?cran',
+    fullscreen: 'Plein écran',
+    fullscreenExit: 'Quitter le plein écran',
     reload: 'Recharger la page',
-    collapse: 'R?duire le menu',
-    expand: 'D?velopper le menu',
-    pin: '?pingler',
-    unpin: 'D?s?pingler'
+    collapse: 'Réduire le menu',
+    expand: 'Développer le menu',
+    pin: 'Épingler',
+    unpin: 'Désépingler'
   },
   datatable: {
     ...enUs.datatable,
-    itemCount: 'Total {total} ?l?ments'
+    itemCount: 'Total {total} éléments'
   }
 };
 

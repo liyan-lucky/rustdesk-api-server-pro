@@ -1,4 +1,4 @@
-import enUs from './en-us';
+﻿import enUs from './en-us';
 
 const local: App.I18n.Schema = {
   ...enUs,
@@ -6,40 +6,40 @@ const local: App.I18n.Schema = {
   common: {
     ...enUs.common,
     action: 'Aktion',
-    add: 'Hinzuf?gen',
-    addSuccess: 'Erfolgreich hinzugef?gt',
+    add: 'Hinzufügen',
+    addSuccess: 'Erfolgreich hinzugefügt',
     backToHome: 'Zur Startseite',
-    batchDelete: 'Stapel l?schen',
+    batchDelete: 'Stapel löschen',
     cancel: 'Abbrechen',
-    close: 'Schlie?en',
-    check: 'Pr?fen',
+    close: 'Schließen',
+    check: 'Prüfen',
     expandColumn: 'Spalte erweitern',
     columnSetting: 'Spalteneinstellungen',
     config: 'Konfiguration',
-    confirm: 'Best?tigen',
-    delete: 'L?schen',
-    deleteSuccess: 'Erfolgreich gel?scht',
-    confirmDelete: 'M?chten Sie wirklich l?schen?',
+    confirm: 'Bestätigen',
+    delete: 'löschen',
+    deleteSuccess: 'Erfolgreich gelöscht',
+    confirmDelete: 'Möchten Sie wirklich löschen?',
     edit: 'Bearbeiten',
     look: 'Anzeigen',
     warning: 'Warnung',
     error: 'Fehler',
     index: 'Index',
-    keywordSearch: 'Bitte Schl?sselwort eingeben',
+    keywordSearch: 'Bitte Schlüsselwort eingeben',
     logout: 'Abmelden',
-    logoutConfirm: 'M?chten Sie sich wirklich abmelden?',
-    lookForward: 'Demn?chst verf?gbar',
-    modify: '?ndern',
-    modifySuccess: 'Erfolgreich ge?ndert',
+    logoutConfirm: 'Möchten Sie sich wirklich Abmelden?',
+    lookForward: 'Demnächst verfügbar',
+    modify: 'Ändern',
+    modifySuccess: 'Erfolgreich geändert',
     noData: 'Keine Daten',
     operate: 'Vorgang',
-    pleaseCheckValue: 'Bitte pr?fen Sie, ob der Wert g?ltig ist',
+    pleaseCheckValue: 'Bitte Prüfen Sie, ob der Wert gültig ist',
     refresh: 'Aktualisieren',
-    reset: 'Zur?cksetzen',
+    reset: 'Zurücksetzen',
     search: 'Suchen',
     switch: 'Umschalten',
     tip: 'Hinweis',
-    trigger: 'Ausl?sen',
+    trigger: 'Auslösen',
     update: '更新',
     updateSuccess: '更新成功',
     userCenter: 'Benutzerzentrum',
@@ -50,10 +50,10 @@ const local: App.I18n.Schema = {
   },
   request: {
     ...enUs.request,
-    logout: 'Benutzer nach fehlgeschlagener Anfrage abmelden',
-    logoutMsg: 'Benutzerstatus ung?ltig, bitte erneut anmelden',
-    logoutWithModal: 'Nach fehlgeschlagener Anfrage Dialog anzeigen und dann abmelden',
-    logoutWithModalMsg: 'Benutzerstatus ung?ltig, bitte erneut anmelden',
+    logout: 'Benutzer nach fehlgeschlagener Anfrage Abmelden',
+    logoutMsg: 'Benutzerstatus ungültig, bitte erneut anmelden',
+    logoutWithModal: 'Nach fehlgeschlagener Anfrage Dialog anzeigen und dann Abmelden',
+    logoutWithModalMsg: 'Benutzerstatus ungültig, bitte erneut anmelden',
     refreshToken: 'Token abgelaufen, Token wird aktualisiert',
     tokenExpired: 'Anfrage-Token ist abgelaufen'
   },
@@ -67,27 +67,27 @@ const local: App.I18n.Schema = {
       auto: 'System folgen'
     },
     grayscale: 'Graustufen',
-    colourWeakness: 'Farbschw?che',
+    colourWeakness: 'Farbschwäche',
     layoutMode: {
       ...enUs.theme.layoutMode,
       title: 'Layoutmodus',
-      vertical: 'Vertikales Men?',
-      horizontal: 'Horizontales Men?',
+      vertical: 'Vertikales Menü',
+      horizontal: 'Horizontales Menü',
       'vertical-mix': 'Vertikaler Mix-Modus',
       'horizontal-mix': 'Horizontaler Mix-Modus',
-      reverseHorizontalMix: 'Position von Haupt- und Untermen?s umkehren'
+      reverseHorizontalMix: 'Position von Haupt- und UnterMenüs umkehren'
     },
     recommendColor: 'Empfohlenen Farbalgorithmus anwenden',
     recommendColorDesc: 'Der empfohlene Farbalgorithmus bezieht sich auf',
     themeColor: {
       ...enUs.theme.themeColor,
       title: 'Theme-Farbe',
-      primary: 'Prim?r',
+      primary: 'Primär',
       info: 'Info',
       success: 'Erfolg',
       warning: 'Warnung',
       error: 'Fehler',
-      followPrimary: 'Prim?rfarbe folgen'
+      followPrimary: 'Primärfarbe folgen'
     },
     scrollMode: {
       ...enUs.theme.scrollMode,
@@ -113,7 +113,7 @@ const local: App.I18n.Schema = {
     fixedHeaderAndTab: 'Header und Tabs fixieren',
     header: {
       ...enUs.theme.header,
-      height: 'Headerh?he',
+      height: 'Headerhöhe',
       breadcrumb: {
         ...enUs.theme.header.breadcrumb,
         visible: 'Breadcrumb sichtbar',
@@ -124,7 +124,7 @@ const local: App.I18n.Schema = {
       ...enUs.theme.tab,
       visible: 'Tab sichtbar',
       cache: 'Tab-Cache',
-      height: 'Tab-H?he',
+      height: 'Tab-Höhe',
       mode: {
         ...enUs.theme.tab.mode,
         title: 'Tab-Modus',
@@ -139,13 +139,13 @@ const local: App.I18n.Schema = {
       collapsedWidth: 'Breite eingeklappt',
       mixWidth: 'Mix-Seitenleistenbreite',
       mixCollapsedWidth: 'Mix eingeklappt Breite',
-      mixChildMenuWidth: 'Mix-Untermen?breite'
+      mixChildMenuWidth: 'Mix-UnterMenübreite'
     },
     footer: {
       ...enUs.theme.footer,
       visible: 'Footer sichtbar',
       fixed: 'Footer fixieren',
-      height: 'Footer-H?he',
+      height: 'Footerhöhe',
       right: 'Rechter Footer'
     },
     watermark: {
@@ -159,8 +159,8 @@ const local: App.I18n.Schema = {
       ...enUs.theme.configOperation,
       copyConfig: 'Konfiguration kopieren',
       copySuccessMsg: 'Kopieren erfolgreich, bitte Variable "themeSettings" in "src/theme/settings.ts" ersetzen',
-      resetConfig: 'Konfiguration zur?cksetzen',
-      resetSuccessMsg: 'Zur?cksetzen erfolgreich'
+      resetConfig: 'Konfiguration Zurücksetzen',
+      resetSuccessMsg: 'Zurücksetzen erfolgreich'
     }
   },
   route: {
@@ -200,18 +200,18 @@ const local: App.I18n.Schema = {
           loginOrRegister: 'Anmelden / Registrieren',
           userNamePlaceholder: 'Benutzernamen eingeben',
           phonePlaceholder: 'Telefonnummer eingeben',
-          codePlaceholder: 'Best?tigungscode eingeben',
+          codePlaceholder: 'Bestätigungscode eingeben',
           passwordPlaceholder: 'Passwort eingeben',
           confirmPasswordPlaceholder: 'Passwort erneut eingeben',
           codeLogin: 'Code-Anmeldung',
-          confirm: 'Best?tigen',
-          back: 'Zur?ck',
-          validateSuccess: 'Pr?fung erfolgreich',
+          confirm: 'Bestätigen',
+          back: 'Zurück',
+          validateSuccess: 'Prüfung erfolgreich',
           loginSuccess: 'Anmeldung erfolgreich',
-          welcomeBack: 'Willkommen zur?ck, {userName} !',
+          welcomeBack: 'Willkommen Zurück, {userName} !',
           thirdPartyLogin: 'Drittanbieter-Anmeldung',
           continueWith: 'Mit {provider} fortfahren',
-          providerUnavailable: '{provider}-Anmeldung ist derzeit nicht verf?gbar'
+          providerUnavailable: '{provider}-Anmeldung ist derzeit nicht verfügbar'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,
@@ -257,7 +257,7 @@ const local: App.I18n.Schema = {
         idServerPlaceholder: 'z. B. your.domain.com',
         relayServerPlaceholder: 'z. B. your.domain.com',
         apiServerPlaceholder: 'z. B. https://your.domain.com',
-        keyPlaceholder: '?ber Umgebungsvariable RUSTDESK_KEY bereitstellen',
+        keyPlaceholder: 'Über Umgebungsvariable RUSTDESK_KEY bereitstellen',
         copy: 'Kopieren',
         copyAll: 'Alles kopieren',
         copyTemplate: 'RustDesk-Vorlage kopieren',
@@ -296,19 +296,19 @@ const local: App.I18n.Schema = {
         },
         connectivity: {
           ...enUs.page.home.serverConfig.connectivity,
-          clear: 'Ergebnisse l?schen',
-          check: 'Konnektivit?t pr?fen',
-          checkOne: 'Pr?fen',
-          checked: 'Konnektivit?tspr?fung abgeschlossen',
-          checkedOne: 'Konnektivit?t von {field} gepr?ft',
-          checkedCached: 'Letztes Pr?fergebnis aus Cache verwendet',
-          checkFailed: 'Konnektivit?tspr?fung fehlgeschlagen',
-          cleared: 'Konnektivit?tsergebnisse gel?scht',
-          source: 'Pr?fquelle',
-          lastChecked: 'Zuletzt gepr?ft',
+          clear: 'Ergebnisse löschen',
+          check: 'Konnektivität Prüfen',
+          checkOne: 'Prüfen',
+          checked: 'KonnektivitätsPrüfung abgeschlossen',
+          checkedOne: 'Konnektivität von {field} geprüft',
+          checkedCached: 'Letztes Prüfergebnis aus Cache verwendet',
+          checkFailed: 'KonnektivitätsPrüfung fehlgeschlagen',
+          cleared: 'Konnektivitätsergebnisse gelöscht',
+          source: 'Prüfquelle',
+          lastChecked: 'Zuletzt geprüft',
           target: 'Ziel',
           duration: 'Dauer',
-          notChecked: 'Noch nicht gepr?ft',
+          notChecked: 'Noch nicht geprüft',
           checkSourceType: {
             ...enUs.page.home.serverConfig.connectivity.checkSourceType,
             remote: 'Remote',
@@ -316,10 +316,10 @@ const local: App.I18n.Schema = {
           },
           status: {
             ...enUs.page.home.serverConfig.connectivity.status,
-            idle: 'Ungepr?ft',
+            idle: 'Ungeprüft',
             ok: 'Erreichbar',
             error: 'Fehlgeschlagen',
-            skip: '?bersprungen'
+            skip: 'Übersprungen'
           }
         }
       }
@@ -403,7 +403,7 @@ const local: App.I18n.Schema = {
     },
       session: {
         ...enUs.dataMap.session,
-        expired: 'L?uft ab am',
+        expired: 'Läuft ab am',
         created_at: 'Erstellt am'
       },
     device: {
@@ -536,11 +536,11 @@ const local: App.I18n.Schema = {
   },
   dropdown: {
     ...enUs.dropdown,
-    closeCurrent: 'Aktuelles schlie?en',
-    closeOther: 'Andere schlie?en',
-    closeLeft: 'Links schlie?en',
-    closeRight: 'Rechts schlie?en',
-    closeAll: 'Alle schlie?en'
+    closeCurrent: 'Aktuelles Schließen',
+    closeOther: 'Andere Schließen',
+    closeLeft: 'Links Schließen',
+    closeRight: 'Rechts Schließen',
+    closeAll: 'Alle Schließen'
   },
   icon: {
     ...enUs.icon,
@@ -550,14 +550,14 @@ const local: App.I18n.Schema = {
     fullscreen: 'Vollbild',
     fullscreenExit: 'Vollbild verlassen',
     reload: 'Seite neu laden',
-    collapse: 'Men? einklappen',
-    expand: 'Men? ausklappen',
+    collapse: 'Menü einklappen',
+    expand: 'Menü ausklappen',
     pin: 'Anheften',
-    unpin: 'L?sen'
+    unpin: 'Lösen'
   },
   datatable: {
     ...enUs.datatable,
-    itemCount: 'Insgesamt {total} Eintr?ge'
+    itemCount: 'Insgesamt {total} Einträge'
   }
 };
 
