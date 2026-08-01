@@ -87,7 +87,7 @@ func (r *XormAddressBookRepository) GetLegacyAddressBook(query core.LegacyAddres
 
 func (r *XormAddressBookRepository) EnsurePersonalAddressBook(cmd core.PersonalAddressBookEnsureCommand) (core.PersonalAddressBookEnsureResult, error) {
 	var ab model.AddressBook
-	has, err := r.DB.Where("user_id = ?", cmd.UserID).Get(&ab)
+	has, err := r.DB.Where("user_id = ? and name = ?", cmd.UserID, model.PersonalAddressBookName).Get(&ab)
 	if err != nil {
 		return core.PersonalAddressBookEnsureResult{}, err
 	}
@@ -111,7 +111,7 @@ func (r *XormAddressBookRepository) EnsurePersonalAddressBook(cmd core.PersonalA
 
 func (r *XormAddressBookRepository) GetAddressBookSettings(query core.AddressBookSettingsQuery) (core.AddressBookSettingsResult, error) {
 	var ab model.AddressBook
-	if _, err := r.DB.Where("user_id = ?", query.UserID).Get(&ab); err != nil {
+	if _, err := r.DB.Where("user_id = ? and name = ?", query.UserID, model.PersonalAddressBookName).Get(&ab); err != nil {
 		return core.AddressBookSettingsResult{}, err
 	}
 	return core.AddressBookSettingsResult{MaxPeerOneAB: ab.MaxPeer}, nil
@@ -358,6 +358,13 @@ func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.Legacy
 	}
 
 	if abID > 0 {
+		if _, err := session.Where("user_id = ? and ab_id = ?", cmd.UserID, abID).Delete(&model.AddressBookTag{}); err != nil {
+			_ = session.Rollback()
+			return err
+		}
+	}
+
+	if abID > 0 {
 		abTags := make([]*model.AddressBookTag, 0, len(cmd.Tags))
 		for _, tag := range cmd.Tags {
 			abTags = append(abTags, &model.AddressBookTag{
@@ -406,7 +413,7 @@ func (r *XormAddressBookRepository) ReplaceLegacyAddressBookData(cmd core.Legacy
 
 func (r *XormAddressBookRepository) ensurePersonalABID(userID int) int {
 	var ab model.AddressBook
-	has, err := r.DB.Where("user_id = ?", userID).Get(&ab)
+	has, err := r.DB.Where("user_id = ? and name = ?", userID, model.PersonalAddressBookName).Get(&ab)
 	if err != nil || !has {
 		return 0
 	}
