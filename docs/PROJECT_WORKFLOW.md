@@ -6,8 +6,8 @@
 
 - `main` 是唯一日常开发、集成和发布分支；本地修改、提交、推送均在 `main` 上进行。
 - 开始工作前先同步 `origin/main`，结束工作后确认本地 `main` 与远端一致。
-- `backup` 仅用于主分支快照备份，不在该分支开发；需要刷新时使用 `.github/workflows/force-backup-main.yml`。
-- 不创建长期功能分支、临时发布分支或版本维护分支。确需隔离实验时，不得将实验分支作为发布来源，最终变更仍需整理回 `main`。
+- `backup` 是唯一必须保留的非主分支，仅用于 `main` 快照备份，不在该分支开发；需要刷新时使用 `.github/workflows/force-backup-main.yml`。
+- 除 `backup` 外，不保留长期功能分支、临时发布分支或版本维护分支。确需隔离实验时，不得将实验分支作为发布来源，最终变更仍需整理回 `main` 并删除实验分支。
 - 工作区存在未确认来源的改动时不得覆盖、重置或批量暂存；先核对变更归属，再按文件提交。
 
 ## 2. 项目结构与职责
@@ -45,9 +45,10 @@
 2. 运行与变更范围相符的后端、前端、兼容、Docker 或安全检查。
 3. 只暂存本次修改文件，使用可读的简短提交说明。
 4. 直接推送 `main`；推送后不得绕过失败的 GitHub Actions 门禁手工发布镜像。
-5. `main` 的线上质量流程全部成功后，`ghcr-docker.yml` 自动递增 PATCH 版本并发布 GHCR 镜像。
+5. `main` 的线上质量流程全部成功后，`ghcr-docker.yml` 自动递增 PATCH 版本，同时更新 `VERSION` 和 `docs/compat/rustdesk-current.json`，再把同一版本注入后端、前端和 GHCR 镜像。
 6. 发布完成后核对 `latest`、`main`、`sha-*` 标签以及 `VERSION` 自动递增提交。
-7. 任一门禁失败时先修复失败原因并重新推送 `main`，不得用旧提交或本地未验证镜像冒充正式发布。
+7. 发布完成后将远端 `backup` 对齐到已发布的 `main`；`backup` 只保存快照，不触发正式发布。
+8. 任一门禁失败时先修复失败原因并重新推送 `main`，不得用旧提交或本地未验证镜像冒充正式发布。
 
 ## 6. 文档事实入口
 
@@ -57,4 +58,3 @@
 - 官方 API 兼容计划：`OFFICIAL_API_COMPATIBILITY_PLAN.md`
 - 发布流程：`RELEASE_PROCESS.md`
 - 故障排查：`TROUBLESHOOTING.md`
-

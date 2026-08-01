@@ -20,17 +20,28 @@ const CompatClientVersion = "1.4.9"
 const CompatClientReleaseDate = "2026-07-06"
 const CompatTargetStatus = "compatibility-layer"
 
-var CompatServerVersion = "1.1.16"
+var CompatServerVersion = "latest"
 
 func init() {
-	if v := os.Getenv("APP_VERSION"); v != "" {
-		CompatServerVersion = v
+	SetCompatServerVersion(os.Getenv("APP_VERSION"))
+}
+
+// SetCompatServerVersion keeps API compatibility metadata aligned with the
+// build version. It is called from init for containers and again from main for
+// standalone binaries, because ldflags are applied to main.appVersion after
+// package initialization has already completed.
+func SetCompatServerVersion(version string) {
+	version = strings.TrimSpace(version)
+	version = strings.TrimPrefix(version, "v")
+	if version != "" && version != "latest" {
+		CompatServerVersion = version
 	}
 }
 
 func CompatSysinfoVersion() string {
 	return fmt.Sprintf("rustdesk-api-server-pro-compat-client-%s-server-%s-latest", CompatClientVersion, CompatServerVersion)
 }
+
 const compatRecordDir = "record_uploads"
 const maxCompatRecordSize int64 = 512 * 1024 * 1024
 
@@ -96,6 +107,7 @@ func (s *CompatService) Target() map[string]any {
 			"/api/compat/target",
 			"/api/compat/version",
 			"/api/sysinfo_ver",
+			"/api/heartbeat",
 			"/api/login-options",
 			"/api/devices/deploy",
 			"/lic/web/api/plugin-sign",

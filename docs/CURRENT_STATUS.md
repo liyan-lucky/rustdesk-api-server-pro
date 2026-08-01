@@ -16,7 +16,7 @@
 - 默认端口：`12345/tcp`，可通过 `PORT` 环境变量覆盖。
 - Docker 镜像：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`。
 - RustDesk 兼容版本：1.4.9。
-- 服务端版本：由 VERSION 文件控制，CI 自动递增 PATCH 号。
+- 服务端版本：由 VERSION 文件控制，CI 自动递增 PATCH 号并同步兼容清单；API、前端、镜像标签使用同一构建版本。
 
 ## 当前能力边界
 

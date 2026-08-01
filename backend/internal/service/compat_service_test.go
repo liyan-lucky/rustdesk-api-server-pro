@@ -185,6 +185,19 @@ func TestCompatServiceTargetContract(t *testing.T) {
 	}
 }
 
+func TestSetCompatServerVersionNormalizesBuildTag(t *testing.T) {
+	previous := CompatServerVersion
+	t.Cleanup(func() { CompatServerVersion = previous })
+
+	SetCompatServerVersion(" v1.2.3 ")
+	if CompatServerVersion != "1.2.3" {
+		t.Fatalf("CompatServerVersion = %q, want 1.2.3", CompatServerVersion)
+	}
+	if got := CompatSysinfoVersion(); got != "rustdesk-api-server-pro-compat-client-1.4.9-server-1.2.3-latest" {
+		t.Fatalf("unexpected sysinfo version: %q", got)
+	}
+}
+
 func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
 	svc := NewCompatService(nil, nil, nil)
 
@@ -205,7 +218,7 @@ func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
 			name: "missing uuid",
 			cmd: core.CompatDeviceDeployCommand{
 				RustdeskID: "123456789",
-				PublicKey: "pk",
+				PublicKey:  "pk",
 			},
 			want: "INVALID_INPUT",
 		},
@@ -213,7 +226,7 @@ func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
 			name: "missing public key",
 			cmd: core.CompatDeviceDeployCommand{
 				RustdeskID: "123456789",
-				UUID:      "uuid",
+				UUID:       "uuid",
 			},
 			want: "INVALID_INPUT",
 		},
@@ -221,8 +234,8 @@ func TestCompatServiceHandleDeviceDeploy(t *testing.T) {
 			name: "deployment not required",
 			cmd: core.CompatDeviceDeployCommand{
 				RustdeskID: "123456789",
-				UUID:      "uuid",
-				PublicKey: "pk",
+				UUID:       "uuid",
+				PublicKey:  "pk",
 			},
 			want: "NOT_ENABLED",
 		},

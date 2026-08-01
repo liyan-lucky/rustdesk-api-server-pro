@@ -4,6 +4,7 @@ set -euo pipefail
 DETECTED_FILE="${1:-docs/compat/rustdesk-latest-detected.json}"
 CURRENT_FILE="${2:-docs/compat/rustdesk-current.json}"
 SERVICE_FILE="${3:-backend/internal/service/compat_service.go}"
+VERSION_FILE="${4:-VERSION}"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required" >&2
@@ -32,6 +33,12 @@ if [ ! -f "$SERVICE_FILE" ]; then
   echo "Service file not found: $SERVICE_FILE" >&2
   exit 1
 fi
+if [ ! -f "$VERSION_FILE" ]; then
+  echo "Version file not found: $VERSION_FILE" >&2
+  exit 1
+fi
+
+SERVER_VERSION="$(tr -d '[:space:]' < "$VERSION_FILE")"
 
 python3 - "$SERVICE_FILE" "$LATEST_TAG" "$RELEASE_DATE" <<'PY'
 from pathlib import Path
@@ -44,11 +51,6 @@ release_date = sys.argv[3]
 text = path.read_text(encoding="utf-8")
 text = re.sub(r'const CompatClientVersion = "[^"]+"', f'const CompatClientVersion = "{version}"', text)
 text = re.sub(r'const CompatClientReleaseDate = "[^"]+"', f'const CompatClientReleaseDate = "{release_date}"', text)
-text = re.sub(
-    r'const CompatSysinfoVersion = "[^"]+"',
-    f'const CompatSysinfoVersion = "rustdesk-api-server-pro-compat-client-{version}-server-1.1.16-latest"',
-    text,
-)
 path.write_text(text, encoding="utf-8")
 PY
 
@@ -56,10 +58,12 @@ tmp="$(mktemp)"
 jq \
   --arg version "$LATEST_TAG" \
   --arg release_date "$RELEASE_DATE" \
-  --arg sysinfo "rustdesk-api-server-pro-compat-client-${LATEST_TAG}-server-1.1.16-latest" \
+  --arg server_version "$SERVER_VERSION" \
+  --arg sysinfo "rustdesk-api-server-pro-compat-client-${LATEST_TAG}-server-${SERVER_VERSION}-latest" \
   '.client.version = $version
    | .client.tag = $version
    | .client.release_date = $release_date
+   | .server.compat_server_version = $server_version
    | .sysinfo_version = $sysinfo' \
   "$CURRENT_FILE" > "$tmp"
 mv "$tmp" "$CURRENT_FILE"

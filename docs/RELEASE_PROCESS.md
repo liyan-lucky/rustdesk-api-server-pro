@@ -11,9 +11,9 @@ Do not create one-off release workflows unless absolutely necessary.
 
 Every push to `main` starts the online quality workflows. After all push-triggered workflows for the same commit complete successfully, `.github/workflows/ghcr-docker.yml` automatically:
 
-1. Bumps the PATCH version in `VERSION` file (e.g., `1.1.16` → `1.1.17`)
+1. Bumps the PATCH version in `VERSION` (e.g., `1.1.39` → `1.1.40`) and updates `docs/compat/rustdesk-current.json` to the same server version
 2. Builds and pushes Docker image to GHCR with tags: `latest`, `main`, `sha-xxxxxxx`
-3. Injects `APP_VERSION` and `BUILD_TIME` via ldflags (backend) and Vite env vars (frontend)
+3. Injects the same `APP_VERSION` and `BUILD_TIME` via ldflags/environment (backend) and Vite env vars (frontend)
 
 If any online workflow for that commit fails, GHCR publishing is blocked. No manual steps are needed when the quality gates are green.
 

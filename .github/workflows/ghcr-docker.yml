@@ -192,11 +192,12 @@ jobs:
           PATCH=$((PATCH + 1))
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
           echo "${NEW_VERSION}" > VERSION
+          bash scripts/compat/update-server-version.sh
           echo "app_version=v${NEW_VERSION}" >> "$GITHUB_OUTPUT"
           echo "Bumped version: ${VERSION} -> ${NEW_VERSION}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add VERSION
+          git add VERSION docs/compat/rustdesk-current.json
           git commit -m "chore: bump version to ${NEW_VERSION} [skip ci]"
           git push origin "HEAD:${TARGET_BRANCH}"
 
