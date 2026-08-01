@@ -83,7 +83,7 @@ onMounted(() => { loadAbList(); });
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard :title="$t('route.address_book_tags')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+    <NCard :title="$t('route.my-devices_tags')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <NSelect
           v-model:value="currentAbGuid"

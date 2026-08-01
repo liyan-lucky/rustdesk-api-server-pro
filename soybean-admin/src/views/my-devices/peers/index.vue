@@ -75,7 +75,7 @@ onMounted(async () => {
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard :title="$t('route.address_book_peers')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+    <NCard :title="$t('route.my-devices_peers')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <NDataTable
         :columns="columns"
         :data="data"

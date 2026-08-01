@@ -93,7 +93,7 @@ const {
 const { checkedRowKeys } = useTableOperate(data, getData);
 
 async function handleBatchKill() {
-  const res = await killSession({ ids: checkedRowKeys.value });
+  const res = await killSession({ ids: checkedRowKeys.value.map(Number) });
   if (res.error === null) {
     getDataByPage();
   }

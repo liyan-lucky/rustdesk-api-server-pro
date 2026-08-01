@@ -8,9 +8,6 @@ import { fetchAbAllList } from '@/service/api/address-book';
 const appStore = useAppStore();
 const loading = ref(false);
 const data = ref<Api.AddressBook.AddressBook[]>([]);
-const total = ref(0);
-const currentPage = ref(1);
-const pageSize = ref(10);
 
 const columns = [
   { key: 'id', title: 'ID', align: 'center' as const },
@@ -39,22 +36,18 @@ async function loadData() {
     const { data: res, error } = await fetchAbAllList();
     if (!error && res) {
       data.value = res || [];
-      total.value = res?.length || 0;
     }
   } finally {
     loading.value = false;
   }
 }
 
-function handlePageChange(page: number) { currentPage.value = page; loadData(); }
-function handlePageSizeChange(size: number) { pageSize.value = size; currentPage.value = 1; loadData(); }
-
 onMounted(() => { loadData(); });
 </script>
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
-    <NCard :title="$t('route.address_book_manage')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+    <NCard :title="$t('route.my-devices_manage')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <NDataTable
         :columns="columns"
         :data="data"
@@ -62,9 +55,7 @@ onMounted(() => { loadData(); });
         :flex-height="!appStore.isMobile"
         :scroll-x="1200"
         :loading="loading"
-        remote
         :row-key="(row: any) => row.id"
-        :pagination="{ page: currentPage, pageSize: pageSize, itemCount: total, showSizePicker: true, pageSizes: [10, 20, 50], onChange: handlePageChange, onUpdatePageSize: handlePageSizeChange }"
         class="sm:h-full"
       />
     </NCard>

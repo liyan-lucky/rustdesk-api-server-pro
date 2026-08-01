@@ -181,7 +181,7 @@ const {
 } = useTableOperate(data, getData);
 
 async function handleBatchDelete() {
-  const res = await delUser({ ids: checkedRowKeys.value });
+  const res = await delUser({ ids: checkedRowKeys.value.map(Number) });
   if (res.error === null) {
     onBatchDeleted();
   }
