@@ -67,7 +67,7 @@ export function fetchGetUserInfo() {
 
 export function fetchUserLogin(model: Api.Form.LoginForm) {
   return request<Api.Auth.LoginToken>({
-    url: '/auth/user-login',
+    url: '/auth/login',
     method: 'post',
     data: {
       username: model.username,

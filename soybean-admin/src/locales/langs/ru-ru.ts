@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   "system": {
     "title": "Rustdesk Api Server",
-    "updateTitle": "系统版本更新通知",
-    "updateContent": "检测到系统有新版本发布，是否立即刷新页面？",
-    "updateConfirm": "立即刷新",
-    "updateCancel": "稍后再说"
+    "updateTitle": "Обновление версии системы",
+    "updateContent": "Доступна новая версия системы. Обновить страницу сейчас?",
+    "updateConfirm": "Обновить сейчас",
+    "updateCancel": "Позже"
   },
   "common": {
     "action": "Action",
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     "switch": "Switch",
     "tip": "Tip",
     "trigger": "Trigger",
-    "update": "更新",
-    "updateSuccess": "更新成功",
+    "update": "Обновить",
+    "updateSuccess": "Обновление выполнено",
     "userCenter": "User Center",
     "yesOrNo": {
       "yes": "Yes",
@@ -240,15 +240,15 @@ const local: App.I18n.Schema = {
         "copy": "Copy",
         "copyAll": "Копировать все",
         "copyTemplate": "Копировать шаблон RustDesk",
-        "showQr": "生成二维码",
-        "qrTitle": "RustDesk 导入二维码",
-        "qrTip": "手机端 RustDesk 可扫描此二维码导入配置，二维码内容与“复制RustDesk模板”完全一致。",
-        "qrPayload": "RustDesk模板文本",
-        "qrFailed": "二维码生成失败",
+        "showQr": "Показать QR-код",
+        "qrTitle": "QR-код импорта RustDesk",
+        "qrTip": "Отсканируйте этот QR-код в мобильном приложении RustDesk для импорта конфигурации.",
+        "qrPayload": "Текст шаблона RustDesk",
+        "qrFailed": "Ошибка генерации QR-кода",
         "refresh": "Обновить",
         "clearCacheReload": "Очистить кэш и перезагрузить",
         "source": "Источник",
-        "lastUpdated": "最后更新",
+        "lastUpdated": "Последнее обновление",
         "show": "Показать",
         "hide": "Скрыть",
         "missingTip": "Следующие поля пустые, сначала настройте их в переменных окружения контейнера: {fields}",
@@ -472,7 +472,8 @@ const local: App.I18n.Schema = {
       "ab_id": "Address Book ID",
       "tagName": "Name",
       "tagColor": "Color",
-      "updated_at": "Updated At"
+      "updated_at": "Updated At",
+      "personal": "Моя адресная книга"
     },
     "token": {
       "device_os": "ОС устройства",
@@ -505,15 +506,15 @@ const local: App.I18n.Schema = {
     "PasswordEmpty": "Пароль не может быть пустым",
     "UserAddSuccess": "Пользователь успешно создан",
     "DataError": "Ошибка данных",
-    "RequestError": "请求失败",
-    "UserUpdateSuccess": "用户修改成功",
+    "RequestError": "Ошибка запроса",
+    "UserUpdateSuccess": "Пользователь успешно обновлён",
     "UserDeleteSuccess": "Пользователь успешно удалён",
     "SessionKillSuccess": "Сессия успешно завершена",
     "MailTemplateNameEmpty": "Имя не может быть пустым",
     "MailTemplateSubjectEmpty": "Тема не может быть пустой",
     "MailTemplateContentsEmpty": "Содержимое не может быть пустым",
     "MailTemplateAddSuccess": "Шаблон письма успешно создан",
-    "MailTemplateUpdateSuccess": "邮件模板修改成功",
+    "MailTemplateUpdateSuccess": "Почтовый шаблон успешно обновлён",
     "NoEmailAddress": "Адрес электронной почты не задан",
     "VerificationCodeError": "Ошибка кода подтверждения",
     "UUIDEmpty": "UUID не может быть пустым"

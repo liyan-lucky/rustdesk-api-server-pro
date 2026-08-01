@@ -95,6 +95,7 @@ const { checkedRowKeys } = useTableOperate(data, getData);
 async function handleBatchKill() {
   const res = await killSession({ ids: checkedRowKeys.value.map(Number) });
   if (res.error === null) {
+    window.$message?.success($t('common.deleteSuccess'));
     getDataByPage();
   }
 }
@@ -102,6 +103,7 @@ async function handleBatchKill() {
 async function handleKillTable(row: Api.UserManagement.Session) {
   const res = await killSession({ ids: [row.id] });
   if (res.error === null) {
+    window.$message?.success($t('common.deleteSuccess'));
     getDataByPage();
   }
 }

@@ -59,8 +59,11 @@ async function loadData() {
 
 async function handleDelete(row: Api.AddressBook.Peer) {
   const guid = personalGuid.value || 'personal';
-  await fetchAbPeerDelete(guid, [row.id]);
-  loadData();
+  const { error } = await fetchAbPeerDelete(guid, [row.id]);
+  if (!error) {
+    window.$message?.success($t('common.deleteSuccess'));
+    loadData();
+  }
 }
 
 function handlePageChange(page: number) { currentPage.value = page; loadData(); }

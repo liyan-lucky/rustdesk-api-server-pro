@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   "system": {
     "title": "Rustdesk Api Server",
-    "updateTitle": "系统版本更新通知",
-    "updateContent": "检测到系统有新版本发布，是否立即刷新页面？",
-    "updateConfirm": "立即刷新",
-    "updateCancel": "稍后再说"
+    "updateTitle": "시스템 버전 업데이트",
+    "updateContent": "새 시스템 버전을 사용할 수 있습니다. 지금 페이지를 새로고침하시겠습니까?",
+    "updateConfirm": "지금 새로고침",
+    "updateCancel": "나중에"
   },
   "common": {
     "action": "Action",
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     "switch": "Switch",
     "tip": "Tip",
     "trigger": "Trigger",
-    "update": "更新",
-    "updateSuccess": "更新成功",
+    "update": "업데이트",
+    "updateSuccess": "업데이트 성공",
     "userCenter": "User Center",
     "yesOrNo": {
       "yes": "Yes",
@@ -240,16 +240,16 @@ const local: App.I18n.Schema = {
         "copy": "Copy",
         "copyAll": "Copy All",
         "copyTemplate": "Copy RustDesk Template",
-        "showQr": "生成二维码",
-        "qrTitle": "RustDesk 导入二维码",
-        "qrTip": "手机端 RustDesk 可扫描此二维码导入配置，二维码内容与“复制RustDesk模板”完全一致。",
-        "qrPayload": "RustDesk模板文本",
-        "qrFailed": "二维码生成失败",
+        "showQr": "QR 코드 표시",
+        "qrTitle": "RustDesk 가져오기 QR 코드",
+        "qrTip": "RustDesk 모바일 앱에서 이 QR 코드를 스캔하여 설정을 가져올 수 있습니다.",
+        "qrPayload": "RustDesk 템플릿 텍스트",
+        "qrFailed": "QR 코드 생성 실패",
         "refresh": "Refresh",
         "clearCacheReload": "Clear Cache & Reload",
         "cacheTtlHint": "Cache TTL: config {configSeconds}s, connectivity {connectivitySeconds}s",
         "source": "Source",
-        "lastUpdated": "最后更新",
+        "lastUpdated": "마지막 업데이트",
         "ageSeconds": "{seconds}s ago",
         "show": "Show",
         "hide": "Hide",
@@ -472,7 +472,8 @@ const local: App.I18n.Schema = {
       "ab_id": "Address Book ID",
       "tagName": "Name",
       "tagColor": "Color",
-      "updated_at": "Updated At"
+      "updated_at": "Updated At",
+      "personal": "내 주소록"
     },
     "token": {
       "device_os": "디바이스 OS",
@@ -505,15 +506,15 @@ const local: App.I18n.Schema = {
     "PasswordEmpty": "비밀번호를 입력하세요",
     "UserAddSuccess": "사용자가 생성되었습니다",
     "DataError": "데이터 오류",
-    "RequestError": "请求失败",
-    "UserUpdateSuccess": "用户修改成功",
+    "RequestError": "요청 실패",
+    "UserUpdateSuccess": "사용자 수정 성공",
     "UserDeleteSuccess": "사용자가 삭제되었습니다",
     "SessionKillSuccess": "세션이 종료되었습니다",
     "MailTemplateNameEmpty": "템플릿 이름을 입력하세요",
     "MailTemplateSubjectEmpty": "제목을 입력하세요",
     "MailTemplateContentsEmpty": "내용을 입력하세요",
     "MailTemplateAddSuccess": "메일 템플릿이 생성되었습니다",
-    "MailTemplateUpdateSuccess": "邮件模板修改成功",
+    "MailTemplateUpdateSuccess": "메일 템플릿 수정 성공",
     "NoEmailAddress": "이메일 주소가 설정되지 않았습니다",
     "VerificationCodeError": "인증 코드 오류",
     "UUIDEmpty": "UUID를 입력하세요"

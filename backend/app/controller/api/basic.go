@@ -30,11 +30,19 @@ func (c *basicController) GetUser() *model.User {
 }
 
 func (c *basicController) GetToken() string {
-	return c.Ctx.Values().Get(config.CurrentAuthTokenString).(string)
+	v := c.Ctx.Values().Get(config.CurrentAuthTokenString)
+	if v == nil {
+		return ""
+	}
+	return v.(string)
 }
 
 func (c *basicController) GetAuthToken() *model.AuthToken {
-	return c.Ctx.Values().Get(config.CurrentAuthToken).(*model.AuthToken)
+	v := c.Ctx.Values().Get(config.CurrentAuthToken)
+	if v == nil {
+		return nil
+	}
+	return v.(*model.AuthToken)
 }
 
 func (c *basicController) ok() mvc.Result {

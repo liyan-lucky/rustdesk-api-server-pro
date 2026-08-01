@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   system: {
     title: 'Server API Rustdesk',
-    updateTitle: '系统版本更新通知',
-    updateContent: '检测到系统有新版本发布，是否立即刷新页面？',
-    updateConfirm: '立即刷新',
-    updateCancel: '稍后再说'
+    updateTitle: 'Aggiornamento versione di sistema',
+    updateContent: 'Una nuova versione di sistema è disponibile. Aggiornare la pagina ora?',
+    updateConfirm: 'Aggiorna ora',
+    updateCancel: 'Più tardi'
   },
   common: {
     action: 'Azione',
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     switch: 'Cambia',
     tip: 'Suggerimento',
     trigger: 'Attiva',
-    update: '更新',
-    updateSuccess: '更新成功',
+    update: 'Aggiorna',
+    updateSuccess: 'Aggiornamento riuscito',
     userCenter: 'Centro utente',
     yesOrNo: { yes: 'Sì', no: 'No' }
   },
@@ -238,16 +238,16 @@ const local: App.I18n.Schema = {
         copy: 'Copia',
         copyAll: 'Copia tutto',
         copyTemplate: 'Copia template RustDesk',
-        showQr: '生成二维码',
-        qrTitle: 'RustDesk 导入二维码',
-        qrTip: '手机端 RustDesk 可扫描此二维码导入配置，二维码内容与“复制RustDesk模板”完全一致。',
-        qrPayload: 'RustDesk模板文本',
-        qrFailed: '二维码生成失败',
+        showQr: 'Mostra codice QR',
+        qrTitle: 'Codice QR importazione RustDesk',
+        qrTip: 'Scansiona questo codice QR nell\'app RustDesk mobile per importare la configurazione.',
+        qrPayload: 'Testo modello RustDesk',
+        qrFailed: 'Generazione codice QR fallita',
         refresh: 'Aggiorna',
         clearCacheReload: 'Svuota cache e ricarica',
         cacheTtlHint: 'TTL cache: configurazione {configSeconds}s, connettività {connectivitySeconds}s',
         source: 'Origine',
-        lastUpdated: '最后更新',
+        lastUpdated: 'Ultimo aggiornamento',
         ageSeconds: '{seconds}s fa',
         show: 'Mostra',
         hide: 'Nascondi',
@@ -470,7 +470,8 @@ const local: App.I18n.Schema = {
       ab_id: 'Address Book ID',
       tagName: 'Name',
       tagColor: 'Color',
-      updated_at: 'Updated At'
+      updated_at: 'Updated At',
+      personal: 'My Address Book'
     },
     token: {
       device_os: 'SO dispositivo',
@@ -503,15 +504,15 @@ const local: App.I18n.Schema = {
     PasswordEmpty: 'La password non può essere vuota',
     UserAddSuccess: 'Utente creato con successo',
     DataError: 'Errore dati',
-    RequestError: '请求失败',
-    UserUpdateSuccess: '用户修改成功',
+    RequestError: 'Richiesta fallita',
+    UserUpdateSuccess: 'Utente aggiornato con successo',
     UserDeleteSuccess: 'Utente eliminato con successo',
     SessionKillSuccess: 'Sessione terminata con successo',
     MailTemplateNameEmpty: 'Il nome non può essere vuoto',
     MailTemplateSubjectEmpty: "L'oggetto non può essere vuoto",
     MailTemplateContentsEmpty: 'Il contenuto non può essere vuoto',
     MailTemplateAddSuccess: 'Modello email creato con successo',
-    MailTemplateUpdateSuccess: '邮件模板修改成功',
+    MailTemplateUpdateSuccess: 'Modello email aggiornato con successo',
     NoEmailAddress: 'Nessun indirizzo email impostato',
     VerificationCodeError: 'Errore codice di verifica',
     UUIDEmpty: "L'UUID non può essere vuoto"

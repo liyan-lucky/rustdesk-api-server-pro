@@ -272,6 +272,49 @@ declare namespace Api {
       Pick<Api.System.MailLog, 'username' | 'uuid' | 'subject' | 'from' | 'to' | 'status' | 'created_at'> &
         Api.Common.CommonSearchParams
     >;
+
+    type Token = Common.CommonRecord<{
+      username: string;
+      rustdesk_id: string;
+      device_os: string;
+      device_name: string;
+      token_hash: string;
+      is_admin: boolean;
+      status: number;
+      expired: string;
+    }>;
+    type TokenList = Common.PaginatingQueryRecord<Token>;
+
+    type OAuthAccount = Common.CommonRecord<{
+      user_id: number;
+      provider: string;
+      subject: string;
+      email: string;
+      name: string;
+      is_admin: boolean;
+      status: number;
+      last_login_at: string;
+    }>;
+    type OAuthAccountList = Common.PaginatingQueryRecord<OAuthAccount>;
+
+    type OAuthProvider = {
+      name: string;
+      displayName: string;
+      type: string;
+      enabled: boolean;
+    };
+  }
+
+  namespace SecurityAudit {
+    type LoginLog = Common.CommonRecord<{
+      username: string;
+      event: string;
+      ip: string;
+      user_agent: string;
+      success: boolean;
+      reason: string;
+    }>;
+    type LoginLogList = Common.PaginatingQueryRecord<LoginLog>;
   }
 
   /**

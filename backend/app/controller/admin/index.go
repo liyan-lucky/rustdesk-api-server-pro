@@ -15,6 +15,9 @@ func (c *IndexController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *IndexController) HandleUserInfo() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 	roles := []string{}
 	if user.IsAdmin {
 		roles = append(roles, "R_SUPER")

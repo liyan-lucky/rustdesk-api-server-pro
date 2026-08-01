@@ -17,15 +17,27 @@ type basicController struct {
 }
 
 func (c *basicController) GetUser() *model.User {
-	return c.Ctx.Values().Get(config.AdminUserKey).(*model.User)
+	v := c.Ctx.Values().Get(config.AdminUserKey)
+	if v == nil {
+		return nil
+	}
+	return v.(*model.User)
 }
 
 func (c *basicController) GetToken() string {
-	return c.Ctx.Values().Get(config.AdminAuthTokenString).(string)
+	v := c.Ctx.Values().Get(config.AdminAuthTokenString)
+	if v == nil {
+		return ""
+	}
+	return v.(string)
 }
 
 func (c *basicController) GetAuthToken() *model.AuthToken {
-	return c.Ctx.Values().Get(config.AdminAuthToken).(*model.AuthToken)
+	v := c.Ctx.Values().Get(config.AdminAuthToken)
+	if v == nil {
+		return nil
+	}
+	return v.(*model.AuthToken)
 }
 
 func (c *basicController) auditService() *v2service.AuditService {

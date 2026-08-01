@@ -472,7 +472,8 @@ const local: App.I18n.Schema = {
       ab_id: 'Address Book ID',
       tagName: 'Name',
       tagColor: 'Color',
-      updated_at: 'Updated At'
+      updated_at: 'Updated At',
+      personal: 'My Address Book'
     },
     token: {
       device_os: 'Device OS',

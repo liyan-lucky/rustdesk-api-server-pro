@@ -27,6 +27,9 @@ func (c *UserController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *UserController) HandleCurrentUser() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	return mvc.Response{
 		Object: httpdto.NewUserResponse(c.userService().CurrentUserView(user.Name, user.Email, user.Note, user.Status, user.IsAdmin)),
 	}
@@ -34,6 +37,9 @@ func (c *UserController) HandleCurrentUser() mvc.Result {
 
 func (c *UserController) GetUsers() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	hasAccessibleParam := c.Ctx.Request().URL.Query().Has("accessible")
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 10)
@@ -60,6 +66,9 @@ func (c *UserController) GetUsers() mvc.Result {
 
 func (c *UserController) HandleLogout() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	rustdeskID := c.Ctx.URLParamDefault("id", "")
 	if rustdeskID == "" {
 		rustdeskID = c.Ctx.URLParamDefault("rustdesk_id", "")

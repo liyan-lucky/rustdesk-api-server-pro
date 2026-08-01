@@ -17,6 +17,9 @@ func (c *PeerController) GetPeers() mvc.Result {
 	hasAccessibleParam := c.Ctx.Request().URL.Query().Has("accessible")
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	result, err := c.peerService().ListPeers(core.PeerListQuery{
 		UserID:             user.Id,
 		Username:           user.Username,

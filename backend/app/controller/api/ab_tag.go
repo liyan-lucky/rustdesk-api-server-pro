@@ -23,6 +23,9 @@ func (c *AddressBookTagController) HandleAbTags() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	tags, err := c.addressBookService().ListTags(core.AddressBookTagListQuery{
 		UserID: user.Id,
 		AbGuid: abGuid,
@@ -46,6 +49,9 @@ func (c *AddressBookTagController) HandleAbTagAdd() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
 		c.recordAPIOperationAudit("ab_tag_add", "address_book_tag", abGuid, nil, sanitizeAddressBookTagFormForAudit(form), "failure", err.Error())
@@ -77,6 +83,9 @@ func (c *AddressBookTagController) HandleAbTagUpdate() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
 		c.recordAPIOperationAudit("ab_tag_update", "address_book_tag", abGuid, nil, sanitizeAddressBookTagFormForAudit(form), "failure", err.Error())
@@ -108,6 +117,9 @@ func (c *AddressBookTagController) HandleAbTagRename() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
 		c.recordAPIOperationAudit("ab_tag_rename", "address_book_tag", abGuid, nil, sanitizeAddressBookTagRenameForAudit(form), "failure", err.Error())
@@ -143,6 +155,9 @@ func (c *AddressBookTagController) HandleAbTagDelete() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
 		c.recordAPIOperationAudit("ab_tag_delete", "address_book_tag", abGuid, map[string]any{"names": names}, nil, "failure", err.Error())

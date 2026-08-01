@@ -69,8 +69,11 @@ async function loadProviders() {
 }
 
 async function handleDelete(row: any) {
-  await request({ url: `/oauth/account/${row.id}`, method: 'delete' });
-  loadData();
+  const { error } = await request({ url: `/oauth/account/${row.id}`, method: 'delete' });
+  if (!error) {
+    window.$message?.success($t('common.deleteSuccess'));
+    loadData();
+  }
 }
 
 function handlePageChange(page: number) { currentPage.value = page; loadData(); }

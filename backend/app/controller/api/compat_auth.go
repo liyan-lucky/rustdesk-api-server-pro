@@ -27,6 +27,9 @@ func (c *CompatAuthController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *CompatAuthController) HandleMe() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	return mvc.Response{Object: iris.Map{
 		"id":       user.Id,
 		"username": user.Username,
@@ -88,6 +91,9 @@ func (c *CompatAuthController) HandleDevicesCli() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	cmd := core.CompatDevicesCliCommand{
 		UserID:     user.Id,
 		RustdeskID: rustdeskID,

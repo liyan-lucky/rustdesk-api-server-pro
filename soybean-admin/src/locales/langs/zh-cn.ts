@@ -530,7 +530,8 @@ const local: App.I18n.Schema = {
       ab_id: '地址簿ID',
       tagName: '名称',
       tagColor: '颜色',
-      updated_at: '更新时间'
+      updated_at: '更新时间',
+      personal: '我的地址簿'
     },
     token: {
       device_os: '设备系统',

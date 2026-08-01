@@ -25,6 +25,9 @@ func (c *AddressBookPeerController) PostAbPeers() mvc.Result {
 	abGuid := c.Ctx.URLParamDefault("ab", "")
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	result, err := c.addressBookService().ListPeers(core.AddressBookPeerListQuery{
 		UserID:   user.Id,
 		AbGuid:   abGuid,
@@ -47,6 +50,9 @@ func (c *AddressBookPeerController) HandleAbPeerAdd() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
 		c.recordAPIOperationAudit("ab_peer_add", "address_book_peer", abGuid, nil, sanitizeAddressBookPeerForAudit(form), "failure", err.Error())
@@ -101,6 +107,9 @@ func (c *AddressBookPeerController) HandleAbPeerUpdate() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
 		c.recordAPIOperationAudit("ab_peer_update", "address_book_peer", abGuid, nil, sanitizeAddressBookPeerUpdateBodyForAudit(body), "failure", err.Error())
@@ -138,6 +147,9 @@ func (c *AddressBookPeerController) HandleAbPeerDelete() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
 		c.recordAPIOperationAudit("ab_peer_delete", "address_book_peer", abGuid, map[string]any{"ids": ids}, nil, "failure", err.Error())

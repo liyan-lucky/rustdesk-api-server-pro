@@ -26,6 +26,9 @@ func (c *AddressBookController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *AddressBookController) GetAb() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	result, err := c.addressBookService().GetLegacyAddressBook(core.LegacyAddressBookGetQuery{
 		UserID: user.Id,
 	})
@@ -60,6 +63,9 @@ func (c *AddressBookController) PostAb() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	if user.LicensedDevices > 0 && len(abData.Peers) > user.LicensedDevices {
 		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, sanitizeLegacyAddressBookForAudit(abData), "failure", "Number of equipment in excess of licenses")
 		return c.failMsg("Number of equipment in excess of licenses")
@@ -99,6 +105,9 @@ func (c *AddressBookController) PostAb() mvc.Result {
 
 func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	result, err := c.addressBookService().EnsurePersonalAddressBook(core.PersonalAddressBookEnsureCommand{
 		UserID:         user.Id,
 		Username:       user.Username,
@@ -114,6 +123,9 @@ func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 
 func (c *AddressBookController) HandleAbSettings() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	result, err := c.addressBookService().GetSettings(core.AddressBookSettingsQuery{UserID: user.Id})
 	if err != nil {
 		return c.fail(err)

@@ -107,7 +107,10 @@ func (c *UsersController) HandleAdd() mvc.Result {
 		c.recordUserOperationAudit("admin_user_add", "", nil, sanitizeUserFormForAudit(form), "failure", "UsernameEmpty")
 		return c.Error(nil, "UsernameEmpty")
 	}
-	if has, _ := c.Db.Where("username = ?", form.Username).Get(&model.User{}); has {
+	if has, err := c.Db.Where("username = ?", form.Username).Get(&model.User{}); err != nil {
+		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", err.Error())
+		return c.Error(nil, err.Error())
+	} else if has {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "UserExists")
 		return c.Error(nil, "UserExists")
 	}

@@ -15,7 +15,7 @@ const pageSize = ref(10);
 const columns = [
   { key: 'id', title: 'ID', align: 'center' as const },
   { key: 'username', title: $t('dataMap.user.username'), align: 'center' as const },
-  { key: 'rustdesk_id', title: 'RustDesk ID', align: 'center' as const },
+  { key: 'rustdesk_id', title: $t('dataMap.device.rustdesk_id'), align: 'center' as const },
   { key: 'device_os', title: $t('dataMap.token.device_os'), align: 'center' as const },
   { key: 'device_name', title: $t('dataMap.token.device_name'), align: 'center' as const },
   { key: 'token_hash', title: $t('dataMap.token.token_hash'), align: 'center' as const, ellipsis: { tooltip: true } },
@@ -61,8 +61,11 @@ async function loadData() {
 }
 
 async function handleKill(row: any) {
-  await request({ url: '/tokens/kill', method: 'post', data: { ids: [row.id] } });
-  loadData();
+  const { error } = await request({ url: '/tokens/kill', method: 'post', data: { ids: [row.id] } });
+  if (!error) {
+    window.$message?.success($t('common.deleteSuccess'));
+    loadData();
+  }
 }
 
 function handlePageChange(page: number) { currentPage.value = page; loadData(); }

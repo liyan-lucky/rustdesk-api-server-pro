@@ -21,6 +21,9 @@ func (c *DevicesController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *DevicesController) HandleMyDevices() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 	currentPage := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("size", 10)
 

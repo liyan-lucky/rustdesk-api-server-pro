@@ -1,10 +1,10 @@
 const local: App.I18n.Schema = {
   "system": {
     "title": "Rustdesk Api Server",
-    "updateTitle": "系统版本更新通知",
-    "updateContent": "检测到系统有新版本发布，是否立即刷新页面？",
-    "updateConfirm": "立即刷新",
-    "updateCancel": "稍后再说"
+    "updateTitle": "システムバージョン更新",
+    "updateContent": "新しいシステムバージョンが利用可能です。今すぐページを更新しますか？",
+    "updateConfirm": "今すぐ更新",
+    "updateCancel": "後で"
   },
   "common": {
     "action": "Action",
@@ -42,8 +42,8 @@ const local: App.I18n.Schema = {
     "switch": "Switch",
     "tip": "Tip",
     "trigger": "Trigger",
-    "update": "更新",
-    "updateSuccess": "更新成功",
+    "update": "更新する",
+    "updateSuccess": "更新に成功しました",
     "userCenter": "User Center",
     "yesOrNo": {
       "yes": "Yes",
@@ -240,16 +240,16 @@ const local: App.I18n.Schema = {
         "copy": "Copy",
         "copyAll": "Copy All",
         "copyTemplate": "Copy RustDesk Template",
-        "showQr": "生成二维码",
-        "qrTitle": "RustDesk 导入二维码",
-        "qrTip": "手机端 RustDesk 可扫描此二维码导入配置，二维码内容与“复制RustDesk模板”完全一致。",
-        "qrPayload": "RustDesk模板文本",
-        "qrFailed": "二维码生成失败",
+        "showQr": "QRコードを表示",
+        "qrTitle": "RustDeskインポートQRコード",
+        "qrTip": "RustDeskモバイルアプリでこのQRコードをスキャンして設定をインポートできます。",
+        "qrPayload": "RustDeskテンプレートテキスト",
+        "qrFailed": "QRコードの生成に失敗しました",
         "refresh": "Refresh",
         "clearCacheReload": "Clear Cache & Reload",
         "cacheTtlHint": "Cache TTL: config {configSeconds}s, connectivity {connectivitySeconds}s",
         "source": "Source",
-        "lastUpdated": "最后更新",
+        "lastUpdated": "最終更新",
         "ageSeconds": "{seconds}s ago",
         "show": "Show",
         "hide": "Hide",
@@ -472,7 +472,8 @@ const local: App.I18n.Schema = {
       "ab_id": "Address Book ID",
       "tagName": "Name",
       "tagColor": "Color",
-      "updated_at": "Updated At"
+      "updated_at": "Updated At",
+      "personal": "マイアドレス帳"
     },
     "token": {
       "device_os": "デバイスOS",
@@ -505,15 +506,15 @@ const local: App.I18n.Schema = {
     "PasswordEmpty": "パスワードを入力してください",
     "UserAddSuccess": "ユーザーを作成しました",
     "DataError": "データエラー",
-    "RequestError": "请求失败",
-    "UserUpdateSuccess": "用户修改成功",
+    "RequestError": "リクエスト失敗",
+    "UserUpdateSuccess": "ユーザー更新成功",
     "UserDeleteSuccess": "ユーザーを削除しました",
     "SessionKillSuccess": "セッションを終了しました",
     "MailTemplateNameEmpty": "テンプレート名を入力してください",
     "MailTemplateSubjectEmpty": "件名を入力してください",
     "MailTemplateContentsEmpty": "内容を入力してください",
     "MailTemplateAddSuccess": "メールテンプレートを作成しました",
-    "MailTemplateUpdateSuccess": "邮件模板修改成功",
+    "MailTemplateUpdateSuccess": "メールテンプレート更新成功",
     "NoEmailAddress": "メールアドレスが設定されていません",
     "VerificationCodeError": "認証コードエラー",
     "UUIDEmpty": "UUID を入力してください"

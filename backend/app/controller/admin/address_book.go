@@ -40,6 +40,9 @@ func (c *AddressBookController) HandleAbPeers() mvc.Result {
 	abGuid := c.Ctx.URLParamDefault("ab", "")
 
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 
 	if user.IsAdmin {
 		return c.listAllPeers(abGuid, current, pageSize)
@@ -140,6 +143,9 @@ func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 
 func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 	result, err := c.addressBookService().EnsurePersonalAddressBook(core.PersonalAddressBookEnsureCommand{
 		UserID:         user.Id,
 		Username:       user.Username,
@@ -155,6 +161,9 @@ func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 
 func (c *AddressBookController) HandleAbList() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 	list := make([]model.AddressBook, 0)
 	if user.IsAdmin {
 		if err := c.Db.Find(&list); err != nil {
@@ -185,6 +194,9 @@ func (c *AddressBookController) HandleAbList() mvc.Result {
 func (c *AddressBookController) HandleAbTags() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 
 	if user.IsAdmin {
 		return c.listAllTags(abGuid)
@@ -241,6 +253,9 @@ func (c *AddressBookController) HandleAbPeerDelete() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 	ab, err := c.findAddressBook(user, abGuid)
 	if err != nil {
 		return c.Error(nil, err.Error())
@@ -269,6 +284,9 @@ func (c *AddressBookController) HandleAbTagDelete() mvc.Result {
 	}
 
 	user := c.GetUser()
+	if user == nil {
+		return c.Error(nil, "unauthorized")
+	}
 	ab, err := c.findAddressBook(user, abGuid)
 	if err != nil {
 		return c.Error(nil, err.Error())

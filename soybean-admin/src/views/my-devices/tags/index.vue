@@ -49,7 +49,7 @@ async function loadAbList() {
     const { data: personalRes, error: personalErr } = await fetchAbPersonal();
     if (!personalErr && personalRes) {
       currentAbGuid.value = personalRes.guid;
-      abOptions.value = [{ label: `My address book (${personalRes.guid.slice(0, 8)}...)`, value: personalRes.guid }];
+      abOptions.value = [{ label: `${$t('dataMap.ab.personal')} (${personalRes.guid.slice(0, 8)}...)`, value: personalRes.guid }];
       loadData();
     }
   }
@@ -69,8 +69,11 @@ async function loadData() {
 }
 
 async function handleDelete(row: any) {
-  await fetchAbTagDelete(currentAbGuid.value, [row.name]);
-  loadData();
+  const { error } = await fetchAbTagDelete(currentAbGuid.value, [row.name]);
+  if (!error) {
+    window.$message?.success($t('common.deleteSuccess'));
+    loadData();
+  }
 }
 
 function handleAbChange(guid: string) {

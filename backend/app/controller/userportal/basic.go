@@ -15,7 +15,11 @@ type basicController struct {
 }
 
 func (c *basicController) GetUser() *model.User {
-	return c.Ctx.Values().Get(config.WebUserKey).(*model.User)
+	v := c.Ctx.Values().Get(config.WebUserKey)
+	if v == nil {
+		return nil
+	}
+	return v.(*model.User)
 }
 
 func (c *basicController) Success(data interface{}, message string) mvc.Result {
