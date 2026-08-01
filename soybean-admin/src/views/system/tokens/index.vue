@@ -23,7 +23,7 @@ const columns = [
     key: 'is_admin',
     title: $t('dataMap.token.is_admin'),
     align: 'center' as const,
-    render: (row: any) => <NTag type={row.is_admin ? 'warning' : 'default'} size="small">{row.is_admin ? 'Admin' : 'User'}</NTag>
+    render: (row: any) => <NTag type={row.is_admin ? 'warning' : 'default'} size="small">{row.is_admin ? $t('dataMap.token.is_admin') : $t('dataMap.user.statusLabel.normal')}</NTag>
   },
   {
     key: 'status',

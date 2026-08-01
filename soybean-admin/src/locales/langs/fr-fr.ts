@@ -186,7 +186,10 @@ const local: App.I18n.Schema = {
     'my-devices': 'Contacts',
     'my-devices_peers': 'Mes contacts',
     'my-devices_manage': 'Gestion des carnets',
-    'my-devices_tags': 'Gestion des tags'
+    'my-devices_tags': 'Gestion des tags',
+    system_server: 'Configuration serveur',
+    system_tokens: 'Jeton utilisateur',
+    system_oauth: 'Gestion OAuth'
   },
   page: {
     ...enUs.page,
