@@ -49,7 +49,7 @@ const {
     },
     {
       key: 'rustdesk_id',
-      title: 'Rustdesk Id',
+      title: $t('dataMap.device.rustdesk_id'),
       align: 'center'
     },
     {

@@ -15,7 +15,7 @@ const providers = ref<any[]>([]);
 
 const columns = [
   { key: 'id', title: 'ID', align: 'center' as const },
-  { key: 'user_id', title: $t('dataMap.user.user_id'), align: 'center' as const },
+  { key: 'user_id', title: $t('dataMap.ab.user_id'), align: 'center' as const },
   { key: 'provider', title: $t('dataMap.oauth.provider'), align: 'center' as const },
   { key: 'subject', title: $t('dataMap.oauth.subject'), align: 'center' as const },
   { key: 'email', title: $t('dataMap.oauth.email'), align: 'center' as const },
@@ -24,7 +24,7 @@ const columns = [
     key: 'is_admin',
     title: $t('dataMap.token.is_admin'),
     align: 'center' as const,
-    render: (row: any) => <NTag type={row.is_admin ? 'warning' : 'default'} size="small">{row.is_admin ? 'Admin' : 'User'}</NTag>
+    render: (row: any) => <NTag type={row.is_admin ? 'warning' : 'default'} size="small">{row.is_admin ? $t('dataMap.token.is_admin') : $t('dataMap.user.statusLabel.normal')}</NTag>
   },
   {
     key: 'status',
