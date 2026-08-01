@@ -11,6 +11,10 @@ RustDesk API Server Pro 是一个面向 RustDesk 客户端的第三方 API 服�
 ## 最近更新
 
 - 兼容 RustDesk 客户端 1.4.9 主流程 API
+- 补齐地址簿兼容别名：`/api/ab/get`、`/api/ab/shared-profiles`、`/api/ab/shared/profiles`、`/api/ab/shared_profiles`
+- 修复共享地址簿跨用户读取和写入归属：共享读取可访问 owner 数据，写入需 owner 或 `rule >= 2`
+- 对齐官方客户端新增 peer 时的 `same_server` 布尔/null/缺省请求形态
+- 修复心跳响应 `modified_at`：未分配策略时回显客户端值，避免触发持续策略重同步
 - 新增"我的同步设备"菜单：管理员可查看所有设备，普通用户可登录查看自己的同步设备
 - 新增"通讯录"菜单：含地址簿、地址簿管理、标签管理三个子页面
 - 新增版本自动递增系统：每次 CI 构建自动递增 PATCH 版本号（VERSION 文件为单一事实来源）
@@ -58,11 +62,11 @@ RustDesk API Server Pro 是一个面向 RustDesk 客户端的第三方 API 服�
 ## 功能清单
 
 - RustDesk 客户端主流程 API 兼容增强（兼容 1.4.9）
-- 地址簿读写与备注字段 `note` 兼容
+- 地址簿读写、共享地址簿、备注字段 `note` 与 `same_server` 兼容
 - 设备列表、用户列表、审计日志基础能力
 - 我的同步设备：管理员查看所有设备，普通用户查看自己的设备
 - 通讯录：地址簿、地址簿管理、标签管理
-- 心跳、sysinfo、devices/cli 的最小兼容实现
+- 心跳、sysinfo、devices/cli 的最小兼容实现，心跳稳定回显客户端 `modified_at`
 - 录屏上传 `record` 的最小落盘流程（`new/part/tail/remove`）
 - 版本自动递增：CI 每次构建 PATCH 版本号 +1，VERSION 文件为单一事实来源
 - 首页显示服务端版本与构建时间

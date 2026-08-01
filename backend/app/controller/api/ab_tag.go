@@ -58,7 +58,7 @@ func (c *AddressBookTagController) HandleAbTagAdd() mvc.Result {
 		return c.fail(err)
 	}
 	cmd := core.AddressBookTagAddCommand{
-		UserID: user.Id,
+		UserID: ab.UserId,
 		AbID:   ab.Id,
 		Name:   form.Name,
 		Color:  form.Color,
@@ -92,7 +92,7 @@ func (c *AddressBookTagController) HandleAbTagUpdate() mvc.Result {
 		return c.fail(err)
 	}
 	cmd := core.AddressBookTagUpdateColorCommand{
-		UserID: user.Id,
+		UserID: ab.UserId,
 		AbID:   ab.Id,
 		Name:   form.Name,
 		Color:  form.Color,
@@ -126,7 +126,7 @@ func (c *AddressBookTagController) HandleAbTagRename() mvc.Result {
 		return c.fail(err)
 	}
 	cmd := core.AddressBookTagRenameCommand{
-		UserID: user.Id,
+		UserID: ab.UserId,
 		AbID:   ab.Id,
 		Old:    form.Old,
 		New:    form.New,
@@ -164,7 +164,7 @@ func (c *AddressBookTagController) HandleAbTagDelete() mvc.Result {
 		return c.fail(err)
 	}
 	if err := c.addressBookService().DeleteTags(core.AddressBookTagDeleteCommand{
-		UserID: user.Id,
+		UserID: ab.UserId,
 		AbID:   ab.Id,
 		Names:  names,
 	}); err != nil {

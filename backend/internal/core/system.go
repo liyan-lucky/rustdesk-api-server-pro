@@ -4,6 +4,7 @@ type HeartbeatCommand struct {
 	RustdeskID string
 	UUID       string
 	ConnCount  int
+	ModifiedAt int64
 }
 
 type HeartbeatResult struct {

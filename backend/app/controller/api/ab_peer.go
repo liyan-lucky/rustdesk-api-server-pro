@@ -70,25 +70,25 @@ func (c *AddressBookPeerController) HandleAbPeerAdd() mvc.Result {
 	}
 
 	forceAlwaysRelay := form.ForceAlwaysRelay == "true"
-	sameServerPresent := form.SameServer != ""
+	sameServer := form.SameServer != nil && *form.SameServer
 
 	if err := c.addressBookService().AddPeer(core.AddressBookPeerCreateCommand{
-		UserID:            user.Id,
-		AbID:              ab.Id,
-		RustdeskID:        form.Id,
-		Hash:              form.Hash,
-		Username:          form.Username,
-		Password:          form.Password,
-		Hostname:          form.Hostname,
-		Platform:          form.Platform,
-		Alias:             form.Alias,
-		Tags:              form.Tags,
-		Note:              form.Note,
-		ForceAlwaysRelay:  forceAlwaysRelay,
-		RdpPort:           form.RdpPort,
-		RdpUsername:       form.RdpUsername,
-		LoginName:         form.LoginName,
-		SameServerPresent: sameServerPresent,
+		UserID:           ab.UserId,
+		AbID:             ab.Id,
+		RustdeskID:       form.Id,
+		Hash:             form.Hash,
+		Username:         form.Username,
+		Password:         form.Password,
+		Hostname:         form.Hostname,
+		Platform:         form.Platform,
+		Alias:            form.Alias,
+		Tags:             form.Tags,
+		Note:             form.Note,
+		ForceAlwaysRelay: forceAlwaysRelay,
+		RdpPort:          form.RdpPort,
+		RdpUsername:      form.RdpUsername,
+		LoginName:        form.LoginName,
+		SameServer:       sameServer,
 	}); err != nil {
 		c.recordAPIOperationAudit("ab_peer_add", "address_book_peer", form.Id, nil, sanitizeAddressBookPeerForAudit(form), "failure", err.Error())
 		return c.fail(err)
@@ -117,7 +117,7 @@ func (c *AddressBookPeerController) HandleAbPeerUpdate() mvc.Result {
 	}
 
 	cmd := parseAddressBookPeerUpdate(body)
-	cmd.UserID = user.Id
+	cmd.UserID = ab.UserId
 	cmd.AbID = ab.Id
 
 	has, err := c.addressBookService().UpdatePeer(cmd)
@@ -157,7 +157,7 @@ func (c *AddressBookPeerController) HandleAbPeerDelete() mvc.Result {
 	}
 
 	if err := c.addressBookService().DeletePeers(core.AddressBookPeerDeleteCommand{
-		UserID: user.Id,
+		UserID: ab.UserId,
 		AbID:   ab.Id,
 		IDs:    ids,
 	}); err != nil {
@@ -228,7 +228,7 @@ func sanitizeAddressBookPeerForAudit(form abform.AbPeer) map[string]any {
 		"rdp_port":           form.RdpPort,
 		"rdp_username":       form.RdpUsername,
 		"login_name":         form.LoginName,
-		"same_server":        form.SameServer != "",
+		"same_server":        form.SameServer,
 	}
 }
 

@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"time"
-
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
 
@@ -42,7 +40,10 @@ func (r *XormSystemRepository) UpsertHeartbeat(cmd core.HeartbeatCommand) (core.
 		return core.HeartbeatResult{}, err
 	}
 
-	return core.HeartbeatResult{ModifiedAt: time.Now().Unix()}, nil
+	// Until a strategy is actually assigned, echo the client's strategy
+	// timestamp. Returning wall-clock time here makes every heartbeat look like
+	// a strategy change and causes a permanent resynchronization loop.
+	return core.HeartbeatResult{ModifiedAt: cmd.ModifiedAt}, nil
 }
 
 func (r *XormSystemRepository) UpdateSysinfo(cmd core.SysinfoUpdateCommand) (core.SysinfoUpdateResult, error) {

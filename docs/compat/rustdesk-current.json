@@ -8,10 +8,10 @@
   },
   "server": {
     "api_project": "rustdesk-api-server-pro",
-    "compat_server_version": "1.1.16",
+    "compat_server_version": "1.1.39",
     "status": "compatibility-layer"
   },
-  "sysinfo_version": "rustdesk-api-server-pro-compat-client-1.4.9-server-1.1.16-latest",
+  "sysinfo_version": "rustdesk-api-server-pro-compat-client-1.4.9-server-1.1.39-latest",
   "smoke_test": {
     "public": "bash scripts/compat/smoke-api.sh http://127.0.0.1:12345",
     "authenticated": "TOKEN=YOUR_TOKEN bash scripts/compat/smoke-api.sh http://127.0.0.1:12345"
@@ -42,6 +42,7 @@
     "/api/compat/target",
     "/api/compat/version",
     "/api/sysinfo_ver",
+    "/api/heartbeat",
     "/api/login-options",
     "/api/devices/deploy",
     "/lic/web/api/plugin-sign"
@@ -49,9 +50,11 @@
   "authenticated_endpoints": [
     "/api/currentUser",
     "/api/logout",
+    "/api/ab/get",
     "/api/ab/personal",
     "/api/ab/settings",
     "/api/ab/shared-profiles",
+    "/api/ab/shared/profiles",
     "/api/ab/shared_profiles",
     "/api/devices/cli",
     "/api/devices/current",
@@ -76,14 +79,17 @@
     "/api/compat/target",
     "/api/compat/version",
     "/api/sysinfo_ver",
+    "/api/heartbeat",
     "/api/login-options",
     "/api/devices/deploy",
     "/lic/web/api/plugin-sign",
     "/api/currentUser",
     "/api/logout",
+    "/api/ab/get",
     "/api/ab/personal",
     "/api/ab/settings",
     "/api/ab/shared-profiles",
+    "/api/ab/shared/profiles",
     "/api/ab/shared_profiles",
     "/api/devices/cli",
     "/api/devices/current",

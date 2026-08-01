@@ -39,11 +39,11 @@ SQLite is the default database, and MySQL is supported. Configuration lives in `
 ## Features
 
 - Compatibility‑enhanced RustDesk client API (compatible with 1.4.9)
-- Address book read/write with `note` field compatibility
+- Address book read/write, shared address books, `note`, and `same_server` compatibility
 - Device list, user list, and audit logs
 - My Synced Devices: admin views all devices, regular users view their own
 - Address Book: peers, address book management, tag management
-- Minimal compatibility for heartbeat, sysinfo, devices/cli
+- Minimal compatibility for heartbeat, sysinfo, devices/cli; heartbeat echoes client `modified_at`
 - Minimal record upload flow for `/api/record` (`new/part/tail/remove`)
 - Auto‑increment version system: CI bumps PATCH version on each build
 - Dashboard shows server version and build time
@@ -56,6 +56,10 @@ Note: some advanced capabilities are placeholders. See the FAQ section.
 ## Recent Updates
 
 - Compatible with RustDesk client 1.4.9
+- Added address book compatibility aliases: `/api/ab/get`, `/api/ab/shared-profiles`, `/api/ab/shared/profiles`, and `/api/ab/shared_profiles`
+- Fixed shared address book cross-user reads and write ownership: shared reads return owner data, writes require owner access or `rule >= 2`
+- Aligned new peer payload parsing with official client `same_server` boolean/null/missing shapes
+- Fixed heartbeat `modified_at` responses to echo the client value when no strategy is assigned, avoiding repeated strategy resyncs
 - Added "My Synced Devices" menu for both admin and regular users
 - Added "Address Book" menu with peers, management, and tags sub-pages
 - Added auto‑increment version system (VERSION file as single source of truth)

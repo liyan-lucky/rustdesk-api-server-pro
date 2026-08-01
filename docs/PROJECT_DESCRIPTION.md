@@ -10,7 +10,7 @@
 
 - 客户端账号登录、退出和 token 管理。
 - 客户端心跳、设备信息上报、设备在线状态维护。
-- 地址簿读取、全量写入、增量维护、标签和备注字段兼容。
+- 地址簿读取、全量写入、增量维护、标签、备注、共享地址簿和 `same_server` 字段兼容。
 - 设备列表、用户列表、审计日志、文件传输日志。
 - 管理后台登录、用户管理、会话管理、设备管理、仪表盘和邮件模板管理。
 - 新版客户端常见兼容路径，避免 404 或响应结构不匹配。
@@ -297,7 +297,7 @@ jobsConfig:
 | --- | --- | --- |
 | `POST` | `/api/login` | 客户端账号登录，支持普通密码、邮箱验证码步骤、TOTP 步骤 |
 | `GET` | `/api/login-options` | 返回已启用的第三方登录选项名称 |
-| `POST` | `/api/heartbeat` | 设备心跳，上报 RustDesk ID、UUID、连接数，刷新在线状态 |
+| `POST` | `/api/heartbeat` | 设备心跳，上报 RustDesk ID、UUID、连接数和 `modified_at`，刷新在线状态；响应回显客户端传入的 `modified_at` |
 | `POST` | `/api/sysinfo` | 设备系统信息上报，更新 CPU、主机名、内存、系统、用户名、版本等 |
 | `POST` | `/api/sysinfo_ver` | 返回兼容版本字符串 |
 | `POST` | `/api/oidc/auth` | 客户端 OIDC 兼容响应 |
@@ -316,10 +316,13 @@ jobsConfig:
 | `POST` | `/api/logout` | 客户端退出，按 RustDesk ID 使 token 失效 |
 | `GET` | `/api/peers` | 地址簿/设备条目列表 |
 | `GET` | `/api/ab` | 旧版地址簿读取 |
+| `GET/POST` | `/api/ab/get` | 旧 Sciter 客户端地址簿读取别名，等价于 `GET /api/ab` |
 | `POST` | `/api/ab` | 旧版地址簿全量替换 |
 | `POST` | `/api/ab/personal` | 确保个人地址簿存在并返回 guid |
 | `POST` | `/api/ab/settings` | 返回地址簿设置 |
-| `POST` | `/api/ab/shared/profiles` | 返回共享地址簿 profile 列表 |
+| `GET/POST` | `/api/ab/shared-profiles` | 返回共享地址簿 profile 列表 |
+| `GET/POST` | `/api/ab/shared/profiles` | 返回共享地址簿 profile 列表 |
+| `GET/POST` | `/api/ab/shared_profiles` | 返回共享地址簿 profile 列表 |
 | `POST` | `/api/ab/peers` | 地址簿 peer 列表 |
 | `POST` | `/api/ab/peer/add/{guid}` | 向地址簿添加 peer |
 | `PUT` | `/api/ab/peer/update/{guid}` | 更新地址簿 peer |
@@ -335,6 +338,12 @@ jobsConfig:
 | `PUT` | `/api/audit` | 按 guid 更新审计备注 |
 | `GET` | `/api/device-group/accessible` | 返回可访问设备分组 |
 | `POST` | `/api/devices/cli` | 客户端 CLI 兼容更新，支持设备名、用户名、地址簿备注、别名、密码、标签等 |
+
+地址簿权限边界：
+
+- `POST /api/ab/peers` 和 `POST /api/ab/tags/{guid}` 可读取当前用户自己的地址簿，也可读取 `shared=true` 的共享地址簿；返回的 peer/tag 使用地址簿 owner 的 `user_id` 查询，避免共享读取时返回空列表。
+- `POST /api/ab/peer/add/{guid}`、`PUT /api/ab/peer/update/{guid}`、`DELETE /api/ab/peer/{guid}` 以及标签写接口允许 owner 写入；共享地址簿只有在 `rule >= 2` 时可写。写入时数据归属地址簿 owner。
+- 新增 peer 的 `same_server` 请求字段按官方客户端形态处理：可传布尔值，`null` 或缺省按 `false` 保存。
 
 ### 10.3 企业兼容 API
 
@@ -517,6 +526,7 @@ jobsConfig:
 影响：
 
 - 客户端需要持续上报 `/api/heartbeat` 才会保持在线。
+- `/api/heartbeat` 的响应 `modified_at` 当前回显客户端请求值；在未真正分配策略前，不返回服务端当前时间，避免客户端误以为策略持续变化。
 - 如果任务周期或心跳间隔配置不合理，设备可能频繁显示离线。
 
 ## 15. 管理后台前端
@@ -617,9 +627,10 @@ docker build -t rustdesk-api-server-pro:local .
 
 - 客户端账号登录、邮箱验证码流程、TOTP 流程。
 - 客户端 token 和后台 token 的独立管理。
-- 地址簿旧接口和新版增量接口的主要字段兼容。
-- 地址簿备注 `note` 读写。
-- 设备心跳、设备信息更新、在线状态定时维护。
+- 地址簿旧接口和新版增量接口的主要字段兼容，含 `/api/ab/get`、共享 profile 三种路径别名。
+- 地址簿备注 `note` 读写，以及新增 peer 时 `same_server` 布尔/null/缺省兼容。
+- 共享地址簿读取支持跨用户访问；共享写入按 `rule >= 2` 控制，并写入到地址簿 owner 名下。
+- 设备心跳、设备信息更新、在线状态定时维护；心跳响应稳定回显客户端 `modified_at`，避免策略重同步循环。
 - 后台用户、会话、设备、审计、邮件模板和邮件日志管理。
 - 后台 OAuth 多 Provider 登录骨架。
 - 设备分组、用户分组、策略的最小持久化兼容接口。

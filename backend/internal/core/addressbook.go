@@ -85,22 +85,22 @@ type AddressBookTagDeleteCommand struct {
 }
 
 type AddressBookPeerCreateCommand struct {
-	UserID            int
-	AbID              int
-	RustdeskID        string
-	Hash              string
-	Username          string
-	Password          string
-	Hostname          string
-	Platform          string
-	Alias             string
-	Tags              []string
-	Note              string
-	ForceAlwaysRelay  bool
-	RdpPort           string
-	RdpUsername       string
-	LoginName         string
-	SameServerPresent bool
+	UserID           int
+	AbID             int
+	RustdeskID       string
+	Hash             string
+	Username         string
+	Password         string
+	Hostname         string
+	Platform         string
+	Alias            string
+	Tags             []string
+	Note             string
+	ForceAlwaysRelay bool
+	RdpPort          string
+	RdpUsername      string
+	LoginName        string
+	SameServer       bool
 }
 
 type AddressBookPeerUpdateCommand struct {

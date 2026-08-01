@@ -14,14 +14,24 @@ type AddressBookController struct {
 }
 
 func (c *AddressBookController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "ab/get", "HandleAbGet")
+	b.Handle("POST", "ab/get", "HandleAbGet")
 	b.Handle("GET", "ab/personal", "HandleAbPersonal")
 	b.Handle("POST", "ab/personal", "HandleAbPersonal")
 	b.Handle("GET", "ab/settings", "HandleAbSettings")
 	b.Handle("POST", "ab/settings", "HandleAbSettings")
 	b.Handle("GET", "ab/shared-profiles", "HandleAbSharedProfiles")
 	b.Handle("POST", "ab/shared-profiles", "HandleAbSharedProfiles")
+	b.Handle("GET", "ab/shared/profiles", "HandleAbSharedProfiles")
+	b.Handle("POST", "ab/shared/profiles", "HandleAbSharedProfiles")
 	b.Handle("GET", "ab/shared_profiles", "HandleAbSharedProfiles")
 	b.Handle("POST", "ab/shared_profiles", "HandleAbSharedProfiles")
+}
+
+// HandleAbGet keeps the legacy Sciter client's /api/ab/get pull endpoint
+// equivalent to the Flutter client's GET /api/ab endpoint.
+func (c *AddressBookController) HandleAbGet() mvc.Result {
+	return c.GetAb()
 }
 
 func (c *AddressBookController) GetAb() mvc.Result {

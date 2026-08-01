@@ -47,7 +47,7 @@
 
 1. 登录、退出、token 刷新、token 校验。
 2. 设备上线、心跳、sysinfo、设备列表。
-3. 地址簿、标签、备注、共享地址簿。
+3. 地址簿、标签、备注、共享地址簿，以及旧 Sciter/新 Flutter 客户端路径别名。
 4. 连接审计、文件传输审计、报警审计。
 5. 用户组、设备组、策略分发。
 6. OIDC、OAuth、license、plugin-sign 兼容。
@@ -71,10 +71,10 @@
 | 登录 | `/api/login` | 已有 | 对齐新版字段、失败原因、2FA 流程 | P0 |
 | 登出 | `/api/logout` | 已有/待核验 | token 失效写入审计 | P0 |
 | 用户信息 | `/api/currentUser` | 待核验 | 返回套餐、权限、组信息兼容字段 | P0 |
-| 心跳 | `/api/heartbeat` | 已有/待核验 | 记录在线状态和客户端版本 | P0 |
+| 心跳 | `/api/heartbeat` | 已有/待核验 | 已回显客户端 `modified_at` 避免策略版本反复同步；继续记录在线状态和客户端版本 | P0 |
 | sysinfo | `/api/sysinfo` | 已有/待核验 | 扩展 OS、版本、主机名、IP、MAC | P1 |
 | 设备列表 | `/api/devices` | 已有/待核验 | 支持分页、搜索、在线过滤 | P1 |
-| 地址簿 | `/api/ab`、`/api/peers` | 已有 | 对齐 note、tags、hash、更新时间 | P0 |
+| 地址簿 | `/api/ab`、`/api/ab/get`、`/api/ab/shared-profiles`、`/api/ab/shared/profiles`、`/api/ab/shared_profiles`、`/api/peers` | 已有 | 已补齐 `note`、`tags`、`hash`、共享地址簿读取和 `same_server` 布尔兼容；继续用真实客户端核验更新时间与共享写权限边界 | P0 |
 | 连接审计 | `/api/audit/conn` | 已有基础 | 增加完整字段、状态、方向、会话时长 | P0 |
 | 文件审计 | `/api/audit/file` | 已有基础 | 增加大小、结果、方向、错误信息 | P0 |
 | 报警审计 | `/api/audit/alarm` | 兼容占位 | 落库并后台展示 | P1 |

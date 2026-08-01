@@ -59,7 +59,7 @@ go build -o rustdesk-api-server-pro.exe .
 
 说明：
 
-- 本仓库最近补充了地址簿兼容字段（如 `peer.note`），未执行 `sync` 可能导致运行时报错
+- 本仓库最近补充了地址簿兼容字段（如 `peer.note`、`peer.same_server`），未执行 `sync` 可能导致运行时报错
 - 执行 `sync` 后请重启服务
 
 ### 3.3 启动服务
@@ -134,9 +134,12 @@ pnpm build
 - 退出成功
 - 地址簿列表正常加载
 - 地址簿备注（`note`）可保存并刷新回显
+- 共享地址簿可读取；有写权限（`rule >= 2`）时可新增/更新/删除 peer 和标签
+- 新增 peer 后 `same_server` 能按客户端传入值稳定保存
 - 设备列表正常显示
 - 分组面板可打开（即使暂无真实分组数据，也不应报 404）
 - 审计记录能写入，审计备注可更新
+- 心跳接口返回的 `modified_at` 与客户端上报值一致，不应触发持续策略重同步
 
 ### 6.3 管理后台功能验证
 
@@ -148,6 +151,7 @@ pnpm build
 ### 6.4 兼容端点验证（按需）
 
 - `devices/cli`：客户端更新设备信息/备注后无报错
+- `heartbeat`：设备在线状态会刷新，响应 `modified_at` 稳定
 - `devices/deploy`：RustDesk 1.4.7 设备部署流程返回 `NOT_ENABLED` 或有效错误，不应出现 404
 - `record`：启用录制时服务端 `record_uploads/` 可写入文件
 - `oidc`：如未使用，可接受返回“不支持”的兼容响应

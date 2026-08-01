@@ -93,7 +93,9 @@ func (c *basicController) withTx(fn func(session *xorm.Session) error) error {
 
 func (c *basicController) getAddressBookByGuid(userID int, guid string) (*model.AddressBook, error) {
 	var ab model.AddressBook
-	has, err := c.Db.Where("user_id = ? and guid = ?", userID, guid).Get(&ab)
+	// Owners always have write access. Shared books are writable only when the
+	// configured share rule grants write/full-control (2/3).
+	has, err := c.Db.Where("guid = ? and (user_id = ? or (shared = ? and rule >= ?))", guid, userID, true, 2).Get(&ab)
 	if err != nil {
 		return nil, err
 	}

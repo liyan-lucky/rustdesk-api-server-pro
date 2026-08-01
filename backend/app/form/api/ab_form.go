@@ -24,7 +24,7 @@ type AbPeer struct {
 	RdpPort          string   `json:"rdpPort"`
 	RdpUsername      string   `json:"rdpUsername"`
 	LoginName        string   `json:"loginName"`
-	SameServer       string   `json:"same_server"`
+	SameServer       *bool    `json:"same_server"`
 }
 
 type AbTagForm struct {

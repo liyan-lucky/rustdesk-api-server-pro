@@ -119,13 +119,16 @@ func (r *XormAddressBookRepository) GetAddressBookSettings(query core.AddressBoo
 
 func (r *XormAddressBookRepository) ListAddressBookPeers(query core.AddressBookPeerListQuery) (core.AddressBookPeerListResult, error) {
 	var ab model.AddressBook
-	_, err := r.DB.Where("user_id = ? and guid = ?", query.UserID, query.AbGuid).Get(&ab)
+	has, err := r.DB.Where("guid = ? and (user_id = ? or shared = ?)", query.AbGuid, query.UserID, true).Get(&ab)
 	if err != nil {
 		return core.AddressBookPeerListResult{}, err
 	}
+	if !has {
+		return core.AddressBookPeerListResult{}, ErrAddressBookNotFound
+	}
 
 	sessionQuery := func() *xorm.Session {
-		return r.DB.Table(&model.Peer{}).Where("user_id = ? and ab_id = ?", query.UserID, ab.Id)
+		return r.DB.Table(&model.Peer{}).Where("user_id = ? and ab_id = ?", ab.UserId, ab.Id)
 	}
 	pagination := db.NewPagination(query.Current, query.PageSize)
 	peerList := make([]model.Peer, 0)
@@ -161,12 +164,15 @@ func (r *XormAddressBookRepository) ListAddressBookPeers(query core.AddressBookP
 
 func (r *XormAddressBookRepository) ListAddressBookTags(query core.AddressBookTagListQuery) ([]core.AddressBookTagView, error) {
 	var ab model.AddressBook
-	_, err := r.DB.Where("user_id = ? and guid = ?", query.UserID, query.AbGuid).Get(&ab)
+	has, err := r.DB.Where("guid = ? and (user_id = ? or shared = ?)", query.AbGuid, query.UserID, true).Get(&ab)
 	if err != nil {
 		return nil, err
 	}
+	if !has {
+		return nil, ErrAddressBookNotFound
+	}
 	tags := make([]model.AddressBookTag, 0)
-	if err := r.DB.Where("user_id = ? and ab_id = ?", query.UserID, ab.Id).Find(&tags); err != nil {
+	if err := r.DB.Where("user_id = ? and ab_id = ?", ab.UserId, ab.Id).Find(&tags); err != nil {
 		return nil, err
 	}
 	out := make([]core.AddressBookTagView, 0, len(tags))
@@ -256,7 +262,7 @@ func (r *XormAddressBookRepository) AddAddressBookPeer(cmd core.AddressBookPeerC
 		RdpPort:          cmd.RdpPort,
 		RdpUsername:      cmd.RdpUsername,
 		LoginName:        cmd.LoginName,
-		SameServer:       cmd.SameServerPresent,
+		SameServer:       cmd.SameServer,
 	})
 	return err
 }
