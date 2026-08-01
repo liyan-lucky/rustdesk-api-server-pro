@@ -416,6 +416,7 @@ const local: App.I18n.Schema = {
       rustdesk_id: 'Rustdesk ID'
     },
     ab: {
+      ...enUs.dataMap.ab,
       rustdesk_id: 'Rustdesk ID',
       username: 'Nombre de usuario',
       hostname: 'Nombre de host',
@@ -432,7 +433,8 @@ const local: App.I18n.Schema = {
       ab_id: 'ID de libreta',
       tagName: 'Nombre',
       tagColor: 'Color',
-      updated_at: 'Actualizado el'
+      updated_at: 'Actualizado el',
+      personal: 'Mi libreta de direcciones'
     },
     token: {
       device_os: 'SO del dispositivo',

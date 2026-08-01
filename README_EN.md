@@ -60,7 +60,7 @@ Note: some advanced capabilities are placeholders. See the FAQ section.
 - Added "Address Book" menu with peers, management, and tags sub-pages
 - Added auto‑increment version system (VERSION file as single source of truth)
 - Dashboard change-logs card shows server version and build time
-- Docker image is now pushed to GHCR on every push to main
+- Docker image publishing is gated: after a push to `main`, GHCR is updated only when all online workflows for that commit complete successfully
 - Fixed `/userinfo` API not returning `roles` for admin menu filtering
 - Fixed `CompatSysinfoVersion()` missing call parentheses causing `/api/status` 400
 - Added third‑party admin login groundwork with multi‑provider support

@@ -416,6 +416,7 @@ const local: App.I18n.Schema = {
       rustdesk_id: 'Rustdesk ID'
     },
     ab: {
+      ...enUs.dataMap.ab,
       rustdesk_id: 'Identifiant Rustdesk',
       username: 'Nom d\'utilisateur',
       hostname: "Nom d'hôte",
@@ -432,7 +433,8 @@ const local: App.I18n.Schema = {
       ab_id: 'ID carnet',
       tagName: 'Nom',
       tagColor: 'Couleur',
-      updated_at: 'Mis à jour le'
+      updated_at: 'Mis à jour le',
+      personal: "Mon carnet d'adresses"
     },
     token: {
       device_os: 'SE appareil',
@@ -536,7 +538,7 @@ const local: App.I18n.Schema = {
   },
   dropdown: {
     ...enUs.dropdown,
-    closeCurrent: 'Fermer l'onglet courant',
+    closeCurrent: "Fermer l'onglet courant",
     closeOther: 'Fermer les autres',
     closeLeft: 'Fermer ? gauche',
     closeRight: 'Fermer ? droite',

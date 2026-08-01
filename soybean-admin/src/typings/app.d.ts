@@ -640,6 +640,7 @@ declare namespace App {
           tagName: string;
           tagColor: string;
           updated_at: string;
+          personal: string;
         };
         audit: {
           username: string;

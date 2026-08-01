@@ -69,7 +69,10 @@ async function consumeOAuthTicket(ticket: string) {
 
 onMounted(async () => {
   let shouldReplaceQuery = false;
-  const rawSearchQuery = Object.fromEntries(new URLSearchParams(window.location.search).entries());
+  const rawSearchQuery: Record<string, string> = {};
+  new URLSearchParams(window.location.search).forEach((value, key) => {
+    rawSearchQuery[key] = value;
+  });
   const mergedQuery = { ...rawSearchQuery, ...route.query };
   const q = { ...mergedQuery };
 

@@ -119,7 +119,7 @@ docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
 
 ### 版本系统
 
-镜像版本由仓库根目录的 `VERSION` 文件控制（单一事实来源）。CI 每次推送到 main 分支时自动递增 PATCH 版本号（如 `1.1.16` → `1.1.17`），并通过 Go ldflags 和 Vite 环境变量注入到后端和前端。
+镜像版本由仓库根目录的 `VERSION` 文件控制（单一事实来源）。推送到 main 分支后，GHCR 发布流程会等待同一提交的线上工作流全部成功；通过后自动递增 PATCH 版本号（如 `1.1.16` → `1.1.17`），并通过 Go ldflags 和 Vite 环境变量注入到后端和前端。
 
 - 后端：`main.appVersion` 和 `main.buildTime` 通过 ldflags 注入，运行时设置 `APP_VERSION` 和 `BUILD_TIME` 环境变量
 - 前端：`VITE_APP_VERSION` 和 `VITE_BUILD_TIME` 在构建时注入
@@ -127,7 +127,7 @@ docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
 
 ### 镜像标签
 
-每次推送到 main 分支，CI 自动构建并推送以下标签到 GHCR：
+推送到 main 分支且线上质量流程全部成功后，CI 自动构建并推送以下标签到 GHCR：
 
 - `latest`：最新构建
 - `main`：main 分支最新

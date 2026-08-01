@@ -43,9 +43,6 @@ jobs:
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
 
-      - name: 对齐 TypeScript 编译器
-        run: pnpm add -D typescript@6.0.3 --ignore-scripts
-
       - name: TypeScript 类型检查
         run: pnpm typecheck
 

@@ -9,13 +9,13 @@ Do not create one-off release workflows unless absolutely necessary.
 
 ## Continuous Delivery (main branch)
 
-Every push to `main` automatically:
+Every push to `main` starts the online quality workflows. After all push-triggered workflows for the same commit complete successfully, `.github/workflows/ghcr-docker.yml` automatically:
 
 1. Bumps the PATCH version in `VERSION` file (e.g., `1.1.16` → `1.1.17`)
 2. Builds and pushes Docker image to GHCR with tags: `latest`, `main`, `sha-xxxxxxx`
 3. Injects `APP_VERSION` and `BUILD_TIME` via ldflags (backend) and Vite env vars (frontend)
 
-No manual steps needed for continuous delivery testing.
+If any online workflow for that commit fails, GHCR publishing is blocked. No manual steps are needed when the quality gates are green.
 
 ## Standard Release Steps (tag-based)
 

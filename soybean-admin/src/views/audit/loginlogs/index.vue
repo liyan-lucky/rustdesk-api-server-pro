@@ -15,7 +15,7 @@ const searchUsername = ref('');
 const searchEvent = ref(null as string | null);
 
 const eventOptions = [
-  { label: $t('dataMap.loginLog.allEvents'), value: null },
+  { label: $t('dataMap.loginLog.allEvents'), value: '' },
   { label: 'api_login', value: 'api_login' },
   { label: 'admin_login', value: 'admin_login' },
   { label: 'web_user_login', value: 'web_user_login' },

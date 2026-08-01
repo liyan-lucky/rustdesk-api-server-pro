@@ -15,7 +15,7 @@ RustDesk API Server Pro 是一个面向 RustDesk 客户端的第三方 API 服�
 - 新增"通讯录"菜单：含地址簿、地址簿管理、标签管理三个子页面
 - 新增版本自动递增系统：每次 CI 构建自动递增 PATCH 版本号（VERSION 文件为单一事实来源）
 - 首页更新日志区域显示服务端版本号与构建时间，方便确认是否更新成功
-- Docker 镜像每次推送到 main 分支自动构建并推送到 GHCR（`latest` + `main` + `sha-xxx` 标签）
+- Docker 镜像发布改为质量门禁后执行：推送到 `main` 后，线上流程全部成功才自动推送 GHCR（`latest` + `main` + `sha-xxx` 标签）
 - 修复管理员 `/userinfo` API 未返回 `roles` 导致前端菜单过滤异常的问题
 - 修复 `CompatSysinfoVersion` 从常量改为函数后 `/api/status` 缺少调用括号返回 400 的问题
 - 修复 `start.sh` 未导出 `BUILD_TIME` 环境变量的问题

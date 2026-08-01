@@ -4,22 +4,23 @@
   "locales": [
     {
       "locale": "zh-CN",
-      "baseKeys": 320,
-      "fallbackCount": 6,
-      "translatedCount": 314,
-      "fallbackRatio": 0.01875,
+      "baseKeys": 392,
+      "fallbackCount": 7,
+      "translatedCount": 385,
+      "fallbackRatio": 0.017857142857142856,
       "topFallbackKeys": [
         "system.title",
         "theme.tab.mode.chrome",
         "page.home.serverConfig.key",
         "dataMap.audit.ip",
         "dataMap.audit.uuid",
-        "dataMap.mailLog.uuid"
+        "dataMap.mailLog.uuid",
+        "dataMap.ab.guid"
       ],
       "modules": [
         {
           "module": "dataMap",
-          "count": 3
+          "count": 4
         },
         {
           "module": "page",
@@ -37,16 +38,12 @@
     },
     {
       "locale": "ja-JP",
-      "baseKeys": 320,
-      "fallbackCount": 239,
-      "translatedCount": 81,
-      "fallbackRatio": 0.746875,
+      "baseKeys": 392,
+      "fallbackCount": 216,
+      "translatedCount": 176,
+      "fallbackRatio": 0.5510204081632653,
       "topFallbackKeys": [
         "system.title",
-        "system.updateTitle",
-        "system.updateContent",
-        "system.updateConfirm",
-        "system.updateCancel",
         "common.action",
         "common.add",
         "common.addSuccess",
@@ -82,8 +79,6 @@
         "common.switch",
         "common.tip",
         "common.trigger",
-        "common.update",
-        "common.updateSuccess",
         "common.userCenter",
         "common.yesOrNo.yes",
         "common.yesOrNo.no",
@@ -103,7 +98,6 @@
         "theme.layoutMode.vertical",
         "theme.layoutMode.horizontal",
         "theme.layoutMode.vertical-mix",
-        "theme.layoutMode.horizontal-mix",
         "theme.layoutMode.reverseHorizontalMix",
         "theme.recommendColor",
         "theme.recommendColorDesc",
@@ -121,32 +115,35 @@
         "theme.page.mode.title",
         "theme.page.mode.fade",
         "theme.page.mode.fade-slide",
-        "theme.page.mode.fade-bottom"
+        "theme.page.mode.fade-bottom",
+        "theme.page.mode.fade-scale",
+        "theme.page.mode.zoom-fade",
+        "theme.page.mode.zoom-out",
+        "theme.page.mode.none",
+        "theme.fixedHeaderAndTab",
+        "theme.header.height",
+        "theme.header.breadcrumb.visible"
       ],
       "modules": [
         {
-          "module": "page",
-          "count": 75
+          "module": "theme",
+          "count": 59
         },
         {
-          "module": "theme",
-          "count": 61
+          "module": "page",
+          "count": 58
         },
         {
           "module": "common",
-          "count": 40
+          "count": 38
         },
         {
           "module": "dataMap",
-          "count": 19
-        },
-        {
-          "module": "route",
-          "count": 17
+          "count": 36
         },
         {
           "module": "icon",
-          "count": 10
+          "count": 9
         },
         {
           "module": "request",
@@ -157,27 +154,27 @@
           "count": 5
         },
         {
-          "module": "system",
-          "count": 5
+          "module": "route",
+          "count": 3
         },
         {
           "module": "datatable",
+          "count": 1
+        },
+        {
+          "module": "system",
           "count": 1
         }
       ]
     },
     {
       "locale": "ko-KR",
-      "baseKeys": 320,
-      "fallbackCount": 239,
-      "translatedCount": 81,
-      "fallbackRatio": 0.746875,
+      "baseKeys": 392,
+      "fallbackCount": 216,
+      "translatedCount": 176,
+      "fallbackRatio": 0.5510204081632653,
       "topFallbackKeys": [
         "system.title",
-        "system.updateTitle",
-        "system.updateContent",
-        "system.updateConfirm",
-        "system.updateCancel",
         "common.action",
         "common.add",
         "common.addSuccess",
@@ -213,8 +210,6 @@
         "common.switch",
         "common.tip",
         "common.trigger",
-        "common.update",
-        "common.updateSuccess",
         "common.userCenter",
         "common.yesOrNo.yes",
         "common.yesOrNo.no",
@@ -234,7 +229,6 @@
         "theme.layoutMode.vertical",
         "theme.layoutMode.horizontal",
         "theme.layoutMode.vertical-mix",
-        "theme.layoutMode.horizontal-mix",
         "theme.layoutMode.reverseHorizontalMix",
         "theme.recommendColor",
         "theme.recommendColorDesc",
@@ -252,32 +246,35 @@
         "theme.page.mode.title",
         "theme.page.mode.fade",
         "theme.page.mode.fade-slide",
-        "theme.page.mode.fade-bottom"
+        "theme.page.mode.fade-bottom",
+        "theme.page.mode.fade-scale",
+        "theme.page.mode.zoom-fade",
+        "theme.page.mode.zoom-out",
+        "theme.page.mode.none",
+        "theme.fixedHeaderAndTab",
+        "theme.header.height",
+        "theme.header.breadcrumb.visible"
       ],
       "modules": [
         {
           "module": "page",
-          "count": 76
+          "count": 59
         },
         {
           "module": "theme",
-          "count": 61
+          "count": 59
         },
         {
           "module": "common",
-          "count": 40
+          "count": 38
         },
         {
           "module": "dataMap",
-          "count": 18
-        },
-        {
-          "module": "route",
-          "count": 17
+          "count": 35
         },
         {
           "module": "icon",
-          "count": 10
+          "count": 9
         },
         {
           "module": "request",
@@ -288,21 +285,25 @@
           "count": 5
         },
         {
-          "module": "system",
-          "count": 5
+          "module": "route",
+          "count": 3
         },
         {
           "module": "datatable",
+          "count": 1
+        },
+        {
+          "module": "system",
           "count": 1
         }
       ]
     },
     {
       "locale": "fr-FR",
-      "baseKeys": 320,
-      "fallbackCount": 34,
-      "translatedCount": 286,
-      "fallbackRatio": 0.10625,
+      "baseKeys": 392,
+      "fallbackCount": 42,
+      "translatedCount": 350,
+      "fallbackRatio": 0.10714285714285714,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -316,8 +317,11 @@
         "route.iframe-page",
         "route.audit",
         "route.user_sessions",
+        "route.my-devices",
         "page.home.serverConfig.key",
+        "page.home.serverConfig.cacheTtlHint",
         "page.home.serverConfig.source",
+        "page.home.serverConfig.ageSeconds",
         "page.home.serverConfig.sourceType.env",
         "page.home.serverConfig.connectivity.checkSourceType.cache",
         "page.user.list.inputUsername",
@@ -328,6 +332,7 @@
         "page.user.list.tfa_secret_bind",
         "page.user.list.require2FASecret",
         "page.user.list.require2FACode",
+        "page.myDevices.title",
         "dataMap.user.statusLabel.normal",
         "dataMap.user.loginVerifyLabel.tfaCheck",
         "dataMap.device.os",
@@ -337,16 +342,20 @@
         "dataMap.audit.ip",
         "dataMap.audit.uuid",
         "dataMap.mailTemplate.type",
-        "dataMap.mailLog.uuid"
+        "dataMap.mailLog.uuid",
+        "dataMap.ab.alias",
+        "dataMap.ab.hash",
+        "dataMap.ab.guid",
+        "dataMap.token.is_admin"
       ],
       "modules": [
         {
           "module": "page",
-          "count": 12
+          "count": 15
         },
         {
           "module": "dataMap",
-          "count": 10
+          "count": 14
         },
         {
           "module": "system",
@@ -354,7 +363,7 @@
         },
         {
           "module": "route",
-          "count": 3
+          "count": 4
         },
         {
           "module": "common",
@@ -368,10 +377,10 @@
     },
     {
       "locale": "de-DE",
-      "baseKeys": 320,
-      "fallbackCount": 36,
-      "translatedCount": 284,
-      "fallbackRatio": 0.1125,
+      "baseKeys": 392,
+      "fallbackCount": 48,
+      "translatedCount": 344,
+      "fallbackRatio": 0.12244897959183673,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -379,7 +388,6 @@
         "system.updateConfirm",
         "system.updateCancel",
         "common.index",
-        "common.update",
         "theme.themeColor.info",
         "theme.scrollMode.wrapper",
         "theme.tab.mode.chrome",
@@ -387,6 +395,8 @@
         "route.iframe-page",
         "route.audit",
         "page.home.serverConfig.key",
+        "page.home.serverConfig.cacheTtlHint",
+        "page.home.serverConfig.ageSeconds",
         "page.home.serverConfig.sourceType.remote",
         "page.home.serverConfig.connectivity.checkSourceType.remote",
         "page.home.serverConfig.connectivity.checkSourceType.cache",
@@ -398,6 +408,9 @@
         "page.user.list.tfa_secret_bind",
         "page.user.list.require2FASecret",
         "page.user.list.require2FACode",
+        "page.myDevices.status",
+        "page.myDevices.online",
+        "page.myDevices.offline",
         "dataMap.user.status",
         "dataMap.user.statusLabel.normal",
         "dataMap.user.loginVerifyLabel.tfaCheck",
@@ -408,16 +421,24 @@
         "dataMap.audit.uuid",
         "dataMap.mailTemplate.name",
         "dataMap.mailLog.uuid",
-        "dataMap.mailLog.status"
+        "dataMap.mailLog.status",
+        "dataMap.ab.rustdesk_id",
+        "dataMap.ab.hostname",
+        "dataMap.ab.alias",
+        "dataMap.ab.hash",
+        "dataMap.ab.guid",
+        "dataMap.ab.tagName",
+        "dataMap.token.is_admin",
+        "dataMap.oauth.name"
       ],
       "modules": [
         {
-          "module": "page",
-          "count": 12
+          "module": "dataMap",
+          "count": 19
         },
         {
-          "module": "dataMap",
-          "count": 11
+          "module": "page",
+          "count": 17
         },
         {
           "module": "system",
@@ -428,21 +449,21 @@
           "count": 4
         },
         {
-          "module": "common",
+          "module": "route",
           "count": 2
         },
         {
-          "module": "route",
-          "count": 2
+          "module": "common",
+          "count": 1
         }
       ]
     },
     {
       "locale": "es-ES",
-      "baseKeys": 320,
-      "fallbackCount": 28,
-      "translatedCount": 292,
-      "fallbackRatio": 0.0875,
+      "baseKeys": 392,
+      "fallbackCount": 36,
+      "translatedCount": 356,
+      "fallbackRatio": 0.09183673469387756,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -456,6 +477,8 @@
         "theme.tab.mode.chrome",
         "route.iframe-page",
         "page.home.serverConfig.key",
+        "page.home.serverConfig.cacheTtlHint",
+        "page.home.serverConfig.ageSeconds",
         "page.user.list.inputUsername",
         "page.user.list.inputPassword",
         "page.user.list.inputNickname",
@@ -471,16 +494,22 @@
         "dataMap.audit.ip",
         "dataMap.audit.uuid",
         "dataMap.mailLog.uuid",
-        "dataMap.mailLog.statusLabel.err"
+        "dataMap.mailLog.statusLabel.err",
+        "dataMap.ab.rustdesk_id",
+        "dataMap.ab.alias",
+        "dataMap.ab.hash",
+        "dataMap.ab.guid",
+        "dataMap.ab.tagColor",
+        "dataMap.token.is_admin"
       ],
       "modules": [
         {
-          "module": "page",
-          "count": 9
+          "module": "dataMap",
+          "count": 14
         },
         {
-          "module": "dataMap",
-          "count": 8
+          "module": "page",
+          "count": 11
         },
         {
           "module": "system",
@@ -502,13 +531,12 @@
     },
     {
       "locale": "ru-RU",
-      "baseKeys": 320,
-      "fallbackCount": 185,
-      "translatedCount": 135,
-      "fallbackRatio": 0.578125,
+      "baseKeys": 392,
+      "fallbackCount": 168,
+      "translatedCount": 224,
+      "fallbackRatio": 0.42857142857142855,
       "topFallbackKeys": [
         "system.title",
-        "system.updateContent",
         "common.action",
         "common.add",
         "common.addSuccess",
@@ -544,8 +572,6 @@
         "common.switch",
         "common.tip",
         "common.trigger",
-        "common.update",
-        "common.updateSuccess",
         "common.userCenter",
         "common.yesOrNo.yes",
         "common.yesOrNo.no",
@@ -565,7 +591,6 @@
         "theme.layoutMode.vertical",
         "theme.layoutMode.horizontal",
         "theme.layoutMode.vertical-mix",
-        "theme.layoutMode.horizontal-mix",
         "theme.layoutMode.reverseHorizontalMix",
         "theme.recommendColor",
         "theme.recommendColorDesc",
@@ -586,32 +611,32 @@
         "theme.page.mode.fade-bottom",
         "theme.page.mode.fade-scale",
         "theme.page.mode.zoom-fade",
-        "theme.page.mode.zoom-out"
+        "theme.page.mode.zoom-out",
+        "theme.page.mode.none",
+        "theme.fixedHeaderAndTab",
+        "theme.header.height",
+        "theme.header.breadcrumb.visible"
       ],
       "modules": [
         {
           "module": "theme",
-          "count": 61
+          "count": 59
         },
         {
           "module": "common",
-          "count": 40
-        },
-        {
-          "module": "page",
-          "count": 25
+          "count": 38
         },
         {
           "module": "dataMap",
-          "count": 18
+          "count": 35
         },
         {
-          "module": "route",
-          "count": 17
+          "module": "page",
+          "count": 11
         },
         {
           "module": "icon",
-          "count": 10
+          "count": 9
         },
         {
           "module": "request",
@@ -622,11 +647,15 @@
           "count": 5
         },
         {
-          "module": "system",
-          "count": 2
+          "module": "route",
+          "count": 3
         },
         {
           "module": "datatable",
+          "count": 1
+        },
+        {
+          "module": "system",
           "count": 1
         }
       ]

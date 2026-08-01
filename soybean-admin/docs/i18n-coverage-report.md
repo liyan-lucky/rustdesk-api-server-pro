@@ -10,29 +10,31 @@ Metrics:
 
 | Locale | Base Keys | Translated | Suspect | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 320 | 280 | 0 | 40 | 0 | 0 | 87.50% | 87.50% |
-| es-ES | 320 | 287 | 0 | 33 | 0 | 0 | 89.69% | 89.69% |
-| fr-FR | 320 | 283 | 0 | 37 | 0 | 0 | 88.44% | 88.44% |
-| ja-JP | 320 | 95 | 0 | 225 | 0 | 0 | 29.69% | 29.69% |
-| ko-KR | 320 | 95 | 0 | 225 | 0 | 0 | 29.69% | 29.69% |
-| ru-RU | 320 | 145 | 0 | 175 | 0 | 0 | 45.31% | 45.31% |
-| zh-CN | 320 | 305 | 0 | 15 | 0 | 0 | 95.31% | 95.31% |
+| de-DE | 392 | 344 | 0 | 48 | 0 | 0 | 87.76% | 87.76% |
+| es-ES | 392 | 356 | 0 | 36 | 0 | 0 | 90.82% | 90.82% |
+| fr-FR | 392 | 350 | 0 | 42 | 0 | 0 | 89.29% | 89.29% |
+| ja-JP | 392 | 176 | 0 | 216 | 0 | 0 | 44.90% | 44.90% |
+| ko-KR | 392 | 176 | 0 | 216 | 0 | 0 | 44.90% | 44.90% |
+| ru-RU | 392 | 224 | 0 | 168 | 0 | 0 | 57.14% | 57.14% |
+| zh-CN | 392 | 385 | 0 | 7 | 0 | 0 | 98.21% | 98.21% |
 
 ## de-DE
 
-- Base leaf keys: 320
-- Translated leaves: 280 (87.50%)
+- Base leaf keys: 392
+- Translated leaves: 344 (87.76%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 40 (12.50%)
+- Fallback-identical leaves: 48 (12.24%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `api.MailTemplateUpdateSuccess`
-  - `api.UserUpdateSuccess`
   - `common.index`
-  - `common.update`
-  - `common.updateSuccess`
+  - `dataMap.ab.alias`
+  - `dataMap.ab.guid`
+  - `dataMap.ab.hash`
+  - `dataMap.ab.hostname`
+  - `dataMap.ab.rustdesk_id`
+  - `dataMap.ab.tagName`
   - `dataMap.audit.ip`
   - `dataMap.audit.rustdesk_id`
   - `dataMap.audit.uuid`
@@ -41,14 +43,20 @@ Metrics:
   - `dataMap.mailLog.status`
   - `dataMap.mailLog.uuid`
   - `dataMap.mailTemplate.name`
+  - `dataMap.oauth.name`
+  - `dataMap.token.is_admin`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.status`
   - `dataMap.user.statusLabel.normal`
+  - `page.home.serverConfig.ageSeconds`
+  - `page.home.serverConfig.cacheTtlHint`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
   - `page.home.serverConfig.connectivity.checkSourceType.remote`
   - `page.home.serverConfig.key`
-  - `page.home.serverConfig.lastUpdated`
   - `page.home.serverConfig.sourceType.remote`
+  - `page.myDevices.offline`
+  - `page.myDevices.online`
+  - `page.myDevices.status`
   - `page.user.list.emailFormatError`
   - `page.user.list.inputNickname`
   - `page.user.list.inputPassword`
@@ -60,14 +68,7 @@ Metrics:
   - `route.audit`
   - `route.iframe-page`
   - `system.title`
-  - `system.updateCancel`
-  - `system.updateConfirm`
-  - `system.updateContent`
-  - `system.updateTitle`
-  - `theme.scrollMode.wrapper`
-  - `theme.tab.mode.button`
-  - `theme.tab.mode.chrome`
-  - `theme.themeColor.info`
+  - ... and 8 more
 
 **Suspect Keys**
 -
@@ -80,30 +81,33 @@ Metrics:
 
 ## es-ES
 
-- Base leaf keys: 320
-- Translated leaves: 287 (89.69%)
+- Base leaf keys: 392
+- Translated leaves: 356 (90.82%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 33 (10.31%)
+- Fallback-identical leaves: 36 (9.18%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `api.MailTemplateUpdateSuccess`
-  - `api.UserUpdateSuccess`
   - `common.error`
-  - `common.update`
-  - `common.updateSuccess`
   - `common.yesOrNo.no`
+  - `dataMap.ab.alias`
+  - `dataMap.ab.guid`
+  - `dataMap.ab.hash`
+  - `dataMap.ab.rustdesk_id`
+  - `dataMap.ab.tagColor`
   - `dataMap.audit.ip`
   - `dataMap.audit.rustdesk_id`
   - `dataMap.audit.uuid`
   - `dataMap.device.rustdesk_id`
   - `dataMap.mailLog.statusLabel.err`
   - `dataMap.mailLog.uuid`
+  - `dataMap.token.is_admin`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.statusLabel.normal`
+  - `page.home.serverConfig.ageSeconds`
+  - `page.home.serverConfig.cacheTtlHint`
   - `page.home.serverConfig.key`
-  - `page.home.serverConfig.lastUpdated`
   - `page.user.list.emailFormatError`
   - `page.user.list.inputNickname`
   - `page.user.list.inputPassword`
@@ -133,18 +137,19 @@ Metrics:
 
 ## fr-FR
 
-- Base leaf keys: 320
-- Translated leaves: 283 (88.44%)
+- Base leaf keys: 392
+- Translated leaves: 350 (89.29%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 37 (11.56%)
+- Fallback-identical leaves: 42 (10.71%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
   - `common.action`
   - `common.index`
-  - `common.update`
-  - `common.updateSuccess`
+  - `dataMap.ab.alias`
+  - `dataMap.ab.guid`
+  - `dataMap.ab.hash`
   - `dataMap.audit.ip`
   - `dataMap.audit.rustdesk_id`
   - `dataMap.audit.type`
@@ -153,13 +158,16 @@ Metrics:
   - `dataMap.device.rustdesk_id`
   - `dataMap.mailLog.uuid`
   - `dataMap.mailTemplate.type`
+  - `dataMap.token.is_admin`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.statusLabel.normal`
+  - `page.home.serverConfig.ageSeconds`
+  - `page.home.serverConfig.cacheTtlHint`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
   - `page.home.serverConfig.key`
-  - `page.home.serverConfig.lastUpdated`
   - `page.home.serverConfig.source`
   - `page.home.serverConfig.sourceType.env`
+  - `page.myDevices.title`
   - `page.user.list.emailFormatError`
   - `page.user.list.inputNickname`
   - `page.user.list.inputPassword`
@@ -170,14 +178,14 @@ Metrics:
   - `page.user.list.tfa_secret_bind`
   - `route.audit`
   - `route.iframe-page`
+  - `route.my-devices`
   - `route.user_sessions`
   - `system.title`
   - `system.updateCancel`
   - `system.updateConfirm`
   - `system.updateContent`
   - `system.updateTitle`
-  - `theme.tab.mode.chrome`
-  - `theme.themeColor.info`
+  - ... and 2 more
 
 **Suspect Keys**
 -
@@ -190,16 +198,14 @@ Metrics:
 
 ## ja-JP
 
-- Base leaf keys: 320
-- Translated leaves: 95 (29.69%)
+- Base leaf keys: 392
+- Translated leaves: 176 (44.90%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 225 (70.31%)
+- Fallback-identical leaves: 216 (55.10%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `api.MailTemplateUpdateSuccess`
-  - `api.UserUpdateSuccess`
   - `common.action`
   - `common.add`
   - `common.addSuccess`
@@ -234,11 +240,13 @@ Metrics:
   - `common.switch`
   - `common.tip`
   - `common.trigger`
-  - `common.update`
-  - `common.updateSuccess`
   - `common.userCenter`
   - `common.warning`
-  - ... and 185 more
+  - `common.yesOrNo.no`
+  - `common.yesOrNo.yes`
+  - `dataMap.ab.ab_id`
+  - `dataMap.ab.alias`
+  - ... and 176 more
 
 **Suspect Keys**
 -
@@ -251,16 +259,14 @@ Metrics:
 
 ## ko-KR
 
-- Base leaf keys: 320
-- Translated leaves: 95 (29.69%)
+- Base leaf keys: 392
+- Translated leaves: 176 (44.90%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 225 (70.31%)
+- Fallback-identical leaves: 216 (55.10%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `api.MailTemplateUpdateSuccess`
-  - `api.UserUpdateSuccess`
   - `common.action`
   - `common.add`
   - `common.addSuccess`
@@ -295,11 +301,13 @@ Metrics:
   - `common.switch`
   - `common.tip`
   - `common.trigger`
-  - `common.update`
-  - `common.updateSuccess`
   - `common.userCenter`
   - `common.warning`
-  - ... and 185 more
+  - `common.yesOrNo.no`
+  - `common.yesOrNo.yes`
+  - `dataMap.ab.ab_id`
+  - `dataMap.ab.alias`
+  - ... and 176 more
 
 **Suspect Keys**
 -
@@ -312,16 +320,14 @@ Metrics:
 
 ## ru-RU
 
-- Base leaf keys: 320
-- Translated leaves: 145 (45.31%)
+- Base leaf keys: 392
+- Translated leaves: 224 (57.14%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 175 (54.69%)
+- Fallback-identical leaves: 168 (42.86%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `api.MailTemplateUpdateSuccess`
-  - `api.UserUpdateSuccess`
   - `common.action`
   - `common.add`
   - `common.addSuccess`
@@ -356,11 +362,13 @@ Metrics:
   - `common.switch`
   - `common.tip`
   - `common.trigger`
-  - `common.update`
-  - `common.updateSuccess`
   - `common.userCenter`
   - `common.warning`
-  - ... and 135 more
+  - `common.yesOrNo.no`
+  - `common.yesOrNo.yes`
+  - `dataMap.ab.ab_id`
+  - `dataMap.ab.alias`
+  - ... and 128 more
 
 **Suspect Keys**
 -
@@ -373,28 +381,20 @@ Metrics:
 
 ## zh-CN
 
-- Base leaf keys: 320
-- Translated leaves: 305 (95.31%)
+- Base leaf keys: 392
+- Translated leaves: 385 (98.21%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 15 (4.69%)
+- Fallback-identical leaves: 7 (1.79%)
 - Missing leaves: 0
 - Extra leaves: 0
 
 **Sample Fallback Keys**
-  - `api.MailTemplateUpdateSuccess`
-  - `api.UserUpdateSuccess`
-  - `common.update`
-  - `common.updateSuccess`
+  - `dataMap.ab.guid`
   - `dataMap.audit.ip`
   - `dataMap.audit.uuid`
   - `dataMap.mailLog.uuid`
   - `page.home.serverConfig.key`
-  - `page.home.serverConfig.lastUpdated`
   - `system.title`
-  - `system.updateCancel`
-  - `system.updateConfirm`
-  - `system.updateContent`
-  - `system.updateTitle`
   - `theme.tab.mode.chrome`
 
 **Suspect Keys**

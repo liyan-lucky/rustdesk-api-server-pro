@@ -3,9 +3,21 @@ run-name: 构建 Docker 镜像：${{ github.ref_name }}
 
 on:
   push:
-    branches: ["master", "main"]
     tags:
       - "v*.*.*"
+  workflow_run:
+    workflows:
+      - 后端质量检查
+      - 前端质量检查
+      - 发布前检查
+      - 合规检查
+      - CodeQL 安全分析
+      - 依赖清单
+      - 兼容性检查
+      - 安全回归检查
+      - RustDesk 上游新版本检查
+    types: [completed]
+    branches: ["master", "main"]
   workflow_dispatch:
     inputs:
       push_image:
@@ -15,23 +27,163 @@ on:
         type: boolean
 
 permissions:
+  actions: read
   contents: write
   packages: write
 
-env:
-  PUSH_IMAGE: ${{ (github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.push_image == 'true') }}
+concurrency:
+  group: ghcr-docker-${{ github.event.workflow_run.head_sha || github.sha }}
+  cancel-in-progress: true
 
 jobs:
-  build-image:
+  quality-gate:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      should_publish: ${{ steps.context.outputs.should_publish }}
+      push_image: ${{ steps.context.outputs.push_image }}
+      checkout_ref: ${{ steps.context.outputs.checkout_ref }}
+      target_sha: ${{ steps.context.outputs.target_sha }}
+      target_branch: ${{ steps.context.outputs.target_branch }}
+      is_tag: ${{ steps.context.outputs.is_tag }}
+      publish_allowed: ${{ steps.gate.outputs.publish_allowed || 'true' }}
+    steps:
+      - name: 确定发布上下文
+        id: context
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            if [ "${{ github.event.workflow_run.event }}" != "push" ]; then
+              echo "should_publish=false" >> "$GITHUB_OUTPUT"
+              echo "push_image=false" >> "$GITHUB_OUTPUT"
+              echo "checkout_ref=${{ github.event.workflow_run.head_branch }}" >> "$GITHUB_OUTPUT"
+              echo "target_sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+              echo "target_branch=${{ github.event.workflow_run.head_branch }}" >> "$GITHUB_OUTPUT"
+              echo "is_tag=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            echo "push_image=true" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=${{ github.event.workflow_run.head_branch }}" >> "$GITHUB_OUTPUT"
+            echo "target_sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+            echo "target_branch=${{ github.event.workflow_run.head_branch }}" >> "$GITHUB_OUTPUT"
+            echo "is_tag=false" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            echo "push_image=true" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "target_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+            echo "target_branch=" >> "$GITHUB_OUTPUT"
+            echo "is_tag=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            echo "push_image=${{ github.event.inputs.push_image == 'true' }}" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "target_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.ref_type }}" = "tag" ]; then
+              echo "target_branch=" >> "$GITHUB_OUTPUT"
+              echo "is_tag=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "target_branch=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+              echo "is_tag=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: 等待本次提交的线上流程全部成功
+        id: gate
+        if: github.event_name == 'workflow_run' && steps.context.outputs.should_publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TARGET_SHA: ${{ steps.context.outputs.target_sha }}
+          CURRENT_WORKFLOW: ${{ github.workflow }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Waiting briefly for all push-triggered workflow runs to register."
+          sleep 30
+          for attempt in $(seq 1 90); do
+            gh api "repos/${REPO}/actions/runs?head_sha=${TARGET_SHA}&event=push&per_page=100" > runs.json
+            echo "Workflow status for ${TARGET_SHA} (attempt ${attempt}):"
+            jq -r --arg current "$CURRENT_WORKFLOW" '
+              .workflow_runs[]
+              | select(.name != $current)
+              | "- \(.name): \(.status) / \(.conclusion // "pending")"
+            ' runs.json
+
+            failed_count="$(jq --arg current "$CURRENT_WORKFLOW" '
+              [.workflow_runs[]
+              | select(.name != $current)
+              | select(.status == "completed")
+              | select(.conclusion != "success" and .conclusion != "skipped")]
+              | length
+            ' runs.json)"
+            if [ "$failed_count" -gt 0 ]; then
+              echo "One or more online workflows failed; GHCR publish is skipped."
+              jq -r --arg current "$CURRENT_WORKFLOW" '
+                .workflow_runs[]
+                | select(.name != $current)
+                | select(.status == "completed")
+                | select(.conclusion != "success" and .conclusion != "skipped")
+                | "- \(.name): \(.conclusion) \(.html_url)"
+              ' runs.json
+              echo "publish_allowed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            total_count="$(jq --arg current "$CURRENT_WORKFLOW" '[.workflow_runs[] | select(.name != $current)] | length' runs.json)"
+            pending_count="$(jq --arg current "$CURRENT_WORKFLOW" '
+              [.workflow_runs[]
+              | select(.name != $current)
+              | select(.status != "completed")]
+              | length
+            ' runs.json)"
+            if [ "$total_count" -gt 0 ] && [ "$pending_count" -eq 0 ]; then
+              echo "All online workflows for ${TARGET_SHA} completed successfully."
+              echo "publish_allowed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            sleep 20
+          done
+          echo "Timed out waiting for online workflows to finish."
+          exit 1
+
+  build-image:
+    needs: quality-gate
+    if: needs.quality-gate.outputs.should_publish == 'true' && needs.quality-gate.outputs.publish_allowed == 'true'
+    runs-on: ubuntu-latest
+    env:
+      PUSH_IMAGE: ${{ needs.quality-gate.outputs.push_image }}
+      TARGET_SHA: ${{ needs.quality-gate.outputs.target_sha }}
+      TARGET_BRANCH: ${{ needs.quality-gate.outputs.target_branch }}
+      IS_TAG: ${{ needs.quality-gate.outputs.is_tag }}
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ needs.quality-gate.outputs.checkout_ref }}
+          fetch-depth: 0
+
+      - name: 跳过过期提交
+        if: github.event_name == 'workflow_run'
+        id: freshness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin "${TARGET_BRANCH}"
+          remote_sha="$(git rev-parse "origin/${TARGET_BRANCH}")"
+          if [ "$remote_sha" != "$TARGET_SHA" ]; then
+            echo "Remote ${TARGET_BRANCH} moved from ${TARGET_SHA} to ${remote_sha}; skip stale publish."
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: 自动递增版本号
-        if: github.ref_type != 'tag'
+        if: steps.freshness.outputs.stale != 'true' && env.PUSH_IMAGE == 'true' && env.IS_TAG != 'true'
         id: bump
         shell: bash
         run: |
@@ -46,30 +198,42 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add VERSION
           git commit -m "chore: bump version to ${NEW_VERSION} [skip ci]"
-          git push
+          git push origin "HEAD:${TARGET_BRANCH}"
+
+      - name: 确定构建提交
+        if: steps.freshness.outputs.stale != 'true'
+        id: build_ref
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "image_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: 配置 QEMU
+        if: steps.freshness.outputs.stale != 'true'
         uses: docker/setup-qemu-action@v3
 
       - name: 配置 Docker Buildx
+        if: steps.freshness.outputs.stale != 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: 提取镜像版本
+        if: steps.freshness.outputs.stale != 'true'
         id: version
         shell: bash
         run: |
           BUILD_TIME=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
           echo "build_time=${BUILD_TIME}" >> "$GITHUB_OUTPUT"
-          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            echo "app_version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          if [[ "${IS_TAG}" == "true" ]]; then
+            echo "app_version=${{ needs.quality-gate.outputs.checkout_ref }}" >> "$GITHUB_OUTPUT"
           elif [[ -n "${{ steps.bump.outputs.app_version }}" ]]; then
             echo "app_version=${{ steps.bump.outputs.app_version }}" >> "$GITHUB_OUTPUT"
           else
-            echo "app_version=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+            image_sha="${{ steps.build_ref.outputs.image_sha }}"
+            echo "app_version=sha-${image_sha::7}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: 登录 GHCR
-        if: env.PUSH_IMAGE == 'true'
+        if: steps.freshness.outputs.stale != 'true' && env.PUSH_IMAGE == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -77,18 +241,42 @@ jobs:
           password: ${{ vars.GHCR_USE_PAT == 'true' && secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: 生成镜像标签
+        if: steps.freshness.outputs.stale != 'true'
         id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository_owner }}/rustdesk-api-server-pro
-          flavor: latest=false
-          tags: |
-            type=raw,value=latest,enable=${{ env.PUSH_IMAGE == 'true' }}
-            type=ref,event=tag
-            type=ref,event=branch
-            type=sha,prefix=sha-
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="ghcr.io/${{ github.repository_owner }}/rustdesk-api-server-pro"
+          image_sha="${{ steps.build_ref.outputs.image_sha }}"
+          short_sha="${image_sha:0:7}"
+          {
+            echo "tags<<EOF"
+            echo "${image}:sha-${short_sha}"
+            if [ "${IS_TAG}" = "true" ]; then
+              tag="${{ needs.quality-gate.outputs.checkout_ref }}"
+              echo "${image}:${tag}"
+              no_v="${tag#v}"
+              if [ "$no_v" != "$tag" ]; then
+                echo "${image}:${no_v}"
+              fi
+              echo "${image}:latest"
+            elif [ -n "${TARGET_BRANCH}" ]; then
+              safe_branch="${TARGET_BRANCH//\//-}"
+              echo "${image}:${safe_branch}"
+              if [ "${TARGET_BRANCH}" = "main" ] || [ "${TARGET_BRANCH}" = "master" ]; then
+                echo "${image}:latest"
+              fi
+            fi
+            echo "EOF"
+            echo "labels<<EOF"
+            echo "org.opencontainers.image.source=https://github.com/${{ github.repository }}"
+            echo "org.opencontainers.image.revision=${image_sha}"
+            echo "org.opencontainers.image.version=${{ steps.version.outputs.app_version }}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: 构建镜像（linux/amd64）
+        if: steps.freshness.outputs.stale != 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
