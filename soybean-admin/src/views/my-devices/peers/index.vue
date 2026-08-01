@@ -45,7 +45,9 @@ const columns = [
 async function loadData() {
   loading.value = true;
   try {
-    const { data: res, error } = await fetchAbPeers({ current: currentPage.value, size: pageSize.value });
+    const params: Record<string, any> = { current: currentPage.value, size: pageSize.value };
+    if (personalGuid.value) params.ab = personalGuid.value;
+    const { data: res, error } = await fetchAbPeers(params);
     if (!error && res) {
       data.value = res.records || [];
       total.value = res.total || 0;

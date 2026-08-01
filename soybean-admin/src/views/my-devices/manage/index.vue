@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { NTag } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { fetchAbList } from '@/service/api/address-book';
+import { fetchAbAllList } from '@/service/api/address-book';
 
 const appStore = useAppStore();
 const loading = ref(false);
@@ -36,10 +36,10 @@ const columns = [
 async function loadData() {
   loading.value = true;
   try {
-    const { data: res, error } = await fetchAbList({ current: currentPage.value, size: pageSize.value });
+    const { data: res, error } = await fetchAbAllList();
     if (!error && res) {
-      data.value = res.records || [];
-      total.value = res.total || 0;
+      data.value = res || [];
+      total.value = res?.length || 0;
     }
   } finally {
     loading.value = false;

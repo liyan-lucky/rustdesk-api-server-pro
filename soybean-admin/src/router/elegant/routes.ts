@@ -47,7 +47,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'audit',
       icon: 'ph:warning-bold',
       i18nKey: 'route.audit',
-      order: 4
+      order: 4,
+      roles: ['R_SUPER']
     },
     children: [
       {
@@ -90,7 +91,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'devices',
       i18nKey: 'route.devices',
       icon: 'mdi:desktop-classic',
-      order: 6
+      order: 6,
+      roles: ['R_SUPER']
     }
   },
   {
@@ -180,7 +182,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'system',
       i18nKey: 'route.system',
       icon: 'hugeicons:system-update-01',
-      order: 5
+      order: 5,
+      roles: ['R_SUPER']
     },
     children: [
       {
@@ -253,7 +256,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'user',
       icon: 'majesticons:users-line',
       i18nKey: 'route.user',
-      order: 2
+      order: 2,
+      roles: ['R_SUPER']
     },
     children: [
       {
