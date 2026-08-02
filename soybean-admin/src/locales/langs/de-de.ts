@@ -187,7 +187,7 @@ const local: App.I18n.Schema = {
     'my-devices_peers': 'Meine Kontakte',
     'my-devices_manage': 'Adressbuchverwaltung',
     'my-devices_tags': 'Tag-Verwaltung',
-    workspace: 'Mein Arbeitsbereich', workspace_overview: 'Übersicht', workspace_devices: 'Meine Geräte', workspace_sessions: 'Anmeldesitzungen', workspace_security: 'Sicherheitsereignisse', workspace_profile: 'Profil',
+    workspace: 'Mein Arbeitsbereich', workspace_overview: 'Übersicht', workspace_devices: 'Meine Geräte', workspace_sessions: 'Anmeldesitzungen', workspace_security: 'Sicherheitsereignisse', workspace_profile: 'Profil', about: 'Über & Updates',
     system_server: 'Serverkonfiguration',
     system_tokens: 'Benutzer-Token',
     system_oauth: 'OAuth-Verwaltung'
@@ -376,6 +376,9 @@ const local: App.I18n.Schema = {
     workspace: {
       ...enUs.page.workspace,
       scopeTitle: 'Persönlicher Arbeitsbereich', scopeTip: 'Hier werden nur Ihre Geräte, Sitzungen, Sicherheitsereignisse und freigegebenen Adressbücher angezeigt.', myDevices: 'Meine Geräte', activeSessions: 'Aktive Sitzungen', addressBooks: 'Adressbücher', securityEvents: 'Sicherheitsereignisse', currentSession: 'Aktuelle Sitzung', revokeConfirm: 'Diese Anmeldesitzung widerrufen?', revoke: 'Widerrufen', accountRole: 'Kontorolle', adminRole: 'Administrator', userRole: 'Benutzer', permissionScope: 'Berechtigungsumfang', userScope: 'Persönliche Ressourcen und ausdrücklich freigegebene Adressbücher', active: 'Aktiv'
+    },
+    about: {
+      runningVersion: 'Laufende Version', buildTime: 'Build-Zeit', compatVersion: 'Kompatible RustDesk-Version', latestVersion: 'Neueste Version', updateAvailable: 'Update verfügbar', upToDate: 'Aktuell', updateCheck: 'Online-Updateprüfung', urlTip: 'Die Prüfadresse kann geändert und in diesem Browser gespeichert werden. Sie darf eine semantische Version als Text oder JSON mit version, latest_version, tag_name oder server.version liefern. Die Zielseite muss Browser-CORS-Anfragen erlauben.', urlPlaceholder: 'Adresse für die Updateprüfung', checkNow: 'Jetzt prüfen', restoreDefault: 'Standard wiederherstellen', checkFailed: 'Updateprüfung fehlgeschlagen', invalidUrl: 'Nur HTTP- und HTTPS-Adressen werden unterstützt', invalidResponse: 'In der Antwort wurde keine semantische Version gefunden'
     }
   },
   dataMap: {

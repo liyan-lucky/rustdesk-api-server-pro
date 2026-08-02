@@ -187,7 +187,7 @@ const local: App.I18n.Schema = {
     'my-devices_peers': 'Mes contacts',
     'my-devices_manage': 'Gestion des carnets',
     'my-devices_tags': 'Gestion des tags',
-    workspace: 'Mon espace', workspace_overview: 'Vue d’ensemble', workspace_devices: 'Mes appareils', workspace_sessions: 'Sessions de connexion', workspace_security: 'Événements de sécurité', workspace_profile: 'Profil',
+    workspace: 'Mon espace', workspace_overview: 'Vue d’ensemble', workspace_devices: 'Mes appareils', workspace_sessions: 'Sessions de connexion', workspace_security: 'Événements de sécurité', workspace_profile: 'Profil', about: 'À propos et mises à jour',
     system_server: 'Configuration serveur',
     system_tokens: 'Jeton utilisateur',
     system_oauth: 'Gestion OAuth'
@@ -376,6 +376,9 @@ const local: App.I18n.Schema = {
     workspace: {
       ...enUs.page.workspace,
       scopeTitle: 'Espace personnel', scopeTip: 'Seuls vos appareils, sessions, événements de sécurité et carnets autorisés sont affichés ici.', myDevices: 'Mes appareils', activeSessions: 'Sessions actives', addressBooks: 'Carnets d’adresses', securityEvents: 'Événements de sécurité', currentSession: 'Session actuelle', revokeConfirm: 'Révoquer cette session de connexion ?', revoke: 'Révoquer', accountRole: 'Rôle du compte', adminRole: 'Administrateur', userRole: 'Utilisateur', permissionScope: 'Périmètre des droits', userScope: 'Ressources personnelles et carnets explicitement partagés', active: 'Actif'
+    },
+    about: {
+      runningVersion: 'Version en cours', buildTime: 'Date de compilation', compatVersion: 'Version RustDesk compatible', latestVersion: 'Dernière version', updateAvailable: 'Mise à jour disponible', upToDate: 'À jour', updateCheck: 'Recherche de mise à jour en ligne', urlTip: 'L’adresse de vérification est modifiable et enregistrée dans ce navigateur. Elle peut renvoyer une version sémantique en texte ou un JSON contenant version, latest_version, tag_name ou server.version. Le site distant doit autoriser les requêtes CORS du navigateur.', urlPlaceholder: 'Adresse de vérification des mises à jour', checkNow: 'Vérifier maintenant', restoreDefault: 'Rétablir l’adresse par défaut', checkFailed: 'Échec de la vérification', invalidUrl: 'Seules les adresses HTTP et HTTPS sont acceptées', invalidResponse: 'Aucune version sémantique trouvée dans la réponse'
     }
   },
   dataMap: {

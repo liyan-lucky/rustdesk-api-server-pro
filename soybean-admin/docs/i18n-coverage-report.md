@@ -10,9 +10,9 @@ Metrics:
 
 | Locale | Base Keys | Translated | Suspect | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 437 | 373 | 0 | 64 | 0 | 0 | 85.35% | 85.35% |
+| de-DE | 437 | 388 | 0 | 49 | 0 | 0 | 88.79% | 88.79% |
 | es-ES | 437 | 401 | 0 | 36 | 0 | 0 | 91.76% | 91.76% |
-| fr-FR | 437 | 379 | 0 | 58 | 0 | 0 | 86.73% | 86.73% |
+| fr-FR | 437 | 394 | 0 | 43 | 0 | 0 | 90.16% | 90.16% |
 | it-IT | 437 | 402 | 0 | 35 | 0 | 0 | 91.99% | 91.99% |
 | ja-JP | 437 | 221 | 0 | 216 | 0 | 0 | 50.57% | 50.57% |
 | ko-KR | 437 | 221 | 0 | 216 | 0 | 0 | 50.57% | 50.57% |
@@ -22,9 +22,9 @@ Metrics:
 ## de-DE
 
 - Base leaf keys: 437
-- Translated leaves: 373 (85.35%)
+- Translated leaves: 388 (88.79%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 64 (14.65%)
+- Fallback-identical leaves: 49 (11.21%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -49,27 +49,27 @@ Metrics:
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.status`
   - `dataMap.user.statusLabel.normal`
-  - `page.about.buildTime`
-  - `page.about.checkFailed`
-  - `page.about.checkNow`
-  - `page.about.compatVersion`
-  - `page.about.invalidResponse`
-  - `page.about.invalidUrl`
-  - `page.about.latestVersion`
-  - `page.about.restoreDefault`
-  - `page.about.runningVersion`
-  - `page.about.upToDate`
-  - `page.about.updateAvailable`
-  - `page.about.updateCheck`
-  - `page.about.urlPlaceholder`
-  - `page.about.urlTip`
   - `page.home.serverConfig.ageSeconds`
   - `page.home.serverConfig.cacheTtlHint`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
   - `page.home.serverConfig.connectivity.checkSourceType.remote`
   - `page.home.serverConfig.key`
   - `page.home.serverConfig.sourceType.remote`
-  - ... and 24 more
+  - `page.myDevices.offline`
+  - `page.myDevices.online`
+  - `page.myDevices.status`
+  - `page.user.list.emailFormatError`
+  - `page.user.list.inputNickname`
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - `page.user.list.selectUserStatus`
+  - `page.user.list.tfa_secret_bind`
+  - `page.workspace.adminRole`
+  - `route.audit`
+  - `route.iframe-page`
+  - ... and 9 more
 
 **Suspect Keys**
 -
@@ -139,9 +139,9 @@ Metrics:
 ## fr-FR
 
 - Base leaf keys: 437
-- Translated leaves: 379 (86.73%)
+- Translated leaves: 394 (90.16%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 58 (13.27%)
+- Fallback-identical leaves: 43 (9.84%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -163,20 +163,6 @@ Metrics:
   - `dataMap.token.is_admin`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.statusLabel.normal`
-  - `page.about.buildTime`
-  - `page.about.checkFailed`
-  - `page.about.checkNow`
-  - `page.about.compatVersion`
-  - `page.about.invalidResponse`
-  - `page.about.invalidUrl`
-  - `page.about.latestVersion`
-  - `page.about.restoreDefault`
-  - `page.about.runningVersion`
-  - `page.about.upToDate`
-  - `page.about.updateAvailable`
-  - `page.about.updateCheck`
-  - `page.about.urlPlaceholder`
-  - `page.about.urlTip`
   - `page.home.serverConfig.ageSeconds`
   - `page.home.serverConfig.cacheTtlHint`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
@@ -186,7 +172,21 @@ Metrics:
   - `page.myDevices.title`
   - `page.user.list.emailFormatError`
   - `page.user.list.inputNickname`
-  - ... and 18 more
+  - `page.user.list.inputPassword`
+  - `page.user.list.inputUsername`
+  - `page.user.list.require2FACode`
+  - `page.user.list.require2FASecret`
+  - `page.user.list.selectUserStatus`
+  - `page.user.list.tfa_secret_bind`
+  - `route.audit`
+  - `route.iframe-page`
+  - `route.my-devices`
+  - `route.user_sessions`
+  - `system.title`
+  - `system.updateCancel`
+  - `system.updateConfirm`
+  - `system.updateContent`
+  - ... and 3 more
 
 **Suspect Keys**
 -
