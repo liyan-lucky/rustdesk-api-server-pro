@@ -431,41 +431,58 @@ func (c *AddressBookController) HandleAbRules() mvc.Result {
 	if err = c.Db.Where("ab_guid = ?", book.Guid).Find(&rules); err != nil {
 		return c.Error(nil, err.Error())
 	}
-	return c.Success(rules, "ok")
+	data := make([]iris.Map, 0, len(rules))
+	for _, rule := range rules {
+		data = append(data, addressBookRuleData(rule))
+	}
+	return c.Success(data, "ok")
 }
+
+type addressBookRulePayload struct {
+	Guid       string `json:"guid"`
+	TargetType string `json:"target_type"`
+	TargetGuid string `json:"target_guid"`
+	Rule       int    `json:"rule"`
+}
+
 func (c *AddressBookController) HandleAbRuleAdd() mvc.Result {
 	book, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), false)
 	if err != nil {
 		return c.Error(nil, err.Error())
 	}
-	var body model.AddressBookRule
+	var body addressBookRulePayload
 	if err = c.Ctx.ReadJSON(&body); err != nil {
 		return c.Error(nil, err.Error())
 	}
 	if body.Rule < 1 || body.Rule > 3 {
 		return c.Error(nil, "invalid rule")
 	}
-	body.Id = 0
-	body.Guid = util.GetUUID()
-	body.AbGuid = book.Guid
-	if _, err = c.Db.Insert(&body); err != nil {
+	rule := model.AddressBookRule{Guid: util.GetUUID(), AbGuid: book.Guid, TargetType: body.TargetType, TargetGuid: body.TargetGuid, Rule: body.Rule}
+	if rule.TargetType == "" || rule.TargetGuid == "" {
+		return c.Error(nil, "target type and target guid required")
+	}
+	if _, err = c.Db.Insert(&rule); err != nil {
 		return c.Error(nil, err.Error())
 	}
-	return c.Success(body, "ok")
+	return c.Success(addressBookRuleData(rule), "ok")
 }
 func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
 	book, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), false)
 	if err != nil {
 		return c.Error(nil, err.Error())
 	}
-	var body model.AddressBookRule
+	var body addressBookRulePayload
 	if err = c.Ctx.ReadJSON(&body); err != nil {
 		return c.Error(nil, err.Error())
 	}
 	if body.Rule < 1 || body.Rule > 3 {
 		return c.Error(nil, "invalid rule")
 	}
-	affected, err := c.Db.Where("guid = ? and ab_guid = ?", body.Guid, book.Guid).Cols("target_type", "target_guid", "rule").Update(&body)
+	if body.Guid == "" || body.TargetType == "" || body.TargetGuid == "" {
+		return c.Error(nil, "guid and target required")
+	}
+	update := model.AddressBookRule{TargetType: body.TargetType, TargetGuid: body.TargetGuid, Rule: body.Rule}
+	affected, err := c.Db.Where("guid = ? and ab_guid = ?", body.Guid, book.Guid).Cols("target_type", "target_guid", "rule").Update(&update)
 	if err != nil {
 		return c.Error(nil, err.Error())
 	}
@@ -473,6 +490,18 @@ func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
 		return c.Error(nil, "rule not found")
 	}
 	return c.Success(nil, "ok")
+}
+
+func addressBookRuleData(rule model.AddressBookRule) iris.Map {
+	return iris.Map{
+		"guid":        rule.Guid,
+		"ab_guid":     rule.AbGuid,
+		"target_type": rule.TargetType,
+		"target_guid": rule.TargetGuid,
+		"rule":        rule.Rule,
+		"created_at":  rule.CreatedAt,
+		"updated_at":  rule.UpdatedAt,
+	}
 }
 func (c *AddressBookController) HandleAbRuleDelete() mvc.Result {
 	book, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), false)
