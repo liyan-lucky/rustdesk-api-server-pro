@@ -35,6 +35,7 @@ var dbSyncCmd = &cobra.Command{
 			new(model.Device),
 			new(model.AddressBook),
 			new(model.AddressBookTag),
+			new(model.AddressBookRule),
 			new(model.MailLogs),
 			new(model.VerifyCode),
 			new(model.SystemSettings),

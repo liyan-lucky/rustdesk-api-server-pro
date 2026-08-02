@@ -119,11 +119,18 @@ func (r *XormAddressBookRepository) GetAddressBookSettings(query core.AddressBoo
 
 func (r *XormAddressBookRepository) ListAddressBookPeers(query core.AddressBookPeerListQuery) (core.AddressBookPeerListResult, error) {
 	var ab model.AddressBook
-	has, err := r.DB.Where("guid = ? and (user_id = ? or shared = ?)", query.AbGuid, query.UserID, true).Get(&ab)
+	has, err := r.DB.Where("guid = ?", query.AbGuid).Get(&ab)
 	if err != nil {
 		return core.AddressBookPeerListResult{}, err
 	}
 	if !has {
+		return core.AddressBookPeerListResult{}, ErrAddressBookNotFound
+	}
+	allowed, err := r.canReadAddressBook(&ab, query.UserID)
+	if err != nil {
+		return core.AddressBookPeerListResult{}, err
+	}
+	if !allowed {
 		return core.AddressBookPeerListResult{}, ErrAddressBookNotFound
 	}
 
@@ -164,11 +171,18 @@ func (r *XormAddressBookRepository) ListAddressBookPeers(query core.AddressBookP
 
 func (r *XormAddressBookRepository) ListAddressBookTags(query core.AddressBookTagListQuery) ([]core.AddressBookTagView, error) {
 	var ab model.AddressBook
-	has, err := r.DB.Where("guid = ? and (user_id = ? or shared = ?)", query.AbGuid, query.UserID, true).Get(&ab)
+	has, err := r.DB.Where("guid = ?", query.AbGuid).Get(&ab)
 	if err != nil {
 		return nil, err
 	}
 	if !has {
+		return nil, ErrAddressBookNotFound
+	}
+	allowed, err := r.canReadAddressBook(&ab, query.UserID)
+	if err != nil {
+		return nil, err
+	}
+	if !allowed {
 		return nil, ErrAddressBookNotFound
 	}
 	tags := make([]model.AddressBookTag, 0)
@@ -182,9 +196,37 @@ func (r *XormAddressBookRepository) ListAddressBookTags(query core.AddressBookTa
 	return out, nil
 }
 
+func (r *XormAddressBookRepository) canReadAddressBook(ab *model.AddressBook, userID int) (bool, error) {
+	if ab == nil {
+		return false, nil
+	}
+	if ab.UserId == userID {
+		return true, nil
+	}
+	if !ab.Shared {
+		return false, nil
+	}
+	if ab.Rule >= 1 {
+		return true, nil
+	}
+	hasRules, err := r.DB.IsTableExist(new(model.AddressBookRule))
+	if err != nil || !hasRules {
+		return false, err
+	}
+	allowed, err := r.DB.Where("ab_guid = ? and rule >= 1 and (target_type = ? or (target_type = ? and target_guid = ?))", ab.Guid, "everyone", "user", strconv.Itoa(userID)).Exist(new(model.AddressBookRule))
+	if err != nil || allowed {
+		return allowed, err
+	}
+	hasGroups, err := r.DB.IsTableExist(new(model.UserGroupMember))
+	if err != nil || !hasGroups {
+		return false, err
+	}
+	return r.DB.Where("ab_guid = ? and rule >= 1 and target_type = ? and target_guid in (select group_guid from user_group_member where user_id = ?)", ab.Guid, "user_group", userID).Exist(new(model.AddressBookRule))
+}
+
 func (r *XormAddressBookRepository) ListSharedAddressBooks(query core.SharedAddressBookListQuery) (core.SharedAddressBookListResult, error) {
 	sessionQuery := func() *xorm.Session {
-		return r.DB.Table(&model.AddressBook{}).Where("shared = 1")
+		return r.DB.Table(&model.AddressBook{}).Where("shared = 1 AND (user_id = ? OR rule >= 1 OR EXISTS (SELECT 1 FROM address_book_rule abr WHERE abr.ab_guid = address_book.guid AND abr.rule >= 1 AND (abr.target_type = 'everyone' OR (abr.target_type = 'user' AND abr.target_guid = ?) OR (abr.target_type = 'user_group' AND abr.target_guid IN (SELECT group_guid FROM user_group_member WHERE user_id = ?)))))", query.UserID, strconv.Itoa(query.UserID), query.UserID)
 	}
 	pagination := db.NewPagination(query.Current, query.PageSize)
 	list := make([]model.AddressBook, 0)

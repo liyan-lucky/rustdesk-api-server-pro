@@ -14,6 +14,8 @@ type AddressBookPeerController struct {
 }
 
 func (c *AddressBookPeerController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "ab/peers", "PostAbPeers")
+	b.Handle("POST", "ab/peers", "PostAbPeers")
 	b.Handle("POST", "ab/peer/add/{guid:string}", "HandleAbPeerAdd")
 	b.Handle("PUT", "ab/peer/update/{guid:string}", "HandleAbPeerUpdate")
 	b.Handle("DELETE", "ab/peer/{guid:string}", "HandleAbPeerDelete")

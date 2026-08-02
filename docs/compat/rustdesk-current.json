@@ -58,7 +58,11 @@
     "/api/ab/shared_profiles",
     "/api/devices/cli",
     "/api/devices/current",
-    "/api/me"
+    "/api/me",
+    "/api/ab/peers",
+    "/api/ab/tags/{guid}",
+    "/api/ab/rules",
+    "/api/ab/rule"
   ],
   "validated_endpoints": [
     "/api/health",
@@ -93,6 +97,10 @@
     "/api/ab/shared_profiles",
     "/api/devices/cli",
     "/api/devices/current",
-    "/api/me"
+    "/api/me",
+    "/api/ab/peers",
+    "/api/ab/tags/{guid}",
+    "/api/ab/rules",
+    "/api/ab/rule"
   ]
 }

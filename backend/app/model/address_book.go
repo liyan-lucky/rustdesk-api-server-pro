@@ -37,3 +37,16 @@ type AddressBookTag struct {
 func (m *AddressBookTag) TableName() string {
 	return "address_book_tag"
 }
+
+type AddressBookRule struct {
+	Id         int       `xorm:"'id' int notnull pk autoincr"`
+	Guid       string    `xorm:"'guid' varchar(64) unique"`
+	AbGuid     string    `xorm:"'ab_guid' varchar(64) index"`
+	TargetType string    `xorm:"'target_type' varchar(32) index"`
+	TargetGuid string    `xorm:"'target_guid' varchar(255) index"`
+	Rule       int       `xorm:"'rule' int"`
+	CreatedAt  time.Time `xorm:"'created_at' datetime created"`
+	UpdatedAt  time.Time `xorm:"'updated_at' datetime updated"`
+}
+
+func (m *AddressBookRule) TableName() string { return "address_book_rule" }

@@ -3,14 +3,229 @@ package api
 import (
 	"encoding/json"
 	"rustdesk-api-server-pro/app/form/api"
+	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
 	"rustdesk-api-server-pro/internal/transport/httpdto"
+	"rustdesk-api-server-pro/util"
 
+	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
 
 type AddressBookController struct {
 	basicController
+}
+
+func (c *AddressBookController) ownedAddressBook(guid string) (*model.AddressBook, error) {
+	user := c.GetUser()
+	if user == nil {
+		return nil, errAddressBookNotFound
+	}
+	var ab model.AddressBook
+	q := c.Db.Where("guid = ?", guid)
+	if !user.IsAdmin {
+		q = q.And("user_id = ?", user.Id)
+	}
+	has, err := q.Get(&ab)
+	if err != nil {
+		return nil, err
+	}
+	if !has {
+		return nil, errAddressBookNotFound
+	}
+	return &ab, nil
+}
+
+func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
+	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
+	var body map[string]any
+	if err := c.readJSONBody(&body); err != nil {
+		return c.fail(err)
+	}
+	name := stringFromAny(body["name"])
+	if name == "" {
+		return c.failMsg("name required")
+	}
+	ab := model.AddressBook{UserId: user.Id, Guid: util.GetUUID(), Name: name, Owner: user.Username, Note: stringFromAny(body["note"]), Rule: 0, Shared: true}
+	if _, err := c.Db.Insert(&ab); err != nil {
+		return c.fail(err)
+	}
+	return mvc.Response{Object: iris.Map{"guid": ab.Guid, "name": ab.Name}}
+}
+
+func (c *AddressBookController) HandleAbSharedUpdate() mvc.Result {
+	var body map[string]any
+	if err := c.readJSONBody(&body); err != nil {
+		return c.fail(err)
+	}
+	guid := stringFromAny(body["guid"])
+	ab, err := c.ownedAddressBook(guid)
+	if err != nil {
+		return c.fail(err)
+	}
+	cols := []string{}
+	update := model.AddressBook{}
+	if v, ok := body["name"]; ok {
+		update.Name = stringFromAny(v)
+		cols = append(cols, "name")
+	}
+	if v, ok := body["note"]; ok {
+		update.Note = stringFromAny(v)
+		cols = append(cols, "note")
+	}
+	if v, ok := body["owner"]; ok && c.GetUser().IsAdmin {
+		update.Owner = stringFromAny(v)
+		cols = append(cols, "owner")
+	}
+	if len(cols) > 0 {
+		if _, err = c.Db.Where("id = ?", ab.Id).Cols(cols...).Update(&update); err != nil {
+			return c.fail(err)
+		}
+	}
+	return c.ok()
+}
+
+func (c *AddressBookController) HandleAbSharedDelete() mvc.Result {
+	var guids []string
+	if err := c.Ctx.ReadBody(&guids); err != nil {
+		return c.fail(err)
+	}
+	for _, guid := range guids {
+		ab, err := c.ownedAddressBook(guid)
+		if err != nil {
+			return c.fail(err)
+		}
+		session := c.Db.NewSession()
+		if err = session.Begin(); err != nil {
+			return c.fail(err)
+		}
+		_, err = session.Where("ab_guid = ?", guid).Delete(&model.AddressBookRule{})
+		if err == nil {
+			_, err = session.Where("ab_id = ?", ab.Id).Delete(&model.AddressBookTag{})
+		}
+		if err == nil {
+			_, err = session.Where("ab_id = ?", ab.Id).Delete(&model.Peer{})
+		}
+		if err == nil {
+			_, err = session.Where("id = ?", ab.Id).Delete(&model.AddressBook{})
+		}
+		if err != nil {
+			_ = session.Rollback()
+			session.Close()
+			return c.fail(err)
+		}
+		err = session.Commit()
+		session.Close()
+		if err != nil {
+			return c.fail(err)
+		}
+	}
+	return c.ok()
+}
+
+func (c *AddressBookController) HandleAbRules() mvc.Result {
+	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
+	abGuid := c.Ctx.URLParamDefault("ab", "")
+	if abGuid == "" {
+		abGuid = c.Ctx.URLParamDefault("guid", "")
+	}
+	if _, err := c.ownedAddressBook(abGuid); err != nil {
+		return c.fail(err)
+	}
+	var rules []model.AddressBookRule
+	if err := c.Db.Where("ab_guid = ?", abGuid).Find(&rules); err != nil {
+		return c.fail(err)
+	}
+	return mvc.Response{Object: iris.Map{"total": len(rules), "data": rules}}
+}
+
+func (c *AddressBookController) HandleAbRuleAdd() mvc.Result {
+	var body map[string]any
+	if err := c.readJSONBody(&body); err != nil {
+		return c.fail(err)
+	}
+	abGuid := stringFromAny(body["ab_guid"])
+	if abGuid == "" {
+		abGuid = stringFromAny(body["ab"])
+	}
+	if _, err := c.ownedAddressBook(abGuid); err != nil {
+		return c.fail(err)
+	}
+	typeName := stringFromAny(body["type"])
+	if typeName == "" {
+		typeName = stringFromAny(body["target_type"])
+	}
+	if typeName == "" {
+		typeName = "everyone"
+	}
+	target := stringFromAny(body["target_guid"])
+	if target == "" {
+		target = stringFromAny(body["user"])
+	}
+	if target == "" {
+		target = stringFromAny(body["group"])
+	}
+	rule := intFromAny(body["rule"])
+	if rule < 1 || rule > 3 {
+		return c.failMsg("rule must be 1, 2 or 3")
+	}
+	row := model.AddressBookRule{Guid: util.GetUUID(), AbGuid: abGuid, TargetType: typeName, TargetGuid: target, Rule: rule}
+	if _, err := c.Db.Insert(&row); err != nil {
+		return c.fail(err)
+	}
+	return mvc.Response{Object: row}
+}
+
+func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
+	var body map[string]any
+	if err := c.readJSONBody(&body); err != nil {
+		return c.fail(err)
+	}
+	guid := stringFromAny(body["guid"])
+	var row model.AddressBookRule
+	has, err := c.Db.Where("guid = ?", guid).Get(&row)
+	if err != nil || !has {
+		return c.failMsg("rule not found")
+	}
+	if _, err = c.ownedAddressBook(row.AbGuid); err != nil {
+		return c.fail(err)
+	}
+	rule := intFromAny(body["rule"])
+	if rule < 1 || rule > 3 {
+		return c.failMsg("rule must be 1, 2 or 3")
+	}
+	_, err = c.Db.Where("guid = ?", guid).Cols("rule").Update(&model.AddressBookRule{Rule: rule})
+	if err != nil {
+		return c.fail(err)
+	}
+	return c.ok()
+}
+
+func (c *AddressBookController) HandleAbRulesDelete() mvc.Result {
+	var guids []string
+	if err := c.Ctx.ReadBody(&guids); err != nil {
+		return c.fail(err)
+	}
+	for _, guid := range guids {
+		var row model.AddressBookRule
+		has, err := c.Db.Where("guid = ?", guid).Get(&row)
+		if err != nil || !has {
+			continue
+		}
+		if _, err = c.ownedAddressBook(row.AbGuid); err != nil {
+			return c.fail(err)
+		}
+		if _, err = c.Db.Where("guid = ?", guid).Delete(&model.AddressBookRule{}); err != nil {
+			return c.fail(err)
+		}
+	}
+	return c.ok()
 }
 
 func (c *AddressBookController) BeforeActivation(b mvc.BeforeActivation) {
@@ -26,6 +241,13 @@ func (c *AddressBookController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("POST", "ab/shared/profiles", "HandleAbSharedProfiles")
 	b.Handle("GET", "ab/shared_profiles", "HandleAbSharedProfiles")
 	b.Handle("POST", "ab/shared_profiles", "HandleAbSharedProfiles")
+	b.Handle("POST", "ab/shared/add", "HandleAbSharedAdd")
+	b.Handle("PUT", "ab/shared/update/profile", "HandleAbSharedUpdate")
+	b.Handle("DELETE", "ab/shared", "HandleAbSharedDelete")
+	b.Handle("GET", "ab/rules", "HandleAbRules")
+	b.Handle("POST", "ab/rule", "HandleAbRuleAdd")
+	b.Handle("PATCH", "ab/rule", "HandleAbRuleUpdate")
+	b.Handle("DELETE", "ab/rules", "HandleAbRulesDelete")
 }
 
 // HandleAbGet keeps the legacy Sciter client's /api/ab/get pull endpoint
@@ -144,9 +366,14 @@ func (c *AddressBookController) HandleAbSettings() mvc.Result {
 }
 
 func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
+	user := c.GetUser()
+	if user == nil {
+		return c.failMsg("unauthorized")
+	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 10)
 	result, err := c.addressBookService().ListSharedProfiles(core.SharedAddressBookListQuery{
+		UserID:   user.Id,
 		Current:  current,
 		PageSize: pageSize,
 	})

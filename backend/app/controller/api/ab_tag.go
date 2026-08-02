@@ -12,6 +12,7 @@ type AddressBookTagController struct {
 }
 
 func (c *AddressBookTagController) BeforeActivation(b mvc.BeforeActivation) {
+	b.Handle("GET", "ab/tags/{guid:string}", "HandleAbTags")
 	b.Handle("POST", "ab/tags/{guid:string}", "HandleAbTags")
 	b.Handle("POST", "ab/tag/add/{guid:string}", "HandleAbTagAdd")
 	b.Handle("PUT", "ab/tag/update/{guid:string}", "HandleAbTagUpdate")

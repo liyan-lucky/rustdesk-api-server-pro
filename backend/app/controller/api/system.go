@@ -24,6 +24,7 @@ func (c *SystemController) PostHeartbeat() mvc.Result {
 		RustdeskID: form.RustdeskId,
 		UUID:       form.Uuid,
 		ConnCount:  len(form.Conns),
+		Conns:      form.Conns,
 		ModifiedAt: form.ModifiedAt,
 	})
 	if err != nil {

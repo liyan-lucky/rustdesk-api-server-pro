@@ -7,6 +7,7 @@ import (
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
+	"strconv"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -93,13 +94,46 @@ func (c *basicController) withTx(fn func(session *xorm.Session) error) error {
 
 func (c *basicController) getAddressBookByGuid(userID int, guid string) (*model.AddressBook, error) {
 	var ab model.AddressBook
-	// Owners always have write access. Shared books are writable only when the
-	// configured share rule grants write/full-control (2/3).
-	has, err := c.Db.Where("guid = ? and (user_id = ? or (shared = ? and rule >= ?))", guid, userID, true, 2).Get(&ab)
+	has, err := c.Db.Where("guid = ?", guid).Get(&ab)
+	if err != nil || !has {
+		if err != nil {
+			return nil, err
+		}
+		return nil, errAddressBookNotFound
+	}
+	if ab.UserId == userID {
+		return &ab, nil
+	}
+	if !ab.Shared {
+		return nil, errAddressBookNotFound
+	}
+	if ab.Rule >= 2 {
+		return &ab, nil
+	}
+	hasRules, err := c.Db.IsTableExist(new(model.AddressBookRule))
 	if err != nil {
 		return nil, err
 	}
-	if !has {
+	if !hasRules {
+		return nil, errAddressBookNotFound
+	}
+	allowed, err := c.Db.Where("ab_guid = ? and rule >= ? and (target_type = ? or (target_type = ? and target_guid = ?))", ab.Guid, 2, "everyone", "user", strconv.Itoa(userID)).Exist(new(model.AddressBookRule))
+	if err != nil {
+		return nil, err
+	}
+	if !allowed {
+		hasGroups, groupErr := c.Db.IsTableExist(new(model.UserGroupMember))
+		if groupErr != nil {
+			return nil, groupErr
+		}
+		if hasGroups {
+			allowed, err = c.Db.Where("ab_guid = ? and rule >= ? and target_type = ? and target_guid in (select group_guid from user_group_member where user_id = ?)", ab.Guid, 2, "user_group", userID).Exist(new(model.AddressBookRule))
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	if !allowed {
 		return nil, errAddressBookNotFound
 	}
 	return &ab, nil

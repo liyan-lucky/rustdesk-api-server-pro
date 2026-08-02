@@ -31,8 +31,11 @@ type CompatDevicesCliCommand struct {
 	Alias          *string
 	Password       *string
 
-	Tags    []string
-	HasTags bool
+	Tags            []string
+	HasTags         bool
+	StrategyName    *string
+	AddressBookName *string
+	DeviceGroupName *string
 }
 
 type CompatRecordCommand struct {
@@ -44,8 +47,8 @@ type CompatRecordCommand struct {
 
 type CompatDeviceDeployCommand struct {
 	RustdeskID string
-	UUID      string
-	PublicKey string
+	UUID       string
+	PublicKey  string
 }
 
 type CompatDeviceDeployResult struct {

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"encoding/json"
+	"errors"
 
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
@@ -18,6 +19,14 @@ func NewXormCompatRepository(dbEngine *xorm.Engine) *XormCompatRepository {
 }
 
 func (r *XormCompatRepository) ApplyDevicesCli(cmd core.CompatDevicesCliCommand) error {
+	var existingDevice model.Device
+	hasDevice, err := r.DB.Where("rustdesk_id = ?", cmd.RustdeskID).Get(&existingDevice)
+	if err != nil {
+		return err
+	}
+	if !hasDevice {
+		return errors.New("device not found")
+	}
 	device := model.Device{}
 	deviceCols := make([]string, 0, 2)
 	if cmd.DeviceName != nil {
@@ -80,6 +89,60 @@ func (r *XormCompatRepository) ApplyDevicesCli(cmd core.CompatDevicesCliCommand)
 	if len(peerCols) > 0 {
 		if _, err := r.DB.Where("user_id = ? and rustdesk_id = ?", cmd.UserID, cmd.RustdeskID).Cols(peerCols...).Update(&peer); err != nil {
 			return err
+		}
+	}
+	if cmd.StrategyName != nil {
+		var strategy model.Strategy
+		has, err := r.DB.Where("name = ? and enabled = ?", *cmd.StrategyName, true).Get(&strategy)
+		if err != nil {
+			return err
+		}
+		if !has {
+			return errors.New("strategy not found")
+		}
+		if _, err = r.DB.Where("target_type = ? and target_guid = ?", "device", cmd.RustdeskID).Delete(&model.StrategyAssignment{}); err != nil {
+			return err
+		}
+		if _, err = r.DB.Insert(&model.StrategyAssignment{StrategyGuid: strategy.Guid, TargetType: "device", TargetGuid: cmd.RustdeskID}); err != nil {
+			return err
+		}
+	}
+	if cmd.DeviceGroupName != nil {
+		var group model.DeviceGroup
+		has, err := r.DB.Where("name = ?", *cmd.DeviceGroupName).Get(&group)
+		if err != nil {
+			return err
+		}
+		if !has {
+			return errors.New("device group not found")
+		}
+		count, err := r.DB.Where("group_guid = ? and rustdesk_id = ?", group.Guid, cmd.RustdeskID).Count(&model.DeviceGroupDevice{})
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			if _, err = r.DB.Insert(&model.DeviceGroupDevice{GroupGuid: group.Guid, RustdeskId: cmd.RustdeskID}); err != nil {
+				return err
+			}
+		}
+	}
+	if cmd.AddressBookName != nil {
+		var ab model.AddressBook
+		has, err := r.DB.Where("name = ? and (user_id = ? or shared = ?)", *cmd.AddressBookName, cmd.UserID, true).Get(&ab)
+		if err != nil {
+			return err
+		}
+		if !has {
+			return errors.New("address book not found")
+		}
+		count, err := r.DB.Where("user_id = ? and ab_id = ? and rustdesk_id = ?", ab.UserId, ab.Id, cmd.RustdeskID).Count(&model.Peer{})
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			if _, err = r.DB.Insert(&model.Peer{UserId: ab.UserId, AbId: ab.Id, RustdeskId: cmd.RustdeskID, Hostname: existingDevice.Hostname, Username: existingDevice.Username, Platform: existingDevice.Os, Tags: "[]"}); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

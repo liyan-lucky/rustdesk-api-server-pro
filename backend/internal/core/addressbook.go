@@ -40,6 +40,7 @@ type AddressBookTagView struct {
 }
 
 type SharedAddressBookListQuery struct {
+	UserID   int
 	Current  int
 	PageSize int
 }

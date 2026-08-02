@@ -20,7 +20,7 @@
 | 系统 | GET/POST | `/api/config`、`/api/client-config`、`/api/server-config` | 否 | 基础 | 返回客户端配置形状，已纳入 smoke 与兼容命中审计 |
 | 系统 | GET/POST | `/api/compat-target`、`/api/compat/target`、`/api/compat/version` | 否 | 基础 | 返回当前匹配对象，目标 RustDesk 1.4.9 |
 | 系统 | GET/POST | `/api/sysinfo_ver` | 否 | 基础 | 返回兼容 sysinfo 版本字符串 |
-| 心跳 | POST | `/api/heartbeat` | 否 | 基础 | 上报设备在线状态和连接数；响应回显客户端 `modified_at`，避免策略版本被误判为每次心跳都变化 |
+| 心跳 | POST | `/api/heartbeat` | 否 | 完整 | 上报在线状态与连接；按设备/设备组下发 `strategy.config_options`，禁用设备返回 `disconnect`，无策略变化时稳定回显 `modified_at` |
 | 登录 | GET/POST | `/api/login-options` | 否 | 基础 | 返回可用登录方式，已纳入公开 smoke 与兼容命中审计 |
 | 登录 | POST | `/api/login` | 否 | 基础/待核验 | 账号登录、token 返回；成功/失败/验证码或 2FA 中间态已写 `security_audit` |
 | 审计 | POST | `/api/audit/conn` | 否/待核验 | 基础 | 连接开始、关闭、备注更新 |
@@ -36,7 +36,7 @@
 | 退出登录 | GET/POST/DELETE | `/api/logout` | 是 | 基础 | 退出登录成功/失败已写 `security_audit` |
 | token 鉴权 | * | `/api/*` 鉴权接口 | 是 | 基础 | 客户端 token 无效、token 对应用户无效已写 `security_audit` |
 | 地址簿 | GET/POST | `/api/peers/*` | 是 | 基础 | 老接口地址簿兼容；整体替换接口已写 `operation_audit`，仅记录摘要 |
-| 地址簿 | GET/POST | `/api/ab/*` | 是 | 基础 | 新地址簿主体；`/api/ab/get` 等价于 `GET /api/ab`，共享列表支持 `/api/ab/shared-profiles`、`/api/ab/shared/profiles`、`/api/ab/shared_profiles` |
+| 地址簿 | GET/POST | `/api/ab/*` | 是 | 完整 | 支持官方 GET/POST peers/tags、旧版 `/api/ab/get`、共享 profile CRUD 与 `/api/ab/rule(s)` 用户/用户组/everyone 权限 |
 | 地址簿标签 | POST/PUT/DELETE | `/api/ab/tag*` | 是 | 基础 | 标签新增、改色、重命名、删除已写 `operation_audit`；共享地址簿读取允许 `shared=true`，写入要求 owner 或共享规则 `rule >= 2` |
 | 地址簿设备 | POST/PUT/DELETE | `/api/ab/peer*` | 是 | 基础 | 地址簿设备新增、修改、删除已写 `operation_audit`；peer 密码不落明文；`same_server` 接受布尔值、`null` 或缺省 |
 | 设备组 | GET/POST | `/api/device-group/*` | 是 | 基础/待核验 | 企业设备组兼容 |

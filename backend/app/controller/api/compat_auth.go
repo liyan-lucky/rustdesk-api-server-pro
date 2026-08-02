@@ -141,6 +141,18 @@ func (c *CompatAuthController) HandleDevicesCli() mvc.Result {
 			}
 		}
 	}
+	if v := gjson.GetBytes(body, "strategy_name"); v.Exists() {
+		value := v.String()
+		cmd.StrategyName = &value
+	}
+	if v := gjson.GetBytes(body, "address_book_name"); v.Exists() {
+		value := v.String()
+		cmd.AddressBookName = &value
+	}
+	if v := gjson.GetBytes(body, "device_group_name"); v.Exists() {
+		value := v.String()
+		cmd.DeviceGroupName = &value
+	}
 
 	if err := c.compatService().ApplyDevicesCli(cmd); err != nil {
 		return c.fail(err)

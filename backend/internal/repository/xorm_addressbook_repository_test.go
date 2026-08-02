@@ -68,3 +68,31 @@ func TestPrivateAddressBookIsNotReadableByAnotherUser(t *testing.T) {
 		t.Fatalf("error = %v, want ErrAddressBookNotFound", err)
 	}
 }
+
+func TestSharedAddressBookUserRuleLimitsAccess(t *testing.T) {
+	engine, err := xorm.NewEngine("sqlite", ":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer engine.Close()
+	if err = engine.Sync(new(model.AddressBook), new(model.AddressBookRule), new(model.Peer)); err != nil {
+		t.Fatal(err)
+	}
+	ab := model.AddressBook{UserId: 1, Guid: "ruled", Name: "Ruled", Shared: true, Rule: 0}
+	if _, err = engine.Insert(&ab); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = engine.Insert(&model.AddressBookRule{Guid: "rule-1", AbGuid: ab.Guid, TargetType: "user", TargetGuid: "2", Rule: 1}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = engine.Insert(&model.Peer{UserId: 1, AbId: ab.Id, RustdeskId: "20001", Tags: "[]"}); err != nil {
+		t.Fatal(err)
+	}
+	repo := NewXormAddressBookRepository(engine)
+	if _, err = repo.ListAddressBookPeers(core.AddressBookPeerListQuery{UserID: 2, AbGuid: ab.Guid, Current: 1, PageSize: 10}); err != nil {
+		t.Fatalf("allowed user: %v", err)
+	}
+	if _, err = repo.ListAddressBookPeers(core.AddressBookPeerListQuery{UserID: 3, AbGuid: ab.Guid, Current: 1, PageSize: 10}); !errors.Is(err, ErrAddressBookNotFound) {
+		t.Fatalf("denied user error=%v", err)
+	}
+}

@@ -58,3 +58,7 @@
 - 官方 API 兼容计划：`OFFICIAL_API_COMPATIBILITY_PLAN.md`
 - 发布流程：`RELEASE_PROCESS.md`
 - 故障排查：`TROUBLESHOOTING.md`
+## 设备更新与版本确认
+
+- 设备更新统一使用 `scripts/deploy/update-rustdesk-api.sh`。脚本保留旧容器，直至新容器健康检查和 `/api/version` 版本匹配成功；失败自动回滚。
+- 发布确认必须同时记录 `VERSION`、镜像 OCI version/revision、RepoDigest 和设备 `/api/version` 返回值，不能只检查 `latest` 标签。
