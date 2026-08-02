@@ -1,11 +1,14 @@
 <script setup lang="tsx">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { NTag, NSpace, NInput, NButton, NSelect } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
+import { useAuthStore } from '@/store/modules/auth';
 import { request } from '@/service/request';
 
 const appStore = useAppStore();
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 const loading = ref(false);
 const data = ref<any[]>([]);
 const total = ref(0);
@@ -45,7 +48,7 @@ async function loadData() {
   loading.value = true;
   try {
     const params: Record<string, any> = { current: currentPage.value, size: pageSize.value };
-    if (searchUsername.value) params.username = searchUsername.value;
+    if (isAdmin.value && searchUsername.value) params.username = searchUsername.value;
     if (searchEvent.value) params.event = searchEvent.value;
     const { data: res, error } = await request({ url: '/security-audit/list', params });
     if (!error && res) {
@@ -68,7 +71,7 @@ onMounted(() => { loadData(); });
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <NCard :bordered="false" size="small">
       <NSpace align="center">
-        <NInput v-model:value="searchUsername" :placeholder="$t('dataMap.user.username')" clearable style="width: 200px" @keyup.enter="handleSearch" />
+        <NInput v-if="isAdmin" v-model:value="searchUsername" :placeholder="$t('dataMap.user.username')" clearable style="width: 200px" @keyup.enter="handleSearch" />
         <NSelect v-model:value="searchEvent" :options="eventOptions" :placeholder="$t('dataMap.loginLog.event')" clearable style="width: 200px" />
         <NButton type="primary" @click="handleSearch">{{ $t('common.search') }}</NButton>
       </NSpace>

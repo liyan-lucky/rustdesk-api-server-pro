@@ -603,6 +603,9 @@ declare namespace App {
           checkFailed: string;
           invalidUrl: string;
           invalidResponse: string;
+          updateCommand: string;
+          commandTip: string;
+          copyCommand: string;
         };
       };
       dropdown: Record<Global.DropdownKey, string>;

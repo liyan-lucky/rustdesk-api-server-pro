@@ -177,6 +177,7 @@ const local: App.I18n.Schema = {
     user: 'Gestion des utilisateurs',
     user_list: 'Liste des utilisateurs',
     user_sessions: 'Sessions',
+    user_profile: 'Profil',
     system: 'Gestion systeme',
     system_mail_template: 'Modèles e-mail',
     system_mail_logs: 'Logs e-mail',
@@ -380,7 +381,7 @@ const local: App.I18n.Schema = {
       scopeTitle: 'Espace personnel', scopeTip: 'Seuls vos appareils, sessions, événements de sécurité et carnets autorisés sont affichés ici.', myDevices: 'Mes appareils', activeSessions: 'Sessions actives', addressBooks: 'Carnets d’adresses', securityEvents: 'Événements de sécurité', currentSession: 'Session actuelle', revokeConfirm: 'Révoquer cette session de connexion ?', revoke: 'Révoquer', accountRole: 'Rôle du compte', adminRole: 'Administrateur', userRole: 'Utilisateur', permissionScope: 'Périmètre des droits', userScope: 'Ressources personnelles et carnets explicitement partagés', active: 'Actif'
     },
     about: {
-      runningVersion: 'Version en cours', buildTime: 'Date de compilation', compatVersion: 'Version RustDesk compatible', latestVersion: 'Dernière version', updateAvailable: 'Mise à jour disponible', upToDate: 'À jour', updateCheck: 'Recherche de mise à jour en ligne', urlTip: 'L’adresse de vérification est modifiable et enregistrée dans ce navigateur. Elle peut renvoyer une version sémantique en texte ou un JSON contenant version, latest_version, tag_name ou server.version. Le site distant doit autoriser les requêtes CORS du navigateur.', urlPlaceholder: 'Adresse de vérification des mises à jour', checkNow: 'Vérifier maintenant', restoreDefault: 'Rétablir l’adresse par défaut', checkFailed: 'Échec de la vérification', invalidUrl: 'Seules les adresses HTTP et HTTPS sont acceptées', invalidResponse: 'Aucune version sémantique trouvée dans la réponse'
+      runningVersion: 'Version en cours', buildTime: 'Date de compilation', compatVersion: 'Version RustDesk compatible', latestVersion: 'Dernière version', updateAvailable: 'Mise à jour disponible', upToDate: 'À jour', updateCheck: 'Recherche de mise à jour en ligne', urlTip: 'L’adresse de vérification est modifiable et enregistrée dans ce navigateur. Elle peut renvoyer une version sémantique en texte ou un JSON contenant version, latest_version, tag_name ou server.version. Le site distant doit autoriser les requêtes CORS du navigateur.', urlPlaceholder: 'Adresse de vérification des mises à jour', checkNow: 'Vérifier maintenant', restoreDefault: 'Rétablir l’adresse par défaut', checkFailed: 'Échec de la vérification', invalidUrl: 'Seules les adresses HTTP et HTTPS sont acceptées', invalidResponse: 'Aucune version sémantique trouvée dans la réponse', updateCommand: 'Commande de mise à jour', commandTip: 'Modifiez le modèle; {version} est remplacé par la dernière version.', copyCommand: 'Copier la commande'
     }
   },
   dataMap: {

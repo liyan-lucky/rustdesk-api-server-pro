@@ -1,22 +1,28 @@
 <script setup lang="tsx">
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { NTag, NButton, NSpace, NPopconfirm, NInput, NSelect } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
+import { useAuthStore } from '@/store/modules/auth';
+import { fetchUserList } from '@/service/api/user_management';
 import { fetchAbPeers, fetchAbPeerAdd, fetchAbPeerUpdate, fetchAbPeerDelete, fetchAbAllList, fetchAbPersonal } from '@/service/api/address-book';
 import { downloadCsv, parseCsv } from '@/utils/csv';
 
 const appStore = useAppStore();
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 const loading = ref(false);
 const data = ref<Api.AddressBook.Peer[]>([]);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
-const abOptions = ref<{ label: string; value: string }[]>([]);
+const abOptions = ref<{ label: string; value: string; userId: number }[]>([]);
+const userOptions = ref<{ label: string; value: number }[]>([]);
 const importInput = ref<HTMLInputElement>();
 const modalVisible = ref(false);
 const editing = ref(false);
-const form = reactive({ ab_guid: '', id: '', username: '', hostname: '', platform: '', alias: '', hash: '', password: '', note: '', tagText: '' });
+const form = reactive({ user_id: 0, ab_guid: '', id: '', username: '', hostname: '', platform: '', alias: '', hash: '', password: '', note: '', tagText: '' });
+const selectableAbOptions = computed(() => isAdmin.value ? abOptions.value.filter(option => option.userId === form.user_id) : abOptions.value);
 const filters = reactive({ ab_name: '', id: '', username: '', hostname: '', platform: '', alias: '', tags: '', hash: '', note: '' });
 const filterTitle = (label: string, key: keyof typeof filters) => () => <div class="min-w-130px"><div>{label}</div><NInput value={filters[key]} size="tiny" clearable placeholder={$t('common.keywordSearch')} onUpdateValue={value => { filters[key] = value; currentPage.value = 1; loadData(); }} /></div>;
 
@@ -80,17 +86,19 @@ function handlePageSizeChange(size: number) { pageSize.value = size; currentPage
 
 function openAdd() {
   editing.value = false;
-  Object.assign(form, { ab_guid: abOptions.value[0]?.value || '', id: '', username: '', hostname: '', platform: '', alias: '', hash: '', password: '', note: '', tagText: '' });
+  Object.assign(form, { user_id: 0, ab_guid: isAdmin.value ? '' : abOptions.value[0]?.value || '', id: '', username: '', hostname: '', platform: '', alias: '', hash: '', password: '', note: '', tagText: '' });
   modalVisible.value = true;
 }
 
 function openEdit(row: Api.AddressBook.Peer) {
   editing.value = true;
-  Object.assign(form, row, { password: '', tagText: (row.tags || []).join(', ') });
+  const book = abOptions.value.find(option => option.value === row.ab_guid);
+  Object.assign(form, row, { user_id: book?.userId || 0, password: '', tagText: (row.tags || []).join(', ') });
   modalVisible.value = true;
 }
 
 async function submit() {
+  if (!form.ab_guid) return window.$message?.warning($t('dataMap.ab.nameRequired'));
   if (!form.id.trim()) return window.$message?.warning($t('dataMap.ab.deviceIdRequired'));
   const payload = { ...form, tags: form.tagText.split(',').map(item => item.trim()).filter(Boolean) };
   const result = editing.value ? await fetchAbPeerUpdate(form.ab_guid, payload) : await fetchAbPeerAdd(form.ab_guid, payload);
@@ -120,10 +128,14 @@ async function importData(event: Event) {
 onMounted(async () => {
   const { data: books } = await fetchAbAllList();
   if (books?.length) {
-    abOptions.value = books.map(book => ({ label: `${book.name} (${book.owner})`, value: book.guid }));
+    abOptions.value = books.map(book => ({ label: `${book.name} (${book.owner})`, value: book.guid, userId: book.user_id || 0 }));
   } else {
     const { data: personal } = await fetchAbPersonal();
-    if (personal) { abOptions.value = [{ label: $t('dataMap.ab.personal'), value: personal.guid }]; }
+    if (personal) { abOptions.value = [{ label: $t('dataMap.ab.personal'), value: personal.guid, userId: 0 }]; }
+  }
+  if (isAdmin.value) {
+    const { data: users } = await fetchUserList({ current: 1, size: 1000 });
+    userOptions.value = (users?.records || []).filter(user => user.id !== undefined).map(user => ({ label: user.username, value: user.id! }));
   }
   loadData();
 });
@@ -148,7 +160,8 @@ onMounted(async () => {
     </NCard>
     <NModal v-model:show="modalVisible" preset="card" :title="editing ? $t('common.edit') : $t('common.add')" class="max-w-620px">
       <NForm label-placement="left" label-width="110">
-        <NFormItem :label="$t('dataMap.ab.name')"><NSelect v-model:value="form.ab_guid" :options="abOptions" :disabled="editing" /></NFormItem>
+        <NFormItem v-if="isAdmin && !editing" :label="$t('dataMap.ab.owner')"><NSelect v-model:value="form.user_id" :options="userOptions" filterable @update:value="form.ab_guid = ''" /></NFormItem>
+        <NFormItem :label="$t('dataMap.ab.name')"><NSelect v-model:value="form.ab_guid" :options="selectableAbOptions" :disabled="editing || (isAdmin && !form.user_id)" /></NFormItem>
         <NFormItem :label="$t('dataMap.ab.rustdesk_id')"><NInput v-model:value="form.id" :disabled="editing" /></NFormItem>
         <NFormItem :label="$t('dataMap.ab.alias')"><NInput v-model:value="form.alias" /></NFormItem>
         <NFormItem :label="$t('dataMap.ab.username')"><NInput v-model:value="form.username" /></NFormItem>

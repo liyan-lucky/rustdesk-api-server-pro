@@ -58,8 +58,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'audit',
       icon: 'ph:warning-bold',
       i18nKey: 'route.audit',
-      order: 4,
-      roles: ['R_SUPER']
+      order: 4
     },
     children: [
       {
@@ -69,7 +68,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'audit_baselogs',
           i18nKey: 'route.audit_baselogs',
-          icon: 'hugeicons:files-01'
+          icon: 'hugeicons:files-01',
+          roles: ['R_SUPER']
         }
       },
       {
@@ -79,7 +79,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'audit_filetransferlogs',
           i18nKey: 'route.audit_filetransferlogs',
-          icon: 'solar:square-transfer-horizontal-linear'
+          icon: 'solar:square-transfer-horizontal-linear',
+          roles: ['R_SUPER']
         }
       },
       {
@@ -102,8 +103,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'devices',
       i18nKey: 'route.devices',
       icon: 'mdi:desktop-classic',
-      order: 6,
-      roles: ['R_SUPER']
+      order: 6
     }
   },
   {
@@ -161,7 +161,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'my-devices_manage',
           i18nKey: 'route.my-devices_manage',
-          icon: 'mdi:book-cog'
+          icon: 'mdi:book-cog',
+          order: 3
         }
       },
       {
@@ -171,7 +172,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'my-devices_peers',
           i18nKey: 'route.my-devices_peers',
-          icon: 'mdi:account-multiple'
+          icon: 'mdi:account-multiple',
+          order: 1
         }
       },
       {
@@ -181,7 +183,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'my-devices_tags',
           i18nKey: 'route.my-devices_tags',
-          icon: 'mdi:tag-multiple'
+          icon: 'mdi:tag-multiple',
+          order: 2
         }
       }
     ]
@@ -194,8 +197,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'system',
       i18nKey: 'route.system',
       icon: 'hugeicons:system-update-01',
-      order: 5,
-      roles: ['R_SUPER']
+      order: 5
     },
     children: [
       {
@@ -203,7 +205,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         path: '/system/mail',
         meta: {
           title: 'system_mail',
-          i18nKey: 'route.system_mail'
+          i18nKey: 'route.system_mail',
+          roles: ['R_SUPER']
         },
         children: [
           {
@@ -213,7 +216,8 @@ export const generatedRoutes: GeneratedRoute[] = [
             meta: {
               title: 'system_mail_logs',
               i18nKey: 'route.system_mail_logs',
-              icon: 'icon-park-outline:upload-logs'
+              icon: 'icon-park-outline:upload-logs',
+              roles: ['R_SUPER']
             }
           },
           {
@@ -223,7 +227,8 @@ export const generatedRoutes: GeneratedRoute[] = [
             meta: {
               title: 'system_mail_template',
               i18nKey: 'route.system_mail_template',
-              icon: 'fluent:mail-template-16-regular'
+              icon: 'fluent:mail-template-16-regular',
+              roles: ['R_SUPER']
             }
           }
         ]
@@ -235,7 +240,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'system_oauth',
           i18nKey: 'route.system_oauth',
-          icon: 'mdi:shield-lock'
+          icon: 'mdi:shield-lock',
+          roles: ['R_SUPER']
         }
       },
       {
@@ -255,7 +261,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'system_tokens',
           i18nKey: 'route.system_tokens',
-          icon: 'mdi:key-*variant'
+          icon: 'mdi:key-*variant',
+          roles: ['R_SUPER']
         }
       }
     ]
@@ -268,8 +275,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'user',
       icon: 'majesticons:users-line',
       i18nKey: 'route.user',
-      order: 2,
-      roles: ['R_SUPER']
+      order: 2
     },
     children: [
       {
@@ -280,7 +286,21 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'user_list',
           i18nKey: 'route.user_list',
           requiresAuth: true,
-          icon: 'gravity-ui:person'
+          icon: 'gravity-ui:person',
+          roles: ['R_SUPER']
+        }
+      },
+      {
+        name: 'user_profile',
+        path: '/user/profile',
+        component: 'view.user_profile',
+        meta: {
+          title: 'user_profile',
+          i18nKey: 'route.user_profile',
+          requiresAuth: true,
+          icon: 'mdi:card-account-details-outline',
+          order: 1,
+          roles: ['R_USER']
         }
       },
       {
@@ -291,7 +311,8 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'user_sessions',
           i18nKey: 'route.user_sessions',
           requiresAuth: true,
-          icon: 'carbon:mobile-session'
+          icon: 'carbon:mobile-session',
+          roles: ['R_SUPER']
         }
       }
     ]
@@ -304,6 +325,7 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'workspace',
       i18nKey: 'route.workspace',
       roles: ['R_USER'],
+      hideInMenu: true,
       icon: 'mdi:account-circle',
       order: 2
     },
@@ -316,6 +338,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'workspace_devices',
           i18nKey: 'route.workspace_devices',
           roles: ['R_USER'],
+          hideInMenu: true,
           icon: 'mdi:monitor-multiple',
           order: 2
         }
@@ -328,6 +351,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'workspace_overview',
           i18nKey: 'route.workspace_overview',
           roles: ['R_USER'],
+          hideInMenu: true,
           icon: 'mdi:view-dashboard-outline',
           order: 1
         }
@@ -340,6 +364,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'workspace_profile',
           i18nKey: 'route.workspace_profile',
           roles: ['R_USER'],
+          hideInMenu: true,
           icon: 'mdi:card-account-details-outline',
           order: 5
         }
@@ -352,6 +377,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'workspace_security',
           i18nKey: 'route.workspace_security',
           roles: ['R_USER'],
+          hideInMenu: true,
           icon: 'mdi:shield-account',
           order: 4
         }
@@ -364,6 +390,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'workspace_sessions',
           i18nKey: 'route.workspace_sessions',
           roles: ['R_USER'],
+          hideInMenu: true,
           icon: 'mdi:devices',
           order: 3
         }

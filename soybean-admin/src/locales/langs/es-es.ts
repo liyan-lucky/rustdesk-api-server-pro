@@ -177,6 +177,7 @@ const local: App.I18n.Schema = {
     user: 'Gestión de usuarios',
     user_list: 'Lista de usuarios',
     user_sessions: 'Sesiones',
+    user_profile: 'Perfil',
     system: 'Gestion del sistema',
     system_mail_template: 'Plantillas de correo',
     system_mail_logs: 'registros de correo',
@@ -381,7 +382,7 @@ const local: App.I18n.Schema = {
     },
     about: {
       ...enUs.page.about,
-      runningVersion: 'Versión en ejecución', buildTime: 'Hora de compilación', compatVersion: 'Versión RustDesk compatible', latestVersion: 'Última versión', updateAvailable: 'Actualización disponible', upToDate: 'Actualizado', updateCheck: 'Comprobación de actualizaciones', urlTip: 'La dirección se puede modificar y se guarda en este navegador. El sitio debe permitir solicitudes CORS.', urlPlaceholder: 'URL de comprobación', checkNow: 'Comprobar ahora', restoreDefault: 'Restaurar valor predeterminado', checkFailed: 'Falló la comprobación', invalidUrl: 'Solo se admiten HTTP y HTTPS', invalidResponse: 'No se encontró una versión válida en la respuesta'
+      runningVersion: 'Versión en ejecución', buildTime: 'Hora de compilación', compatVersion: 'Versión RustDesk compatible', latestVersion: 'Última versión', updateAvailable: 'Actualización disponible', upToDate: 'Actualizado', updateCheck: 'Comprobación de actualizaciones', urlTip: 'La dirección se puede modificar y se guarda en este navegador. El sitio debe permitir solicitudes CORS.', urlPlaceholder: 'URL de comprobación', checkNow: 'Comprobar ahora', restoreDefault: 'Restaurar valor predeterminado', checkFailed: 'Falló la comprobación', invalidUrl: 'Solo se admiten HTTP y HTTPS', invalidResponse: 'No se encontró una versión válida en la respuesta', updateCommand: 'Comando de actualización', commandTip: 'Edite la plantilla; {version} se reemplaza por la última versión.', copyCommand: 'Copiar comando'
     }
   },
   dataMap: {

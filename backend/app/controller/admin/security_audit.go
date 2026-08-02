@@ -26,7 +26,13 @@ func (c *SecurityAuditController) HandleList() mvc.Result {
 
 	query := func() *xorm.Session {
 		q := c.Db.Table(&model.SecurityAudit{})
-		if username != "" {
+		user := c.GetUser()
+		if user == nil {
+			return q.Where("1 = 0")
+		}
+		if !user.IsAdmin {
+			q = q.Where("user_id = ?", user.Id)
+		} else if username != "" {
 			q.Where("username LIKE ?", "%"+username+"%")
 		}
 		if event != "" {

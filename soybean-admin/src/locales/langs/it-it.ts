@@ -160,6 +160,7 @@ const local: App.I18n.Schema = {
     user: 'Gestione utenti',
     user_list: 'Elenco utenti',
     user_sessions: 'Sessioni',
+    user_profile: 'Profilo',
     system: 'Gestione sistema',
     system_mail_template: 'Modelli email',
     system_mail_logs: 'Log email',
@@ -352,7 +353,7 @@ const local: App.I18n.Schema = {
       scopeTitle: 'Spazio personale', scopeTip: 'Sono mostrati solo i tuoi dispositivi, le sessioni, gli eventi di sicurezza e le rubriche autorizzate.', myDevices: 'I miei dispositivi', activeSessions: 'Sessioni attive', addressBooks: 'Rubriche', securityEvents: 'Eventi di sicurezza', currentSession: 'Sessione corrente', revokeConfirm: 'Revocare questa sessione?', revoke: 'Revoca', accountRole: 'Ruolo account', adminRole: 'Amministratore', userRole: 'Utente', permissionScope: 'Ambito autorizzazioni', userScope: 'Risorse personali e rubriche condivise esplicitamente', active: 'Attivo'
     },
     about: {
-      runningVersion: 'Versione in esecuzione', buildTime: 'Data build', compatVersion: 'Versione RustDesk compatibile', latestVersion: 'Ultima versione', updateAvailable: 'Aggiornamento disponibile', upToDate: 'Aggiornato', updateCheck: 'Controllo aggiornamenti online', urlTip: 'L’indirizzo può essere modificato e viene salvato nel browser. Il sito deve consentire CORS.', urlPlaceholder: 'URL controllo aggiornamenti', checkNow: 'Controlla ora', restoreDefault: 'Ripristina predefinito', checkFailed: 'Controllo aggiornamenti non riuscito', invalidUrl: 'Sono supportati solo HTTP e HTTPS', invalidResponse: 'Nessuna versione valida nella risposta'
+      runningVersion: 'Versione in esecuzione', buildTime: 'Data build', compatVersion: 'Versione RustDesk compatibile', latestVersion: 'Ultima versione', updateAvailable: 'Aggiornamento disponibile', upToDate: 'Aggiornato', updateCheck: 'Controllo aggiornamenti online', urlTip: 'L’indirizzo può essere modificato e viene salvato nel browser. Il sito deve consentire CORS.', urlPlaceholder: 'URL controllo aggiornamenti', checkNow: 'Controlla ora', restoreDefault: 'Ripristina predefinito', checkFailed: 'Controllo aggiornamenti non riuscito', invalidUrl: 'Sono supportati solo HTTP e HTTPS', invalidResponse: 'Nessuna versione valida nella risposta', updateCommand: 'Comando aggiornamento contenitore', commandTip: 'Modifica il modello; {version} viene sostituito con la versione più recente.', copyCommand: 'Copia comando'
     }
   },
   dropdown: {

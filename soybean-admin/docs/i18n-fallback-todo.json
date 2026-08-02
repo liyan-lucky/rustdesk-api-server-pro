@@ -4,10 +4,10 @@
   "locales": [
     {
       "locale": "zh-CN",
-      "baseKeys": 392,
+      "baseKeys": 443,
       "fallbackCount": 7,
-      "translatedCount": 385,
-      "fallbackRatio": 0.017857142857142856,
+      "translatedCount": 436,
+      "fallbackRatio": 0.01580135440180587,
       "topFallbackKeys": [
         "system.title",
         "theme.tab.mode.chrome",
@@ -38,10 +38,10 @@
     },
     {
       "locale": "ja-JP",
-      "baseKeys": 392,
+      "baseKeys": 443,
       "fallbackCount": 216,
-      "translatedCount": 176,
-      "fallbackRatio": 0.5510204081632653,
+      "translatedCount": 227,
+      "fallbackRatio": 0.48758465011286684,
       "topFallbackKeys": [
         "system.title",
         "common.action",
@@ -169,10 +169,10 @@
     },
     {
       "locale": "ko-KR",
-      "baseKeys": 392,
+      "baseKeys": 443,
       "fallbackCount": 216,
-      "translatedCount": 176,
-      "fallbackRatio": 0.5510204081632653,
+      "translatedCount": 227,
+      "fallbackRatio": 0.48758465011286684,
       "topFallbackKeys": [
         "system.title",
         "common.action",
@@ -300,10 +300,10 @@
     },
     {
       "locale": "fr-FR",
-      "baseKeys": 392,
-      "fallbackCount": 42,
-      "translatedCount": 350,
-      "fallbackRatio": 0.10714285714285714,
+      "baseKeys": 443,
+      "fallbackCount": 43,
+      "translatedCount": 400,
+      "fallbackRatio": 0.09706546275395034,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -346,16 +346,17 @@
         "dataMap.ab.alias",
         "dataMap.ab.hash",
         "dataMap.ab.guid",
+        "dataMap.ab.note",
         "dataMap.token.is_admin"
       ],
       "modules": [
         {
-          "module": "page",
+          "module": "dataMap",
           "count": 15
         },
         {
-          "module": "dataMap",
-          "count": 14
+          "module": "page",
+          "count": 15
         },
         {
           "module": "system",
@@ -377,10 +378,10 @@
     },
     {
       "locale": "de-DE",
-      "baseKeys": 392,
-      "fallbackCount": 48,
-      "translatedCount": 344,
-      "fallbackRatio": 0.12244897959183673,
+      "baseKeys": 443,
+      "fallbackCount": 49,
+      "translatedCount": 394,
+      "fallbackRatio": 0.11060948081264109,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -411,6 +412,7 @@
         "page.myDevices.status",
         "page.myDevices.online",
         "page.myDevices.offline",
+        "page.workspace.adminRole",
         "dataMap.user.status",
         "dataMap.user.statusLabel.normal",
         "dataMap.user.loginVerifyLabel.tfaCheck",
@@ -438,7 +440,7 @@
         },
         {
           "module": "page",
-          "count": 17
+          "count": 18
         },
         {
           "module": "system",
@@ -460,10 +462,10 @@
     },
     {
       "locale": "es-ES",
-      "baseKeys": 392,
+      "baseKeys": 443,
       "fallbackCount": 36,
-      "translatedCount": 356,
-      "fallbackRatio": 0.09183673469387756,
+      "translatedCount": 407,
+      "fallbackRatio": 0.08126410835214447,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -531,10 +533,10 @@
     },
     {
       "locale": "ru-RU",
-      "baseKeys": 392,
+      "baseKeys": 443,
       "fallbackCount": 168,
-      "translatedCount": 224,
-      "fallbackRatio": 0.42857142857142855,
+      "translatedCount": 275,
+      "fallbackRatio": 0.3792325056433409,
       "topFallbackKeys": [
         "system.title",
         "common.action",
@@ -656,6 +658,68 @@
         },
         {
           "module": "system",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "locale": "it-IT",
+      "baseKeys": 443,
+      "fallbackCount": 35,
+      "translatedCount": 408,
+      "fallbackRatio": 0.07900677200902935,
+      "topFallbackKeys": [
+        "common.yesOrNo.no",
+        "route.iframe-page",
+        "route.home",
+        "route.audit",
+        "page.home.serverConfig.key",
+        "page.home.serverConfig.connectivity.checkSourceType.cache",
+        "page.myDevices.online",
+        "page.myDevices.offline",
+        "dataMap.user.password",
+        "dataMap.user.name",
+        "dataMap.user.email",
+        "dataMap.user.loginVerifyLabel.tfaCheck",
+        "dataMap.audit.ip",
+        "dataMap.audit.uuid",
+        "dataMap.mailLog.uuid",
+        "dataMap.ab.rustdesk_id",
+        "dataMap.ab.username",
+        "dataMap.ab.hostname",
+        "dataMap.ab.tags",
+        "dataMap.ab.alias",
+        "dataMap.ab.hash",
+        "dataMap.ab.owner",
+        "dataMap.ab.name",
+        "dataMap.ab.user_id",
+        "dataMap.ab.guid",
+        "dataMap.ab.rule",
+        "dataMap.ab.max_peer",
+        "dataMap.ab.shared",
+        "dataMap.ab.ab_id",
+        "dataMap.ab.tagName",
+        "dataMap.ab.tagColor",
+        "dataMap.ab.updated_at",
+        "dataMap.token.is_admin",
+        "dataMap.oauth.provider",
+        "dataMap.oauth.email"
+      ],
+      "modules": [
+        {
+          "module": "dataMap",
+          "count": 27
+        },
+        {
+          "module": "page",
+          "count": 4
+        },
+        {
+          "module": "route",
+          "count": 3
+        },
+        {
+          "module": "common",
           "count": 1
         }
       ]

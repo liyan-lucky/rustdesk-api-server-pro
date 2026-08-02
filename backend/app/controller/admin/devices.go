@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"time"
+
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
@@ -26,6 +28,29 @@ func (c *DevicesController) HandleList() mvc.Result {
 	rustdesk_id := c.Ctx.URLParamDefault("rustdesk_id", "")
 	query := func() *xorm.Session {
 		q := c.Db.Table(&model.Device{})
+		user := c.GetUser()
+		if user == nil {
+			return q.Where("1 = 0")
+		}
+		if !user.IsAdmin {
+			type idRow struct {
+				RustdeskId string `xorm:"'rustdesk_id'"`
+			}
+			rows := make([]idRow, 0)
+			if err := c.Db.Table(&model.AuthToken{}).Where("user_id = ? and status = 1 and expired > ?", user.Id, time.Now().Format(config.TimeFormat)).Cols("rustdesk_id").Find(&rows); err != nil {
+				return q.Where("1 = 0")
+			}
+			ids := make([]string, 0, len(rows))
+			for _, row := range rows {
+				if row.RustdeskId != "" {
+					ids = append(ids, row.RustdeskId)
+				}
+			}
+			if len(ids) == 0 {
+				return q.Where("1 = 0")
+			}
+			q = q.In("rustdesk_id", ids)
+		}
 
 		if hostname != "" {
 			q.Where("hostname LIKE ?", "%"+hostname+"%")

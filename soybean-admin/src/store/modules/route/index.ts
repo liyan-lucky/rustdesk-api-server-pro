@@ -239,8 +239,8 @@ export const useRouteStore = defineStore(SetupStoreId.Route, () => {
       addAuthRoutes(filteredAuthRoutes);
 
       if (authStore.userInfo.roles.includes('R_USER')) {
-        setRouteHome('workspace_overview');
-        handleUpdateRootRouteRedirect('workspace_overview');
+        setRouteHome('user_profile');
+        handleUpdateRootRouteRedirect('user_profile');
       }
     }
 

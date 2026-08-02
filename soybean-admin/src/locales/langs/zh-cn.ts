@@ -185,6 +185,7 @@ const local: App.I18n.Schema = {
     user: '用户管理',
     user_list: '用户列表',
     user_sessions: '会话管理',
+    user_profile: '个人资料',
     system: '系统管理',
     system_mail_template: '邮件模板',
     system_mail_logs: '邮件日志',
@@ -418,7 +419,7 @@ const local: App.I18n.Schema = {
     },
     about: {
       ...enUs.page.about,
-      runningVersion: '运行版本', buildTime: '构建时间', compatVersion: '兼容的 RustDesk 版本', latestVersion: '最新版本', updateAvailable: '发现新版本', upToDate: '已是最新版本', updateCheck: '在线更新检查', urlTip: '检查地址可以修改并保存在当前浏览器。响应可为纯版本号，或包含 version、latest_version、tag_name、server.version 的 JSON；目标网站需允许浏览器跨域访问。', urlPlaceholder: '更新检查地址', checkNow: '立即检查', restoreDefault: '恢复默认地址', checkFailed: '更新检查失败', invalidUrl: '仅支持 HTTP 或 HTTPS 地址', invalidResponse: '响应中没有找到有效的语义版本号'
+      runningVersion: '运行版本', buildTime: '构建时间', compatVersion: '兼容的 RustDesk 版本', latestVersion: '最新版本', updateAvailable: '发现新版本', upToDate: '已是最新版本', updateCheck: '在线更新检查', urlTip: '检查地址可以修改并保存在当前浏览器。响应可为纯版本号，或包含 version、latest_version、tag_name、server.version 的 JSON；目标网站需允许浏览器跨域访问。', urlPlaceholder: '更新检查地址', checkNow: '立即检查', restoreDefault: '恢复默认地址', checkFailed: '更新检查失败', invalidUrl: '仅支持 HTTP 或 HTTPS 地址', invalidResponse: '响应中没有找到有效的语义版本号', updateCommand: '容器更新命令', commandTip: '可按部署环境修改命令模板，{version} 会替换为检查到的最新版本。', copyCommand: '复制命令'
     }
   },
   dropdown: {

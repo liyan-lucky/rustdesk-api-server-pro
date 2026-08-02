@@ -10,21 +10,21 @@ Metrics:
 
 | Locale | Base Keys | Translated | Suspect | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 439 | 390 | 0 | 49 | 0 | 0 | 88.84% | 88.84% |
-| es-ES | 439 | 403 | 0 | 36 | 0 | 0 | 91.80% | 91.80% |
-| fr-FR | 439 | 396 | 0 | 43 | 0 | 0 | 90.21% | 90.21% |
-| it-IT | 439 | 404 | 0 | 35 | 0 | 0 | 92.03% | 92.03% |
-| ja-JP | 439 | 223 | 0 | 216 | 0 | 0 | 50.80% | 50.80% |
-| ko-KR | 439 | 223 | 0 | 216 | 0 | 0 | 50.80% | 50.80% |
-| ru-RU | 439 | 271 | 0 | 168 | 0 | 0 | 61.73% | 61.73% |
-| zh-CN | 439 | 432 | 0 | 7 | 0 | 0 | 98.41% | 98.41% |
+| de-DE | 443 | 394 | 0 | 49 | 0 | 0 | 88.94% | 88.94% |
+| es-ES | 443 | 407 | 0 | 36 | 0 | 0 | 91.87% | 91.87% |
+| fr-FR | 443 | 400 | 0 | 43 | 0 | 0 | 90.29% | 90.29% |
+| it-IT | 443 | 408 | 0 | 35 | 0 | 0 | 92.10% | 92.10% |
+| ja-JP | 443 | 227 | 0 | 216 | 0 | 0 | 51.24% | 51.24% |
+| ko-KR | 443 | 227 | 0 | 216 | 0 | 0 | 51.24% | 51.24% |
+| ru-RU | 443 | 275 | 0 | 168 | 0 | 0 | 62.08% | 62.08% |
+| zh-CN | 443 | 436 | 0 | 7 | 0 | 0 | 98.42% | 98.42% |
 
 ## de-DE
 
-- Base leaf keys: 439
-- Translated leaves: 390 (88.84%)
+- Base leaf keys: 443
+- Translated leaves: 394 (88.94%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 49 (11.16%)
+- Fallback-identical leaves: 49 (11.06%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -82,10 +82,10 @@ Metrics:
 
 ## es-ES
 
-- Base leaf keys: 439
-- Translated leaves: 403 (91.80%)
+- Base leaf keys: 443
+- Translated leaves: 407 (91.87%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 36 (8.20%)
+- Fallback-identical leaves: 36 (8.13%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -138,10 +138,10 @@ Metrics:
 
 ## fr-FR
 
-- Base leaf keys: 439
-- Translated leaves: 396 (90.21%)
+- Base leaf keys: 443
+- Translated leaves: 400 (90.29%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 43 (9.79%)
+- Fallback-identical leaves: 43 (9.71%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -199,10 +199,10 @@ Metrics:
 
 ## it-IT
 
-- Base leaf keys: 439
-- Translated leaves: 404 (92.03%)
+- Base leaf keys: 443
+- Translated leaves: 408 (92.10%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 35 (7.97%)
+- Fallback-identical leaves: 35 (7.90%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -254,10 +254,10 @@ Metrics:
 
 ## ja-JP
 
-- Base leaf keys: 439
-- Translated leaves: 223 (50.80%)
+- Base leaf keys: 443
+- Translated leaves: 227 (51.24%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 216 (49.20%)
+- Fallback-identical leaves: 216 (48.76%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -315,10 +315,10 @@ Metrics:
 
 ## ko-KR
 
-- Base leaf keys: 439
-- Translated leaves: 223 (50.80%)
+- Base leaf keys: 443
+- Translated leaves: 227 (51.24%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 216 (49.20%)
+- Fallback-identical leaves: 216 (48.76%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -376,10 +376,10 @@ Metrics:
 
 ## ru-RU
 
-- Base leaf keys: 439
-- Translated leaves: 271 (61.73%)
+- Base leaf keys: 443
+- Translated leaves: 275 (62.08%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 168 (38.27%)
+- Fallback-identical leaves: 168 (37.92%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -437,10 +437,10 @@ Metrics:
 
 ## zh-CN
 
-- Base leaf keys: 439
-- Translated leaves: 432 (98.41%)
+- Base leaf keys: 443
+- Translated leaves: 436 (98.42%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 7 (1.59%)
+- Fallback-identical leaves: 7 (1.58%)
 - Missing leaves: 0
 - Extra leaves: 0
 

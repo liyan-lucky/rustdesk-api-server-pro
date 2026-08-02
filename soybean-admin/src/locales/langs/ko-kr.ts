@@ -162,6 +162,7 @@ const local: App.I18n.Schema = {
     "user": "사용자 관리",
     "user_list": "사용자 목록",
     "user_sessions": "세션",
+    "user_profile": "프로필",
     "system": "시스템 관리",
     "system_mail_template": "메일 템플릿",
     "system_mail_logs": "메일 로그",
@@ -354,7 +355,7 @@ const local: App.I18n.Schema = {
       "scopeTitle": "개인 작업 공간", "scopeTip": "본인의 장치, 세션, 보안 기록 및 권한이 있는 주소록만 표시됩니다.", "myDevices": "내 장치", "activeSessions": "활성 세션", "addressBooks": "주소록", "securityEvents": "보안 기록", "currentSession": "현재 세션", "revokeConfirm": "이 로그인 세션을 해제하시겠습니까?", "revoke": "해제", "accountRole": "계정 역할", "adminRole": "관리자", "userRole": "일반 사용자", "permissionScope": "권한 범위", "userScope": "개인 리소스 및 명시적으로 공유된 주소록", "active": "활성"
     },
     "about": {
-      "runningVersion": "실행 버전", "buildTime": "빌드 시간", "compatVersion": "호환 RustDesk 버전", "latestVersion": "최신 버전", "updateAvailable": "업데이트 있음", "upToDate": "최신 상태", "updateCheck": "온라인 업데이트 확인", "urlTip": "확인 URL은 변경할 수 있으며 이 브라우저에 저장됩니다. 대상 사이트에서 CORS를 허용해야 합니다.", "urlPlaceholder": "업데이트 확인 URL", "checkNow": "지금 확인", "restoreDefault": "기본값 복원", "checkFailed": "업데이트 확인 실패", "invalidUrl": "HTTP 또는 HTTPS URL만 지원합니다", "invalidResponse": "유효한 버전을 찾을 수 없습니다"
+      "runningVersion": "실행 버전", "buildTime": "빌드 시간", "compatVersion": "호환 RustDesk 버전", "latestVersion": "최신 버전", "updateAvailable": "업데이트 있음", "upToDate": "최신 상태", "updateCheck": "온라인 업데이트 확인", "urlTip": "확인 URL은 변경할 수 있으며 이 브라우저에 저장됩니다. 대상 사이트에서 CORS를 허용해야 합니다.", "urlPlaceholder": "업데이트 확인 URL", "checkNow": "지금 확인", "restoreDefault": "기본값 복원", "checkFailed": "업데이트 확인 실패", "invalidUrl": "HTTP 또는 HTTPS URL만 지원합니다", "invalidResponse": "유효한 버전을 찾을 수 없습니다", "updateCommand": "컨테이너 업데이트 명령", "commandTip": "명령 템플릿을 편집할 수 있으며 {version}은 최신 버전으로 대체됩니다.", "copyCommand": "명령 복사"
     }
   },
   "dropdown": {

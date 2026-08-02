@@ -188,6 +188,7 @@ const routeMap: RouteMap = {
   "system_tokens": "/system/tokens",
   "user": "/user",
   "user_list": "/user/list",
+  "user_profile": "/user/profile",
   "user_sessions": "/user/sessions",
   "workspace": "/workspace",
   "workspace_devices": "/workspace/devices",

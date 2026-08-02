@@ -4,9 +4,9 @@ Base locale: `en-US`
 
 ## zh-CN
 
-- Base keys: 392
-- Fallback keys: 7 (1.79%)
-- Translated keys: 385
+- Base keys: 443
+- Fallback keys: 7 (1.58%)
+- Translated keys: 436
 
 **Top Modules To Translate**
 - `dataMap`: 4
@@ -25,9 +25,9 @@ Base locale: `en-US`
 
 ## ja-JP
 
-- Base keys: 392
-- Fallback keys: 216 (55.10%)
-- Translated keys: 176
+- Base keys: 443
+- Fallback keys: 216 (48.76%)
+- Translated keys: 227
 
 **Top Modules To Translate**
 - `theme`: 59
@@ -123,9 +123,9 @@ Base locale: `en-US`
 
 ## ko-KR
 
-- Base keys: 392
-- Fallback keys: 216 (55.10%)
-- Translated keys: 176
+- Base keys: 443
+- Fallback keys: 216 (48.76%)
+- Translated keys: 227
 
 **Top Modules To Translate**
 - `page`: 59
@@ -221,19 +221,19 @@ Base locale: `en-US`
 
 ## fr-FR
 
-- Base keys: 392
-- Fallback keys: 42 (10.71%)
-- Translated keys: 350
+- Base keys: 443
+- Fallback keys: 43 (9.71%)
+- Translated keys: 400
 
 **Top Modules To Translate**
+- `dataMap`: 15
 - `page`: 15
-- `dataMap`: 14
 - `system`: 5
 - `route`: 4
 - `common`: 2
 - `theme`: 2
 
-**Top 42 Fallback Keys**
+**Top 43 Fallback Keys**
 - `system.title`
 - `system.updateTitle`
 - `system.updateContent`
@@ -275,23 +275,24 @@ Base locale: `en-US`
 - `dataMap.ab.alias`
 - `dataMap.ab.hash`
 - `dataMap.ab.guid`
+- `dataMap.ab.note`
 - `dataMap.token.is_admin`
 
 ## de-DE
 
-- Base keys: 392
-- Fallback keys: 48 (12.24%)
-- Translated keys: 344
+- Base keys: 443
+- Fallback keys: 49 (11.06%)
+- Translated keys: 394
 
 **Top Modules To Translate**
 - `dataMap`: 19
-- `page`: 17
+- `page`: 18
 - `system`: 5
 - `theme`: 4
 - `route`: 2
 - `common`: 1
 
-**Top 48 Fallback Keys**
+**Top 49 Fallback Keys**
 - `system.title`
 - `system.updateTitle`
 - `system.updateContent`
@@ -321,6 +322,7 @@ Base locale: `en-US`
 - `page.myDevices.status`
 - `page.myDevices.online`
 - `page.myDevices.offline`
+- `page.workspace.adminRole`
 - `dataMap.user.status`
 - `dataMap.user.statusLabel.normal`
 - `dataMap.user.loginVerifyLabel.tfaCheck`
@@ -343,9 +345,9 @@ Base locale: `en-US`
 
 ## es-ES
 
-- Base keys: 392
-- Fallback keys: 36 (9.18%)
-- Translated keys: 356
+- Base keys: 443
+- Fallback keys: 36 (8.13%)
+- Translated keys: 407
 
 **Top Modules To Translate**
 - `dataMap`: 14
@@ -395,9 +397,9 @@ Base locale: `en-US`
 
 ## ru-RU
 
-- Base keys: 392
-- Fallback keys: 168 (42.86%)
-- Translated keys: 224
+- Base keys: 443
+- Fallback keys: 168 (37.92%)
+- Translated keys: 275
 
 **Top Modules To Translate**
 - `theme`: 59
@@ -490,3 +492,52 @@ Base locale: `en-US`
 - `theme.fixedHeaderAndTab`
 - `theme.header.height`
 - `theme.header.breadcrumb.visible`
+
+## it-IT
+
+- Base keys: 443
+- Fallback keys: 35 (7.90%)
+- Translated keys: 408
+
+**Top Modules To Translate**
+- `dataMap`: 27
+- `page`: 4
+- `route`: 3
+- `common`: 1
+
+**Top 35 Fallback Keys**
+- `common.yesOrNo.no`
+- `route.iframe-page`
+- `route.home`
+- `route.audit`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.myDevices.online`
+- `page.myDevices.offline`
+- `dataMap.user.password`
+- `dataMap.user.name`
+- `dataMap.user.email`
+- `dataMap.user.loginVerifyLabel.tfaCheck`
+- `dataMap.audit.ip`
+- `dataMap.audit.uuid`
+- `dataMap.mailLog.uuid`
+- `dataMap.ab.rustdesk_id`
+- `dataMap.ab.username`
+- `dataMap.ab.hostname`
+- `dataMap.ab.tags`
+- `dataMap.ab.alias`
+- `dataMap.ab.hash`
+- `dataMap.ab.owner`
+- `dataMap.ab.name`
+- `dataMap.ab.user_id`
+- `dataMap.ab.guid`
+- `dataMap.ab.rule`
+- `dataMap.ab.max_peer`
+- `dataMap.ab.shared`
+- `dataMap.ab.ab_id`
+- `dataMap.ab.tagName`
+- `dataMap.ab.tagColor`
+- `dataMap.ab.updated_at`
+- `dataMap.token.is_admin`
+- `dataMap.oauth.provider`
+- `dataMap.oauth.email`

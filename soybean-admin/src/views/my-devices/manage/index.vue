@@ -54,7 +54,7 @@ async function loadData() {
 
 function openAdd() {
   editing.value = false;
-  Object.assign(form, { guid: '', user_id: userOptions.value[0]?.value || 0, name: '', note: '', rule: 1, max_peer: 0 });
+  Object.assign(form, { guid: '', user_id: 0, name: '', note: '', rule: 1, max_peer: 0 });
   modalVisible.value = true;
 }
 
@@ -65,6 +65,7 @@ function openEdit(row: Api.AddressBook.AddressBook) {
 }
 
 async function submit() {
+  if (isAdmin.value && !editing.value && !form.user_id) return window.$message?.warning($t('dataMap.ab.nameRequired'));
   if (!form.name.trim()) return window.$message?.warning($t('dataMap.ab.nameRequired'));
   const result = editing.value ? await fetchAbSharedUpdate(form) : await fetchAbSharedAdd(form);
   if (!result.error) {

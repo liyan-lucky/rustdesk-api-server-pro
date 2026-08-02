@@ -3,17 +3,23 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { NButton, NSpace, NPopconfirm, NColorPicker, NSelect, NInput } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
+import { useAuthStore } from '@/store/modules/auth';
+import { fetchUserList } from '@/service/api/user_management';
 import { fetchAbAllTags, fetchAbTagAdd, fetchAbTagUpdate, fetchAbTagRename, fetchAbTagDelete, fetchAbPersonal, fetchAbAllList } from '@/service/api/address-book';
 import { downloadCsv, parseCsv } from '@/utils/csv';
 
 const appStore = useAppStore();
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 const loading = ref(false);
 const data = ref<any[]>([]);
-const abOptions = ref<{ label: string; value: string }[]>([]);
+const abOptions = ref<{ label: string; value: string; userId: number }[]>([]);
+const userOptions = ref<{ label: string; value: number }[]>([]);
 const importInput = ref<HTMLInputElement>();
 const modalVisible = ref(false);
 const editing = ref(false);
-const form = reactive({ ab_guid: '', old: '', name: '', color: '#4098fc' });
+const form = reactive({ user_id: 0, ab_guid: '', old: '', name: '', color: '#4098fc' });
+const selectableAbOptions = computed(() => isAdmin.value ? abOptions.value.filter(option => option.userId === form.user_id) : abOptions.value);
 const filters = reactive({ ab_name: '', owner: '', name: '' });
 const filteredData = computed(() => data.value.filter(row => Object.entries(filters).every(([key, value]) => !value || String(row[key] || '').toLowerCase().includes(value.toLowerCase()))));
 const filterTitle = (label: string, key: keyof typeof filters) => () => <div class="min-w-130px"><div>{label}</div><NInput value={filters[key]} size="tiny" clearable placeholder={$t('common.keywordSearch')} onUpdateValue={value => { filters[key] = value; }} /></div>;
@@ -48,12 +54,12 @@ async function loadAbList() {
   const { data: res, error } = await fetchAbAllList();
   if (!error && res) {
     const list = Array.isArray(res) ? res : [];
-    abOptions.value = list.map((ab: any) => ({ label: `${ab.name} (${ab.guid.slice(0, 8)}...)`, value: ab.guid }));
+    abOptions.value = list.map((ab: any) => ({ label: `${ab.name} (${ab.owner})`, value: ab.guid, userId: ab.user_id || 0 }));
   }
   if (abOptions.value.length === 0) {
     const { data: personalRes, error: personalErr } = await fetchAbPersonal();
     if (!personalErr && personalRes) {
-      abOptions.value = [{ label: `${$t('dataMap.ab.personal')} (${personalRes.guid.slice(0, 8)}...)`, value: personalRes.guid }];
+      abOptions.value = [{ label: `${$t('dataMap.ab.personal')} (${personalRes.guid.slice(0, 8)}...)`, value: personalRes.guid, userId: 0 }];
     }
   }
 }
@@ -83,17 +89,19 @@ function colorToInt(value: string) { return (0xff000000 | Number.parseInt(value.
 
 function openAdd() {
   editing.value = false;
-  Object.assign(form, { ab_guid: abOptions.value[0]?.value || '', old: '', name: '', color: '#4098fc' });
+  Object.assign(form, { user_id: 0, ab_guid: isAdmin.value ? '' : abOptions.value[0]?.value || '', old: '', name: '', color: '#4098fc' });
   modalVisible.value = true;
 }
 
 function openEdit(row: any) {
   editing.value = true;
-  Object.assign(form, { ab_guid: row.ab_guid, old: row.name, name: row.name, color: colorToHex(row.color) });
+  const book = abOptions.value.find(option => option.value === row.ab_guid);
+  Object.assign(form, { user_id: book?.userId || 0, ab_guid: row.ab_guid, old: row.name, name: row.name, color: colorToHex(row.color) });
   modalVisible.value = true;
 }
 
 async function submit() {
+  if (!form.ab_guid) return window.$message?.warning($t('dataMap.ab.nameRequired'));
   if (!form.name.trim()) return window.$message?.warning($t('dataMap.ab.nameRequired'));
   let error: unknown;
   if (!editing.value) {
@@ -117,7 +125,14 @@ async function importData(event: Event) {
   window.$message?.success(`${success}/${rows.length}`); (event.target as HTMLInputElement).value = ''; loadData();
 }
 
-onMounted(async () => { await loadAbList(); loadData(); });
+onMounted(async () => {
+  await loadAbList();
+  if (isAdmin.value) {
+    const { data: users } = await fetchUserList({ current: 1, size: 1000 });
+    userOptions.value = (users?.records || []).filter(user => user.id !== undefined).map(user => ({ label: user.username, value: user.id! }));
+  }
+  loadData();
+});
 </script>
 
 <template>
@@ -139,7 +154,8 @@ onMounted(async () => { await loadAbList(); loadData(); });
     </NCard>
     <NModal v-model:show="modalVisible" preset="card" :title="editing ? $t('common.edit') : $t('common.add')" class="max-w-520px">
       <NForm label-placement="left" label-width="100">
-        <NFormItem :label="$t('dataMap.ab.name')"><NSelect v-model:value="form.ab_guid" :options="abOptions" :disabled="editing" /></NFormItem>
+        <NFormItem v-if="isAdmin && !editing" :label="$t('dataMap.ab.owner')"><NSelect v-model:value="form.user_id" :options="userOptions" filterable @update:value="form.ab_guid = ''" /></NFormItem>
+        <NFormItem :label="$t('dataMap.ab.name')"><NSelect v-model:value="form.ab_guid" :options="selectableAbOptions" :disabled="editing || (isAdmin && !form.user_id)" /></NFormItem>
         <NFormItem :label="$t('dataMap.ab.tagName')"><NInput v-model:value="form.name" /></NFormItem>
         <NFormItem :label="$t('dataMap.ab.tagColor')"><NColorPicker v-model:value="form.color" :show-alpha="false" :modes="['hex']" /></NFormItem>
       </NForm>

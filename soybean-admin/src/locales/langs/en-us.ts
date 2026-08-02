@@ -163,6 +163,7 @@ const local: App.I18n.Schema = {
     user: 'User Management',
     user_list: 'User List',
     user_sessions: 'Sessions',
+    user_profile: 'Profile',
     system: 'System Management',
     system_mail_template: 'Mail Template',
     system_mail_logs: 'Mail Logs',
@@ -375,7 +376,7 @@ const local: App.I18n.Schema = {
       active: 'Active'
     },
     about: {
-      runningVersion: 'Running version', buildTime: 'Build time', compatVersion: 'Compatible RustDesk version', latestVersion: 'Latest version', updateAvailable: 'Update available', upToDate: 'Up to date', updateCheck: 'Online update check', urlTip: 'The check URL is editable and saved in this browser. It may return a plain semantic version or JSON containing version, latest_version, tag_name, or server.version. The remote site must allow browser CORS requests.', urlPlaceholder: 'Update check URL', checkNow: 'Check now', restoreDefault: 'Restore default', checkFailed: 'Update check failed', invalidUrl: 'Only HTTP and HTTPS URLs are supported', invalidResponse: 'No semantic version was found in the response'
+      runningVersion: 'Running version', buildTime: 'Build time', compatVersion: 'Compatible RustDesk version', latestVersion: 'Latest version', updateAvailable: 'Update available', upToDate: 'Up to date', updateCheck: 'Online update check', urlTip: 'The check URL is editable and saved in this browser. It may return a plain semantic version or JSON containing version, latest_version, tag_name, or server.version. The remote site must allow browser CORS requests.', urlPlaceholder: 'Update check URL', checkNow: 'Check now', restoreDefault: 'Restore default', checkFailed: 'Update check failed', invalidUrl: 'Only HTTP and HTTPS URLs are supported', invalidResponse: 'No semantic version was found in the response', updateCommand: 'Container update command', commandTip: 'Edit the command template for your deployment. {version} is replaced with the latest detected version.', copyCommand: 'Copy command'
     }
   },
   dropdown: {

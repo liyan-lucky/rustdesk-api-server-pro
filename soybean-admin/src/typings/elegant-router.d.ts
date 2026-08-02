@@ -42,6 +42,7 @@ declare module "@elegant-router/types" {
     "system_tokens": "/system/tokens";
     "user": "/user";
     "user_list": "/user/list";
+    "user_profile": "/user/profile";
     "user_sessions": "/user/sessions";
     "workspace": "/workspace";
     "workspace_devices": "/workspace/devices";
@@ -129,6 +130,7 @@ declare module "@elegant-router/types" {
     | "system_server"
     | "system_tokens"
     | "user_list"
+    | "user_profile"
     | "user_sessions"
     | "workspace_devices"
     | "workspace_overview"

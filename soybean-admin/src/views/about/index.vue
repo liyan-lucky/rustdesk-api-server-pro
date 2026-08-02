@@ -2,16 +2,23 @@
 import { computed, onMounted, ref } from 'vue';
 import { getBuildTime, getVersionTag } from '@/utils/version';
 import { $t } from '@/locales';
+import { useAuthStore } from '@/store/modules/auth';
 
 const defaultCheckUrl = 'https://raw.githubusercontent.com/liyan-lucky/rustdesk-api-server-pro/main/VERSION';
 const storageKey = 'rustdesk-api-update-check-url';
+const commandStorageKey = 'rustdesk-api-update-command-template';
+const defaultCommandTemplate = 'IMAGE=ghcr.io/liyan-lucky/rustdesk-api-server-pro:{version} EXPECTED_VERSION={version} /vol1/docker/rustdesk-api-server-pro/update-rustdesk-api.sh';
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 const checkUrl = ref(localStorage.getItem(storageKey) || defaultCheckUrl);
+const commandTemplate = ref(localStorage.getItem(commandStorageKey) || defaultCommandTemplate);
 const runningVersion = ref(getVersionTag().replace(/^v/, ''));
 const latestVersion = ref('');
 const compatVersion = ref('');
 const checking = ref(false);
 const errorMessage = ref('');
 const hasUpdate = computed(() => latestVersion.value && compareVersions(latestVersion.value, runningVersion.value) > 0);
+const resolvedUpdateCommand = computed(() => commandTemplate.value.replaceAll('{version}', latestVersion.value || runningVersion.value));
 
 function normalizeVersion(value: string) {
   const match = value.trim().match(/v?(\d+\.\d+\.\d+)/);
@@ -64,6 +71,21 @@ function restoreDefault() {
   localStorage.setItem(storageKey, defaultCheckUrl);
 }
 
+function saveCommandTemplate() {
+  localStorage.setItem(commandStorageKey, commandTemplate.value);
+  window.$message?.success($t('common.updateSuccess'));
+}
+
+function restoreDefaultCommand() {
+  commandTemplate.value = defaultCommandTemplate;
+  localStorage.setItem(commandStorageKey, defaultCommandTemplate);
+}
+
+async function copyUpdateCommand() {
+  await navigator.clipboard.writeText(resolvedUpdateCommand.value);
+  window.$message?.success($t('common.updateSuccess'));
+}
+
 onMounted(() => { loadRuntimeVersion(); checkUpdate(); });
 </script>
 
@@ -83,6 +105,14 @@ onMounted(() => { loadRuntimeVersion(); checkUpdate(); });
         <NInput v-model:value="checkUrl" :placeholder="$t('page.about.urlPlaceholder')" />
         <NSpace><NButton type="primary" :loading="checking" @click="checkUpdate">{{ $t('page.about.checkNow') }}</NButton><NButton @click="restoreDefault">{{ $t('page.about.restoreDefault') }}</NButton></NSpace>
         <NAlert v-if="errorMessage" type="error">{{ $t('page.about.checkFailed') }}: {{ errorMessage }}</NAlert>
+      </NSpace>
+    </NCard>
+    <NCard v-if="isAdmin" :title="$t('page.about.updateCommand')" :bordered="false">
+      <NAlert type="info" class="mb-16px">{{ $t('page.about.commandTip') }}</NAlert>
+      <NSpace vertical>
+        <NInput v-model:value="commandTemplate" type="textarea" :autosize="{ minRows: 3, maxRows: 8 }" />
+        <NCode :code="resolvedUpdateCommand" language="shell" word-wrap />
+        <NSpace><NButton type="primary" @click="copyUpdateCommand">{{ $t('page.about.copyCommand') }}</NButton><NButton @click="saveCommandTemplate">{{ $t('common.save') }}</NButton><NButton @click="restoreDefaultCommand">{{ $t('page.about.restoreDefault') }}</NButton></NSpace>
       </NSpace>
     </NCard>
   </NSpace>

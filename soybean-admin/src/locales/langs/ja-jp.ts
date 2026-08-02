@@ -162,6 +162,7 @@ const local: App.I18n.Schema = {
     "user": "ユーザー管理",
     "user_list": "ユーザー一覧",
     "user_sessions": "セッション",
+    "user_profile": "プロフィール",
     "system": "システム管理",
     "system_mail_template": "メールテンプレート",
     "system_mail_logs": "メールログ",
@@ -354,7 +355,7 @@ const local: App.I18n.Schema = {
       "scopeTitle": "個人ワークスペース", "scopeTip": "自分のデバイス、セッション、セキュリティ履歴、許可されたアドレス帳のみ表示されます。", "myDevices": "マイデバイス", "activeSessions": "有効なセッション", "addressBooks": "アドレス帳", "securityEvents": "セキュリティ履歴", "currentSession": "現在のセッション", "revokeConfirm": "このセッションを無効にしますか？", "revoke": "無効化", "accountRole": "アカウント権限", "adminRole": "管理者", "userRole": "一般ユーザー", "permissionScope": "権限範囲", "userScope": "個人リソースと許可された共有アドレス帳", "active": "有効"
     },
     "about": {
-      "runningVersion": "実行中のバージョン", "buildTime": "ビルド日時", "compatVersion": "対応RustDeskバージョン", "latestVersion": "最新バージョン", "updateAvailable": "更新があります", "upToDate": "最新です", "updateCheck": "オンライン更新確認", "urlTip": "確認URLは変更でき、このブラウザーに保存されます。対象サイトはCORSを許可する必要があります。", "urlPlaceholder": "更新確認URL", "checkNow": "今すぐ確認", "restoreDefault": "既定に戻す", "checkFailed": "更新確認に失敗しました", "invalidUrl": "HTTPまたはHTTPSのみ対応しています", "invalidResponse": "有効なバージョンが見つかりません"
+      "runningVersion": "実行中のバージョン", "buildTime": "ビルド日時", "compatVersion": "対応RustDeskバージョン", "latestVersion": "最新バージョン", "updateAvailable": "更新があります", "upToDate": "最新です", "updateCheck": "オンライン更新確認", "urlTip": "確認URLは変更でき、このブラウザーに保存されます。対象サイトはCORSを許可する必要があります。", "urlPlaceholder": "更新確認URL", "checkNow": "今すぐ確認", "restoreDefault": "既定に戻す", "checkFailed": "更新確認に失敗しました", "invalidUrl": "HTTPまたはHTTPSのみ対応しています", "invalidResponse": "有効なバージョンが見つかりません", "updateCommand": "コンテナ更新コマンド", "commandTip": "テンプレートを編集できます。{version} は最新バージョンに置換されます。", "copyCommand": "コマンドをコピー"
     }
   },
   "dropdown": {
