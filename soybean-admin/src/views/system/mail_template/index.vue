@@ -1,6 +1,7 @@
 <script setup lang="tsx">
-import { NButton, NSpace, NTag } from 'naive-ui';
-import { fetchMailTemplateList } from '@/service/api/system';
+import { reactive, ref } from 'vue';
+import { NButton, NSpace, NTag, NInput, NSelect, NDatePicker } from 'naive-ui';
+import { addMailTemplate, fetchMailTemplateList } from '@/service/api/system';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useTable, useTableOperate } from '@/hooks/common/table';
@@ -8,7 +9,10 @@ import { MailTemplateOptions } from '@/constants/business';
 import MailTemplateEdit from './components/edit.vue';
 import MailTemplateSearch from './components/search.vue';
 import TableHeader from './components/table-header.vue';
+import { downloadCsv, parseCsv } from '@/utils/csv';
 const appStore = useAppStore();
+const importInput = ref<HTMLInputElement>();
+const headerFilters = reactive<{ id: string; name: string; type: number | null; subject: string; created_at: [number, number] | null }>({ id: '', name: '', type: null, subject: '', created_at: null });
 
 const tagTypes: any = {
   1: 'success',
@@ -32,6 +36,7 @@ const {
   apiParams: {
     current: 1,
     size: 10,
+    id: null,
     // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
     // the value can not be undefined, otherwise the property in Form will not be reactive
     name: null,
@@ -39,7 +44,9 @@ const {
     subject: null,
     created_at: null
   },
-  columns: () => [
+  columns: () => {
+    const filterTitle = (label: string, key: 'id' | 'name' | 'subject') => () => <div class="min-w-130px"><div>{label}</div><NInput value={headerFilters[key]} size="tiny" clearable placeholder={$t('common.keywordSearch')} onUpdateValue={value => { headerFilters[key] = value; applyHeaderFilters(); }} /></div>;
+    return [
     {
       type: 'selection',
       align: 'center',
@@ -49,17 +56,17 @@ const {
     },
     {
       key: 'id',
-      title: 'ID',
+      title: filterTitle('ID', 'id'),
       align: 'center'
     },
     {
       key: 'name',
-      title: $t('dataMap.mailTemplate.name'),
+      title: filterTitle($t('dataMap.mailTemplate.name'), 'name'),
       align: 'center'
     },
     {
       key: 'type',
-      title: $t('dataMap.mailTemplate.type'),
+      title: () => <div class="min-w-130px"><div>{$t('dataMap.mailTemplate.type')}</div><NSelect value={headerFilters.type} size="tiny" clearable options={MailTemplateOptions.map(option => ({ ...option, label: $t(option.label as App.I18n.I18nKey) }))} onUpdateValue={value => { headerFilters.type = value; applyHeaderFilters(); }} /></div>,
       align: 'center',
       render: row => {
         let label = '';
@@ -77,12 +84,12 @@ const {
     },
     {
       key: 'subject',
-      title: $t('dataMap.mailTemplate.subject'),
+      title: filterTitle($t('dataMap.mailTemplate.subject'), 'subject'),
       align: 'center'
     },
     {
       key: 'created_at',
-      title: $t('dataMap.session.created_at'),
+      title: () => <div class="min-w-250px"><div>{$t('dataMap.session.created_at')}</div><NDatePicker value={headerFilters.created_at} type="daterange" size="small" clearable onUpdateValue={value => { headerFilters.created_at = value as [number, number] | null; applyHeaderFilters(); }} /></div>,
       align: 'center'
     },
     {
@@ -99,7 +106,8 @@ const {
         );
       }
     }
-  ]
+    ];
+  }
 });
 
 const {
@@ -115,6 +123,23 @@ const {
 function handleEditTable(row: Api.System.MailTemplate) {
   handleEdit(row.id);
 }
+
+function applyHeaderFilters() {
+  Object.assign(searchParams, headerFilters, { created_at: headerFilters.created_at?.map(value => new Date(value).toISOString()) || null });
+  getDataByPage();
+}
+
+async function exportData() {
+  const { data: result, error } = await fetchMailTemplateList({ ...searchParams, current: 1, size: 10000 });
+  if (!error && result) downloadCsv('mail-templates.csv', result.records as any[], ['name', 'type', 'subject', 'contents']);
+}
+
+async function importData(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]; if (!file) return;
+  const rows = await parseCsv(file); let success = 0;
+  for (const row of rows) { if (!row.name || !row.subject) continue; const result = await addMailTemplate({ name: row.name, type: Number(row.type) || 3, subject: row.subject, contents: row.contents || '' } as Api.System.MailTemplate); if (!result.error) success += 1; }
+  window.$message?.success(`${success}/${rows.length}`); (event.target as HTMLInputElement).value = ''; getDataByPage();
+}
 </script>
 
 <template>
@@ -127,11 +152,14 @@ function handleEditTable(row: Api.System.MailTemplate) {
       class="sm:flex-1-hidden card-wrapper"
     >
       <template #header-extra>
+        <input ref="importInput" type="file" accept=".csv,text/csv" class="hidden" @change="importData" />
         <TableHeader
           v-model:columns="columnChecks"
           :disabled-kill="checkedRowKeys.length === 0"
           :loading="loading"
           @add="handleAdd"
+          @import="importInput?.click()"
+          @export="exportData"
           @refresh="getData"
         />
       </template>

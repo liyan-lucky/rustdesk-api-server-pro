@@ -32,6 +32,10 @@ export function fetchAbTags(abGuid: string) {
   return request({ url: `/ab/tags/${abGuid}`, method: 'post' });
 }
 
+export function fetchAbAllTags() {
+  return request<Api.AddressBook.Tag[]>({ url: '/ab/tags' });
+}
+
 export function fetchAbTagAdd(abGuid: string, data: any) {
   return request({ url: `/ab/tag/add/${abGuid}`, method: 'post', data });
 }

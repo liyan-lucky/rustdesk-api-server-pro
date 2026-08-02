@@ -74,7 +74,7 @@
 | 心跳 | `/api/heartbeat` | 已有/待核验 | 已回显客户端 `modified_at` 避免策略版本反复同步；继续记录在线状态和客户端版本 | P0 |
 | sysinfo | `/api/sysinfo` | 已有/待核验 | 扩展 OS、版本、主机名、IP、MAC | P1 |
 | 设备列表 | `/api/devices` | 已有/待核验 | 支持分页、搜索、在线过滤 | P1 |
-| 地址簿 | `/api/ab`、`/api/ab/get`、`/api/ab/shared-profiles`、`/api/ab/shared/profiles`、`/api/ab/shared_profiles`、`/api/peers` | 已有 | 已补齐 `note`、`tags`、`hash`、共享地址簿读取和 `same_server` 布尔兼容；继续用真实客户端核验更新时间与共享写权限边界 | P0 |
+| 地址簿 | `/api/ab`、`/api/ab/get`、`/api/ab/shared-profiles`、`/api/ab/shared/profiles`、`/api/ab/shared_profiles`、`/api/peers` | 已有 | 已补齐 `note`、`tags`、`hash`、共享地址簿读取和 `same_server` 布尔兼容；管理端全量视图不改变官方客户端按 guid 同步协议，继续用真实客户端核验更新时间与共享写权限边界 | P0 |
 | 连接审计 | `/api/audit/conn` | 已有基础 | 增加完整字段、状态、方向、会话时长 | P0 |
 | 文件审计 | `/api/audit/file` | 已有基础 | 增加大小、结果、方向、错误信息 | P0 |
 | 报警审计 | `/api/audit/alarm` | 兼容占位 | 落库并后台展示 | P1 |

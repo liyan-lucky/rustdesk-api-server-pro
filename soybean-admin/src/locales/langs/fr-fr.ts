@@ -21,6 +21,8 @@ const local: App.I18n.Schema = {
     deleteSuccess: 'Suppression réussie',
     confirmDelete: 'Voulez-vous vraiment supprimer ?',
     edit: 'Modifier',
+    import: 'Importer CSV',
+    export: 'Exporter CSV',
     look: 'Voir',
     warning: 'Avertissement',
     error: 'Erreur',

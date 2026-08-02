@@ -233,6 +233,8 @@ jobsConfig:
 | `tags` | `Tags` | 旧标签模型 |
 | `address_book` | `AddressBook` | 地址簿主体 |
 | `address_book_tag` | `AddressBookTag` | 地址簿标签和颜色 |
+
+`address_book.created_by_admin` 用于记录管理员是否为其他用户代建地址簿。该字段由 `sync` 自动补齐，默认值为 `0`；普通用户删除时必须由后端检查该字段，不能只依赖前端隐藏按钮。
 | `audit` | `Audit` | 连接审计日志 |
 | `file_transfer` | `FileTransfer` | 文件传输日志 |
 | `mail_template` | `MailTemplate` | 邮件模板 |
@@ -450,6 +452,12 @@ jobsConfig:
 | `GET` | `/admin/sessions/list` | 会话列表 |
 | `POST` | `/admin/sessions/kill` | 踢出会话 |
 | `GET` | `/admin/devices/list` | 设备列表 |
+| `GET` | `/admin/ab/list` | 当前账户可管理的地址簿列表；管理员返回全部，普通用户仅返回自己的 |
+| `GET` | `/admin/ab/peers` | 当前账户下全部联系人，可按地址簿名称、设备 ID、用户、主机、平台、别名、标签等字段筛选 |
+| `GET` | `/admin/ab/tags` | 当前账户下全部地址簿标签，返回地址簿名称、guid 和归属人 |
+| `POST` | `/admin/ab/shared/add` | 新增地址簿；管理员可指定 `user_id`，普通用户的归属强制为当前用户 |
+| `PUT` | `/admin/ab/shared/update` | 修改可管理的共享地址簿 |
+| `DELETE` | `/admin/ab/shared` | 删除共享地址簿；普通用户不能删除 `created_by_admin=true` 的管理员代建地址簿 |
 | `GET` | `/admin/audit/list` | 连接审计日志 |
 | `GET` | `/admin/audit/file-transfer-list` | 文件传输日志 |
 | `GET` | `/admin/mail/templates/list` | 邮件模板列表 |

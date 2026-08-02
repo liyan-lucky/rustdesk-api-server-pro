@@ -25,6 +25,7 @@ func (c *MailTemplateController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *MailTemplateController) HandleList() mvc.Result {
 	currentPage := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("size", 10)
+	id := c.Ctx.URLParamDefault("id", "")
 	name := c.Ctx.URLParamDefault("name", "")
 	subject := c.Ctx.URLParamDefault("subject", "")
 	_type := c.Ctx.URLParamDefault("type", "")
@@ -33,6 +34,9 @@ func (c *MailTemplateController) HandleList() mvc.Result {
 
 	query := func() *xorm.Session {
 		q := c.Db.Table(&model.MailTemplate{})
+		if id != "" {
+			q.Where("id = ?", id)
+		}
 		if name != "" {
 			name = "%" + name + "%"
 			q.Where("name like ?", name)
@@ -183,22 +187,22 @@ func sanitizeMailTemplateForAudit(template *model.MailTemplate) iris.Map {
 		return nil
 	}
 	return iris.Map{
-		"id":              template.Id,
-		"name":            template.Name,
-		"type":            template.Type,
-		"subject":         template.Subject,
-		"contents_length": len(template.Contents),
+		"id":               template.Id,
+		"name":             template.Name,
+		"type":             template.Type,
+		"subject":          template.Subject,
+		"contents_length":  len(template.Contents),
 		"contents_preview": truncateForAudit(template.Contents, 120),
 	}
 }
 
 func sanitizeMailTemplateFormForAudit(form admin.MailTemplateForm) iris.Map {
 	return iris.Map{
-		"id":              form.Id,
-		"name":            form.Name,
-		"type":            form.Type,
-		"subject":         form.Subject,
-		"contents_length": len(form.Contents),
+		"id":               form.Id,
+		"name":             form.Name,
+		"type":             form.Type,
+		"subject":          form.Subject,
+		"contents_length":  len(form.Contents),
 		"contents_preview": truncateForAudit(form.Contents, 120),
 	}
 }

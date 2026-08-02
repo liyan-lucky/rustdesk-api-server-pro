@@ -28,6 +28,8 @@ const local: App.I18n.Schema = {
     deleteSuccess: '删除成功',
     confirmDelete: '确认删除吗？',
     edit: '编辑',
+    import: '导入 CSV',
+    export: '导出 CSV',
     look: '查看',
     warning: '警告',
     error: '错误',

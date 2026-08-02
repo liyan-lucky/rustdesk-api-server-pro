@@ -1,23 +1,28 @@
 <script setup lang="tsx">
-import { onMounted, reactive, ref } from 'vue';
-import { NButton, NSpace, NPopconfirm, NColorPicker, NSelect } from 'naive-ui';
+import { computed, onMounted, reactive, ref } from 'vue';
+import { NButton, NSpace, NPopconfirm, NColorPicker, NSelect, NInput } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import { fetchAbTags, fetchAbTagAdd, fetchAbTagUpdate, fetchAbTagRename, fetchAbTagDelete, fetchAbPersonal, fetchAbAllList } from '@/service/api/address-book';
+import { fetchAbAllTags, fetchAbTagAdd, fetchAbTagUpdate, fetchAbTagRename, fetchAbTagDelete, fetchAbPersonal, fetchAbAllList } from '@/service/api/address-book';
+import { downloadCsv, parseCsv } from '@/utils/csv';
 
 const appStore = useAppStore();
 const loading = ref(false);
 const data = ref<any[]>([]);
-const currentAbGuid = ref('');
 const abOptions = ref<{ label: string; value: string }[]>([]);
+const importInput = ref<HTMLInputElement>();
 const modalVisible = ref(false);
 const editing = ref(false);
-const form = reactive({ old: '', name: '', color: '#4098fc' });
+const form = reactive({ ab_guid: '', old: '', name: '', color: '#4098fc' });
+const filters = reactive({ ab_name: '', owner: '', name: '' });
+const filteredData = computed(() => data.value.filter(row => Object.entries(filters).every(([key, value]) => !value || String(row[key] || '').toLowerCase().includes(value.toLowerCase()))));
+const filterTitle = (label: string, key: keyof typeof filters) => () => <div class="min-w-130px"><div>{label}</div><NInput value={filters[key]} size="tiny" clearable placeholder={$t('common.keywordSearch')} onUpdateValue={value => { filters[key] = value; }} /></div>;
 
 const columns = [
   { key: 'id', title: 'ID', align: 'center' as const },
-  { key: 'ab_id', title: $t('dataMap.ab.ab_id'), align: 'center' as const },
-  { key: 'name', title: $t('dataMap.ab.tagName'), align: 'center' as const },
+  { key: 'ab_name', title: filterTitle($t('dataMap.ab.name'), 'ab_name'), align: 'center' as const },
+  { key: 'owner', title: filterTitle($t('dataMap.ab.owner'), 'owner'), align: 'center' as const },
+  { key: 'name', title: filterTitle($t('dataMap.ab.tagName'), 'name'), align: 'center' as const },
   {
     key: 'color',
     title: $t('dataMap.ab.tagColor'),
@@ -44,26 +49,19 @@ async function loadAbList() {
   if (!error && res) {
     const list = Array.isArray(res) ? res : [];
     abOptions.value = list.map((ab: any) => ({ label: `${ab.name} (${ab.guid.slice(0, 8)}...)`, value: ab.guid }));
-    if (!currentAbGuid.value && list.length > 0) {
-      currentAbGuid.value = list[0].guid;
-      loadData();
-    }
   }
   if (abOptions.value.length === 0) {
     const { data: personalRes, error: personalErr } = await fetchAbPersonal();
     if (!personalErr && personalRes) {
-      currentAbGuid.value = personalRes.guid;
       abOptions.value = [{ label: `${$t('dataMap.ab.personal')} (${personalRes.guid.slice(0, 8)}...)`, value: personalRes.guid }];
-      loadData();
     }
   }
 }
 
 async function loadData() {
-  if (!currentAbGuid.value) return;
   loading.value = true;
   try {
-    const { data: res, error } = await fetchAbTags(currentAbGuid.value);
+    const { data: res, error } = await fetchAbAllTags();
     if (!error && res) {
       data.value = Array.isArray(res) ? res : [];
     }
@@ -73,7 +71,7 @@ async function loadData() {
 }
 
 async function handleDelete(row: any) {
-  const { error } = await fetchAbTagDelete(currentAbGuid.value, [row.name]);
+  const { error } = await fetchAbTagDelete(row.ab_guid, [row.name]);
   if (!error) {
     window.$message?.success($t('common.deleteSuccess'));
     loadData();
@@ -85,13 +83,13 @@ function colorToInt(value: string) { return (0xff000000 | Number.parseInt(value.
 
 function openAdd() {
   editing.value = false;
-  Object.assign(form, { old: '', name: '', color: '#4098fc' });
+  Object.assign(form, { ab_guid: abOptions.value[0]?.value || '', old: '', name: '', color: '#4098fc' });
   modalVisible.value = true;
 }
 
 function openEdit(row: any) {
   editing.value = true;
-  Object.assign(form, { old: row.name, name: row.name, color: colorToHex(row.color) });
+  Object.assign(form, { ab_guid: row.ab_guid, old: row.name, name: row.name, color: colorToHex(row.color) });
   modalVisible.value = true;
 }
 
@@ -99,10 +97,10 @@ async function submit() {
   if (!form.name.trim()) return window.$message?.warning($t('dataMap.ab.nameRequired'));
   let error: unknown;
   if (!editing.value) {
-    ({ error } = await fetchAbTagAdd(currentAbGuid.value, { name: form.name, color: colorToInt(form.color) }));
+    ({ error } = await fetchAbTagAdd(form.ab_guid, { name: form.name, color: colorToInt(form.color) }));
   } else {
-    if (form.old !== form.name) ({ error } = await fetchAbTagRename(currentAbGuid.value, { old: form.old, new: form.name }));
-    if (!error) ({ error } = await fetchAbTagUpdate(currentAbGuid.value, { name: form.name, color: colorToInt(form.color) }));
+    if (form.old !== form.name) ({ error } = await fetchAbTagRename(form.ab_guid, { old: form.old, new: form.name }));
+    if (!error) ({ error } = await fetchAbTagUpdate(form.ab_guid, { name: form.name, color: colorToInt(form.color) }));
   }
   if (!error) {
     window.$message?.success(editing.value ? $t('common.updateSuccess') : $t('common.addSuccess'));
@@ -111,23 +109,26 @@ async function submit() {
   }
 }
 
-function handleAbChange(guid: string) {
-  currentAbGuid.value = guid;
-  loadData();
+function exportData() { downloadCsv('address-book-tags.csv', filteredData.value, ['ab_guid', 'ab_name', 'owner', 'name', 'color']); }
+async function importData(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]; if (!file) return;
+  const rows = await parseCsv(file); let success = 0;
+  for (const row of rows) { const guid = row.ab_guid || ''; if (!guid || !row.name) continue; const result = await fetchAbTagAdd(guid, { name: row.name, color: Number(row.color) || colorToInt('#4098fc') }); if (!result.error) success += 1; }
+  window.$message?.success(`${success}/${rows.length}`); (event.target as HTMLInputElement).value = ''; loadData();
 }
 
-onMounted(() => { loadAbList(); });
+onMounted(async () => { await loadAbList(); loadData(); });
 </script>
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <NCard :title="$t('route.my-devices_tags')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
-        <NSpace><NSelect v-model:value="currentAbGuid" :options="abOptions" size="small" style="width: 260px" @update:value="handleAbChange" /><NButton type="primary" size="small" :disabled="!currentAbGuid" @click="openAdd">{{ $t('common.add') }}</NButton></NSpace>
+        <NSpace><input ref="importInput" type="file" accept=".csv,text/csv" class="hidden" @change="importData" /><NButton size="small" @click="importInput?.click()">{{ $t('common.import') }}</NButton><NButton size="small" @click="exportData">{{ $t('common.export') }}</NButton><NButton type="primary" size="small" :disabled="!abOptions.length" @click="openAdd">{{ $t('common.add') }}</NButton></NSpace>
       </template>
       <NDataTable
         :columns="columns"
-        :data="data"
+        :data="filteredData"
         size="small"
         :flex-height="!appStore.isMobile"
         :scroll-x="900"
@@ -138,6 +139,7 @@ onMounted(() => { loadAbList(); });
     </NCard>
     <NModal v-model:show="modalVisible" preset="card" :title="editing ? $t('common.edit') : $t('common.add')" class="max-w-520px">
       <NForm label-placement="left" label-width="100">
+        <NFormItem :label="$t('dataMap.ab.name')"><NSelect v-model:value="form.ab_guid" :options="abOptions" :disabled="editing" /></NFormItem>
         <NFormItem :label="$t('dataMap.ab.tagName')"><NInput v-model:value="form.name" /></NFormItem>
         <NFormItem :label="$t('dataMap.ab.tagColor')"><NColorPicker v-model:value="form.color" :show-alpha="false" :modes="['hex']" /></NFormItem>
       </NForm>

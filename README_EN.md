@@ -42,7 +42,9 @@ SQLite is the default database, and MySQL is supported. Configuration lives in `
 - Address book read/write, shared address books, `note`, and `same_server` compatibility
 - Device list, user list, and audit logs
 - My Synced Devices: admin views all devices, regular users view their own
-- Address Book: peers, address book management, tag management
+- Address Book: account-wide peer/tag views with address-book columns, header filters, and CSV import/export
+- Administrators can create address books for a selected user; regular users can only create their own and cannot delete administrator-created books
+- About & Updates page with runtime/compatibility versions and an editable online update-check URL
 - Minimal compatibility for heartbeat, sysinfo, devices/cli; heartbeat echoes client `modified_at`
 - Minimal record upload flow for `/api/record` (`new/part/tail/remove`)
 - Auto‑increment version system: CI bumps PATCH version on each build
@@ -61,7 +63,8 @@ Note: some advanced capabilities are placeholders. See the FAQ section.
 - Aligned new peer payload parsing with official client `same_server` boolean/null/missing shapes
 - Fixed heartbeat `modified_at` responses to echo the client value when no strategy is assigned, avoiding repeated strategy resyncs
 - Added "My Synced Devices" menu for both admin and regular users
-- Added "Address Book" menu with peers, management, and tags sub-pages
+- Reworked the Address Book menu: peers and tags are shown across the current account without a page-level book selector, with address-book columns and header filters
+- Added CSV import/export for every data page that supports creation, including address books, peers, tags, and mail templates
 - Added auto‑increment version system (VERSION file as single source of truth)
 - Dashboard change-logs card shows server version and build time
 - Docker image publishing is gated: after a push to `main`, GHCR is updated only when all online workflows for that commit complete successfully

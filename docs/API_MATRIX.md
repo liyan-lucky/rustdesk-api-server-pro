@@ -52,8 +52,9 @@
 | 用户管理 | `/admin/users/*` | 基础 | 新增、修改、删除用户已写 `operation_audit`；不记录密码和 2FA 密钥明文；空删除列表会返回 `NoUserIds` 并记录失败审计 |
 | 会话管理 | `/admin/sessions/*` | 基础 | 踢下线成功/失败已写 `operation_audit`；空会话 ID 列表会返回 `NoSessionIds` 并记录失败审计 |
 | 设备管理 | `/admin/devices/*` | 已有 | 当前只有列表查询，无写操作；后续如增加修改/删除再接 `operation_audit` |
+| 通讯录管理 | `/admin/ab/*` | 完整 | 联系人/标签支持当前账户全量列表和地址簿名称筛选；管理员可为指定用户创建地址簿，`created_by_admin` 在后端阻止普通用户删除管理员代建地址簿；新增型页面支持 CSV 导入导出 |
 | 审计日志 | `/admin/audit/*` | 已有 | 增加高级筛选、导出、报警审计、兼容探测审计视图 |
-| 邮件模板 | `/admin/mail-template/*` | 基础 | 新增、修改已写 `operation_audit`；模板正文只记录长度和预览，避免审计日志过大 |
+| 邮件模板 | `/admin/mail/templates/*` | 基础 | 新增、修改已写 `operation_audit`；模板正文只记录长度和预览，避免审计日志过大；前端支持表头筛选和 CSV 导入导出 |
 | 邮件日志 | `/admin/mail-logs/*` | 已有 | 增加发送失败分析 |
 
 ## 4. License / plugin-sign 兼容接口

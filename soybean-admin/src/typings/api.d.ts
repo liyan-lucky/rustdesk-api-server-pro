@@ -184,6 +184,10 @@ declare namespace Api {
       alias: string;
       tags: string[];
       note: string;
+      ab_id: number;
+      ab_guid: string;
+      ab_name: string;
+      owner: string;
     };
     type PeerList = Common.PaginatingQueryRecord<Peer>;
     type PeerSearchParams = CommonType.RecordNullable<
@@ -200,12 +204,16 @@ declare namespace Api {
       rule: number;
       max_peer: number;
       shared: boolean;
+      created_by_admin: boolean;
     }>;
     type AddressBookList = Common.PaginatingQueryRecord<AddressBook>;
 
     type Tag = Common.CommonRecord<{
       user_id: number;
       ab_id: number;
+      ab_guid: string;
+      ab_name: string;
+      owner: string;
       name: string;
       color: number;
     }>;

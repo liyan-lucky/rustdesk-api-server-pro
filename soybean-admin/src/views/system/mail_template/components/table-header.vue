@@ -14,6 +14,8 @@ defineProps<Props>();
 
 interface Emits {
   (e: 'add'): void;
+  (e: 'import'): void;
+  (e: 'export'): void;
   (e: 'refresh'): void;
 }
 
@@ -36,6 +38,8 @@ function refresh() {
   <NSpace :align="itemAlign" wrap justify="end" class="lt-sm:w-200px">
     <slot name="prefix"></slot>
     <slot name="default">
+      <NButton size="small" @click="emit('import')">{{ $t('common.import') }}</NButton>
+      <NButton size="small" @click="emit('export')">{{ $t('common.export') }}</NButton>
       <NButton size="small" ghost type="primary" @click="add">
         <template #icon>
           <icon-ic-round-plus class="text-icon" />
