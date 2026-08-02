@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -31,6 +32,7 @@ type OAuthProviderMeta struct {
 	Name        string `json:"name"`
 	DisplayName string `json:"displayName"`
 	Type        string `json:"type"`
+	AccountRole string `json:"accountRole"`
 }
 
 type oauthMetadata struct {
@@ -48,10 +50,12 @@ type oauthTokenResponse struct {
 }
 
 type OAuthUserClaims struct {
-	Subject string
-	Email   string
-	Name    string
-	Picture string
+	Subject       string
+	Email         string
+	Login         string
+	Name          string
+	Picture       string
+	EmailVerified bool
 }
 
 type oauthStateEntry struct {
@@ -59,6 +63,7 @@ type oauthStateEntry struct {
 	RedirectTo   string
 	CallbackURL  string
 	ExpiresAt    time.Time
+	CodeVerifier string
 }
 
 type oauthSignedStatePayload struct {
@@ -70,7 +75,8 @@ type oauthSignedStatePayload struct {
 }
 
 type oauthTicketEntry struct {
-	Token     string
+	UserID    int
+	IsAdmin   bool
 	ExpiresAt time.Time
 }
 
@@ -130,6 +136,7 @@ func (s *OAuthProviderService) ListEnabledProviders() []OAuthProviderMeta {
 			Name:        normalized.Name,
 			DisplayName: normalized.DisplayName,
 			Type:        normalized.Type,
+			AccountRole: normalized.AccountRole,
 		})
 	}
 	return metas
@@ -161,12 +168,15 @@ func (s *OAuthProviderService) BuildAdminAuthURL(providerName, requestBaseURL, r
 		ExpiresAt:    time.Now().Add(s.stateTTL(provider)),
 	}
 
-	state := s.buildSignedState(stateEntry)
+	stateEntry.CodeVerifier = randomOAuthToken(32)
+	state := randomOAuthToken(24)
 	if state == "" {
 		return "", true, errors.New("failed to generate state")
 	}
 
-	s.setState(state, stateEntry)
+	if err = s.setState(state, stateEntry); err != nil {
+		return "", true, err
+	}
 
 	query := url.Values{}
 	query.Set("client_id", provider.ClientID)
@@ -174,6 +184,9 @@ func (s *OAuthProviderService) BuildAdminAuthURL(providerName, requestBaseURL, r
 	query.Set("scope", strings.Join(s.scopes(provider), " "))
 	query.Set("redirect_uri", callbackURL)
 	query.Set("state", state)
+	challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
+	query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
+	query.Set("code_challenge_method", "S256")
 	if prompt := strings.TrimSpace(provider.Prompt); prompt != "" {
 		query.Set("prompt", prompt)
 	}
@@ -196,17 +209,11 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 	}
 
 	stored, ok := s.popState(state)
-	if (!ok || stored.ProviderName != provider.Name) && state != "" {
-		if decoded, decodeErr := s.parseSignedState(state); decodeErr == nil {
-			stored = decoded
-			ok = stored.ProviderName == provider.Name
-		}
-	}
 	if !ok || stored.ProviderName != provider.Name {
 		return "", failureRedirect, errors.New("state invalid or expired")
 	}
 
-	tokenResp, err := s.exchangeCode(provider, code, stored.CallbackURL)
+	tokenResp, err := s.exchangeCode(provider, code, stored.CallbackURL, stored.CodeVerifier)
 	if err != nil {
 		return "", stored.RedirectTo, err
 	}
@@ -216,12 +223,7 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 		return "", stored.RedirectTo, err
 	}
 
-	user, err := s.resolveAdminUser(provider, claims)
-	if err != nil {
-		return "", stored.RedirectTo, err
-	}
-
-	token, err := s.issueAdminToken(user)
+	user, err := s.resolveOAuthUser(provider, claims)
 	if err != nil {
 		return "", stored.RedirectTo, err
 	}
@@ -231,10 +233,13 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 		return "", stored.RedirectTo, errors.New("failed to generate ticket")
 	}
 
-	s.setTicket(ticket, oauthTicketEntry{
-		Token:     token,
+	if err = s.setTicket(ticket, oauthTicketEntry{
+		UserID:    user.Id,
+		IsAdmin:   user.IsAdmin,
 		ExpiresAt: time.Now().Add(s.ticketTTL(provider)),
-	})
+	}); err != nil {
+		return "", stored.RedirectTo, err
+	}
 
 	return ticket, stored.RedirectTo, nil
 }
@@ -247,7 +252,15 @@ func (s *OAuthProviderService) ExchangeAdminTicket(ticket string) (string, error
 	if !ok {
 		return "", errors.New("ticket invalid or expired")
 	}
-	return item.Token, nil
+	var user model.User
+	has, err := s.db.Where("id = ? and is_admin = ? and status > 0", item.UserID, item.IsAdmin).Get(&user)
+	if err != nil {
+		return "", err
+	}
+	if !has {
+		return "", errors.New("oauth ticket user not available")
+	}
+	return s.issueOAuthToken(&user)
 }
 
 func (s *OAuthProviderService) getProvider(name string) (config.OAuthProviderConfig, bool) {
@@ -328,7 +341,7 @@ func (s *OAuthProviderService) getMetadata(provider config.OAuthProviderConfig) 
 	return &metadata, nil
 }
 
-func (s *OAuthProviderService) exchangeCode(provider config.OAuthProviderConfig, code, callbackURL string) (*oauthTokenResponse, error) {
+func (s *OAuthProviderService) exchangeCode(provider config.OAuthProviderConfig, code, callbackURL, codeVerifier string) (*oauthTokenResponse, error) {
 	metadata, err := s.getMetadata(provider)
 	if err != nil {
 		return nil, err
@@ -340,6 +353,7 @@ func (s *OAuthProviderService) exchangeCode(provider config.OAuthProviderConfig,
 	form.Set("redirect_uri", callbackURL)
 	form.Set("client_id", provider.ClientID)
 	form.Set("client_secret", provider.ClientSecret)
+	form.Set("code_verifier", codeVerifier)
 
 	req, _ := http.NewRequest(http.MethodPost, metadata.TokenEndpoint, bytes.NewBufferString(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -385,12 +399,12 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 	}
 
 	if metadata.UserinfoEndpoint != "" && tokenResp.AccessToken != "" {
-		if err = s.fillClaimsByUserinfo(metadata.UserinfoEndpoint, tokenResp.AccessToken, claims); err != nil {
+		if err = s.fillClaimsByUserinfo(provider, metadata.UserinfoEndpoint, tokenResp.AccessToken, claims); err != nil {
 			return nil, err
 		}
 	}
 	if provider.Type == "github" && tokenResp.AccessToken != "" {
-		if err = s.fillGithubEmail(tokenResp.AccessToken, claims); err != nil {
+		if err = s.fillGithubEmail(provider, tokenResp.AccessToken, claims); err != nil {
 			return nil, err
 		}
 	}
@@ -409,12 +423,20 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 	userClaims := &OAuthUserClaims{
 		Subject: strings.TrimSpace(anyToOAuthString(claims[defaultIfEmpty(provider.SubjectClaim, "sub")])),
 		Email:   strings.TrimSpace(anyToOAuthString(claims[defaultIfEmpty(provider.EmailClaim, "email")])),
+		Login:   strings.TrimSpace(anyToOAuthString(claims["login"])),
 		Name:    strings.TrimSpace(anyToOAuthString(claims[defaultIfEmpty(provider.NameClaim, "name")])),
 		Picture: strings.TrimSpace(anyToOAuthString(claims[defaultIfEmpty(provider.PictureClaim, "picture")])),
 	}
+	userClaims.EmailVerified, _ = claims["email_verified"].(bool)
 
 	if userClaims.Subject == "" {
 		return nil, errors.New("oauth subject claim missing")
+	}
+	if provider.Type == "github" && provider.BindByEmail && !userClaims.EmailVerified {
+		return nil, errors.New("verified github email required")
+	}
+	if (provider.BindByEmail || len(provider.AllowedEmailDomains) > 0) && userClaims.Email == "" {
+		return nil, errors.New("verified oauth email required")
 	}
 	if !s.isAllowedEmailDomain(provider, userClaims.Email) {
 		return nil, errors.New("email domain not allowed")
@@ -437,10 +459,14 @@ func (s *OAuthProviderService) verifyOAuthIDToken(provider config.OAuthProviderC
 	return fillClaimsByOAuthIDToken(idToken, expectedIssuer, provider.ClientID, claims)
 }
 
-func (s *OAuthProviderService) fillClaimsByUserinfo(userinfoEndpoint, accessToken string, claims map[string]interface{}) error {
+func (s *OAuthProviderService) fillClaimsByUserinfo(provider config.OAuthProviderConfig, userinfoEndpoint, accessToken string, claims map[string]interface{}) error {
 	req, _ := http.NewRequest(http.MethodGet, userinfoEndpoint, nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	req.Header.Set("Accept", "application/json")
+	if provider.Type == "github" {
+		req.Header.Set("Accept", "application/vnd.github+json")
+		req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+	}
 	req.Header.Set("User-Agent", "rustdesk-api-server-pro")
 
 	resp, err := s.httpClient.Do(req)
@@ -458,14 +484,17 @@ func (s *OAuthProviderService) fillClaimsByUserinfo(userinfoEndpoint, accessToke
 	return json.Unmarshal(body, &claims)
 }
 
-func (s *OAuthProviderService) fillGithubEmail(accessToken string, claims map[string]interface{}) error {
-	if email := strings.TrimSpace(anyToOAuthString(claims["email"])); email != "" {
-		return nil
+func (s *OAuthProviderService) fillGithubEmail(provider config.OAuthProviderConfig, accessToken string, claims map[string]interface{}) error {
+	userinfoEndpoint := strings.TrimRight(strings.TrimSpace(provider.UserinfoEndpoint), "/")
+	apiBase := strings.TrimSuffix(userinfoEndpoint, "/user")
+	if apiBase == "" {
+		apiBase = "https://api.github.com"
 	}
-
-	req, _ := http.NewRequest(http.MethodGet, "https://api.github.com/user/emails", nil)
+	emailEndpoint := apiBase + "/user/emails"
+	req, _ := http.NewRequest(http.MethodGet, emailEndpoint, nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept", "application/vnd.github+json")
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 	req.Header.Set("User-Agent", "rustdesk-api-server-pro")
 
 	resp, err := s.httpClient.Do(req)
@@ -478,22 +507,25 @@ func (s *OAuthProviderService) fillGithubEmail(accessToken string, claims map[st
 	}
 
 	var emails []struct {
-		Email   string `json:"email"`
-		Primary bool   `json:"primary"`
+		Email    string `json:"email"`
+		Primary  bool   `json:"primary"`
+		Verified bool   `json:"verified"`
 	}
 	if err = json.NewDecoder(resp.Body).Decode(&emails); err != nil {
 		return err
 	}
 
 	for _, item := range emails {
-		if item.Primary && strings.TrimSpace(item.Email) != "" {
+		if item.Primary && item.Verified && strings.TrimSpace(item.Email) != "" {
 			claims["email"] = item.Email
+			claims["email_verified"] = true
 			return nil
 		}
 	}
 	for _, item := range emails {
-		if strings.TrimSpace(item.Email) != "" {
+		if item.Verified && strings.TrimSpace(item.Email) != "" {
 			claims["email"] = item.Email
+			claims["email_verified"] = true
 			return nil
 		}
 	}
@@ -515,15 +547,16 @@ func fillClaimsByOAuthIDToken(idToken, expectedIssuer, expectedAudience string, 
 	return validateIDTokenClaims(claims, expectedIssuer, expectedAudience)
 }
 
-func (s *OAuthProviderService) resolveAdminUser(provider config.OAuthProviderConfig, claims *OAuthUserClaims) (*model.User, error) {
+func (s *OAuthProviderService) resolveOAuthUser(provider config.OAuthProviderConfig, claims *OAuthUserClaims) (*model.User, error) {
+	isAdmin := provider.AccountRole != "user"
 	var account model.OAuthAccount
-	has, err := s.db.Where("provider = ? and subject = ? and is_admin = 1 and status = 1", provider.Name, claims.Subject).Get(&account)
+	has, err := s.db.Where("provider = ? and subject = ? and is_admin = ? and status = 1", provider.Name, claims.Subject, isAdmin).Get(&account)
 	if err != nil {
 		return nil, err
 	}
 	if has {
 		var user model.User
-		ok, err := s.db.Where("id = ? and is_admin = 1 and status > 0", account.UserId).Get(&user)
+		ok, err := s.db.Where("id = ? and is_admin = ? and status > 0", account.UserId, isAdmin).Get(&user)
 		if err != nil {
 			return nil, err
 		}
@@ -538,7 +571,7 @@ func (s *OAuthProviderService) resolveAdminUser(provider config.OAuthProviderCon
 		return &user, nil
 	}
 
-	user, err := s.matchOrCreateAdminUser(provider, claims)
+	user, err := s.matchOrCreateOAuthUser(provider, claims, isAdmin)
 	if err != nil {
 		return nil, err
 	}
@@ -550,7 +583,7 @@ func (s *OAuthProviderService) resolveAdminUser(provider config.OAuthProviderCon
 		Email:       claims.Email,
 		Name:        claims.Name,
 		Picture:     claims.Picture,
-		IsAdmin:     true,
+		IsAdmin:     isAdmin,
 		Status:      1,
 		LastLoginAt: time.Now(),
 	}
@@ -562,10 +595,10 @@ func (s *OAuthProviderService) resolveAdminUser(provider config.OAuthProviderCon
 	return user, nil
 }
 
-func (s *OAuthProviderService) matchOrCreateAdminUser(provider config.OAuthProviderConfig, claims *OAuthUserClaims) (*model.User, error) {
+func (s *OAuthProviderService) matchOrCreateOAuthUser(provider config.OAuthProviderConfig, claims *OAuthUserClaims, isAdmin bool) (*model.User, error) {
 	if provider.BindByEmail && claims.Email != "" {
 		var user model.User
-		has, err := s.db.Where("email = ? and is_admin = 1 and status > 0", claims.Email).Get(&user)
+		has, err := s.db.Where("email = ? and is_admin = ? and status > 0", claims.Email, isAdmin).Get(&user)
 		if err != nil {
 			return nil, err
 		}
@@ -574,11 +607,14 @@ func (s *OAuthProviderService) matchOrCreateAdminUser(provider config.OAuthProvi
 		}
 	}
 
-	if !provider.AutoCreateAdmin {
-		return nil, errors.New("no bindable admin account")
+	if (isAdmin && !provider.AutoCreateAdmin) || (!isAdmin && !provider.AutoCreateUser) {
+		return nil, errors.New("no bindable oauth account")
 	}
 
-	nameSeed := claims.Email
+	nameSeed := claims.Login
+	if nameSeed == "" {
+		nameSeed = claims.Email
+	}
 	if nameSeed == "" {
 		nameSeed = claims.Subject
 	}
@@ -609,7 +645,7 @@ func (s *OAuthProviderService) matchOrCreateAdminUser(provider config.OAuthProvi
 		Note:                "auto-created by oauth:" + provider.Name,
 		LicensedDevices:     0,
 		Status:              1,
-		IsAdmin:             true,
+		IsAdmin:             isAdmin,
 	}
 	_, err = s.db.Insert(user)
 	if err != nil {
@@ -634,8 +670,8 @@ func (s *OAuthProviderService) makeUniqueUsername(base string) (string, error) {
 	return "", errors.New("failed to allocate unique username")
 }
 
-func (s *OAuthProviderService) issueAdminToken(user *model.User) (string, error) {
-	_, _ = s.db.Where("user_id = ? and status = 1 and is_admin = 1", user.Id).Cols("status").Update(&model.AuthToken{
+func (s *OAuthProviderService) issueOAuthToken(user *model.User) (string, error) {
+	_, _ = s.db.Where("user_id = ? and status = 1 and is_admin = ?", user.Id, user.IsAdmin).Cols("status").Update(&model.AuthToken{
 		Status: 0,
 	})
 	signStr := fmt.Sprintf("%d_%s_%s", user.Id, user.Username, time.Now().String())
@@ -644,7 +680,7 @@ func (s *OAuthProviderService) issueAdminToken(user *model.User) (string, error)
 		UserId:    user.Id,
 		TokenHash: util.Sha256Hex(token),
 		Expired:   time.Now().Add(2 * time.Hour),
-		IsAdmin:   true,
+		IsAdmin:   user.IsAdmin,
 		Status:    1,
 	}
 	_, err := s.db.Insert(authToken)
@@ -737,7 +773,12 @@ func (s *OAuthProviderService) isAllowedEmailDomain(provider config.OAuthProvide
 	return false
 }
 
-func (s *OAuthProviderService) setState(key string, value oauthStateEntry) {
+func (s *OAuthProviderService) setState(key string, value oauthStateEntry) error {
+	if s.db != nil {
+		_, _ = s.db.Where("expires_at < ? or status = 0", time.Now()).Delete(&model.OAuthLoginSession{})
+		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "state", KeyHash: util.Sha256Hex(key), Provider: value.ProviderName, RedirectTo: value.RedirectTo, CallbackURL: value.CallbackURL, CodeVerifier: value.CodeVerifier, ExpiresAt: value.ExpiresAt, Status: 1})
+		return err
+	}
 	now := time.Now()
 	globalOAuthRuntimeStore.mu.Lock()
 	defer globalOAuthRuntimeStore.mu.Unlock()
@@ -747,9 +788,22 @@ func (s *OAuthProviderService) setState(key string, value oauthStateEntry) {
 		}
 	}
 	globalOAuthRuntimeStore.states[key] = value
+	return nil
 }
 
 func (s *OAuthProviderService) popState(key string) (oauthStateEntry, bool) {
+	if s.db != nil {
+		var session model.OAuthLoginSession
+		has, err := s.db.Where("kind = ? and key_hash = ? and status = 1 and expires_at > ?", "state", util.Sha256Hex(key), time.Now()).Get(&session)
+		if err != nil || !has {
+			return oauthStateEntry{}, false
+		}
+		updated, err := s.db.ID(session.Id).Where("status = 1").Cols("status").Update(&model.OAuthLoginSession{Status: 0})
+		if err != nil || updated != 1 {
+			return oauthStateEntry{}, false
+		}
+		return oauthStateEntry{ProviderName: session.Provider, RedirectTo: session.RedirectTo, CallbackURL: session.CallbackURL, CodeVerifier: session.CodeVerifier, ExpiresAt: session.ExpiresAt}, true
+	}
 	now := time.Now()
 	globalOAuthRuntimeStore.mu.Lock()
 	defer globalOAuthRuntimeStore.mu.Unlock()
@@ -764,7 +818,11 @@ func (s *OAuthProviderService) popState(key string) (oauthStateEntry, bool) {
 	return v, true
 }
 
-func (s *OAuthProviderService) setTicket(key string, value oauthTicketEntry) {
+func (s *OAuthProviderService) setTicket(key string, value oauthTicketEntry) error {
+	if s.db != nil {
+		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "ticket", KeyHash: util.Sha256Hex(key), UserId: value.UserID, IsAdmin: value.IsAdmin, ExpiresAt: value.ExpiresAt, Status: 1})
+		return err
+	}
 	now := time.Now()
 	globalOAuthRuntimeStore.mu.Lock()
 	defer globalOAuthRuntimeStore.mu.Unlock()
@@ -774,9 +832,22 @@ func (s *OAuthProviderService) setTicket(key string, value oauthTicketEntry) {
 		}
 	}
 	globalOAuthRuntimeStore.tickets[key] = value
+	return nil
 }
 
 func (s *OAuthProviderService) popTicket(key string) (oauthTicketEntry, bool) {
+	if s.db != nil {
+		var session model.OAuthLoginSession
+		has, err := s.db.Where("kind = ? and key_hash = ? and status = 1 and expires_at > ?", "ticket", util.Sha256Hex(key), time.Now()).Get(&session)
+		if err != nil || !has {
+			return oauthTicketEntry{}, false
+		}
+		updated, err := s.db.ID(session.Id).Where("status = 1").Cols("status").Update(&model.OAuthLoginSession{Status: 0})
+		if err != nil || updated != 1 {
+			return oauthTicketEntry{}, false
+		}
+		return oauthTicketEntry{UserID: session.UserId, IsAdmin: session.IsAdmin, ExpiresAt: session.ExpiresAt}, true
+	}
 	now := time.Now()
 	globalOAuthRuntimeStore.mu.Lock()
 	defer globalOAuthRuntimeStore.mu.Unlock()
@@ -880,6 +951,10 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		provider.Type = "oidc"
 	}
 	provider.Name = strings.TrimSpace(provider.Name)
+	provider.AccountRole = strings.ToLower(strings.TrimSpace(provider.AccountRole))
+	if provider.AccountRole != "user" {
+		provider.AccountRole = "admin"
+	}
 	if provider.Name == "" {
 		switch provider.Type {
 		case "github":

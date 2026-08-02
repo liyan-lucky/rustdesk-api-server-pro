@@ -236,7 +236,7 @@ smtpConfig:
 
 ## 第三方登录
 
-当前后台已支持第三方管理员登录骨架，前端登录页会自动展示已启用的 provider。支持方式包括：
+第三方登录统一使用可扩展 Provider 架构，前端登录页会自动展示已启用的 Provider。GitHub 已完成端到端实现；Google 和通用 OIDC 保持兼容。
 
 - 传统单 provider：`oidc`
 - 多 provider：`oauth.providers`
@@ -247,8 +247,10 @@ smtpConfig:
 - 旧版 `oidc` 配置仍然保留兼容
 - 新版推荐使用 `oauth.providers`
 - 登录成功后仍走后台原有 token 体系，不会额外引入前端独立会话机制
-- 若开启 `bindByEmail: true`，会优先按管理员邮箱绑定已有账号
-- 若开启 `autoCreateAdmin: true`，在未绑定时可自动创建后台管理员账号
+- `accountRole: admin|user` 决定只能绑定对应角色，禁止跨角色匹配
+- 若开启 `bindByEmail: true`，GitHub 只使用官方 API 返回的已验证邮箱绑定已有账号
+- 自动创建默认关闭；管理员使用 `autoCreateAdmin`，普通用户使用 `autoCreateUser`
+- GitHub 授权使用 PKCE S256，state 与 ticket 为数据库持久化的一次性短期凭据
 
 `backend/server.yaml` 示例：
 
@@ -270,6 +272,9 @@ oauth:
       enabled: true
       clientId: "YOUR_GITHUB_CLIENT_ID"
       clientSecret: "YOUR_GITHUB_CLIENT_SECRET"
+      redirectUrl: "https://desk.example.com/admin/auth/oauth/github/callback"
+      scopes: ["read:user", "user:email"]
+      accountRole: "admin"
       bindByEmail: true
       autoCreateAdmin: false
 
@@ -291,6 +296,8 @@ oauth:
 - 旧版兼容 OIDC：`/admin/auth/oidc/callback`
 
 如果你使用反向代理，请确保外部访问域名与回调地址保持一致，并建议传递 `X-Forwarded-Proto`、`X-Forwarded-Host`。
+
+完整 GitHub OAuth App 注册、普通用户配置、安全边界和后续国内外 Provider 路线见 [第三方登录规范](docs/OAUTH_PROVIDERS.md)。
 
 ### 授权状态检查
 

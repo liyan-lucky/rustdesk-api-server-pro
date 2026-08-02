@@ -480,7 +480,7 @@ const local: App.I18n.Schema = {
       tagName: 'Name',
       tagColor: 'Color',
       updated_at: 'Updated At',
-      personal: 'La mia rubrica', note: 'Nota', platform: 'Piattaforma', personalReadOnly: 'Personale (sola lettura)', nameRequired: 'Il nome è obbligatorio', deviceIdRequired: 'L’ID dispositivo è obbligatorio', tagsHint: 'Separa le etichette con virgole', read: 'Lettura', readWrite: 'Lettura e scrittura', fullControl: 'Controllo completo'
+      personal: 'La mia rubrica', legacy: 'Rubrica legacy', note: 'Nota', platform: 'Piattaforma', personalReadOnly: 'Personale (sola lettura)', nameRequired: 'Il nome è obbligatorio', deviceIdRequired: 'L’ID dispositivo è obbligatorio', tagsHint: 'Separa le etichette con virgole', read: 'Lettura', readWrite: 'Lettura e scrittura', fullControl: 'Controllo completo'
     },
     token: {
       device_os: 'SO dispositivo',

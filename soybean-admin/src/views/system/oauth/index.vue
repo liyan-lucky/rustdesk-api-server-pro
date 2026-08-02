@@ -88,7 +88,7 @@ onMounted(() => { loadData(); loadProviders(); });
       <template #header-extra>
         <NSpace size="small">
           <NTag v-for="p in providers" :key="p.name" :type="p.enabled ? 'success' : 'default'" size="small">
-            {{ p.displayName || p.name }} ({{ p.type }})
+            {{ p.displayName || p.name }} ({{ p.type }} / {{ p.accountRole || 'admin' }})
           </NTag>
         </NSpace>
       </template>

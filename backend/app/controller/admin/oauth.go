@@ -37,16 +37,16 @@ func (c *OAuthController) HandleListAccounts() mvc.Result {
 	list := make([]iris.Map, 0, len(accountList))
 	for _, a := range accountList {
 		list = append(list, iris.Map{
-			"id":           a.Id,
-			"user_id":      a.UserId,
-			"provider":     a.Provider,
-			"subject":      a.Subject,
-			"email":        a.Email,
-			"name":         a.Name,
-			"is_admin":     a.IsAdmin,
-			"status":       a.Status,
+			"id":            a.Id,
+			"user_id":       a.UserId,
+			"provider":      a.Provider,
+			"subject":       a.Subject,
+			"email":         a.Email,
+			"name":          a.Name,
+			"is_admin":      a.IsAdmin,
+			"status":        a.Status,
 			"last_login_at": a.LastLoginAt.Format(config.TimeFormat),
-			"created_at":   a.CreatedAt.Format(config.TimeFormat),
+			"created_at":    a.CreatedAt.Format(config.TimeFormat),
 		})
 	}
 
@@ -83,6 +83,7 @@ func (c *OAuthController) HandleListProviders() mvc.Result {
 			"name":        p.Name,
 			"displayName": p.DisplayName,
 			"enabled":     p.Enabled,
+			"accountRole": p.AccountRole,
 		})
 	}
 

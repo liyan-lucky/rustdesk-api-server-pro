@@ -504,6 +504,7 @@ const local: App.I18n.Schema = {
       tagColor: 'Color',
       updated_at: 'Updated At',
       personal: 'My Address Book',
+      legacy: 'Legacy Address Book',
       note: 'Note',
       platform: 'Platform',
       personalReadOnly: 'Personal (read-only)',

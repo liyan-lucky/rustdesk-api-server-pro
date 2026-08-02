@@ -445,7 +445,7 @@ const local: App.I18n.Schema = {
       tagName: 'Name',
       tagColor: 'Farbe',
       updated_at: 'Aktualisiert am',
-      personal: 'Mein Adressbuch', note: 'Notiz', platform: 'Plattform', personalReadOnly: 'Persönlich (schreibgeschützt)', nameRequired: 'Name ist erforderlich', deviceIdRequired: 'Geräte-ID ist erforderlich', tagsHint: 'Mehrere Tags durch Kommas trennen', read: 'Lesen', readWrite: 'Lesen und schreiben', fullControl: 'Vollzugriff'
+      personal: 'Mein Adressbuch', legacy: 'Legacy-Adressbuch', note: 'Notiz', platform: 'Plattform', personalReadOnly: 'Persönlich (schreibgeschützt)', nameRequired: 'Name ist erforderlich', deviceIdRequired: 'Geräte-ID ist erforderlich', tagsHint: 'Mehrere Tags durch Kommas trennen', read: 'Lesen', readWrite: 'Lesen und schreiben', fullControl: 'Vollzugriff'
     },
     token: {
       device_os: 'Gerätebetriebssystem',

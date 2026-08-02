@@ -482,7 +482,7 @@ const local: App.I18n.Schema = {
       "tagName": "Name",
       "tagColor": "Color",
       "updated_at": "Updated At",
-      "personal": "Моя адресная книга", "note": "Примечание", "platform": "Платформа", "personalReadOnly": "Личная (только чтение)", "nameRequired": "Имя обязательно", "deviceIdRequired": "ID устройства обязателен", "tagsHint": "Разделяйте метки запятыми", "read": "Чтение", "readWrite": "Чтение и запись", "fullControl": "Полный доступ"
+      "personal": "Моя адресная книга", "legacy": "Устаревшая адресная книга", "note": "Примечание", "platform": "Платформа", "personalReadOnly": "Личная (только чтение)", "nameRequired": "Имя обязательно", "deviceIdRequired": "ID устройства обязателен", "tagsHint": "Разделяйте метки запятыми", "read": "Чтение", "readWrite": "Чтение и запись", "fullControl": "Полный доступ"
     },
     "token": {
       "device_os": "ОС устройства",

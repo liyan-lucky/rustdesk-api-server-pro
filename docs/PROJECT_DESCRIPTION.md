@@ -248,6 +248,7 @@ jobsConfig:
 | `strategy` | `Strategy` | 企业兼容策略 |
 | `strategy_assignment` | `StrategyAssignment` | 策略分配关系 |
 | `oauth_account` | `OAuthAccount` | 后台 OAuth 账号绑定 |
+| `oauth_login_session` | `OAuthLoginSession` | OAuth 一次性 state、PKCE verifier 与短期登录 ticket；浏览器值仅存 SHA-256 |
 
 建议持久化内容：
 
@@ -495,11 +496,11 @@ jobsConfig:
 
 1. 前端调用 `/admin/auth/oauth/providers` 获取启用的 Provider。
 2. 用户点击 Provider 后调用 `/admin/auth/oauth/url?provider=<name>`。
-3. 后端生成授权地址和 signed state。
+3. 后端生成授权地址、随机一次性 state 和 PKCE S256 challenge，并将短期会话持久化。
 4. Provider 回调 `/admin/auth/oauth/<provider>/callback`。
 5. 后端通过 code 换 token，读取 userinfo 或 id token claims。
-6. 根据 `provider + subject` 查找 `oauth_account`。
-7. 找不到时按配置使用邮箱绑定已有管理员或自动创建管理员。
+6. 根据 `provider + subject + accountRole` 查找 `oauth_account`。
+7. 找不到时按配置使用已验证邮箱绑定相同角色账号，或按独立开关自动创建管理员/普通用户。
 8. 后端签发后台 token，并生成短期 ticket。
 9. 前端用 ticket 调用 `/admin/auth/oauth/token` 换 token。
 
@@ -509,14 +510,17 @@ jobsConfig:
 - `clientId`、`clientSecret`：Provider 凭据。
 - `issuer` 或显式 `authorizationEndpoint`、`tokenEndpoint`、`userinfoEndpoint`。
 - `redirectUrl`：显式回调地址；为空时根据当前请求 Host 生成。
-- `bindByEmail`：是否按邮箱绑定已有管理员。
+- `accountRole`：`admin` 或 `user`，限制 Provider 可绑定的账号角色。
+- `bindByEmail`：是否按已验证邮箱绑定同角色已有账号。
 - `autoCreateAdmin`：找不到管理员时是否自动创建。
+- `autoCreateUser`：普通用户模式下找不到账号时是否自动创建。
 - `allowedEmailDomains`：可选邮箱域名白名单。
 - `stateTtlSeconds`、`ticketTtlSeconds`：state 和 ticket 有效期，默认 180 秒。
 
 安全注意：
 
-- OAuth state 使用 `signKey` 做 HMAC 签名。
+- OAuth authorization code flow 使用 PKCE S256；state 和 ticket 在 `oauth_login_session` 中一次性消费并可跨服务重启。
+- GitHub 按邮箱绑定只接受 `/user/emails` 返回的 `verified=true` 邮箱。
 - 回调重定向目标会拒绝外部完整 URL，只允许站内路径。
 - 自动创建管理员应谨慎开启。
 - 生产环境必须使用固定、强随机 `signKey`。

@@ -679,6 +679,7 @@ declare namespace App {
           tagColor: string;
           updated_at: string;
           personal: string;
+          legacy: string;
           note: string;
           platform: string;
           personalReadOnly: string;

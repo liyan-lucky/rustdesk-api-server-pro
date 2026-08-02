@@ -19,7 +19,7 @@
 - 当前推荐部署方式：单容器一体化服务。
 - 当前默认端口：`12345/tcp`，以 `server.yaml` 的 `httpConfig.port` 为准。
 - 当前镜像内置管理后台前端，旧 `rustdesk-web` / nginx 前端容器不再是必需组件。
-- 当前第三方登录推荐使用 `oauth.providers`，支持 `oidc`、`google`、`github`。
+- 当前第三方登录统一使用 `oauth.providers`；GitHub 已完整实现，配置、安全边界和后续国内外 Provider 路线见 [OAUTH_PROVIDERS.md](./OAUTH_PROVIDERS.md)。
 - 当前通讯录交互统一为账户级全量列表、地址簿名称列和表头筛选；地址簿/联系人/标签及邮件模板新增型页面提供 CSV 导入导出。
 - 地址簿归属由后端强制校验：管理员可代用户创建，普通用户只能自建且不能删除管理员代建项。
 - “关于与更新”页面的在线版本检查地址允许按发布站点修改，配置仅保存在浏览器。

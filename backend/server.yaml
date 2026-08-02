@@ -63,6 +63,7 @@ oauth:
   #     redirectUrl: ""
   #     scopes: ["openid", "profile", "email"]
   #     bindByEmail: true
+  #     accountRole: "admin" # admin or user
   #     autoCreateAdmin: false
   #
   # Google provider example
@@ -72,6 +73,9 @@ oauth:
   #     enabled: false
   #     clientId: ""
   #     clientSecret: ""
+  #     accountRole: "admin"
+  #     bindByEmail: true
+  #     autoCreateAdmin: false
   #
   # GitHub provider example
   #   - type: "github"
@@ -80,4 +84,10 @@ oauth:
   #     enabled: false
   #     clientId: ""
   #     clientSecret: ""
+  #     redirectUrl: "https://your-domain.example/admin/auth/oauth/github/callback"
+  #     scopes: ["read:user", "user:email"]
+  #     accountRole: "admin" # use "user" for normal accounts
+  #     bindByEmail: true
+  #     autoCreateAdmin: false
+  #     autoCreateUser: false
   providers: []

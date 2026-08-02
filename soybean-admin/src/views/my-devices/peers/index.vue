@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/modules/auth';
 import { fetchUserList } from '@/service/api/user_management';
 import { fetchAbPeers, fetchAbPeerAdd, fetchAbPeerUpdate, fetchAbPeerDelete, fetchAbAllList, fetchAbPersonal } from '@/service/api/address-book';
 import { downloadCsv, parseCsv } from '@/utils/csv';
+import { localizeAddressBookName, normalizeAddressBookFilter } from '@/utils/address-book';
 
 const appStore = useAppStore();
 const authStore = useAuthStore();
@@ -27,7 +28,7 @@ const filters = reactive({ ab_name: '', id: '', username: '', hostname: '', plat
 const filterTitle = (label: string, key: keyof typeof filters) => () => <div class="min-w-130px"><div>{label}</div><NInput value={filters[key]} size="tiny" clearable placeholder={$t('common.keywordSearch')} onUpdateValue={value => { filters[key] = value; currentPage.value = 1; loadData(); }} /></div>;
 
 const columns = [
-  { key: 'ab_name', title: filterTitle($t('dataMap.ab.name'), 'ab_name'), align: 'center' as const },
+  { key: 'ab_name', title: filterTitle($t('dataMap.ab.name'), 'ab_name'), align: 'center' as const, render: (row: Api.AddressBook.Peer) => localizeAddressBookName(row.ab_name) },
   { key: 'id', title: filterTitle($t('dataMap.ab.rustdesk_id'), 'id'), align: 'center' as const },
   { key: 'username', title: filterTitle($t('dataMap.ab.username'), 'username'), align: 'center' as const },
   { key: 'hostname', title: filterTitle($t('dataMap.ab.hostname'), 'hostname'), align: 'center' as const },
@@ -62,7 +63,7 @@ const columns = [
 async function loadData() {
   loading.value = true;
   try {
-    const params: Record<string, any> = { current: currentPage.value, size: pageSize.value, ...filters };
+    const params: Record<string, any> = { current: currentPage.value, size: pageSize.value, ...filters, ab_name: normalizeAddressBookFilter(filters.ab_name) };
     const { data: res, error } = await fetchAbPeers(params);
     if (!error && res) {
       data.value = res.records || [];
@@ -128,7 +129,7 @@ async function importData(event: Event) {
 onMounted(async () => {
   const { data: books } = await fetchAbAllList();
   if (books?.length) {
-    abOptions.value = books.map(book => ({ label: `${book.name} (${book.owner})`, value: book.guid, userId: book.user_id || 0 }));
+    abOptions.value = books.map(book => ({ label: `${localizeAddressBookName(book.name)} (${book.owner})`, value: book.guid, userId: book.user_id || 0 }));
   } else {
     const { data: personal } = await fetchAbPersonal();
     if (personal) { abOptions.value = [{ label: $t('dataMap.ab.personal'), value: personal.guid, userId: 0 }]; }

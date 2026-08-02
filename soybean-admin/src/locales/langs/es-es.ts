@@ -446,7 +446,7 @@ const local: App.I18n.Schema = {
       tagName: 'Nombre',
       tagColor: 'Color',
       updated_at: 'Actualizado el',
-      personal: 'Mi libreta de direcciones', note: 'Nota', platform: 'Plataforma', personalReadOnly: 'Personal (solo lectura)', nameRequired: 'El nombre es obligatorio', deviceIdRequired: 'El ID del dispositivo es obligatorio', tagsHint: 'Separe las etiquetas con comas', read: 'Lectura', readWrite: 'Lectura y escritura', fullControl: 'Control total'
+      personal: 'Mi libreta de direcciones', legacy: 'Libreta heredada', note: 'Nota', platform: 'Plataforma', personalReadOnly: 'Personal (solo lectura)', nameRequired: 'El nombre es obligatorio', deviceIdRequired: 'El ID del dispositivo es obligatorio', tagsHint: 'Separe las etiquetas con comas', read: 'Lectura', readWrite: 'Lectura y escritura', fullControl: 'Control total'
     },
     token: {
       device_os: 'SO del dispositivo',

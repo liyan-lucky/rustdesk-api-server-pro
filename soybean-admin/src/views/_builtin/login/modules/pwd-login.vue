@@ -98,6 +98,11 @@ async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {
   }
 }
 
+function providerIcon(type: string) {
+  const icons: Record<string, string> = { github: 'mdi:github', google: 'logos:google-icon', oidc: 'mdi:shield-account' };
+  return icons[type] || 'mdi:login-variant';
+}
+
 onMounted(() => {
   handleCaptcha();
   loadOAuthProviders();
@@ -147,6 +152,7 @@ onMounted(() => {
         :loading="activeProvider === provider.name"
         @click="handleOAuthLogin(provider)"
       >
+        <template #icon><SvgIcon :icon="providerIcon(provider.type)" /></template>
         {{ $t('page.login.common.continueWith', { provider: provider.displayName }) }}
       </NButton>
     </NSpace>

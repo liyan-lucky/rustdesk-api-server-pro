@@ -4,44 +4,19 @@
   "locales": [
     {
       "locale": "zh-CN",
-      "baseKeys": 443,
-      "fallbackCount": 7,
-      "translatedCount": 436,
-      "fallbackRatio": 0.01580135440180587,
-      "topFallbackKeys": [
-        "system.title",
-        "theme.tab.mode.chrome",
-        "page.home.serverConfig.key",
-        "dataMap.audit.ip",
-        "dataMap.audit.uuid",
-        "dataMap.mailLog.uuid",
-        "dataMap.ab.guid"
-      ],
-      "modules": [
-        {
-          "module": "dataMap",
-          "count": 4
-        },
-        {
-          "module": "page",
-          "count": 1
-        },
-        {
-          "module": "system",
-          "count": 1
-        },
-        {
-          "module": "theme",
-          "count": 1
-        }
-      ]
+      "baseKeys": 444,
+      "fallbackCount": 0,
+      "translatedCount": 444,
+      "fallbackRatio": 0,
+      "topFallbackKeys": [],
+      "modules": []
     },
     {
       "locale": "ja-JP",
-      "baseKeys": 443,
+      "baseKeys": 444,
       "fallbackCount": 216,
-      "translatedCount": 227,
-      "fallbackRatio": 0.48758465011286684,
+      "translatedCount": 228,
+      "fallbackRatio": 0.4864864864864865,
       "topFallbackKeys": [
         "system.title",
         "common.action",
@@ -169,10 +144,10 @@
     },
     {
       "locale": "ko-KR",
-      "baseKeys": 443,
+      "baseKeys": 444,
       "fallbackCount": 216,
-      "translatedCount": 227,
-      "fallbackRatio": 0.48758465011286684,
+      "translatedCount": 228,
+      "fallbackRatio": 0.4864864864864865,
       "topFallbackKeys": [
         "system.title",
         "common.action",
@@ -300,10 +275,10 @@
     },
     {
       "locale": "fr-FR",
-      "baseKeys": 443,
+      "baseKeys": 444,
       "fallbackCount": 43,
-      "translatedCount": 400,
-      "fallbackRatio": 0.09706546275395034,
+      "translatedCount": 401,
+      "fallbackRatio": 0.09684684684684684,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -378,10 +353,10 @@
     },
     {
       "locale": "de-DE",
-      "baseKeys": 443,
+      "baseKeys": 444,
       "fallbackCount": 49,
-      "translatedCount": 394,
-      "fallbackRatio": 0.11060948081264109,
+      "translatedCount": 395,
+      "fallbackRatio": 0.11036036036036036,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -462,10 +437,10 @@
     },
     {
       "locale": "es-ES",
-      "baseKeys": 443,
+      "baseKeys": 444,
       "fallbackCount": 36,
-      "translatedCount": 407,
-      "fallbackRatio": 0.08126410835214447,
+      "translatedCount": 408,
+      "fallbackRatio": 0.08108108108108109,
       "topFallbackKeys": [
         "system.title",
         "system.updateTitle",
@@ -533,10 +508,10 @@
     },
     {
       "locale": "ru-RU",
-      "baseKeys": 443,
+      "baseKeys": 444,
       "fallbackCount": 168,
-      "translatedCount": 275,
-      "fallbackRatio": 0.3792325056433409,
+      "translatedCount": 276,
+      "fallbackRatio": 0.3783783783783784,
       "topFallbackKeys": [
         "system.title",
         "common.action",
@@ -664,10 +639,10 @@
     },
     {
       "locale": "it-IT",
-      "baseKeys": 443,
+      "baseKeys": 444,
       "fallbackCount": 35,
-      "translatedCount": 408,
-      "fallbackRatio": 0.07900677200902935,
+      "translatedCount": 409,
+      "fallbackRatio": 0.07882882882882883,
       "topFallbackKeys": [
         "common.yesOrNo.no",
         "route.iframe-page",

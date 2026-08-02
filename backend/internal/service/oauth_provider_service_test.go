@@ -70,7 +70,7 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new engine: %v", err)
 	}
-	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount)); err != nil {
+	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount), new(model.OAuthLoginSession)); err != nil {
 		t.Fatalf("sync: %v", err)
 	}
 
@@ -114,6 +114,9 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 	if state == "" {
 		t.Fatalf("state should not be empty")
 	}
+	if u.Query().Get("code_challenge_method") != "S256" || u.Query().Get("code_challenge") == "" {
+		t.Fatalf("github authorization must use PKCE S256")
+	}
 
 	ticket, redirectTo, err := svc.ConsumeAdminCallback("github", "github-code", state)
 	if err != nil {
@@ -125,6 +128,9 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 	if redirectTo == "" {
 		t.Fatalf("redirect should not be empty")
 	}
+	if _, _, replayErr := svc.ConsumeAdminCallback("github", "github-code", state); replayErr == nil {
+		t.Fatalf("oauth state replay must be rejected")
+	}
 
 	token, err := svc.ExchangeAdminTicket(ticket)
 	if err != nil {
@@ -132,6 +138,9 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 	}
 	if token == "" {
 		t.Fatalf("token should not be empty")
+	}
+	if _, replayErr := svc.ExchangeAdminTicket(ticket); replayErr == nil {
+		t.Fatalf("oauth ticket replay must be rejected")
 	}
 
 	var users []model.User
@@ -164,7 +173,7 @@ func TestOAuthProviderService_GithubTicketFlowWithoutInMemoryState(t *testing.T)
 	if err != nil {
 		t.Fatalf("new engine: %v", err)
 	}
-	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount)); err != nil {
+	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount), new(model.OAuthLoginSession)); err != nil {
 		t.Fatalf("sync: %v", err)
 	}
 
@@ -183,7 +192,8 @@ func TestOAuthProviderService_GithubTicketFlowWithoutInMemoryState(t *testing.T)
 					TokenEndpoint:         provider.URL + "/login/oauth/access_token",
 					UserinfoEndpoint:      provider.URL + "/user",
 					BindByEmail:           true,
-					AutoCreateAdmin:       true,
+					AccountRole:           "user",
+					AutoCreateUser:        true,
 					SuccessRedirect:       "/login",
 					FailureRedirect:       "/login",
 				},
@@ -220,6 +230,10 @@ func TestOAuthProviderService_GithubTicketFlowWithoutInMemoryState(t *testing.T)
 	if ticket == "" {
 		t.Fatalf("ticket should not be empty")
 	}
+	var normalUsers []model.User
+	if err = engine.Where("is_admin = 0").Find(&normalUsers); err != nil || len(normalUsers) != 1 {
+		t.Fatalf("expected one normal oauth user, users=%d err=%v", len(normalUsers), err)
+	}
 }
 
 func newMockGitHubOAuthProvider(t *testing.T) *httptest.Server {
@@ -241,6 +255,10 @@ func newMockGitHubOAuthProvider(t *testing.T) *httptest.Server {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+		if r.Form.Get("code_verifier") == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		_ = json.NewEncoder(w).Encode(map[string]interface{}{
 			"access_token": "github-access-token",
 			"token_type":   "Bearer",
@@ -251,10 +269,16 @@ func newMockGitHubOAuthProvider(t *testing.T) *httptest.Server {
 	mux.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]interface{}{
 			"id":         10001,
-			"email":      "github-admin@example.com",
+			"email":      nil,
+			"login":      "github-admin",
 			"name":       "GitHub Admin",
 			"avatar_url": "https://example.com/github-admin.png",
 		})
+	})
+	mux.HandleFunc("/user/emails", func(w http.ResponseWriter, r *http.Request) {
+		_ = json.NewEncoder(w).Encode([]map[string]interface{}{{
+			"email": "github-admin@example.com", "primary": true, "verified": true,
+		}})
 	})
 
 	return server

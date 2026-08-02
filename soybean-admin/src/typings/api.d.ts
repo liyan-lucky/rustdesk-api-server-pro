@@ -59,6 +59,7 @@ declare namespace Api {
       name: string;
       displayName: string;
       type: string;
+      accountRole: 'admin' | 'user';
     }
 
     interface Captcha {
@@ -310,6 +311,7 @@ declare namespace Api {
       displayName: string;
       type: string;
       enabled: boolean;
+      accountRole: 'admin' | 'user';
     };
   }
 

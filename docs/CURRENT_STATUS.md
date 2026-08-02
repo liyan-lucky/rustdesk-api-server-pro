@@ -36,7 +36,7 @@
 - 版本自动递增系统：VERSION 文件为单一事实来源，CI 每次构建自动递增 PATCH 版本号。
 - 首页更新日志区域显示服务端版本与构建时间。
 - 管理后台前端已内置到镜像，旧 `rustdesk-web` / nginx 前端容器不再是必需组件。
-- 第三方登录支持骨架：`oidc`、`google`、`github`，新版推荐使用 `oauth.providers`。
+- 第三方登录统一使用 `oauth.providers`。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关；Google 与通用 OIDC 保持兼容，其他国内外 Provider 按 `OAUTH_PROVIDERS.md` 逐个完成官方协议适配后启用。
 - plugin-sign、部分 OIDC 和高级企业能力仍以兼容占位或主流程兼容为主，不能宣称完整替代官方 Pro。
 
 ## 当前目录职责

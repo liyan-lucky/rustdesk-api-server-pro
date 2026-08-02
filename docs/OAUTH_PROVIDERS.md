@@ -1,0 +1,59 @@
+# 第三方登录规范
+
+## 当前支持状态
+
+第三方登录统一使用 `oauth.providers`。GitHub 是第一套完成安全加固和端到端测试的 Provider；Google 与通用 OIDC 保持兼容。后续 Provider 应复用同一套一次性 state、PKCE、短期 ticket、账号绑定和审计逻辑。
+
+规划中的国际 Provider 包括 Microsoft、Apple、GitLab；国内 Provider 包括 Gitee、微信开放平台、QQ、支付宝、钉钉和飞书。未完成官方协议适配及测试前，不得仅添加一个按钮就宣称支持。
+
+## GitHub OAuth App 配置
+
+在 GitHub OAuth App 中设置：
+
+- Homepage URL：后台公开访问地址，例如 `https://desk.example.com/`
+- Authorization callback URL：`https://desk.example.com/admin/auth/oauth/github/callback`
+
+`server.yaml` 示例：
+
+```yaml
+oauth:
+  providers:
+    - type: "github"
+      name: "github"
+      displayName: "GitHub"
+      enabled: true
+      clientId: "YOUR_GITHUB_CLIENT_ID"
+      clientSecret: "YOUR_GITHUB_CLIENT_SECRET"
+      redirectUrl: "https://desk.example.com/admin/auth/oauth/github/callback"
+      scopes: ["read:user", "user:email"]
+      accountRole: "admin" # admin 或 user
+      bindByEmail: true
+      autoCreateAdmin: false
+      autoCreateUser: false
+      allowedEmailDomains: []
+      stateTtlSeconds: 180
+      ticketTtlSeconds: 180
+      successRedirect: "/#/login"
+      failureRedirect: "/#/login"
+```
+
+默认不自动创建账号。推荐先在系统中创建同邮箱、同角色的账号，再使用 `bindByEmail: true` 完成首次绑定。若配置 `accountRole: user`，只会绑定或创建普通用户；`accountRole: admin` 只会绑定或创建管理员，不能跨角色匹配。
+
+## 安全与生命周期
+
+- 授权请求使用 OAuth authorization code flow、随机一次性 state 和 PKCE S256。
+- state、PKCE verifier 与登录 ticket 持久化到 `oauth_login_session`，只保存浏览器值的 SHA-256，均为一次性并有短有效期，服务重启后流程仍可完成。
+- GitHub 私有邮箱通过 `/user/emails` 获取，只接受 `verified=true` 的主邮箱或首个已验证邮箱；按邮箱绑定时没有已验证邮箱会拒绝登录。
+- GitHub API 请求使用 Bearer token、官方 JSON media type 和明确 API 版本头；访问令牌不会写入日志或 OAuth 账号表。
+- 回调成功后按 `provider + subject + role` 绑定 `oauth_account`，浏览器只能获得一次性 ticket，再换取站内 token。
+- `successRedirect` 与 `failureRedirect` 只允许站内路径，拒绝完整外部 URL，避免开放重定向。
+- `clientSecret` 只能保存在部署环境的 `server.yaml` 或密钥管理系统中，禁止提交仓库。
+
+## 验证
+
+```bash
+curl https://desk.example.com/admin/auth/oauth/providers
+curl "https://desk.example.com/admin/auth/oauth/url?provider=github"
+```
+
+第二个响应中的 GitHub 授权 URL 应包含 `state`、`code_challenge` 和 `code_challenge_method=S256`。完整验收还必须分别验证：已有管理员绑定、已有普通用户绑定、私有已验证邮箱、state/ticket 重放拒绝、服务重启后的回调，以及禁用 Provider 后按钮消失。

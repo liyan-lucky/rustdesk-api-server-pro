@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/modules/auth';
 import { fetchUserList } from '@/service/api/user_management';
 import { fetchAbAllTags, fetchAbTagAdd, fetchAbTagUpdate, fetchAbTagRename, fetchAbTagDelete, fetchAbPersonal, fetchAbAllList } from '@/service/api/address-book';
 import { downloadCsv, parseCsv } from '@/utils/csv';
+import { localizeAddressBookName } from '@/utils/address-book';
 
 const appStore = useAppStore();
 const authStore = useAuthStore();
@@ -21,12 +22,12 @@ const editing = ref(false);
 const form = reactive({ user_id: 0, ab_guid: '', old: '', name: '', color: '#4098fc' });
 const selectableAbOptions = computed(() => isAdmin.value ? abOptions.value.filter(option => option.userId === form.user_id) : abOptions.value);
 const filters = reactive({ ab_name: '', owner: '', name: '' });
-const filteredData = computed(() => data.value.filter(row => Object.entries(filters).every(([key, value]) => !value || String(row[key] || '').toLowerCase().includes(value.toLowerCase()))));
+const filteredData = computed(() => data.value.filter(row => Object.entries(filters).every(([key, value]) => !value || String(key === 'ab_name' ? localizeAddressBookName(row[key]) : row[key] || '').toLowerCase().includes(value.toLowerCase()))));
 const filterTitle = (label: string, key: keyof typeof filters) => () => <div class="min-w-130px"><div>{label}</div><NInput value={filters[key]} size="tiny" clearable placeholder={$t('common.keywordSearch')} onUpdateValue={value => { filters[key] = value; }} /></div>;
 
 const columns = [
   { key: 'id', title: 'ID', align: 'center' as const },
-  { key: 'ab_name', title: filterTitle($t('dataMap.ab.name'), 'ab_name'), align: 'center' as const },
+  { key: 'ab_name', title: filterTitle($t('dataMap.ab.name'), 'ab_name'), align: 'center' as const, render: (row: any) => localizeAddressBookName(row.ab_name) },
   { key: 'owner', title: filterTitle($t('dataMap.ab.owner'), 'owner'), align: 'center' as const },
   { key: 'name', title: filterTitle($t('dataMap.ab.tagName'), 'name'), align: 'center' as const },
   {
@@ -54,7 +55,7 @@ async function loadAbList() {
   const { data: res, error } = await fetchAbAllList();
   if (!error && res) {
     const list = Array.isArray(res) ? res : [];
-    abOptions.value = list.map((ab: any) => ({ label: `${ab.name} (${ab.owner})`, value: ab.guid, userId: ab.user_id || 0 }));
+    abOptions.value = list.map((ab: any) => ({ label: `${localizeAddressBookName(ab.name)} (${ab.owner})`, value: ab.guid, userId: ab.user_id || 0 }));
   }
   if (abOptions.value.length === 0) {
     const { data: personalRes, error: personalErr } = await fetchAbPersonal();

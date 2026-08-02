@@ -92,6 +92,8 @@ type OAuthProviderConfig struct {
 	Scopes                []string `yaml:"scopes"`
 	BindByEmail           bool     `yaml:"bindByEmail"`
 	AutoCreateAdmin       bool     `yaml:"autoCreateAdmin"`
+	AccountRole           string   `yaml:"accountRole"`
+	AutoCreateUser        bool     `yaml:"autoCreateUser"`
 	StateTTLSeconds       int      `yaml:"stateTtlSeconds"`
 	TicketTTLSeconds      int      `yaml:"ticketTtlSeconds"`
 	SuccessRedirect       string   `yaml:"successRedirect"`
@@ -208,6 +210,7 @@ func (cfg *ServerConfig) OAuthProviders() []OAuthProviderConfig {
 			Scopes:              cfg.OIDC.Scopes,
 			BindByEmail:         cfg.OIDC.BindByEmail,
 			AutoCreateAdmin:     cfg.OIDC.AutoCreateAdmin,
+			AccountRole:         "admin",
 			StateTTLSeconds:     cfg.OIDC.StateTTLSeconds,
 			TicketTTLSeconds:    cfg.OIDC.TicketTTLSeconds,
 			SuccessRedirect:     cfg.OIDC.SuccessRedirect,
@@ -239,6 +242,10 @@ func (cfg *ServerConfig) OAuthProviders() []OAuthProviderConfig {
 				continue
 			}
 			provider.Name = name
+			provider.AccountRole = strings.ToLower(strings.TrimSpace(provider.AccountRole))
+			if provider.AccountRole != "user" {
+				provider.AccountRole = "admin"
+			}
 			providers = append(providers, provider)
 			seen[name] = struct{}{}
 		}

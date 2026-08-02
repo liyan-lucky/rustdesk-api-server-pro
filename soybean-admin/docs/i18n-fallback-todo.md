@@ -4,30 +4,19 @@ Base locale: `en-US`
 
 ## zh-CN
 
-- Base keys: 443
-- Fallback keys: 7 (1.58%)
-- Translated keys: 436
+- Base keys: 444
+- Fallback keys: 0 (0.00%)
+- Translated keys: 444
 
 **Top Modules To Translate**
-- `dataMap`: 4
-- `page`: 1
-- `system`: 1
-- `theme`: 1
 
-**Top 7 Fallback Keys**
-- `system.title`
-- `theme.tab.mode.chrome`
-- `page.home.serverConfig.key`
-- `dataMap.audit.ip`
-- `dataMap.audit.uuid`
-- `dataMap.mailLog.uuid`
-- `dataMap.ab.guid`
+**Top 0 Fallback Keys**
 
 ## ja-JP
 
-- Base keys: 443
-- Fallback keys: 216 (48.76%)
-- Translated keys: 227
+- Base keys: 444
+- Fallback keys: 216 (48.65%)
+- Translated keys: 228
 
 **Top Modules To Translate**
 - `theme`: 59
@@ -123,9 +112,9 @@ Base locale: `en-US`
 
 ## ko-KR
 
-- Base keys: 443
-- Fallback keys: 216 (48.76%)
-- Translated keys: 227
+- Base keys: 444
+- Fallback keys: 216 (48.65%)
+- Translated keys: 228
 
 **Top Modules To Translate**
 - `page`: 59
@@ -221,9 +210,9 @@ Base locale: `en-US`
 
 ## fr-FR
 
-- Base keys: 443
-- Fallback keys: 43 (9.71%)
-- Translated keys: 400
+- Base keys: 444
+- Fallback keys: 43 (9.68%)
+- Translated keys: 401
 
 **Top Modules To Translate**
 - `dataMap`: 15
@@ -280,9 +269,9 @@ Base locale: `en-US`
 
 ## de-DE
 
-- Base keys: 443
-- Fallback keys: 49 (11.06%)
-- Translated keys: 394
+- Base keys: 444
+- Fallback keys: 49 (11.04%)
+- Translated keys: 395
 
 **Top Modules To Translate**
 - `dataMap`: 19
@@ -345,9 +334,9 @@ Base locale: `en-US`
 
 ## es-ES
 
-- Base keys: 443
-- Fallback keys: 36 (8.13%)
-- Translated keys: 407
+- Base keys: 444
+- Fallback keys: 36 (8.11%)
+- Translated keys: 408
 
 **Top Modules To Translate**
 - `dataMap`: 14
@@ -397,9 +386,9 @@ Base locale: `en-US`
 
 ## ru-RU
 
-- Base keys: 443
-- Fallback keys: 168 (37.92%)
-- Translated keys: 275
+- Base keys: 444
+- Fallback keys: 168 (37.84%)
+- Translated keys: 276
 
 **Top Modules To Translate**
 - `theme`: 59
@@ -495,9 +484,9 @@ Base locale: `en-US`
 
 ## it-IT
 
-- Base keys: 443
-- Fallback keys: 35 (7.90%)
-- Translated keys: 408
+- Base keys: 444
+- Fallback keys: 35 (7.88%)
+- Translated keys: 409
 
 **Top Modules To Translate**
 - `dataMap`: 27

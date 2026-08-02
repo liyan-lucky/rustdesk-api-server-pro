@@ -7,6 +7,7 @@ import { fetchAbAllList, fetchAbSharedAdd, fetchAbSharedDelete, fetchAbSharedUpd
 import { fetchUserList } from '@/service/api/user_management';
 import { useAuthStore } from '@/store/modules/auth';
 import { downloadCsv, parseCsv } from '@/utils/csv';
+import { localizeAddressBookName } from '@/utils/address-book';
 
 const appStore = useAppStore();
 const authStore = useAuthStore();
@@ -19,12 +20,12 @@ const form = reactive({ guid: '', user_id: 0, name: '', note: '', rule: 1, max_p
 const userOptions = ref<{ label: string; value: number }[]>([]);
 const importInput = ref<HTMLInputElement>();
 const filters = reactive({ owner: '', name: '', note: '', guid: '' });
-const filteredData = computed(() => data.value.filter(row => Object.entries(filters).every(([key, value]) => !value || String((row as any)[key] || '').toLowerCase().includes(value.toLowerCase()))));
+const filteredData = computed(() => data.value.filter(row => Object.entries(filters).every(([key, value]) => !value || String(key === 'name' ? localizeAddressBookName((row as any)[key]) : (row as any)[key] || '').toLowerCase().includes(value.toLowerCase()))));
 const filterTitle = (label: string, key: keyof typeof filters) => () => <div class="min-w-130px"><div>{label}</div><NInput value={filters[key]} size="tiny" clearable placeholder={$t('common.keywordSearch')} onUpdateValue={value => { filters[key] = value; }} /></div>;
 
 const columns = [
   { key: 'owner', title: filterTitle($t('dataMap.ab.owner'), 'owner'), align: 'center' as const },
-  { key: 'name', title: filterTitle($t('dataMap.ab.name'), 'name'), align: 'center' as const },
+  { key: 'name', title: filterTitle($t('dataMap.ab.name'), 'name'), align: 'center' as const, render: (row: Api.AddressBook.AddressBook) => localizeAddressBookName(row.name) },
   { key: 'note', title: filterTitle($t('dataMap.ab.note'), 'note'), align: 'center' as const },
   { key: 'guid', title: filterTitle($t('dataMap.ab.guid'), 'guid'), align: 'center' as const },
   { key: 'rule', title: $t('dataMap.ab.rule'), align: 'center' as const },
