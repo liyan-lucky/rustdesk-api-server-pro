@@ -434,7 +434,7 @@ const local: App.I18n.Schema = {
       tagName: 'Nom',
       tagColor: 'Couleur',
       updated_at: 'Mis à jour le',
-      personal: "Mon carnet d'adresses"
+      personal: "Mon carnet d'adresses", note: 'Note', platform: 'Plateforme', personalReadOnly: 'Personnel (lecture seule)', nameRequired: 'Le nom est obligatoire', deviceIdRequired: "L’identifiant de l’appareil est obligatoire", tagsHint: 'Séparez les étiquettes par des virgules', read: 'Lecture', readWrite: 'Lecture et écriture', fullControl: 'Contrôle total'
     },
     token: {
       device_os: 'SE appareil',

@@ -96,49 +96,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
-    name: 'my-devices',
-    path: '/my-devices',
-    component: 'layout.base',
-    meta: {
-      title: 'my-devices',
-      i18nKey: 'route.my-devices',
-      icon: 'mdi:book-open-variant',
-      order: 3
-    },
-    children: [
-      {
-        name: 'my-devices_peers',
-        path: '/my-devices/peers',
-        component: 'view.my-devices_peers',
-        meta: {
-          title: 'my-devices_peers',
-          i18nKey: 'route.my-devices_peers',
-          icon: 'mdi:account-multiple'
-        }
-      },
-      {
-        name: 'my-devices_manage',
-        path: '/my-devices/manage',
-        component: 'view.my-devices_manage',
-        meta: {
-          title: 'my-devices_manage',
-          i18nKey: 'route.my-devices_manage',
-          icon: 'mdi:book-cog'
-        }
-      },
-      {
-        name: 'my-devices_tags',
-        path: '/my-devices/tags',
-        component: 'view.my-devices_tags',
-        meta: {
-          title: 'my-devices_tags',
-          i18nKey: 'route.my-devices_tags',
-          icon: 'mdi:tag-multiple'
-        }
-      }
-    ]
-  },
-  {
     name: 'home',
     path: '/home',
     component: 'layout.base$view.home',
@@ -173,6 +130,49 @@ export const generatedRoutes: GeneratedRoute[] = [
       constant: true,
       hideInMenu: true
     }
+  },
+  {
+    name: 'my-devices',
+    path: '/my-devices',
+    component: 'layout.base',
+    meta: {
+      title: 'my-devices',
+      i18nKey: 'route.my-devices',
+      icon: 'mdi:book-open-variant',
+      order: 3
+    },
+    children: [
+      {
+        name: 'my-devices_manage',
+        path: '/my-devices/manage',
+        component: 'view.my-devices_manage',
+        meta: {
+          title: 'my-devices_manage',
+          i18nKey: 'route.my-devices_manage',
+          icon: 'mdi:book-cog'
+        }
+      },
+      {
+        name: 'my-devices_peers',
+        path: '/my-devices/peers',
+        component: 'view.my-devices_peers',
+        meta: {
+          title: 'my-devices_peers',
+          i18nKey: 'route.my-devices_peers',
+          icon: 'mdi:account-multiple'
+        }
+      },
+      {
+        name: 'my-devices_tags',
+        path: '/my-devices/tags',
+        component: 'view.my-devices_tags',
+        meta: {
+          title: 'my-devices_tags',
+          i18nKey: 'route.my-devices_tags',
+          icon: 'mdi:tag-multiple'
+        }
+      }
+    ]
   },
   {
     name: 'system',
@@ -217,6 +217,16 @@ export const generatedRoutes: GeneratedRoute[] = [
         ]
       },
       {
+        name: 'system_oauth',
+        path: '/system/oauth',
+        component: 'view.system_oauth',
+        meta: {
+          title: 'system_oauth',
+          i18nKey: 'route.system_oauth',
+          icon: 'mdi:shield-lock'
+        }
+      },
+      {
         name: 'system_server',
         path: '/system/server',
         component: 'view.system_server',
@@ -234,16 +244,6 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'system_tokens',
           i18nKey: 'route.system_tokens',
           icon: 'mdi:key-*variant'
-        }
-      },
-      {
-        name: 'system_oauth',
-        path: '/system/oauth',
-        component: 'view.system_oauth',
-        meta: {
-          title: 'system_oauth',
-          i18nKey: 'route.system_oauth',
-          icon: 'mdi:shield-lock'
         }
       }
     ]

@@ -473,7 +473,7 @@ const local: App.I18n.Schema = {
       "tagName": "Name",
       "tagColor": "Color",
       "updated_at": "Updated At",
-      "personal": "マイアドレス帳"
+      "personal": "マイアドレス帳", "note": "メモ", "platform": "プラットフォーム", "personalReadOnly": "個人用（読み取り専用）", "nameRequired": "名前は必須です", "deviceIdRequired": "デバイスIDは必須です", "tagsHint": "複数のタグはカンマで区切ってください", "read": "読み取り", "readWrite": "読み取りと書き込み", "fullControl": "フルコントロール"
     },
     "token": {
       "device_os": "デバイスOS",

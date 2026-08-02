@@ -473,7 +473,7 @@ const local: App.I18n.Schema = {
       "tagName": "Name",
       "tagColor": "Color",
       "updated_at": "Updated At",
-      "personal": "내 주소록"
+      "personal": "내 주소록", "note": "메모", "platform": "플랫폼", "personalReadOnly": "개인용(읽기 전용)", "nameRequired": "이름은 필수입니다", "deviceIdRequired": "장치 ID는 필수입니다", "tagsHint": "여러 태그는 쉼표로 구분하세요", "read": "읽기", "readWrite": "읽기 및 쓰기", "fullControl": "전체 제어"
     },
     "token": {
       "device_os": "디바이스 OS",

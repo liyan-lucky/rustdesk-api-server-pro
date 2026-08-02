@@ -265,7 +265,7 @@ declare namespace App {
   namespace I18n {
     type RouteKey = import('@elegant-router/types').RouteKey;
 
-    type LangType = 'en-US' | 'zh-CN' | 'ja-JP' | 'ko-KR' | 'fr-FR' | 'de-DE' | 'es-ES' | 'ru-RU';
+    type LangType = 'en-US' | 'zh-CN' | 'ja-JP' | 'ko-KR' | 'fr-FR' | 'de-DE' | 'es-ES' | 'ru-RU' | 'it-IT';
 
     type LangOption = {
       label: string;
@@ -641,6 +641,15 @@ declare namespace App {
           tagColor: string;
           updated_at: string;
           personal: string;
+          note: string;
+          platform: string;
+          personalReadOnly: string;
+          nameRequired: string;
+          deviceIdRequired: string;
+          tagsHint: string;
+          read: string;
+          readWrite: string;
+          fullControl: string;
         };
         audit: {
           username: string;

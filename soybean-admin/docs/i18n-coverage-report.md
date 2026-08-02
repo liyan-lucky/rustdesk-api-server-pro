@@ -10,20 +10,21 @@ Metrics:
 
 | Locale | Base Keys | Translated | Suspect | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 392 | 344 | 0 | 48 | 0 | 0 | 87.76% | 87.76% |
-| es-ES | 392 | 356 | 0 | 36 | 0 | 0 | 90.82% | 90.82% |
-| fr-FR | 392 | 350 | 0 | 42 | 0 | 0 | 89.29% | 89.29% |
-| ja-JP | 392 | 176 | 0 | 216 | 0 | 0 | 44.90% | 44.90% |
-| ko-KR | 392 | 176 | 0 | 216 | 0 | 0 | 44.90% | 44.90% |
-| ru-RU | 392 | 224 | 0 | 168 | 0 | 0 | 57.14% | 57.14% |
-| zh-CN | 392 | 385 | 0 | 7 | 0 | 0 | 98.21% | 98.21% |
+| de-DE | 401 | 353 | 0 | 48 | 0 | 0 | 88.03% | 88.03% |
+| es-ES | 401 | 365 | 0 | 36 | 0 | 0 | 91.02% | 91.02% |
+| fr-FR | 401 | 358 | 0 | 43 | 0 | 0 | 89.28% | 89.28% |
+| it-IT | 401 | 366 | 0 | 35 | 0 | 0 | 91.27% | 91.27% |
+| ja-JP | 401 | 185 | 0 | 216 | 0 | 0 | 46.13% | 46.13% |
+| ko-KR | 401 | 185 | 0 | 216 | 0 | 0 | 46.13% | 46.13% |
+| ru-RU | 401 | 233 | 0 | 168 | 0 | 0 | 58.10% | 58.10% |
+| zh-CN | 401 | 394 | 0 | 7 | 0 | 0 | 98.25% | 98.25% |
 
 ## de-DE
 
-- Base leaf keys: 392
-- Translated leaves: 344 (87.76%)
+- Base leaf keys: 401
+- Translated leaves: 353 (88.03%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 48 (12.24%)
+- Fallback-identical leaves: 48 (11.97%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -81,10 +82,10 @@ Metrics:
 
 ## es-ES
 
-- Base leaf keys: 392
-- Translated leaves: 356 (90.82%)
+- Base leaf keys: 401
+- Translated leaves: 365 (91.02%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 36 (9.18%)
+- Fallback-identical leaves: 36 (8.98%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -137,10 +138,10 @@ Metrics:
 
 ## fr-FR
 
-- Base leaf keys: 392
-- Translated leaves: 350 (89.29%)
+- Base leaf keys: 401
+- Translated leaves: 358 (89.28%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 42 (10.71%)
+- Fallback-identical leaves: 43 (10.72%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -150,6 +151,7 @@ Metrics:
   - `dataMap.ab.alias`
   - `dataMap.ab.guid`
   - `dataMap.ab.hash`
+  - `dataMap.ab.note`
   - `dataMap.audit.ip`
   - `dataMap.audit.rustdesk_id`
   - `dataMap.audit.type`
@@ -184,8 +186,62 @@ Metrics:
   - `system.updateCancel`
   - `system.updateConfirm`
   - `system.updateContent`
-  - `system.updateTitle`
-  - ... and 2 more
+  - ... and 3 more
+
+**Suspect Keys**
+-
+
+**Missing Keys**
+-
+
+**Extra Keys**
+-
+
+## it-IT
+
+- Base leaf keys: 401
+- Translated leaves: 366 (91.27%)
+- Suspect translated leaves: 0
+- Fallback-identical leaves: 35 (8.73%)
+- Missing leaves: 0
+- Extra leaves: 0
+
+**Sample Fallback Keys**
+  - `common.yesOrNo.no`
+  - `dataMap.ab.ab_id`
+  - `dataMap.ab.alias`
+  - `dataMap.ab.guid`
+  - `dataMap.ab.hash`
+  - `dataMap.ab.hostname`
+  - `dataMap.ab.max_peer`
+  - `dataMap.ab.name`
+  - `dataMap.ab.owner`
+  - `dataMap.ab.rule`
+  - `dataMap.ab.rustdesk_id`
+  - `dataMap.ab.shared`
+  - `dataMap.ab.tagColor`
+  - `dataMap.ab.tagName`
+  - `dataMap.ab.tags`
+  - `dataMap.ab.updated_at`
+  - `dataMap.ab.user_id`
+  - `dataMap.ab.username`
+  - `dataMap.audit.ip`
+  - `dataMap.audit.uuid`
+  - `dataMap.mailLog.uuid`
+  - `dataMap.oauth.email`
+  - `dataMap.oauth.provider`
+  - `dataMap.token.is_admin`
+  - `dataMap.user.email`
+  - `dataMap.user.loginVerifyLabel.tfaCheck`
+  - `dataMap.user.name`
+  - `dataMap.user.password`
+  - `page.home.serverConfig.connectivity.checkSourceType.cache`
+  - `page.home.serverConfig.key`
+  - `page.myDevices.offline`
+  - `page.myDevices.online`
+  - `route.audit`
+  - `route.home`
+  - `route.iframe-page`
 
 **Suspect Keys**
 -
@@ -198,10 +254,10 @@ Metrics:
 
 ## ja-JP
 
-- Base leaf keys: 392
-- Translated leaves: 176 (44.90%)
+- Base leaf keys: 401
+- Translated leaves: 185 (46.13%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 216 (55.10%)
+- Fallback-identical leaves: 216 (53.87%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -259,10 +315,10 @@ Metrics:
 
 ## ko-KR
 
-- Base leaf keys: 392
-- Translated leaves: 176 (44.90%)
+- Base leaf keys: 401
+- Translated leaves: 185 (46.13%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 216 (55.10%)
+- Fallback-identical leaves: 216 (53.87%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -320,10 +376,10 @@ Metrics:
 
 ## ru-RU
 
-- Base leaf keys: 392
-- Translated leaves: 224 (57.14%)
+- Base leaf keys: 401
+- Translated leaves: 233 (58.10%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 168 (42.86%)
+- Fallback-identical leaves: 168 (41.90%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -381,10 +437,10 @@ Metrics:
 
 ## zh-CN
 
-- Base leaf keys: 392
-- Translated leaves: 385 (98.21%)
+- Base leaf keys: 401
+- Translated leaves: 394 (98.25%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 7 (1.79%)
+- Fallback-identical leaves: 7 (1.75%)
 - Missing leaves: 0
 - Extra leaves: 0
 

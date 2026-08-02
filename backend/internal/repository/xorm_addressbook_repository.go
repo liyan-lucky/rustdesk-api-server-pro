@@ -23,28 +23,30 @@ func NewXormAddressBookRepository(dbEngine *xorm.Engine) *XormAddressBookReposit
 func (r *XormAddressBookRepository) GetLegacyAddressBook(query core.LegacyAddressBookGetQuery) (core.LegacyAddressBookGetResult, error) {
 	abID := r.ensurePersonalABID(query.UserID)
 
-	tagList := make([]model.Tags, 0)
-	if err := r.DB.Where("user_id = ?", query.UserID).Find(&tagList); err != nil {
-		return core.LegacyAddressBookGetResult{}, err
-	}
-
-	tags := make([]string, 0, len(tagList))
-	tagColors := make(map[string]int64, len(tagList))
-	for _, tag := range tagList {
-		tags = append(tags, tag.Tag)
-		colorCode, err := strconv.ParseInt(tag.Color, 10, 64)
-		if err != nil {
-			continue
-		}
-		tagColors[tag.Tag] = colorCode
-	}
-
-	if abID > 0 && len(tagList) == 0 {
+	tags := make([]string, 0)
+	tagColors := make(map[string]int64)
+	if abID > 0 {
 		abTagList := make([]model.AddressBookTag, 0)
-		if err := r.DB.Where("user_id = ? and ab_id = ?", query.UserID, abID).Find(&abTagList); err == nil {
-			for _, t := range abTagList {
-				tags = append(tags, t.Name)
-				tagColors[t.Name] = t.Color
+		if err := r.DB.Where("user_id = ? and ab_id = ?", query.UserID, abID).Find(&abTagList); err != nil {
+			return core.LegacyAddressBookGetResult{}, err
+		}
+		for _, t := range abTagList {
+			tags = append(tags, t.Name)
+			tagColors[t.Name] = t.Color
+		}
+	}
+	// Old installations may only have the legacy tags table. Once the modern
+	// personal address book contains tags it is authoritative, so stale legacy
+	// rows cannot mask changes made through the official v2 API/admin UI.
+	if len(tags) == 0 {
+		tagList := make([]model.Tags, 0)
+		if err := r.DB.Where("user_id = ?", query.UserID).Find(&tagList); err != nil {
+			return core.LegacyAddressBookGetResult{}, err
+		}
+		for _, tag := range tagList {
+			tags = append(tags, tag.Tag)
+			if colorCode, err := strconv.ParseInt(tag.Color, 10, 64); err == nil {
+				tagColors[tag.Tag] = colorCode
 			}
 		}
 	}
@@ -263,16 +265,86 @@ func (r *XormAddressBookRepository) UpdateAddressBookTagColor(cmd core.AddressBo
 }
 
 func (r *XormAddressBookRepository) RenameAddressBookTag(cmd core.AddressBookTagRenameCommand) error {
-	_, err := r.DB.Where("user_id = ? and ab_id = ? and name = ?", cmd.UserID, cmd.AbID, cmd.Old).
-		Update(&model.AddressBookTag{Name: cmd.New})
-	return err
+	session := r.DB.NewSession()
+	defer session.Close()
+	if err := session.Begin(); err != nil {
+		return err
+	}
+	if _, err := session.Where("user_id = ? and ab_id = ? and name = ?", cmd.UserID, cmd.AbID, cmd.Old).
+		Cols("name").Update(&model.AddressBookTag{Name: cmd.New}); err != nil {
+		_ = session.Rollback()
+		return err
+	}
+	if err := rewritePeerTags(session, cmd.UserID, cmd.AbID, func(tag string) (string, bool) {
+		return cmd.New, tag == cmd.Old
+	}); err != nil {
+		_ = session.Rollback()
+		return err
+	}
+	return session.Commit()
 }
 
 func (r *XormAddressBookRepository) DeleteAddressBookTags(cmd core.AddressBookTagDeleteCommand) error {
-	_, err := r.DB.Where("user_id = ? and ab_id = ?", cmd.UserID, cmd.AbID).
+	session := r.DB.NewSession()
+	defer session.Close()
+	if err := session.Begin(); err != nil {
+		return err
+	}
+	if _, err := session.Where("user_id = ? and ab_id = ?", cmd.UserID, cmd.AbID).
 		In("name", cmd.Names).
-		Delete(&model.AddressBookTag{})
-	return err
+		Delete(&model.AddressBookTag{}); err != nil {
+		_ = session.Rollback()
+		return err
+	}
+	deleted := make(map[string]struct{}, len(cmd.Names))
+	for _, name := range cmd.Names {
+		deleted[name] = struct{}{}
+	}
+	if err := rewritePeerTags(session, cmd.UserID, cmd.AbID, func(tag string) (string, bool) {
+		_, remove := deleted[tag]
+		return "", remove
+	}); err != nil {
+		_ = session.Rollback()
+		return err
+	}
+	return session.Commit()
+}
+
+func rewritePeerTags(session *xorm.Session, userID, abID int, rewrite func(string) (string, bool)) error {
+	var peers []model.Peer
+	if err := session.Where("user_id = ? and ab_id = ?", userID, abID).Find(&peers); err != nil {
+		return err
+	}
+	for _, peer := range peers {
+		var current []string
+		if err := json.Unmarshal([]byte(peer.Tags), &current); err != nil {
+			continue
+		}
+		next := make([]string, 0, len(current))
+		changed := false
+		for _, tag := range current {
+			value, match := rewrite(tag)
+			if !match {
+				next = append(next, tag)
+				continue
+			}
+			changed = true
+			if value != "" {
+				next = append(next, value)
+			}
+		}
+		if !changed {
+			continue
+		}
+		encoded, err := json.Marshal(next)
+		if err != nil {
+			return err
+		}
+		if _, err = session.Where("id = ?", peer.Id).Cols("tags").Update(&model.Peer{Tags: string(encoded)}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (r *XormAddressBookRepository) CountAddressBookPeers(userID, abID int) (int64, error) {

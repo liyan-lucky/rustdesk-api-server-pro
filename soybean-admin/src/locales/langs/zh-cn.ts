@@ -531,7 +531,16 @@ const local: App.I18n.Schema = {
       tagName: '名称',
       tagColor: '颜色',
       updated_at: '更新时间',
-      personal: '我的地址簿'
+      personal: '我的地址簿',
+      note: '备注',
+      platform: '平台',
+      personalReadOnly: '个人地址簿（只读）',
+      nameRequired: '名称不能为空',
+      deviceIdRequired: '设备 ID 不能为空',
+      tagsHint: '多个标签请用逗号分隔',
+      read: '读取',
+      readWrite: '读取和写入',
+      fullControl: '完全控制'
     },
     token: {
       device_os: '设备系统',

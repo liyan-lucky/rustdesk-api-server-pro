@@ -58,6 +58,12 @@
 - 官方 API 兼容计划：`OFFICIAL_API_COMPATIBILITY_PLAN.md`
 - 发布流程：`RELEASE_PROCESS.md`
 - 故障排查：`TROUBLESHOOTING.md`
+
+## 7. 通讯录与翻译发布门禁
+
+- 地址簿、标签和 peer 的写操作必须分别从管理后台和 RustDesk 客户端 API 做真实增删改查回归，不能只验证接口可达。
+- 标签重命名或删除必须同步更新 peer 内的标签引用；新版地址簿标签优先于遗留 `tags` 表，旧客户端兼容响应不得被陈旧数据遮蔽。
+- 每个语言文件必须实际注册到 locale、语言选择器、Day.js 和 Naive UI；发布前执行严格键值检查并生成覆盖率报告。
 ## 设备更新与版本确认
 
 - 设备更新统一使用 `scripts/deploy/update-rustdesk-api.sh`。脚本保留旧容器，直至新容器健康检查和 `/api/version` 版本匹配成功；失败自动回滚。

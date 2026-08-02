@@ -473,7 +473,16 @@ const local: App.I18n.Schema = {
       tagName: 'Name',
       tagColor: 'Color',
       updated_at: 'Updated At',
-      personal: 'My Address Book'
+      personal: 'My Address Book',
+      note: 'Note',
+      platform: 'Platform',
+      personalReadOnly: 'Personal (read-only)',
+      nameRequired: 'Name is required',
+      deviceIdRequired: 'Device ID is required',
+      tagsHint: 'Separate multiple tags with commas',
+      read: 'Read',
+      readWrite: 'Read and write',
+      fullControl: 'Full control'
     },
     token: {
       device_os: 'Device OS',

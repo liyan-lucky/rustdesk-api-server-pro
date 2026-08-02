@@ -6,6 +6,7 @@ import frFR from './langs/fr-fr';
 import deDE from './langs/de-de';
 import esES from './langs/es-es';
 import ruRU from './langs/ru-ru';
+import itIT from './langs/it-it';
 
 const locales: Record<App.I18n.LangType, App.I18n.Schema> = {
   'zh-CN': zhCN,
@@ -16,6 +17,7 @@ const locales: Record<App.I18n.LangType, App.I18n.Schema> = {
   'de-DE': deDE,
   'es-ES': esES,
   'ru-RU': ruRU,
+  'it-IT': itIT,
 };
 
 export default locales;

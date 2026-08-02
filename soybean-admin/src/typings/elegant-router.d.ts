@@ -26,19 +26,19 @@ declare module "@elegant-router/types" {
     "audit_loginlogs": "/audit/loginlogs";
     "devices": "/devices";
     "home": "/home";
-    "my-devices": "/my-devices";
-    "my-devices_peers": "/my-devices/peers";
-    "my-devices_manage": "/my-devices/manage";
-    "my-devices_tags": "/my-devices/tags";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login)?";
+    "my-devices": "/my-devices";
+    "my-devices_manage": "/my-devices/manage";
+    "my-devices_peers": "/my-devices/peers";
+    "my-devices_tags": "/my-devices/tags";
     "system": "/system";
     "system_mail": "/system/mail";
     "system_mail_logs": "/system/mail/logs";
     "system_mail_template": "/system/mail/template";
+    "system_oauth": "/system/oauth";
     "system_server": "/system/server";
     "system_tokens": "/system/tokens";
-    "system_oauth": "/system/oauth";
     "user": "/user";
     "user_list": "/user/list";
     "user_sessions": "/user/sessions";
@@ -79,9 +79,9 @@ declare module "@elegant-router/types" {
     | "audit"
     | "devices"
     | "home"
-    | "my-devices"
     | "iframe-page"
     | "login"
+    | "my-devices"
     | "system"
     | "user"
   >;
@@ -105,19 +105,19 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
-    | "my-devices_peers"
-    | "my-devices_manage"
-    | "my-devices_tags"
     | "audit_baselogs"
     | "audit_filetransferlogs"
     | "audit_loginlogs"
     | "devices"
     | "home"
+    | "my-devices_manage"
+    | "my-devices_peers"
+    | "my-devices_tags"
     | "system_mail_logs"
     | "system_mail_template"
+    | "system_oauth"
     | "system_server"
     | "system_tokens"
-    | "system_oauth"
     | "user_list"
     | "user_sessions"
   >;

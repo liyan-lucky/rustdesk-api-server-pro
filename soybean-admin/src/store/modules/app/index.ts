@@ -58,7 +58,8 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
     { label: 'Français', key: 'fr-FR' },
     { label: 'Deutsch', key: 'de-DE' },
     { label: 'Español', key: 'es-ES' },
-    { label: 'Русский', key: 'ru-RU' }
+    { label: 'Русский', key: 'ru-RU' },
+    { label: 'Italiano', key: 'it-IT' }
   ];
 
   function changeLocale(lang: App.I18n.LangType) {
@@ -163,4 +164,3 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
     toggleMixSiderFixed
   };
 });
-

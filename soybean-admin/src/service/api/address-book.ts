@@ -16,6 +16,18 @@ export function fetchAbAllList() {
   return request<Api.AddressBook.AddressBook[]>({ url: '/ab/list' });
 }
 
+export function fetchAbSharedAdd(data: Partial<Api.AddressBook.AddressBook>) {
+  return request<{ guid: string }>({ url: '/ab/shared/add', method: 'post', data });
+}
+
+export function fetchAbSharedUpdate(data: Partial<Api.AddressBook.AddressBook>) {
+  return request({ url: '/ab/shared/update', method: 'put', data });
+}
+
+export function fetchAbSharedDelete(guids: string[]) {
+  return request({ url: '/ab/shared', method: 'delete', data: guids });
+}
+
 export function fetchAbTags(abGuid: string) {
   return request({ url: `/ab/tags/${abGuid}`, method: 'post' });
 }
