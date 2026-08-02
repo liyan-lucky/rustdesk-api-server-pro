@@ -265,6 +265,8 @@ jobs:
               safe_branch="${TARGET_BRANCH//\//-}"
               echo "${image}:${safe_branch}"
               if [ "${TARGET_BRANCH}" = "main" ] || [ "${TARGET_BRANCH}" = "master" ]; then
+                app_version="${{ steps.version.outputs.app_version }}"
+                echo "${image}:${app_version#v}"
                 echo "${image}:latest"
               fi
             fi

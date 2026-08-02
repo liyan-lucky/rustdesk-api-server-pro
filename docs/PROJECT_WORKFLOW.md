@@ -46,7 +46,7 @@
 3. 只暂存本次修改文件，使用可读的简短提交说明。
 4. 直接推送 `main`；推送后不得绕过失败的 GitHub Actions 门禁手工发布镜像。
 5. `main` 的线上质量流程全部成功后，`ghcr-docker.yml` 自动递增 PATCH 版本，同时更新 `VERSION` 和 `docs/compat/rustdesk-current.json`，再把同一版本注入后端、前端和 GHCR 镜像。
-6. 发布完成后核对 `latest`、`main`、`sha-*` 标签以及 `VERSION` 自动递增提交。
+6. 发布完成后核对版本号、`latest`、`main`、`sha-*` 标签以及 `VERSION` 自动递增提交；缺少版本号标签不得视为发布完成。
 7. 发布完成后将远端 `backup` 对齐到已发布的 `main`；`backup` 只保存快照，不触发正式发布。
 8. 任一门禁失败时先修复失败原因并重新推送 `main`，不得用旧提交或本地未验证镜像冒充正式发布。
 

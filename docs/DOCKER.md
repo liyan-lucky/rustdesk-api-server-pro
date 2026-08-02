@@ -131,6 +131,7 @@ docker exec -it rustdesk-api-server-pro rustdesk-api-server-pro sync
 
 - `latest`：最新构建
 - `main`：main 分支最新
+- `<VERSION>`：每次 main 构建自动递增后的明确版本号（例如 `1.1.42`）
 - `sha-xxxxxxx`：对应 commit SHA
 
 打 tag（如 `v1.1.17`）时额外推送版本号标签（如 `1.1.17`）。
