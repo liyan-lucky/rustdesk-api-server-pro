@@ -153,7 +153,7 @@ const local: App.I18n.Schema = {
     404: 'Pagina non trovata',
     500: 'Errore del server',
     'iframe-page': 'Iframe',
-    home: 'Home',
+    home: 'Home', about: 'Informazioni e aggiornamenti',
     audit: 'Audit',
     user: 'Gestione utenti',
     user_list: 'Elenco utenti',
@@ -172,7 +172,7 @@ const local: App.I18n.Schema = {
     'my-devices': 'Contatti',
     'my-devices_peers': 'I miei contatti',
     'my-devices_manage': 'Gestione rubrica',
-    'my-devices_tags': 'Gestione tag'
+    'my-devices_tags': 'Gestione tag', workspace: 'Il mio spazio', workspace_overview: 'Panoramica', workspace_devices: 'I miei dispositivi', workspace_sessions: 'Sessioni di accesso', workspace_security: 'Eventi di sicurezza', workspace_profile: 'Profilo'
   },
   page: {
     login: {
@@ -345,6 +345,12 @@ const local: App.I18n.Schema = {
       conns: 'Connessioni',
       lastSync: 'Ultima sincronizzazione',
       logout: 'Esci'
+    },
+    workspace: {
+      scopeTitle: 'Spazio personale', scopeTip: 'Sono mostrati solo i tuoi dispositivi, le sessioni, gli eventi di sicurezza e le rubriche autorizzate.', myDevices: 'I miei dispositivi', activeSessions: 'Sessioni attive', addressBooks: 'Rubriche', securityEvents: 'Eventi di sicurezza', currentSession: 'Sessione corrente', revokeConfirm: 'Revocare questa sessione?', revoke: 'Revoca', accountRole: 'Ruolo account', adminRole: 'Amministratore', userRole: 'Utente', permissionScope: 'Ambito autorizzazioni', userScope: 'Risorse personali e rubriche condivise esplicitamente', active: 'Attivo'
+    },
+    about: {
+      runningVersion: 'Versione in esecuzione', buildTime: 'Data build', compatVersion: 'Versione RustDesk compatibile', latestVersion: 'Ultima versione', updateAvailable: 'Aggiornamento disponibile', upToDate: 'Aggiornato', updateCheck: 'Controllo aggiornamenti online', urlTip: 'L’indirizzo può essere modificato e viene salvato nel browser. Il sito deve consentire CORS.', urlPlaceholder: 'URL controllo aggiornamenti', checkNow: 'Controlla ora', restoreDefault: 'Ripristina predefinito', checkFailed: 'Controllo aggiornamenti non riuscito', invalidUrl: 'Sono supportati solo HTTP e HTTPS', invalidResponse: 'Nessuna versione valida nella risposta'
     }
   },
   dropdown: {

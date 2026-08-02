@@ -10,21 +10,21 @@ Metrics:
 
 | Locale | Base Keys | Translated | Suspect | Fallback | Missing | Extra | Translated/Base | Translated/(Base-Missing) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| de-DE | 401 | 353 | 0 | 48 | 0 | 0 | 88.03% | 88.03% |
-| es-ES | 401 | 365 | 0 | 36 | 0 | 0 | 91.02% | 91.02% |
-| fr-FR | 401 | 358 | 0 | 43 | 0 | 0 | 89.28% | 89.28% |
-| it-IT | 401 | 366 | 0 | 35 | 0 | 0 | 91.27% | 91.27% |
-| ja-JP | 401 | 185 | 0 | 216 | 0 | 0 | 46.13% | 46.13% |
-| ko-KR | 401 | 185 | 0 | 216 | 0 | 0 | 46.13% | 46.13% |
-| ru-RU | 401 | 233 | 0 | 168 | 0 | 0 | 58.10% | 58.10% |
-| zh-CN | 401 | 394 | 0 | 7 | 0 | 0 | 98.25% | 98.25% |
+| de-DE | 437 | 373 | 0 | 64 | 0 | 0 | 85.35% | 85.35% |
+| es-ES | 437 | 401 | 0 | 36 | 0 | 0 | 91.76% | 91.76% |
+| fr-FR | 437 | 379 | 0 | 58 | 0 | 0 | 86.73% | 86.73% |
+| it-IT | 437 | 402 | 0 | 35 | 0 | 0 | 91.99% | 91.99% |
+| ja-JP | 437 | 221 | 0 | 216 | 0 | 0 | 50.57% | 50.57% |
+| ko-KR | 437 | 221 | 0 | 216 | 0 | 0 | 50.57% | 50.57% |
+| ru-RU | 437 | 269 | 0 | 168 | 0 | 0 | 61.56% | 61.56% |
+| zh-CN | 437 | 430 | 0 | 7 | 0 | 0 | 98.40% | 98.40% |
 
 ## de-DE
 
-- Base leaf keys: 401
-- Translated leaves: 353 (88.03%)
+- Base leaf keys: 437
+- Translated leaves: 373 (85.35%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 48 (11.97%)
+- Fallback-identical leaves: 64 (14.65%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -49,27 +49,27 @@ Metrics:
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.status`
   - `dataMap.user.statusLabel.normal`
+  - `page.about.buildTime`
+  - `page.about.checkFailed`
+  - `page.about.checkNow`
+  - `page.about.compatVersion`
+  - `page.about.invalidResponse`
+  - `page.about.invalidUrl`
+  - `page.about.latestVersion`
+  - `page.about.restoreDefault`
+  - `page.about.runningVersion`
+  - `page.about.upToDate`
+  - `page.about.updateAvailable`
+  - `page.about.updateCheck`
+  - `page.about.urlPlaceholder`
+  - `page.about.urlTip`
   - `page.home.serverConfig.ageSeconds`
   - `page.home.serverConfig.cacheTtlHint`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
   - `page.home.serverConfig.connectivity.checkSourceType.remote`
   - `page.home.serverConfig.key`
   - `page.home.serverConfig.sourceType.remote`
-  - `page.myDevices.offline`
-  - `page.myDevices.online`
-  - `page.myDevices.status`
-  - `page.user.list.emailFormatError`
-  - `page.user.list.inputNickname`
-  - `page.user.list.inputPassword`
-  - `page.user.list.inputUsername`
-  - `page.user.list.require2FACode`
-  - `page.user.list.require2FASecret`
-  - `page.user.list.selectUserStatus`
-  - `page.user.list.tfa_secret_bind`
-  - `route.audit`
-  - `route.iframe-page`
-  - `system.title`
-  - ... and 8 more
+  - ... and 24 more
 
 **Suspect Keys**
 -
@@ -82,10 +82,10 @@ Metrics:
 
 ## es-ES
 
-- Base leaf keys: 401
-- Translated leaves: 365 (91.02%)
+- Base leaf keys: 437
+- Translated leaves: 401 (91.76%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 36 (8.98%)
+- Fallback-identical leaves: 36 (8.24%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -138,10 +138,10 @@ Metrics:
 
 ## fr-FR
 
-- Base leaf keys: 401
-- Translated leaves: 358 (89.28%)
+- Base leaf keys: 437
+- Translated leaves: 379 (86.73%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 43 (10.72%)
+- Fallback-identical leaves: 58 (13.27%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -163,6 +163,20 @@ Metrics:
   - `dataMap.token.is_admin`
   - `dataMap.user.loginVerifyLabel.tfaCheck`
   - `dataMap.user.statusLabel.normal`
+  - `page.about.buildTime`
+  - `page.about.checkFailed`
+  - `page.about.checkNow`
+  - `page.about.compatVersion`
+  - `page.about.invalidResponse`
+  - `page.about.invalidUrl`
+  - `page.about.latestVersion`
+  - `page.about.restoreDefault`
+  - `page.about.runningVersion`
+  - `page.about.upToDate`
+  - `page.about.updateAvailable`
+  - `page.about.updateCheck`
+  - `page.about.urlPlaceholder`
+  - `page.about.urlTip`
   - `page.home.serverConfig.ageSeconds`
   - `page.home.serverConfig.cacheTtlHint`
   - `page.home.serverConfig.connectivity.checkSourceType.cache`
@@ -172,21 +186,7 @@ Metrics:
   - `page.myDevices.title`
   - `page.user.list.emailFormatError`
   - `page.user.list.inputNickname`
-  - `page.user.list.inputPassword`
-  - `page.user.list.inputUsername`
-  - `page.user.list.require2FACode`
-  - `page.user.list.require2FASecret`
-  - `page.user.list.selectUserStatus`
-  - `page.user.list.tfa_secret_bind`
-  - `route.audit`
-  - `route.iframe-page`
-  - `route.my-devices`
-  - `route.user_sessions`
-  - `system.title`
-  - `system.updateCancel`
-  - `system.updateConfirm`
-  - `system.updateContent`
-  - ... and 3 more
+  - ... and 18 more
 
 **Suspect Keys**
 -
@@ -199,10 +199,10 @@ Metrics:
 
 ## it-IT
 
-- Base leaf keys: 401
-- Translated leaves: 366 (91.27%)
+- Base leaf keys: 437
+- Translated leaves: 402 (91.99%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 35 (8.73%)
+- Fallback-identical leaves: 35 (8.01%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -254,10 +254,10 @@ Metrics:
 
 ## ja-JP
 
-- Base leaf keys: 401
-- Translated leaves: 185 (46.13%)
+- Base leaf keys: 437
+- Translated leaves: 221 (50.57%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 216 (53.87%)
+- Fallback-identical leaves: 216 (49.43%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -315,10 +315,10 @@ Metrics:
 
 ## ko-KR
 
-- Base leaf keys: 401
-- Translated leaves: 185 (46.13%)
+- Base leaf keys: 437
+- Translated leaves: 221 (50.57%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 216 (53.87%)
+- Fallback-identical leaves: 216 (49.43%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -376,10 +376,10 @@ Metrics:
 
 ## ru-RU
 
-- Base leaf keys: 401
-- Translated leaves: 233 (58.10%)
+- Base leaf keys: 437
+- Translated leaves: 269 (61.56%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 168 (41.90%)
+- Fallback-identical leaves: 168 (38.44%)
 - Missing leaves: 0
 - Extra leaves: 0
 
@@ -437,10 +437,10 @@ Metrics:
 
 ## zh-CN
 
-- Base leaf keys: 401
-- Translated leaves: 394 (98.25%)
+- Base leaf keys: 437
+- Translated leaves: 430 (98.40%)
 - Suspect translated leaves: 0
-- Fallback-identical leaves: 7 (1.75%)
+- Fallback-identical leaves: 7 (1.60%)
 - Missing leaves: 0
 - Extra leaves: 0
 

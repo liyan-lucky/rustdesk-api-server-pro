@@ -187,6 +187,7 @@ const local: App.I18n.Schema = {
     'my-devices_peers': 'Meine Kontakte',
     'my-devices_manage': 'Adressbuchverwaltung',
     'my-devices_tags': 'Tag-Verwaltung',
+    workspace: 'Mein Arbeitsbereich', workspace_overview: 'Übersicht', workspace_devices: 'Meine Geräte', workspace_sessions: 'Anmeldesitzungen', workspace_security: 'Sicherheitsereignisse', workspace_profile: 'Profil',
     system_server: 'Serverkonfiguration',
     system_tokens: 'Benutzer-Token',
     system_oauth: 'OAuth-Verwaltung'
@@ -371,6 +372,10 @@ const local: App.I18n.Schema = {
       conns: 'Verbindungen',
       lastSync: 'Letzte Synchronisierung',
       logout: 'Abmelden'
+    },
+    workspace: {
+      ...enUs.page.workspace,
+      scopeTitle: 'Persönlicher Arbeitsbereich', scopeTip: 'Hier werden nur Ihre Geräte, Sitzungen, Sicherheitsereignisse und freigegebenen Adressbücher angezeigt.', myDevices: 'Meine Geräte', activeSessions: 'Aktive Sitzungen', addressBooks: 'Adressbücher', securityEvents: 'Sicherheitsereignisse', currentSession: 'Aktuelle Sitzung', revokeConfirm: 'Diese Anmeldesitzung widerrufen?', revoke: 'Widerrufen', accountRole: 'Kontorolle', adminRole: 'Administrator', userRole: 'Benutzer', permissionScope: 'Berechtigungsumfang', userScope: 'Persönliche Ressourcen und ausdrücklich freigegebene Adressbücher', active: 'Aktiv'
     }
   },
   dataMap: {

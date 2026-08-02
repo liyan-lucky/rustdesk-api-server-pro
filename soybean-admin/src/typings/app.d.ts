@@ -569,6 +569,39 @@ declare namespace App {
           lastSync: string;
           logout: string;
         };
+        workspace: {
+          scopeTitle: string;
+          scopeTip: string;
+          myDevices: string;
+          activeSessions: string;
+          addressBooks: string;
+          securityEvents: string;
+          currentSession: string;
+          revokeConfirm: string;
+          revoke: string;
+          accountRole: string;
+          adminRole: string;
+          userRole: string;
+          permissionScope: string;
+          userScope: string;
+          active: string;
+        };
+        about: {
+          runningVersion: string;
+          buildTime: string;
+          compatVersion: string;
+          latestVersion: string;
+          updateAvailable: string;
+          upToDate: string;
+          updateCheck: string;
+          urlTip: string;
+          urlPlaceholder: string;
+          checkNow: string;
+          restoreDefault: string;
+          checkFailed: string;
+          invalidUrl: string;
+          invalidResponse: string;
+        };
       };
       dropdown: Record<Global.DropdownKey, string>;
       icon: {

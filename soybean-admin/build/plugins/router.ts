@@ -35,6 +35,26 @@ export function setupElegantRouter() {
         meta.constant = true;
       }
 
+      if (key === 'workspace' || key.startsWith('workspace_')) {
+        meta.roles = ['R_USER'];
+      }
+
+      if (key === 'home') {
+        meta.roles = ['R_SUPER'];
+      }
+
+      const routeMeta: Partial<Record<RouteKey, Partial<RouteMeta>>> = {
+        about: { icon: 'mdi:information-outline', order: 99 },
+        workspace: { icon: 'mdi:account-circle', order: 2 },
+        workspace_overview: { icon: 'mdi:view-dashboard-outline', order: 1 },
+        workspace_devices: { icon: 'mdi:monitor-multiple', order: 2 },
+        workspace_sessions: { icon: 'mdi:devices', order: 3 },
+        workspace_security: { icon: 'mdi:shield-account', order: 4 },
+        workspace_profile: { icon: 'mdi:card-account-details-outline', order: 5 }
+      };
+
+      Object.assign(meta, routeMeta[key]);
+
       return meta;
     }
   });

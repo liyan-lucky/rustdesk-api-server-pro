@@ -178,6 +178,7 @@ const local: App.I18n.Schema = {
     500: '服务器错误',
     'iframe-page': '内嵌页面',
     home: '首页',
+    about: '关于与更新',
     audit: '日志审计',
     user: '用户管理',
     user_list: '用户列表',
@@ -197,6 +198,12 @@ const local: App.I18n.Schema = {
     'my-devices_peers': '地址簿',
     'my-devices_manage': '地址簿管理',
     'my-devices_tags': '标签管理'
+    ,workspace: '个人工作台',
+    workspace_overview: '个人概览',
+    workspace_devices: '我的设备',
+    workspace_sessions: '登录会话',
+    workspace_security: '安全记录',
+    workspace_profile: '个人资料'
   },
   page: {
     ...enUs.page,
@@ -388,6 +395,28 @@ const local: App.I18n.Schema = {
       conns: '连接数',
       lastSync: '最后同步',
       logout: '退出登录'
+    },
+    workspace: {
+      ...enUs.page.workspace,
+      scopeTitle: '个人权限空间',
+      scopeTip: '这里仅展示属于你的设备、登录会话、安全记录以及你有权访问的地址簿。',
+      myDevices: '我的设备',
+      activeSessions: '有效会话',
+      addressBooks: '地址簿',
+      securityEvents: '安全记录',
+      currentSession: '当前会话',
+      revokeConfirm: '确认撤销这个登录会话？',
+      revoke: '撤销',
+      accountRole: '账户角色',
+      adminRole: '管理员',
+      userRole: '普通用户',
+      permissionScope: '权限范围',
+      userScope: '个人资源及明确授权的共享地址簿',
+      active: '有效'
+    },
+    about: {
+      ...enUs.page.about,
+      runningVersion: '运行版本', buildTime: '构建时间', compatVersion: '兼容的 RustDesk 版本', latestVersion: '最新版本', updateAvailable: '发现新版本', upToDate: '已是最新版本', updateCheck: '在线更新检查', urlTip: '检查地址可以修改并保存在当前浏览器。响应可为纯版本号，或包含 version、latest_version、tag_name、server.version 的 JSON；目标网站需允许浏览器跨域访问。', urlPlaceholder: '更新检查地址', checkNow: '立即检查', restoreDefault: '恢复默认地址', checkFailed: '更新检查失败', invalidUrl: '仅支持 HTTP 或 HTTPS 地址', invalidResponse: '响应中没有找到有效的语义版本号'
     }
   },
   dropdown: {

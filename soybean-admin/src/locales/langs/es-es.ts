@@ -187,6 +187,7 @@ const local: App.I18n.Schema = {
     'my-devices_peers': 'Mis contactos',
     'my-devices_manage': 'Gestión de libretas',
     'my-devices_tags': 'Gestión de etiquetas',
+    workspace: 'Mi espacio', workspace_overview: 'Resumen', workspace_devices: 'Mis dispositivos', workspace_sessions: 'Sesiones de inicio', workspace_security: 'Eventos de seguridad', workspace_profile: 'Perfil', about: 'Acerca de y actualizaciones',
     system_server: 'Configuración del servidor',
     system_tokens: 'Token de usuario',
     system_oauth: 'Gestión OAuth'
@@ -371,6 +372,14 @@ const local: App.I18n.Schema = {
       conns: 'Conexiones',
       lastSync: 'Última sincronización',
       logout: 'Cerrar sesión'
+    },
+    workspace: {
+      ...enUs.page.workspace,
+      scopeTitle: 'Espacio personal', scopeTip: 'Aquí solo se muestran tus dispositivos, sesiones, eventos de seguridad y libretas autorizadas.', myDevices: 'Mis dispositivos', activeSessions: 'Sesiones activas', addressBooks: 'Libretas de direcciones', securityEvents: 'Eventos de seguridad', currentSession: 'Sesión actual', revokeConfirm: '¿Revocar esta sesión?', revoke: 'Revocar', accountRole: 'Rol de la cuenta', adminRole: 'Administrador', userRole: 'Usuario', permissionScope: 'Ámbito de permisos', userScope: 'Recursos personales y libretas compartidas explícitamente', active: 'Activo'
+    },
+    about: {
+      ...enUs.page.about,
+      runningVersion: 'Versión en ejecución', buildTime: 'Hora de compilación', compatVersion: 'Versión RustDesk compatible', latestVersion: 'Última versión', updateAvailable: 'Actualización disponible', upToDate: 'Actualizado', updateCheck: 'Comprobación de actualizaciones', urlTip: 'La dirección se puede modificar y se guarda en este navegador. El sitio debe permitir solicitudes CORS.', urlPlaceholder: 'URL de comprobación', checkNow: 'Comprobar ahora', restoreDefault: 'Restaurar valor predeterminado', checkFailed: 'Falló la comprobación', invalidUrl: 'Solo se admiten HTTP y HTTPS', invalidResponse: 'No se encontró una versión válida en la respuesta'
     }
   },
   dataMap: {

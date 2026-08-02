@@ -21,13 +21,18 @@ func (c *IndexController) HandleUserInfo() mvc.Result {
 	roles := []string{}
 	if user.IsAdmin {
 		roles = append(roles, "R_SUPER")
+	} else {
+		roles = append(roles, "R_USER")
 	}
 	return c.Success(iris.Map{
-		"userId":   user.Id,
-		"userName": user.Name,
-		"email":    user.Email,
-		"isAdmin":  user.IsAdmin,
-		"roles":    roles,
-		"buttons":  []string{},
+		"userId":          user.Id,
+		"userName":        user.Name,
+		"email":           user.Email,
+		"username":        user.Username,
+		"note":            user.Note,
+		"licensedDevices": user.LicensedDevices,
+		"isAdmin":         user.IsAdmin,
+		"roles":           roles,
+		"buttons":         []string{},
 	}, "ok")
 }

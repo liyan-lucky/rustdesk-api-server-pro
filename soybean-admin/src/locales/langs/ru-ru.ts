@@ -155,7 +155,7 @@ const local: App.I18n.Schema = {
     "500": "Server Error",
     "login": "Вход",
     "iframe-page": "Встроенная страница",
-    "home": "Главная",
+    "home": "Главная", "about": "О программе и обновления",
     "audit": "Аудит",
     "user": "Управление пользователями",
     "user_list": "Список пользователей",
@@ -174,7 +174,7 @@ const local: App.I18n.Schema = {
     "my-devices": "Контакты",
     "my-devices_peers": "Мои пиры",
     "my-devices_manage": "Управление адресной книгой",
-    "my-devices_tags": "Управление тегами"
+    "my-devices_tags": "Управление тегами", "workspace": "Моё пространство", "workspace_overview": "Обзор", "workspace_devices": "Мои устройства", "workspace_sessions": "Сеансы входа", "workspace_security": "События безопасности", "workspace_profile": "Профиль"
   },
   "page": {
     "login": {
@@ -347,6 +347,12 @@ const local: App.I18n.Schema = {
       "conns": "Соединения",
       "lastSync": "Последняя синхронизация",
       "logout": "Выход"
+    },
+    "workspace": {
+      "scopeTitle": "Личное пространство", "scopeTip": "Здесь показаны только ваши устройства, сеансы, события безопасности и разрешённые адресные книги.", "myDevices": "Мои устройства", "activeSessions": "Активные сеансы", "addressBooks": "Адресные книги", "securityEvents": "События безопасности", "currentSession": "Текущий сеанс", "revokeConfirm": "Отозвать этот сеанс входа?", "revoke": "Отозвать", "accountRole": "Роль учётной записи", "adminRole": "Администратор", "userRole": "Пользователь", "permissionScope": "Область доступа", "userScope": "Личные ресурсы и явно предоставленные адресные книги", "active": "Активен"
+    },
+    "about": {
+      "runningVersion": "Текущая версия", "buildTime": "Время сборки", "compatVersion": "Совместимая версия RustDesk", "latestVersion": "Последняя версия", "updateAvailable": "Доступно обновление", "upToDate": "Установлена последняя версия", "updateCheck": "Проверка обновлений", "urlTip": "Адрес проверки можно изменить; он сохраняется в этом браузере. Сайт должен разрешать CORS.", "urlPlaceholder": "Адрес проверки обновлений", "checkNow": "Проверить", "restoreDefault": "Вернуть адрес по умолчанию", "checkFailed": "Ошибка проверки обновлений", "invalidUrl": "Поддерживаются только HTTP и HTTPS", "invalidResponse": "Версия не найдена в ответе"
     }
   },
   "dropdown": {

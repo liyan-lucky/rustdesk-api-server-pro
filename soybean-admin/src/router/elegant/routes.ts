@@ -40,6 +40,17 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'about',
+    path: '/about',
+    component: 'layout.base$view.about',
+    meta: {
+      title: 'about',
+      i18nKey: 'route.about',
+      icon: 'mdi:information-outline',
+      order: 99
+    }
+  },
+  {
     name: 'audit',
     path: '/audit',
     component: 'layout.base',
@@ -103,7 +114,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'home',
       i18nKey: 'route.home',
       icon: 'mdi:monitor-dashboard',
-      order: 1
+      order: 1,
+      roles: ['R_SUPER']
     }
   },
   {
@@ -280,6 +292,80 @@ export const generatedRoutes: GeneratedRoute[] = [
           i18nKey: 'route.user_sessions',
           requiresAuth: true,
           icon: 'carbon:mobile-session'
+        }
+      }
+    ]
+  },
+  {
+    name: 'workspace',
+    path: '/workspace',
+    component: 'layout.base',
+    meta: {
+      title: 'workspace',
+      i18nKey: 'route.workspace',
+      roles: ['R_USER'],
+      icon: 'mdi:account-circle',
+      order: 2
+    },
+    children: [
+      {
+        name: 'workspace_devices',
+        path: '/workspace/devices',
+        component: 'view.workspace_devices',
+        meta: {
+          title: 'workspace_devices',
+          i18nKey: 'route.workspace_devices',
+          roles: ['R_USER'],
+          icon: 'mdi:monitor-multiple',
+          order: 2
+        }
+      },
+      {
+        name: 'workspace_overview',
+        path: '/workspace/overview',
+        component: 'view.workspace_overview',
+        meta: {
+          title: 'workspace_overview',
+          i18nKey: 'route.workspace_overview',
+          roles: ['R_USER'],
+          icon: 'mdi:view-dashboard-outline',
+          order: 1
+        }
+      },
+      {
+        name: 'workspace_profile',
+        path: '/workspace/profile',
+        component: 'view.workspace_profile',
+        meta: {
+          title: 'workspace_profile',
+          i18nKey: 'route.workspace_profile',
+          roles: ['R_USER'],
+          icon: 'mdi:card-account-details-outline',
+          order: 5
+        }
+      },
+      {
+        name: 'workspace_security',
+        path: '/workspace/security',
+        component: 'view.workspace_security',
+        meta: {
+          title: 'workspace_security',
+          i18nKey: 'route.workspace_security',
+          roles: ['R_USER'],
+          icon: 'mdi:shield-account',
+          order: 4
+        }
+      },
+      {
+        name: 'workspace_sessions',
+        path: '/workspace/sessions',
+        component: 'view.workspace_sessions',
+        meta: {
+          title: 'workspace_sessions',
+          i18nKey: 'route.workspace_sessions',
+          roles: ['R_USER'],
+          icon: 'mdi:devices',
+          order: 3
         }
       }
     ]

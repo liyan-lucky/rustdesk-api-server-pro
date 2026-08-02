@@ -166,6 +166,7 @@ const routeMap: RouteMap = {
   "403": "/403",
   "404": "/404",
   "500": "/500",
+  "about": "/about",
   "audit": "/audit",
   "audit_baselogs": "/audit/baselogs",
   "audit_filetransferlogs": "/audit/filetransferlogs",
@@ -187,7 +188,13 @@ const routeMap: RouteMap = {
   "system_tokens": "/system/tokens",
   "user": "/user",
   "user_list": "/user/list",
-  "user_sessions": "/user/sessions"
+  "user_sessions": "/user/sessions",
+  "workspace": "/workspace",
+  "workspace_devices": "/workspace/devices",
+  "workspace_overview": "/workspace/overview",
+  "workspace_profile": "/workspace/profile",
+  "workspace_security": "/workspace/security",
+  "workspace_sessions": "/workspace/sessions"
 };
 
 /**

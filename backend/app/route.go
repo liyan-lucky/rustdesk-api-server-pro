@@ -64,5 +64,6 @@ func SetRoute(app *iris.Application) {
 		userPortalMvc := mvc.New(userPortalWithAuthParty)
 		userPortalMvc.Handle(new(userportal.IndexController))
 		userPortalMvc.Handle(new(userportal.DevicesController))
+		userPortalMvc.Handle(new(userportal.AccountController))
 	}
 }

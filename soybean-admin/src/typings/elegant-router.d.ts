@@ -20,6 +20,7 @@ declare module "@elegant-router/types" {
     "403": "/403";
     "404": "/404";
     "500": "/500";
+    "about": "/about";
     "audit": "/audit";
     "audit_baselogs": "/audit/baselogs";
     "audit_filetransferlogs": "/audit/filetransferlogs";
@@ -42,6 +43,12 @@ declare module "@elegant-router/types" {
     "user": "/user";
     "user_list": "/user/list";
     "user_sessions": "/user/sessions";
+    "workspace": "/workspace";
+    "workspace_devices": "/workspace/devices";
+    "workspace_overview": "/workspace/overview";
+    "workspace_profile": "/workspace/profile";
+    "workspace_security": "/workspace/security";
+    "workspace_sessions": "/workspace/sessions";
   };
 
   /**
@@ -76,6 +83,7 @@ declare module "@elegant-router/types" {
     | "403"
     | "404"
     | "500"
+    | "about"
     | "audit"
     | "devices"
     | "home"
@@ -84,6 +92,7 @@ declare module "@elegant-router/types" {
     | "my-devices"
     | "system"
     | "user"
+    | "workspace"
   >;
 
   /**
@@ -105,6 +114,7 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
+    | "about"
     | "audit_baselogs"
     | "audit_filetransferlogs"
     | "audit_loginlogs"
@@ -120,6 +130,11 @@ declare module "@elegant-router/types" {
     | "system_tokens"
     | "user_list"
     | "user_sessions"
+    | "workspace_devices"
+    | "workspace_overview"
+    | "workspace_profile"
+    | "workspace_security"
+    | "workspace_sessions"
   >;
 
   /**

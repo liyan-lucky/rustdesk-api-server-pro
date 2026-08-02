@@ -237,6 +237,11 @@ export const useRouteStore = defineStore(SetupStoreId.Route, () => {
       const filteredAuthRoutes = filterAuthRoutesByRoles(staticAuthRoutes, authStore.userInfo.roles);
 
       addAuthRoutes(filteredAuthRoutes);
+
+      if (authStore.userInfo.roles.includes('R_USER')) {
+        setRouteHome('workspace_overview');
+        handleUpdateRootRouteRedirect('workspace_overview');
+      }
     }
 
     handleConstantAndAuthRoutes();

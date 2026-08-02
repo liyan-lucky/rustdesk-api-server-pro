@@ -187,6 +187,7 @@ const local: App.I18n.Schema = {
     'my-devices_peers': 'Mes contacts',
     'my-devices_manage': 'Gestion des carnets',
     'my-devices_tags': 'Gestion des tags',
+    workspace: 'Mon espace', workspace_overview: 'Vue d’ensemble', workspace_devices: 'Mes appareils', workspace_sessions: 'Sessions de connexion', workspace_security: 'Événements de sécurité', workspace_profile: 'Profil',
     system_server: 'Configuration serveur',
     system_tokens: 'Jeton utilisateur',
     system_oauth: 'Gestion OAuth'
@@ -371,6 +372,10 @@ const local: App.I18n.Schema = {
       conns: 'connexions',
       lastSync: 'Dernière synchro',
       logout: 'Déconnexion'
+    },
+    workspace: {
+      ...enUs.page.workspace,
+      scopeTitle: 'Espace personnel', scopeTip: 'Seuls vos appareils, sessions, événements de sécurité et carnets autorisés sont affichés ici.', myDevices: 'Mes appareils', activeSessions: 'Sessions actives', addressBooks: 'Carnets d’adresses', securityEvents: 'Événements de sécurité', currentSession: 'Session actuelle', revokeConfirm: 'Révoquer cette session de connexion ?', revoke: 'Révoquer', accountRole: 'Rôle du compte', adminRole: 'Administrateur', userRole: 'Utilisateur', permissionScope: 'Périmètre des droits', userScope: 'Ressources personnelles et carnets explicitement partagés', active: 'Actif'
     }
   },
   dataMap: {

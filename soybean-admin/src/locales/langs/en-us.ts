@@ -156,6 +156,7 @@ const local: App.I18n.Schema = {
     500: 'Server Error',
     'iframe-page': 'Iframe',
     home: 'Home',
+    about: 'About & Updates',
     audit: 'Audit',
     user: 'User Management',
     user_list: 'User List',
@@ -174,7 +175,13 @@ const local: App.I18n.Schema = {
     'my-devices': 'Contacts',
     'my-devices_peers': 'My Peers',
     'my-devices_manage': 'Address Book Mgmt',
-    'my-devices_tags': 'Tag Management'
+    'my-devices_tags': 'Tag Management',
+    workspace: 'My Workspace',
+    workspace_overview: 'Overview',
+    workspace_devices: 'My Devices',
+    workspace_sessions: 'Login Sessions',
+    workspace_security: 'Security Events',
+    workspace_profile: 'Profile'
   },
   page: {
     login: {
@@ -347,6 +354,26 @@ const local: App.I18n.Schema = {
       conns: 'Connections',
       lastSync: 'Last Sync',
       logout: 'Logout'
+    },
+    workspace: {
+      scopeTitle: 'Personal workspace',
+      scopeTip: 'Only your own devices, sessions, security events and authorized address books are shown here.',
+      myDevices: 'My devices',
+      activeSessions: 'Active sessions',
+      addressBooks: 'Address books',
+      securityEvents: 'Security events',
+      currentSession: 'Current session',
+      revokeConfirm: 'Revoke this login session?',
+      revoke: 'Revoke',
+      accountRole: 'Account role',
+      adminRole: 'Administrator',
+      userRole: 'User',
+      permissionScope: 'Permission scope',
+      userScope: 'Personal resources and explicitly shared address books',
+      active: 'Active'
+    },
+    about: {
+      runningVersion: 'Running version', buildTime: 'Build time', compatVersion: 'Compatible RustDesk version', latestVersion: 'Latest version', updateAvailable: 'Update available', upToDate: 'Up to date', updateCheck: 'Online update check', urlTip: 'The check URL is editable and saved in this browser. It may return a plain semantic version or JSON containing version, latest_version, tag_name, or server.version. The remote site must allow browser CORS requests.', urlPlaceholder: 'Update check URL', checkNow: 'Check now', restoreDefault: 'Restore default', checkFailed: 'Update check failed', invalidUrl: 'Only HTTP and HTTPS URLs are supported', invalidResponse: 'No semantic version was found in the response'
     }
   },
   dropdown: {
