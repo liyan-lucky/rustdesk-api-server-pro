@@ -162,6 +162,58 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 	}
 }
 
+func TestOAuthProviderService_QQTicketFlow(t *testing.T) {
+	var server *httptest.Server
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/oauth2.0/token":
+			if r.Method != http.MethodGet || r.URL.Query().Get("fmt") != "json" || r.URL.Query().Get("need_openid") != "1" {
+				t.Fatalf("unexpected QQ token request: %s %s", r.Method, r.URL.RawQuery)
+			}
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"access_token": "qq-token", "openid": "qq-openid", "expires_in": 3600})
+		case "/user/get_user_info":
+			if r.URL.Query().Get("access_token") != "qq-token" || r.URL.Query().Get("openid") != "qq-openid" || r.URL.Query().Get("oauth_consumer_key") != "qq-app-id" {
+				t.Fatalf("unexpected QQ userinfo request: %s", r.URL.RawQuery)
+			}
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"ret": 0, "nickname": "QQ User", "figureurl_qq_2": "https://qlogo.example/avatar"})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	engine, err := db.NewEngine(&config.DbConfig{Driver: "sqlite", Dsn: ":memory:", TimeZone: "Asia/Shanghai", ShowSql: false})
+	if err != nil {
+		t.Fatalf("new engine: %v", err)
+	}
+	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount), new(model.OAuthLoginSession)); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+	cfg := &config.ServerConfig{SignKey: "test-sign-key", OAuth: &config.OAuthConfig{Providers: []config.OAuthProviderConfig{{
+		Type: "qq", Name: "qq", DisplayName: "QQ", Enabled: true, ClientID: "qq-app-id", ClientSecret: "qq-app-key",
+		AuthorizationEndpoint: server.URL + "/oauth2.0/authorize", TokenEndpoint: server.URL + "/oauth2.0/token", UserinfoEndpoint: server.URL + "/user/get_user_info",
+		AccountRole: "user", AutoCreateUser: true, BindByEmail: true,
+	}}}}
+	svc := NewOAuthProviderService(cfg, engine)
+	authURL, enabled, err := svc.BuildAdminAuthURL("qq", "http://localhost:12345", "/login")
+	if err != nil || !enabled {
+		t.Fatalf("build QQ auth url: enabled=%v err=%v", enabled, err)
+	}
+	u, _ := url.Parse(authURL)
+	if u.Query().Get("scope") != "get_user_info" || u.Query().Get("code_challenge") != "" {
+		t.Fatalf("unexpected QQ authorization query: %s", u.RawQuery)
+	}
+	ticket, _, err := svc.ConsumeAdminCallback("qq", "qq-code", u.Query().Get("state"))
+	if err != nil || ticket == "" {
+		t.Fatalf("consume QQ callback: ticket=%q err=%v", ticket, err)
+	}
+	var account model.OAuthAccount
+	has, err := engine.Where("provider = ? and subject = ?", "qq", "qq-openid").Get(&account)
+	if err != nil || !has || account.Name != "QQ User" {
+		t.Fatalf("QQ account was not persisted correctly: has=%v account=%+v err=%v", has, account, err)
+	}
+}
+
 func TestOAuthProviderService_GithubTicketFlowWithoutInMemoryState(t *testing.T) {
 	provider := newMockGitHubOAuthProvider(t)
 	defer provider.Close()

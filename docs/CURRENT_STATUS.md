@@ -37,9 +37,9 @@
 - 版本自动递增系统：VERSION 文件为单一事实来源，CI 每次构建自动递增 PATCH 版本号。
 - 首页更新日志区域显示服务端版本与构建时间。
 - 管理后台前端已内置到镜像，旧 `rustdesk-web` / nginx 前端容器不再是必需组件。
-- 第三方登录统一使用 `oauth.providers`，管理员优先在“第三方登录”页面配置。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关。Client Secret 接口只返回 `********` 加末 8 位的识别提示，不返回明文；未修改提示直接保存会保留原密钥。
+- 第三方登录统一使用 `oauth.providers`，管理员优先在“第三方登录”页面配置。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关；QQ 已完成网站应用 OAuth2、OpenID 身份与用户资料协议适配，等待真实回调验收。Client Secret 接口只返回 `********` 加末 8 位的识别提示，不返回明文；未修改提示直接保存会保留原密钥。
 - OAuth/OIDC 成功目标和失败目标均已统一为前端 hash 路由；失败回调固定返回登录页，不再先进入受保护页面后闪退。错误码区分账户不可绑定、Provider 网络不可达、state 过期和其他失败。
-- Google 与通用 OIDC 保持兼容。微信、QQ、Gitee 等国内 Provider 目前仅在路线图中，尚未完成官方协议适配，不得在界面中宣称可用。
+- Google 与通用 OIDC 保持兼容。微信、Gitee 等国内 Provider 目前仅在路线图中，尚未完成官方协议适配，不得在界面中宣称可用。
 - plugin-sign、部分 OIDC 和高级企业能力仍以兼容占位或主流程兼容为主，不能宣称完整替代官方 Pro。
 
 ## 当前目录职责

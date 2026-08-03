@@ -129,7 +129,7 @@ func (c *OAuthController) HandleProviderConfigs() mvc.Result {
 		list = append(list, iris.Map{
 			"type": p.Type, "name": p.Name, "displayName": p.DisplayName, "enabled": p.Enabled,
 			"clientId": p.ClientID, "secretConfigured": strings.TrimSpace(p.ClientSecret) != "",
-			"secretHint": maskOAuthSecret(p.ClientSecret),
+			"secretHint":  maskOAuthSecret(p.ClientSecret),
 			"redirectUrl": p.RedirectURL, "scopes": p.Scopes, "accountRole": p.AccountRole,
 			"bindByEmail": p.BindByEmail, "autoCreateAdmin": p.AutoCreateAdmin,
 			"autoCreateUser": p.AutoCreateUser, "allowedEmailDomains": p.AllowedEmailDomains,
@@ -148,8 +148,8 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	form.OriginalName = strings.ToLower(strings.TrimSpace(form.OriginalName))
 	form.DisplayName = strings.TrimSpace(form.DisplayName)
 	form.AccountRole = strings.ToLower(strings.TrimSpace(form.AccountRole))
-	if form.Type != "github" {
-		return c.Error(nil, "OnlyGitHubProviderIsCurrentlyEditable")
+	if form.Type != "github" && form.Type != "qq" {
+		return c.Error(nil, "UnsupportedOAuthProvider")
 	}
 	if !oauthProviderNamePattern.MatchString(form.Name) {
 		return c.Error(nil, "InvalidProviderName")
@@ -210,8 +210,16 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	provider.AutoCreateAdmin = form.AutoCreateAdmin
 	provider.AutoCreateUser = form.AutoCreateUser
 	provider.AllowedEmailDomains = cleanOAuthValues(form.AllowedEmailDomains)
+	if provider.Type == "qq" {
+		provider.BindByEmail = false
+		provider.AllowedEmailDomains = nil
+	}
 	if provider.DisplayName == "" {
-		provider.DisplayName = "GitHub"
+		if provider.Type == "qq" {
+			provider.DisplayName = "QQ"
+		} else {
+			provider.DisplayName = "GitHub"
+		}
 	}
 	if index >= 0 {
 		cfg.OAuth.Providers[index] = provider

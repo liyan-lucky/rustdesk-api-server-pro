@@ -44,6 +44,7 @@ type oauthMetadata struct {
 
 type oauthTokenResponse struct {
 	AccessToken string `json:"access_token"`
+	OpenID      string `json:"openid"`
 	IDToken     string `json:"id_token"`
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
@@ -181,12 +182,20 @@ func (s *OAuthProviderService) BuildAdminAuthURL(providerName, requestBaseURL, r
 	query := url.Values{}
 	query.Set("client_id", provider.ClientID)
 	query.Set("response_type", "code")
-	query.Set("scope", strings.Join(s.scopes(provider), " "))
+	scopeSeparator := " "
+	if provider.Type == "qq" {
+		scopeSeparator = ","
+	}
+	query.Set("scope", strings.Join(s.scopes(provider), scopeSeparator))
 	query.Set("redirect_uri", callbackURL)
 	query.Set("state", state)
-	challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
-	query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
-	query.Set("code_challenge_method", "S256")
+	// QQ Connect does not support PKCE. The persisted one-time state still
+	// protects the callback against CSRF and replay attacks.
+	if provider.Type != "qq" {
+		challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
+		query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
+		query.Set("code_challenge_method", "S256")
+	}
 	if prompt := strings.TrimSpace(provider.Prompt); prompt != "" {
 		query.Set("prompt", prompt)
 	}
@@ -353,10 +362,27 @@ func (s *OAuthProviderService) exchangeCode(provider config.OAuthProviderConfig,
 	form.Set("redirect_uri", callbackURL)
 	form.Set("client_id", provider.ClientID)
 	form.Set("client_secret", provider.ClientSecret)
-	form.Set("code_verifier", codeVerifier)
+	if provider.Type != "qq" {
+		form.Set("code_verifier", codeVerifier)
+	}
+	if provider.Type == "qq" {
+		form.Set("fmt", "json")
+		form.Set("need_openid", "1")
+		endpoint, parseErr := url.Parse(metadata.TokenEndpoint)
+		if parseErr != nil {
+			return nil, parseErr
+		}
+		endpoint.RawQuery = form.Encode()
+		req, _ := http.NewRequest(http.MethodGet, endpoint.String(), nil)
+		return s.doTokenRequest(req)
+	}
 
 	req, _ := http.NewRequest(http.MethodPost, metadata.TokenEndpoint, bytes.NewBufferString(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return s.doTokenRequest(req)
+}
+
+func (s *OAuthProviderService) doTokenRequest(req *http.Request) (*oauthTokenResponse, error) {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "rustdesk-api-server-pro")
 
@@ -398,7 +424,11 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 		}
 	}
 
-	if metadata.UserinfoEndpoint != "" && tokenResp.AccessToken != "" {
+	if provider.Type == "qq" && tokenResp.AccessToken != "" {
+		if err = s.fillQQClaims(provider, tokenResp, claims); err != nil {
+			return nil, err
+		}
+	} else if metadata.UserinfoEndpoint != "" && tokenResp.AccessToken != "" {
 		if err = s.fillClaimsByUserinfo(provider, metadata.UserinfoEndpoint, tokenResp.AccessToken, claims); err != nil {
 			return nil, err
 		}
@@ -442,6 +472,78 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 		return nil, errors.New("email domain not allowed")
 	}
 	return userClaims, nil
+}
+
+func (s *OAuthProviderService) fillQQClaims(provider config.OAuthProviderConfig, tokenResp *oauthTokenResponse, claims map[string]interface{}) error {
+	graphBase := "https://graph.qq.com"
+	userinfoEndpoint := strings.TrimSpace(provider.UserinfoEndpoint)
+	if parsed, err := url.Parse(userinfoEndpoint); err == nil && parsed.Scheme != "" && parsed.Host != "" {
+		graphBase = parsed.Scheme + "://" + parsed.Host
+	}
+	openid := strings.TrimSpace(tokenResp.OpenID)
+	if openid == "" {
+		meURL := graphBase + "/oauth2.0/me?fmt=json&access_token=" + url.QueryEscape(tokenResp.AccessToken)
+		var me struct {
+			OpenID string `json:"openid"`
+			Error  int    `json:"error"`
+		}
+		if err := s.getQQJSON(meURL, &me); err != nil {
+			return err
+		}
+		if me.Error != 0 || strings.TrimSpace(me.OpenID) == "" {
+			return errors.New("qq openid response invalid")
+		}
+		openid = me.OpenID
+	}
+	if userinfoEndpoint == "" {
+		userinfoEndpoint = graphBase + "/user/get_user_info"
+	}
+	query := url.Values{
+		"access_token":       {tokenResp.AccessToken},
+		"oauth_consumer_key": {provider.ClientID},
+		"openid":             {openid},
+		"fmt":                {"json"},
+	}
+	separator := "?"
+	if strings.Contains(userinfoEndpoint, "?") {
+		separator = "&"
+	}
+	var profile struct {
+		Ret       int    `json:"ret"`
+		Msg       string `json:"msg"`
+		Nickname  string `json:"nickname"`
+		FigureURL string `json:"figureurl_qq_2"`
+		Figure40  string `json:"figureurl_qq_1"`
+	}
+	if err := s.getQQJSON(userinfoEndpoint+separator+query.Encode(), &profile); err != nil {
+		return err
+	}
+	if profile.Ret != 0 {
+		return fmt.Errorf("qq userinfo failed with ret %d", profile.Ret)
+	}
+	claims[defaultIfEmpty(provider.SubjectClaim, "openid")] = openid
+	claims[defaultIfEmpty(provider.NameClaim, "nickname")] = profile.Nickname
+	picture := profile.FigureURL
+	if picture == "" {
+		picture = profile.Figure40
+	}
+	claims[defaultIfEmpty(provider.PictureClaim, "figureurl_qq_2")] = picture
+	return nil
+}
+
+func (s *OAuthProviderService) getQQJSON(endpoint string, target interface{}) error {
+	req, _ := http.NewRequest(http.MethodGet, endpoint, nil)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "rustdesk-api-server-pro")
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("qq api failed with status %d", resp.StatusCode)
+	}
+	return json.NewDecoder(resp.Body).Decode(target)
 }
 
 func (s *OAuthProviderService) verifyOAuthIDToken(provider config.OAuthProviderConfig, metadata *oauthMetadata, idToken string, claims map[string]interface{}) error {
@@ -743,6 +845,8 @@ func (s *OAuthProviderService) scopes(provider config.OAuthProviderConfig) []str
 	switch provider.Type {
 	case "github":
 		return []string{"read:user", "user:email"}
+	case "qq":
+		return []string{"get_user_info"}
 	default:
 		return []string{"openid", "profile", "email"}
 	}
@@ -967,6 +1071,8 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 			provider.Name = "github"
 		case "google":
 			provider.Name = "google"
+		case "qq":
+			provider.Name = "qq"
 		default:
 			provider.Name = "oidc"
 		}
@@ -977,6 +1083,8 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 			provider.DisplayName = "GitHub"
 		case "google":
 			provider.DisplayName = "Google"
+		case "qq":
+			provider.DisplayName = "QQ"
 		default:
 			provider.DisplayName = "OIDC"
 		}
@@ -1013,6 +1121,24 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		if provider.PictureClaim == "" {
 			provider.PictureClaim = "avatar_url"
 		}
+	} else if provider.Type == "qq" {
+		if provider.AuthorizationEndpoint == "" {
+			provider.AuthorizationEndpoint = "https://graph.qq.com/oauth2.0/authorize"
+		}
+		if provider.TokenEndpoint == "" {
+			provider.TokenEndpoint = "https://graph.qq.com/oauth2.0/token"
+		}
+		if provider.UserinfoEndpoint == "" {
+			provider.UserinfoEndpoint = "https://graph.qq.com/user/get_user_info"
+		}
+		if len(provider.Scopes) == 0 {
+			provider.Scopes = []string{"get_user_info"}
+		}
+		provider.BindByEmail = false
+		provider.AllowedEmailDomains = nil
+		provider.SubjectClaim = "openid"
+		provider.NameClaim = "nickname"
+		provider.PictureClaim = "figureurl_qq_2"
 	} else {
 		if len(provider.Scopes) == 0 {
 			provider.Scopes = []string{"openid", "profile", "email"}

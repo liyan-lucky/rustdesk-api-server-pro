@@ -2,9 +2,17 @@
 
 ## 当前支持状态
 
-第三方登录统一使用 `oauth.providers`。GitHub 是第一套完成安全加固和端到端测试的 Provider；Google 与通用 OIDC 保持兼容。后续 Provider 应复用同一套一次性 state、PKCE、短期 ticket、账号绑定和审计逻辑。
+第三方登录统一使用 `oauth.providers`。GitHub 是第一套完成安全加固和端到端测试的 Provider；QQ 已完成网站应用 OAuth2 协议适配，等待使用已审核应用做真实回调验收；Google 与通用 OIDC 保持兼容。后续 Provider 应复用同一套一次性 state、短期 ticket、账号绑定和审计逻辑。
 
-规划中的国际 Provider 包括 Microsoft、Apple、GitLab；国内 Provider 包括 Gitee、微信开放平台、QQ、支付宝、钉钉和飞书。未完成官方协议适配及测试前，不得仅添加一个按钮就宣称支持。
+规划中的国际 Provider 包括 Microsoft、Apple、GitLab；国内 Provider 包括 Gitee、微信开放平台、支付宝、钉钉和飞书。未完成官方协议适配及测试前，不得仅添加一个按钮就宣称支持。
+
+## QQ 网站应用配置
+
+在 QQ 互联创建并审核网站应用后，在后台“第三方登录”中选择 QQ，填写 AppID、AppKey 和审核时登记的回调地址。默认回调路径为 `/admin/auth/oauth/qq/callback`，授权范围使用最小权限 `get_user_info`。
+
+QQ 的 token 接口使用 GET，用户身份需要通过 `openid` 识别，再调用 `get_user_info` 获取昵称和头像。QQ 不提供可信邮箱，因此配置会强制关闭按邮箱绑定和邮箱域名限制。新增 QQ 配置默认使用普通用户角色并允许自动创建普通用户，禁止自动创建管理员；管理员接入应先建立显式 OpenID 绑定。
+
+QQ Connect 当前不提供 PKCE 参数。服务端继续使用数据库持久化、一次性消费且短时有效的 state 防止 CSRF 和回放，回调成功后仅向浏览器返回一次性短期 ticket，不保存第三方 access token。
 
 ## GitHub OAuth App 配置
 
@@ -63,6 +71,6 @@ curl "https://desk.example.com/admin/auth/oauth/url?provider=github"
 
 第二个响应中的 GitHub 授权 URL 应包含 `state`、`code_challenge` 和 `code_challenge_method=S256`。完整验收还必须分别验证：已有管理员绑定、已有普通用户绑定、私有已验证邮箱、state/ticket 重放拒绝、服务重启后的回调，以及禁用 Provider 后按钮消失。
 
-## 国内 Provider 状态
+## 其他国内 Provider 状态
 
-微信开放平台与 QQ 互联尚未实现。接入前必须重新查阅其当前官方文档并确认：应用审核类型、网站应用资质、公开 HTTPS 回调域名、Client ID/AppID 与 Secret、授权/换 token/userinfo 端点、unionid/openid 身份规则和国内网络可达性。没有完成官方协议、错误处理、安全测试和真实回调验收前，只能标记为“计划”，不得仅增加按钮。
+微信开放平台等 Provider 尚未实现。接入前必须重新查阅其当前官方文档并确认：应用审核类型、网站应用资质、公开 HTTPS 回调域名、Client ID/AppID 与 Secret、授权/换 token/userinfo 端点、unionid/openid 身份规则和国内网络可达性。没有完成官方协议、错误处理、安全测试和真实回调验收前，只能标记为“计划”，不得仅增加按钮。

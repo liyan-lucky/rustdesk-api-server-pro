@@ -82,9 +82,9 @@ GitHub OAuth 换 token 必须访问 `https://github.com/login/oauth/access_token
 
 若启用按邮箱绑定且关闭自动创建，现有同角色账户必须填写与 Provider 已验证邮箱完全一致的邮箱。管理员 Provider 不能绑定普通用户，普通用户 Provider 也不能绑定管理员。
 
-### 微信/QQ 测试
+### 国内 Provider 测试
 
-当前版本没有实现微信或 QQ Provider，不能用它们替代 GitHub 直接测试。后续接入必须基于当时的官方开放平台文档、已审核应用和公开 HTTPS 回调地址完成真实验收。
+QQ Provider 已实现网站应用 OAuth2 流程。必须使用已审核的 QQ 互联网站应用，并确保配置的回调地址与审核登记值一致；QQ 不提供邮箱，首次测试建议使用普通用户角色和自动创建普通用户。微信 Provider 仍未实现。
 
 ## 3. 登录成功但部分页面/接口报错（尤其升级后）
 

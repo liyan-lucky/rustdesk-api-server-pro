@@ -20,6 +20,14 @@ const savedSecretHint = ref('');
 const form = reactive({ originalName: '', type: 'github', name: 'github', displayName: 'GitHub', enabled: true, clientId: '', clientSecret: '', redirectUrl: '', scopesText: 'read:user user:email', accountRole: 'admin', bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false, allowedDomainsText: '' });
 const defaultCallback = computed(() => `${window.location.origin}/admin/auth/oauth/${form.name || 'github'}/callback`);
 
+function applyProviderPreset(type: string) {
+  if (type === 'qq') {
+    Object.assign(form, { type: 'qq', name: 'qq', displayName: 'QQ', redirectUrl: `${window.location.origin}/admin/auth/oauth/qq/callback`, scopesText: 'get_user_info', accountRole: 'user', bindByEmail: false, autoCreateAdmin: false, autoCreateUser: true, allowedDomainsText: '' });
+  } else {
+    Object.assign(form, { type: 'github', name: 'github', displayName: 'GitHub', redirectUrl: `${window.location.origin}/admin/auth/oauth/github/callback`, scopesText: 'read:user user:email', accountRole: 'admin', bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false, allowedDomainsText: '' });
+  }
+}
+
 function values(value: string) { return value.split(/[\s,;]+/).map(item => item.trim()).filter(Boolean); }
 function resetForm(row?: any) {
   savedSecretHint.value = row?.secretHint || (row?.secretConfigured ? secretMask : '');
@@ -90,7 +98,7 @@ onMounted(() => { loadData(); loadProviderConfigs(); });
     </NCard>
     <NModal v-model:show="showModal" preset="card" :title="form.originalName ? $t('page.oauth.editProvider') : $t('page.oauth.addProvider')" class="w-720px max-w-95vw">
       <NForm label-placement="left" label-width="150">
-        <NFormItem :label="$t('dataMap.oauth.provider')"><NSelect v-model:value="form.type" :options="[{ label: 'GitHub', value: 'github' }]" /></NFormItem>
+        <NFormItem :label="$t('dataMap.oauth.provider')"><NSelect v-model:value="form.type" :options="[{ label: 'GitHub', value: 'github' }, { label: 'QQ', value: 'qq' }]" :disabled="Boolean(form.originalName)" @update:value="applyProviderPreset" /></NFormItem>
         <NFormItem :label="$t('page.oauth.providerName')"><NInput v-model:value="form.name" /></NFormItem>
         <NFormItem :label="$t('page.oauth.displayName')"><NInput v-model:value="form.displayName" /></NFormItem>
         <NFormItem :label="$t('page.oauth.clientId')"><NInput v-model:value="form.clientId" /></NFormItem>
@@ -98,8 +106,8 @@ onMounted(() => { loadData(); loadProviderConfigs(); });
         <NFormItem :label="$t('page.oauth.redirectUrl')"><NInput v-model:value="form.redirectUrl" /><NButton class="ml-8px" @click="form.redirectUrl = defaultCallback">{{ $t('page.oauth.useDefault') }}</NButton></NFormItem>
         <NFormItem :label="$t('page.oauth.scopes')"><NInput v-model:value="form.scopesText" /></NFormItem>
         <NFormItem :label="$t('page.oauth.accountRole')"><NSelect v-model:value="form.accountRole" :options="[{ label: $t('page.oauth.adminRole'), value: 'admin' }, { label: $t('page.oauth.userRole'), value: 'user' }]" /></NFormItem>
-        <NFormItem :label="$t('page.oauth.allowedDomains')"><NInput v-model:value="form.allowedDomainsText" :placeholder="$t('page.oauth.listPlaceholder')" /></NFormItem>
-        <NFormItem :label="$t('page.oauth.bindByEmail')"><NSwitch v-model:value="form.bindByEmail" /></NFormItem>
+        <NFormItem v-if="form.type !== 'qq'" :label="$t('page.oauth.allowedDomains')"><NInput v-model:value="form.allowedDomainsText" :placeholder="$t('page.oauth.listPlaceholder')" /></NFormItem>
+        <NFormItem v-if="form.type !== 'qq'" :label="$t('page.oauth.bindByEmail')"><NSwitch v-model:value="form.bindByEmail" /></NFormItem>
         <NFormItem :label="$t('page.oauth.autoCreateAdmin')"><NSwitch v-model:value="form.autoCreateAdmin" /></NFormItem>
         <NFormItem :label="$t('page.oauth.autoCreateUser')"><NSwitch v-model:value="form.autoCreateUser" /></NFormItem>
         <NFormItem :label="$t('dataMap.token.status')"><NSwitch v-model:value="form.enabled" /></NFormItem>

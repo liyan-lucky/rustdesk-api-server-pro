@@ -99,7 +99,7 @@ async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {
 }
 
 function providerIcon(type: string) {
-  const icons: Record<string, string> = { github: 'mdi:github', google: 'logos:google-icon', oidc: 'mdi:shield-account' };
+  const icons: Record<string, string> = { github: 'mdi:github', qq: 'ri:qq-fill', google: 'logos:google-icon', oidc: 'mdi:shield-account' };
   return icons[type] || 'mdi:login-variant';
 }
 
