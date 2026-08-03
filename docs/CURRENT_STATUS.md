@@ -1,6 +1,6 @@
 # 当前仓库状态
 
-更新时间：2026-08-02
+更新时间：2026-08-03
 
 ## 定位
 
@@ -17,6 +17,7 @@
 - Docker 镜像：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`。
 - RustDesk 兼容版本：1.4.9。
 - 服务端版本：由 VERSION 文件控制，CI 自动递增 PATCH 号并同步兼容清单；API、前端、镜像标签使用同一构建版本。
+- 当前已发布并在测试设备运行的版本：`1.1.54`（提交 `f2633f26`）。
 
 ## 当前能力边界
 
@@ -36,7 +37,9 @@
 - 版本自动递增系统：VERSION 文件为单一事实来源，CI 每次构建自动递增 PATCH 版本号。
 - 首页更新日志区域显示服务端版本与构建时间。
 - 管理后台前端已内置到镜像，旧 `rustdesk-web` / nginx 前端容器不再是必需组件。
-- 第三方登录统一使用 `oauth.providers`。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关；Google 与通用 OIDC 保持兼容，其他国内外 Provider 按 `OAUTH_PROVIDERS.md` 逐个完成官方协议适配后启用。
+- 第三方登录统一使用 `oauth.providers`，管理员优先在“第三方登录”页面配置。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关。Client Secret 接口只返回 `********` 加末 8 位的识别提示，不返回明文；未修改提示直接保存会保留原密钥。
+- OAuth/OIDC 成功目标和失败目标均已统一为前端 hash 路由；失败回调固定返回登录页，不再先进入受保护页面后闪退。错误码区分账户不可绑定、Provider 网络不可达、state 过期和其他失败。
+- Google 与通用 OIDC 保持兼容。微信、QQ、Gitee 等国内 Provider 目前仅在路线图中，尚未完成官方协议适配，不得在界面中宣称可用。
 - plugin-sign、部分 OIDC 和高级企业能力仍以兼容占位或主流程兼容为主，不能宣称完整替代官方 Pro。
 
 ## 当前目录职责
@@ -57,6 +60,15 @@
 ## 部署结论
 
 当前文档和部署脚本应统一推荐单容器一体化部署。升级旧部署时，应停止继续访问旧 `rustdesk-web` 前端容器；后端镜像内置的 `/app/dist` 才是当前管理后台入口。
+
+## 当前测试设备状态
+
+- SSH：`ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net`（当前密钥不允许直接以 `root` 登录）。
+- 容器：`rustdesk-api-server-pro`，host 网络，API/后台端口 `16888`。
+- 更新脚本：`/vol1/docker/rustdesk-api-server-pro/update-rustdesk-api.sh`。
+- 运行版本：`1.1.54`，容器状态已验证为 `running`。
+- GitHub OAuth 配置已启用且 Secret 已保存，但测试设备访问 `github.com:443` 多次超时；`api.github.com:443` 返回 200。该网络问题会阻断 `/login/oauth/access_token`，不是 Secret 保存失败。
+- 当前有效管理员没有填写邮箱，且 GitHub 配置为按邮箱绑定、禁止自动创建管理员。网络恢复后，需要给目标管理员填写与 GitHub 已验证邮箱一致的邮箱，或由维护者明确决定是否开启自动创建管理员。
 
 ## 维护要求
 

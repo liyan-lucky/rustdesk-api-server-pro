@@ -8,7 +8,7 @@
 
 ## GitHub OAuth App 配置
 
-登录管理后台后打开“系统管理 → 第三方登录”，点击“添加登录方式”，填写 GitHub Client ID、Client Secret、回调地址和账户角色，保存后使用“检查必填项”确认配置完整且能够生成授权地址。该检查不访问 GitHub，不能证明 Client ID 或 Client Secret 有效；凭据有效性必须通过一次完整的 GitHub 登录回调确认。Client Secret 是只写字段：编辑时留空表示保留原密钥，列表和接口不会返回明文。
+登录管理后台后打开“系统管理 → 第三方登录”，点击“添加登录方式”，填写 GitHub Client ID、Client Secret、回调地址和账户角色，保存后使用“检查必填项”确认配置完整且能够生成授权地址。该检查不访问 GitHub，不能证明 Client ID 或 Client Secret 有效；凭据有效性必须通过一次完整的 GitHub 登录回调确认。Client Secret 是只写字段：保存后编辑框显示 `********` 加末 8 位用于识别，未修改该提示直接保存会保留原密钥；列表和接口不会返回明文。
 
 下面的 `server.yaml` 配置只作为旧版兼容、自动化部署或后台不可用时的恢复方式；日常配置无需直接编辑该文件。页面保存后会原子更新实际配置，并立即用于后续登录请求，无需重启服务。
 
@@ -51,6 +51,7 @@ oauth:
 - GitHub API 请求使用 Bearer token、官方 JSON media type 和明确 API 版本头；访问令牌不会写入日志或 OAuth 账号表。
 - 回调成功后按 `provider + subject + role` 绑定 `oauth_account`，浏览器只能获得一次性 ticket，再换取站内 token。
 - `successRedirect` 与 `failureRedirect` 只允许站内路径，拒绝完整外部 URL，避免开放重定向。
+- 管理后台使用 hash 路由，普通站内路径会规范化为 `/#/...`。OAuth/OIDC 失败始终回到 `/#/login` 并显示经过白名单映射的错误，不会跳入受保护页面造成提示闪退。
 - `clientSecret` 由第三方登录页面写入部署环境的实际配置文件，或由部署密钥管理系统注入，禁止提交仓库；后台接口不会回传明文。
 
 ## 验证
@@ -61,3 +62,7 @@ curl "https://desk.example.com/admin/auth/oauth/url?provider=github"
 ```
 
 第二个响应中的 GitHub 授权 URL 应包含 `state`、`code_challenge` 和 `code_challenge_method=S256`。完整验收还必须分别验证：已有管理员绑定、已有普通用户绑定、私有已验证邮箱、state/ticket 重放拒绝、服务重启后的回调，以及禁用 Provider 后按钮消失。
+
+## 国内 Provider 状态
+
+微信开放平台与 QQ 互联尚未实现。接入前必须重新查阅其当前官方文档并确认：应用审核类型、网站应用资质、公开 HTTPS 回调域名、Client ID/AppID 与 Secret、授权/换 token/userinfo 端点、unionid/openid 身份规则和国内网络可达性。没有完成官方协议、错误处理、安全测试和真实回调验收前，只能标记为“计划”，不得仅增加按钮。

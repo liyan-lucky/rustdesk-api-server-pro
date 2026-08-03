@@ -57,6 +57,35 @@
 
 **处理**：v1.1.16 已修复：`exec` 替换 Shell 为 PID 1，Go 进程直接接收信号优雅关闭。
 
+## 2.1 第三方登录不显示、提示闪退或 GitHub 登录失败
+
+### Provider 不显示
+
+检查 `/admin/auth/oauth/providers`。只有 `enabled=true` 且 Client ID/Secret 完整的 Provider 才会返回。后台编辑 Secret 时显示 `********` 加末 8 位属于正常安全提示，不代表配置为空。
+
+### 点击后提示闪一下消失
+
+旧版本在 OAuth 失败时会跳向成功目标页，受保护页面随后再次重定向到登录页，导致错误参数进入嵌套 `redirect`。从 1.1.54 起，OAuth/OIDC 失败固定回到 `/#/login?oauth_error=...`；请升级并强制刷新浏览器缓存。
+
+### `oauth_provider_unreachable`
+
+表示服务端无法访问 Provider，不代表 Secret 未保存。应从容器宿主机分别测试：
+
+```bash
+curl -I --connect-timeout 8 https://github.com/
+curl -I --connect-timeout 8 https://api.github.com/
+```
+
+GitHub OAuth 换 token 必须访问 `https://github.com/login/oauth/access_token`。仅 `api.github.com` 可用仍不能完成登录，需要检查出站防火墙、DNS、透明代理或路由。
+
+### `oauth_account_not_bound`
+
+若启用按邮箱绑定且关闭自动创建，现有同角色账户必须填写与 Provider 已验证邮箱完全一致的邮箱。管理员 Provider 不能绑定普通用户，普通用户 Provider 也不能绑定管理员。
+
+### 微信/QQ 测试
+
+当前版本没有实现微信或 QQ Provider，不能用它们替代 GitHub 直接测试。后续接入必须基于当时的官方开放平台文档、已审核应用和公开 HTTPS 回调地址完成真实验收。
+
 ## 3. 登录成功但部分页面/接口报错（尤其升级后）
 
 ### 现象

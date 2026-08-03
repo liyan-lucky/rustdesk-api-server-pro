@@ -516,12 +516,14 @@ jobsConfig:
 - `autoCreateUser`：普通用户模式下找不到账号时是否自动创建。
 - `allowedEmailDomains`：可选邮箱域名白名单。
 - `stateTtlSeconds`、`ticketTtlSeconds`：state 和 ticket 有效期，默认 180 秒。
+- 后台配置接口不返回 `clientSecret` 明文，只返回 `********` 加末 8 位的识别提示；前端原样保存提示时保留已有密钥。
 
 安全注意：
 
 - OAuth authorization code flow 使用 PKCE S256；state 和 ticket 在 `oauth_login_session` 中一次性消费并可跨服务重启。
 - GitHub 按邮箱绑定只接受 `/user/emails` 返回的 `verified=true` 邮箱。
 - 回调重定向目标会拒绝外部完整 URL，只允许站内路径。
+- OAuth/OIDC 回调目标统一规范化为 `/#/` hash 路由；失败固定回到登录页并使用安全错误码，只有成功才进入原目标页。
 - 自动创建管理员应谨慎开启。
 - 生产环境必须使用固定、强随机 `signKey`。
 

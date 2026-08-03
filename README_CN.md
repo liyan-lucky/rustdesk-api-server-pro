@@ -6,8 +6,8 @@
 
 - 管理后台多语言优化
 - 服务器配置入口从首页调整到左侧菜单
-- 第三方登录支持骨架
-  支持 `oidc`、`google`、`github`
+- 第三方登录统一配置页：GitHub 主流程已实现，Secret 仅显示 `********` 加末 8 位，OAuth/OIDC 失败使用 hash 路由登录页和明确错误提示
+- `oidc`、`google` 保持兼容；微信、QQ 等国内 Provider 尚未完成官方协议适配
 - 旧 `oidc` 配置兼容，新项目推荐使用 `oauth.providers`
 - 通讯录按当前账户全量展示联系人和标签，使用地址簿名称列及表头筛选，不再依赖页面级地址簿切换
 - 地址簿、联系人、标签和邮件模板支持 CSV 批量导入导出；管理员可为指定用户创建受保护地址簿
@@ -20,6 +20,7 @@
 - 使用说明：`docs/USAGE.md`
 - Docker 说明：`docs/DOCKER.md`
 - 排障文档：`docs/TROUBLESHOOTING.md`
+- 新对话续接提示词：`docs/NEXT_CONVERSATION_PROMPT.md`
 
 第三方登录回调地址规则：
 

@@ -214,6 +214,8 @@ If `/api` works but `/` is 404, check `httpConfig.staticdir`.
 
 The admin UI now supports third‑party login providers for administrator sign‑in.
 
+GitHub can be configured directly in the Third-Party Login page. A saved client secret is represented only as `********` plus its last eight characters; the full value is never returned by the API. OAuth/OIDC callbacks use hash-router targets, and failures return to the login page with sanitized, actionable error codes.
+
 Supported modes:
 
 - Legacy single provider config: `oidc`
@@ -227,6 +229,8 @@ Behavior notes:
 - Successful provider login still ends in the same backend admin token flow
 - `bindByEmail: true` tries to match an existing admin account by email
 - `autoCreateAdmin: true` allows creating a new admin account automatically when no match exists
+- WeChat, QQ, Gitee, and other domestic providers are roadmap items, not implemented providers. They must not be advertised as supported before official-protocol integration and real callback testing.
+- The deployment host must reach both the provider authorization/token host and its API host. Access to `api.github.com` alone is insufficient when `github.com/login/oauth/access_token` is unreachable.
 
 Example:
 

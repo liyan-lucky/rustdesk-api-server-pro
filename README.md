@@ -238,7 +238,7 @@ smtpConfig:
 
 第三方登录统一使用可扩展 Provider 架构，前端登录页会自动展示已启用的 Provider。GitHub 已完成端到端实现；Google 和通用 OIDC 保持兼容。
 
-管理员应优先在后台“第三方登录”页面添加、编辑、启用和测试 GitHub 配置；页面会给出可复制的回调地址，密钥编辑时留空会保留原值且接口不会返回密钥明文。`server.yaml` 仅保留用于旧版本兼容、自动化部署和后台无法访问时的故障恢复。
+管理员应优先在后台“第三方登录”页面添加、编辑、启用和检查 GitHub 配置；页面会给出可复制的回调地址。Client Secret 保存后仅显示 `********` 加末 8 位作为识别提示，接口不会返回明文，未修改提示直接保存会保留原值。`server.yaml` 仅保留用于旧版本兼容、自动化部署和后台无法访问时的故障恢复。
 
 - 传统单 provider：`oidc`
 - 多 provider：`oauth.providers`
@@ -253,6 +253,8 @@ smtpConfig:
 - 若开启 `bindByEmail: true`，GitHub 只使用官方 API 返回的已验证邮箱绑定已有账号
 - 自动创建默认关闭；管理员使用 `autoCreateAdmin`，普通用户使用 `autoCreateUser`
 - GitHub 授权使用 PKCE S256，state 与 ticket 为数据库持久化的一次性短期凭据
+- OAuth/OIDC 回调使用 `/#/` hash 路由；失败固定回到登录页，并区分账户不可绑定、Provider 不可达和 state 过期等错误
+- 微信、QQ、Gitee 等国内 Provider 当前仍为计划项，完成官方协议适配与真实回调验收前不会显示为已支持
 
 `backend/server.yaml` 示例：
 
