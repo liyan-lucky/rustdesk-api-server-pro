@@ -241,7 +241,33 @@ func (c *OAuthController) HandleDeleteProvider() mvc.Result {
 
 func (c *OAuthController) HandleTestProvider() mvc.Result {
 	name := strings.TrimSpace(c.Ctx.Params().Get("name"))
-	svc := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
+	cfg := config.GetServerConfig()
+	var provider *config.OAuthProviderConfig
+	if cfg.OAuth != nil {
+		for i := range cfg.OAuth.Providers {
+			if strings.EqualFold(cfg.OAuth.Providers[i].Name, name) {
+				provider = &cfg.OAuth.Providers[i]
+				break
+			}
+		}
+	}
+	if provider == nil {
+		return c.Error(nil, "ProviderNotFound")
+	}
+	if !provider.Enabled {
+		return c.Error(nil, "ProviderNotEnabled")
+	}
+	if strings.TrimSpace(provider.ClientID) == "" {
+		return c.Error(nil, "ClientIdRequired")
+	}
+	if strings.TrimSpace(provider.ClientSecret) == "" {
+		return c.Error(nil, "ClientSecretRequired")
+	}
+	if err := validateOAuthRedirectURL(provider.RedirectURL); err != nil {
+		return c.Error(nil, err.Error())
+	}
+
+	svc := v2service.NewOAuthProviderService(cfg, c.Db)
 	authURL, enabled, err := svc.BuildAdminAuthURL(name, c.Ctx.URLParamDefault("baseUrl", ""), "/#/login")
 	if err != nil {
 		return c.Error(nil, err.Error())
@@ -249,7 +275,13 @@ func (c *OAuthController) HandleTestProvider() mvc.Result {
 	if !enabled || authURL == "" {
 		return c.Error(nil, "ProviderNotEnabledOrIncomplete")
 	}
-	return c.Success(iris.Map{"authorizationUrl": authURL}, "ok")
+	return c.Success(iris.Map{
+		"authorizationUrl": authURL,
+		"checks": iris.Map{
+			"enabled": true, "clientIdConfigured": true, "clientSecretConfigured": true,
+			"authorizationUrlGenerated": true, "credentialValidityVerified": false,
+		},
+	}, "ConfigurationCompleteCredentialValidityRequiresOAuthCallback")
 }
 
 func validateOAuthRedirectURL(raw string) error {

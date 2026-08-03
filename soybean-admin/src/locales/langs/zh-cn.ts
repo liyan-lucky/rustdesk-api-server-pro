@@ -419,7 +419,7 @@ const local: App.I18n.Schema = {
     },
     oauth: {
       ...enUs.page.oauth,
-      configTitle: '第三方登录配置', bindingsTitle: '账号绑定', addProvider: '添加登录方式', editProvider: '编辑登录方式', providerName: '提供方标识', displayName: '显示名称', clientId: '客户端 ID', clientSecret: '客户端密钥', secretPlaceholder: '已配置时留空可保留原密钥', redirectUrl: '回调地址', scopes: '授权范围', accountRole: '账户角色', allowedDomains: '允许的邮箱域名', bindByEmail: '按已验证邮箱绑定', autoCreateAdmin: '自动创建管理员', autoCreateUser: '自动创建普通用户', testConfig: '测试配置', testSuccess: '配置完整，已成功生成授权地址', copyCallback: '复制回调地址', githubOnlyTip: '目前先支持 GitHub，请直接在此页面配置；server.yaml 仅作为兼容和故障恢复方式。', adminRole: '管理员', userRole: '普通用户', useDefault: '使用默认值', listPlaceholder: '多个值用空格或逗号分隔', copied: '已复制'
+      configTitle: '第三方登录配置', bindingsTitle: '账号绑定', addProvider: '添加登录方式', editProvider: '编辑登录方式', providerName: '提供方标识', displayName: '显示名称', clientId: '客户端 ID', clientSecret: '客户端密钥', secretPlaceholder: '已配置时留空可保留原密钥', redirectUrl: '回调地址', scopes: '授权范围', accountRole: '账户角色', allowedDomains: '允许的邮箱域名', bindByEmail: '按已验证邮箱绑定', autoCreateAdmin: '自动创建管理员', autoCreateUser: '自动创建普通用户', testConfig: '检查必填项', testSuccess: '必填项完整且可生成授权地址；Client ID 与密钥是否有效，仍需完成一次 GitHub 登录回调验证。', copyCallback: '复制回调地址', githubOnlyTip: '目前先支持 GitHub，请直接在此页面配置；server.yaml 仅作为兼容和故障恢复方式。', adminRole: '管理员', userRole: '普通用户', useDefault: '使用默认值', listPlaceholder: '多个值用空格或逗号分隔', copied: '已复制'
     },
     about: {
       ...enUs.page.about,
