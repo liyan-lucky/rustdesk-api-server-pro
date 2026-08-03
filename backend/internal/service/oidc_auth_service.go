@@ -154,27 +154,27 @@ func (s *OIDCAuthService) ConsumeAdminCallback(code, state string) (string, stri
 
 	tokenResp, err := s.exchangeCode(code, stored.CallbackURL)
 	if err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	claims, err := s.fetchUserClaims(tokenResp)
 	if err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	user, err := s.resolveAdminUser(claims)
 	if err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	token, err := s.issueAdminToken(user)
 	if err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	ticket := randomToken(24)
 	if ticket == "" {
-		return "", stored.RedirectTo, errors.New("failed to generate ticket")
+		return "", failureRedirect, errors.New("failed to generate ticket")
 	}
 	s.setTicket(ticket, oidcTicketEntry{
 		Token:     token,

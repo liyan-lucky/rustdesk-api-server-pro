@@ -128,8 +128,10 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 	if redirectTo == "" {
 		t.Fatalf("redirect should not be empty")
 	}
-	if _, _, replayErr := svc.ConsumeAdminCallback("github", "github-code", state); replayErr == nil {
+	if _, failureRedirect, replayErr := svc.ConsumeAdminCallback("github", "github-code", state); replayErr == nil {
 		t.Fatalf("oauth state replay must be rejected")
+	} else if failureRedirect != "/#/login" {
+		t.Fatalf("failed OAuth callback must return to login, got %q", failureRedirect)
 	}
 
 	token, err := svc.ExchangeAdminTicket(ticket)

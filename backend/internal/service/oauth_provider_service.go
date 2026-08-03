@@ -215,22 +215,22 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 
 	tokenResp, err := s.exchangeCode(provider, code, stored.CallbackURL, stored.CodeVerifier)
 	if err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	claims, err := s.fetchUserClaims(provider, tokenResp)
 	if err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	user, err := s.resolveOAuthUser(provider, claims)
 	if err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	ticket := randomOAuthToken(24)
 	if ticket == "" {
-		return "", stored.RedirectTo, errors.New("failed to generate ticket")
+		return "", failureRedirect, errors.New("failed to generate ticket")
 	}
 
 	if err = s.setTicket(ticket, oauthTicketEntry{
@@ -238,7 +238,7 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 		IsAdmin:   user.IsAdmin,
 		ExpiresAt: time.Now().Add(s.ticketTTL(provider)),
 	}); err != nil {
-		return "", stored.RedirectTo, err
+		return "", failureRedirect, err
 	}
 
 	return ticket, stored.RedirectTo, nil

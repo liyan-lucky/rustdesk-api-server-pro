@@ -74,6 +74,11 @@ func TestOIDCAuthService_AutoCreateAdminAndTicketFlow(t *testing.T) {
 	if ticket == "" {
 		t.Fatalf("ticket should not be empty")
 	}
+	if _, failureRedirect, replayErr := svc.ConsumeAdminCallback("mock-code", state); replayErr == nil {
+		t.Fatalf("oidc state replay must be rejected")
+	} else if failureRedirect != "/#/login" {
+		t.Fatalf("failed OIDC callback must return to login, got %q", failureRedirect)
+	}
 	if redirectTo == "" {
 		t.Fatalf("redirect should not be empty")
 	}
