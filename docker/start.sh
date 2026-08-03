@@ -24,7 +24,9 @@ if [ -n "${PORT:-}" ]; then
     port_val="$PORT"
     case "$port_val" in :*) ;; *) port_val=":$port_val" ;; esac
     if [ -f /app/data/server.yaml ]; then
-        sed -i "/^httpConfig:/,/^[^ ]/ s|^\([[:space:]]*port:\).*|  port: \"$port_val\"|" /app/data/server.yaml
+        # Preserve the indentation produced by yaml.v3. Hard-coding two spaces
+        # corrupts a persisted four-space YAML file after an admin UI save.
+        sed -i "/^httpConfig:/,/^[^ ]/ s|^\([[:space:]]*port:\).*|\1 \"$port_val\"|" /app/data/server.yaml
     fi
 fi
 
