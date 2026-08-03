@@ -14,13 +14,13 @@
 6. 后端通讯/OAuth 改动必须有测试，检查错误处理、权限边界、敏感信息、回调重放、网络超时和重启持久化。
 
 当前快照（2026-08-03，使用前实时复核）：
-- main/backup/本地：f2633f2669d7a8b94284e5163a173df3348166ae
-- VERSION：1.1.54
+- main/backup/本地：95e71820a42f13216c79bb9915f777f0fd0e3871（如交接文档修正提交已存在，以实时 main 为准）
+- VERSION：1.1.55
 - GHCR：ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
-- 最近 Docker 发布流程成功：https://github.com/liyan-lucky/rustdesk-api-server-pro/actions/runs/30786562895
+- 最近 Docker 发布流程成功：https://github.com/liyan-lucky/rustdesk-api-server-pro/actions/runs/30790993111
 - 测试设备：ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net
 - root 账户当前不接受已有 SSH 密钥，使用 LiYan；该账户属于 docker/Administrators 组。
-- 容器：rustdesk-api-server-pro，host 网络，端口 16888，运行版本已验证为 1.1.54。
+- 容器：rustdesk-api-server-pro，host 网络，端口 16888；当前仍运行 1.1.54。GHCR 已发布 1.1.55，但设备拉取时反复出现 EOF/HTTPS 被代理返回 HTTP，旧容器未被替换。
 - 更新脚本：/vol1/docker/rustdesk-api-server-pro/update-rustdesk-api.sh
 
 已完成的 OAuth 状态：

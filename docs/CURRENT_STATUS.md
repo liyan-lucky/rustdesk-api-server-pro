@@ -17,7 +17,7 @@
 - Docker 镜像：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`。
 - RustDesk 兼容版本：1.4.9。
 - 服务端版本：由 VERSION 文件控制，CI 自动递增 PATCH 号并同步兼容清单；API、前端、镜像标签使用同一构建版本。
-- 当前已发布并在测试设备运行的版本：`1.1.54`（提交 `f2633f26`）。
+- 当前已发布版本：`1.1.55`（版本提交 `95e71820`）；测试设备因 GHCR 链路异常暂时仍运行 `1.1.54`。
 
 ## 当前能力边界
 
@@ -66,7 +66,7 @@
 - SSH：`ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net`（当前密钥不允许直接以 `root` 登录）。
 - 容器：`rustdesk-api-server-pro`，host 网络，API/后台端口 `16888`。
 - 更新脚本：`/vol1/docker/rustdesk-api-server-pro/update-rustdesk-api.sh`。
-- 运行版本：`1.1.54`，容器状态已验证为 `running`。
+- 运行版本：`1.1.54`，容器状态已验证为 `running`。`1.1.55` 镜像已发布，但设备拉取 `ghcr.io` 多次出现 `EOF` 以及代理返回 HTTP 给 HTTPS 客户端，旧容器未被替换。
 - GitHub OAuth 配置已启用且 Secret 已保存，但测试设备访问 `github.com:443` 多次超时；`api.github.com:443` 返回 200。该网络问题会阻断 `/login/oauth/access_token`，不是 Secret 保存失败。
 - 当前有效管理员没有填写邮箱，且 GitHub 配置为按邮箱绑定、禁止自动创建管理员。网络恢复后，需要给目标管理员填写与 GitHub 已验证邮箱一致的邮箱，或由维护者明确决定是否开启自动创建管理员。
 
