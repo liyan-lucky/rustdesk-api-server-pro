@@ -194,7 +194,7 @@ const local: App.I18n.Schema = {
         welcomeBack: 'Bentornato, {userName}!',
         thirdPartyLogin: 'Accesso di terze parti',
         continueWith: 'Continua con {provider}',
-        providerUnavailable: 'Accesso con {provider} non disponibile'
+        providerUnavailable: 'Accesso con {provider} non disponibile', oauthAccountNotBound: 'Nessun account corrispondente può essere collegato. Usa la stessa email verificata o abilita la creazione automatica.', oauthProviderUnreachable: 'Il server non può raggiungere il provider. Controlla la connessione HTTPS in uscita.', oauthStateExpired: 'La richiesta di accesso è scaduta o già utilizzata. Avvia nuovamente l’accesso.', oauthAuthFailed: 'Accesso di terze parti non riuscito. Controlla configurazione e registro di sicurezza.'
       },
       pwdLogin: {
         title: 'Accesso con password',

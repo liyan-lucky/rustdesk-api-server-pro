@@ -181,6 +181,9 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		}
 	}
 	secret := strings.TrimSpace(form.ClientSecret)
+	if secret == "********" {
+		secret = ""
+	}
 	if index >= 0 && secret == "" {
 		secret = cfg.OAuth.Providers[index].ClientSecret
 	}

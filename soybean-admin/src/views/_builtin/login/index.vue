@@ -78,7 +78,14 @@ onMounted(async () => {
 
   const oauthError = mergedQuery.oauth_error;
   if (typeof oauthError === 'string' && oauthError) {
-    window.$message?.error(oauthError);
+    const messageMap: Record<string, string> = {
+      oauth_account_not_bound: $t('page.login.common.oauthAccountNotBound'),
+      oauth_provider_unreachable: $t('page.login.common.oauthProviderUnreachable'),
+      oauth_state_expired: $t('page.login.common.oauthStateExpired'),
+      oauth_auth_failed: $t('page.login.common.oauthAuthFailed'),
+      auth_failed: $t('page.login.common.oauthAuthFailed')
+    };
+    window.$message?.error(messageMap[oauthError] || $t('page.login.common.oauthAuthFailed'));
     delete q.oauth_error;
     shouldReplaceQuery = true;
   }

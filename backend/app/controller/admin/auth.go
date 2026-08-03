@@ -199,7 +199,7 @@ func (c *AuthController) HandleOauthCallback() mvc.Result {
 	ticket, redirectTo, err := service.ConsumeAdminCallback(provider, code, state)
 	if err != nil {
 		c.recordAdminSecurityAudit("admin_oauth_callback", false, provider+": "+err.Error())
-		c.Ctx.Redirect(withQuery(redirectTo, "oauth_error", "auth_failed"), iris.StatusFound)
+		c.Ctx.Redirect(withQuery(redirectTo, "oauth_error", oauthCallbackErrorCode(err)), iris.StatusFound)
 		return mvc.Response{}
 	}
 
@@ -207,6 +207,23 @@ func (c *AuthController) HandleOauthCallback() mvc.Result {
 	target := withQuery(withQuery(redirectTo, "oauth_provider", provider), "oauth_ticket", ticket)
 	c.Ctx.Redirect(target, iris.StatusFound)
 	return mvc.Response{}
+}
+
+func oauthCallbackErrorCode(err error) string {
+	if err == nil {
+		return "oauth_auth_failed"
+	}
+	message := strings.ToLower(err.Error())
+	switch {
+	case strings.Contains(message, "no bindable oauth account"), strings.Contains(message, "bound admin user not available"):
+		return "oauth_account_not_bound"
+	case strings.Contains(message, "timeout"), strings.Contains(message, "deadline exceeded"), strings.Contains(message, "connection refused"):
+		return "oauth_provider_unreachable"
+	case strings.Contains(message, "state invalid"), strings.Contains(message, "state expired"):
+		return "oauth_state_expired"
+	default:
+		return "oauth_auth_failed"
+	}
 }
 
 func (c *AuthController) currentBaseURL() string {

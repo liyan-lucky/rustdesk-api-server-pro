@@ -196,7 +196,7 @@ const local: App.I18n.Schema = {
         "welcomeBack": "환영합니다, {userName} 님!",
         "thirdPartyLogin": "서드파티 로그인",
         "continueWith": "{provider}로 로그인",
-        "providerUnavailable": "{provider} 로그인은 현재 사용할 수 없습니다"
+        "providerUnavailable": "{provider} 로그인은 현재 사용할 수 없습니다", "oauthAccountNotBound": "일치하는 계정을 연결할 수 없습니다. 동일한 확인된 이메일을 설정하거나 자동 생성을 활성화하세요.", "oauthProviderUnreachable": "서버가 로그인 공급자에 연결할 수 없습니다. 아웃바운드 HTTPS 연결을 확인하세요.", "oauthStateExpired": "로그인 요청이 만료되었거나 이미 사용되었습니다. 다시 시작하세요.", "oauthAuthFailed": "타사 로그인에 실패했습니다. 설정과 보안 감사 로그를 확인하세요."
       },
       "pwdLogin": {
         "title": "비밀번호 로그인",

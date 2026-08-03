@@ -215,7 +215,7 @@ const local: App.I18n.Schema = {
           welcomeBack: 'Willkommen Zurück, {userName} !',
           thirdPartyLogin: 'Drittanbieter-Anmeldung',
           continueWith: 'Mit {provider} fortfahren',
-          providerUnavailable: '{provider}-Anmeldung ist derzeit nicht verfügbar'
+          providerUnavailable: '{provider}-Anmeldung ist derzeit nicht verfügbar', oauthAccountNotBound: 'Kein passendes Konto kann verknüpft werden. Verwenden Sie dieselbe bestätigte E-Mail oder aktivieren Sie die automatische Erstellung.', oauthProviderUnreachable: 'Der Server kann den Anmeldeanbieter nicht erreichen. Prüfen Sie die ausgehende HTTPS-Verbindung.', oauthStateExpired: 'Die Anmeldung ist abgelaufen oder wurde bereits verwendet. Starten Sie sie erneut.', oauthAuthFailed: 'Drittanbieter-Anmeldung fehlgeschlagen. Prüfen Sie Konfiguration und Sicherheitsprotokoll.'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,

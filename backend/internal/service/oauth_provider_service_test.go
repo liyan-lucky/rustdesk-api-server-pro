@@ -283,3 +283,18 @@ func newMockGitHubOAuthProvider(t *testing.T) *httptest.Server {
 
 	return server
 }
+
+func TestNormalizeOAuthRedirectTargetUsesHashRouter(t *testing.T) {
+	tests := map[string]string{
+		"":                    "/#/login",
+		"/login":              "/#/login",
+		"/system/oauth?tab=1": "/#/system/oauth?tab=1",
+		"/#/system/oauth":     "/#/system/oauth",
+		"https://evil.test/x": "/#/login",
+	}
+	for input, expected := range tests {
+		if actual := normalizeOAuthRedirectTarget(input); actual != expected {
+			t.Fatalf("normalizeOAuthRedirectTarget(%q) = %q, want %q", input, actual, expected)
+		}
+	}
+}

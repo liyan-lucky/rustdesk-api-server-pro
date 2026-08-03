@@ -196,7 +196,7 @@ const local: App.I18n.Schema = {
         "welcomeBack": "С возвращением, {userName}!",
         "thirdPartyLogin": "Вход через сторонний сервис",
         "continueWith": "Продолжить через {provider}",
-        "providerUnavailable": "Вход через {provider} сейчас недоступен"
+        "providerUnavailable": "Вход через {provider} сейчас недоступен", "oauthAccountNotBound": "Подходящую учетную запись привязать нельзя. Укажите ту же подтвержденную почту или включите автоматическое создание.", "oauthProviderUnreachable": "Сервер не может подключиться к провайдеру. Проверьте исходящее HTTPS-соединение.", "oauthStateExpired": "Запрос входа истек или уже использован. Начните вход заново.", "oauthAuthFailed": "Ошибка стороннего входа. Проверьте настройки и журнал безопасности."
       },
       "pwdLogin": {
         "title": "Вход по паролю",

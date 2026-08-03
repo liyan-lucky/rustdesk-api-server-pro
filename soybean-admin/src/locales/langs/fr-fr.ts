@@ -215,7 +215,7 @@ const local: App.I18n.Schema = {
           welcomeBack: 'Bon retour, {userName} !',
           thirdPartyLogin: 'connexion tierce',
           continueWith: 'Continuer avec {provider}',
-          providerUnavailable: 'La connexion {provider} est indisponible'
+          providerUnavailable: 'La connexion {provider} est indisponible', oauthAccountNotBound: 'Aucun compte correspondant ne peut être lié. Utilisez le même courriel vérifié ou activez la création automatique.', oauthProviderUnreachable: 'Le serveur ne peut pas joindre le fournisseur. Vérifiez la connexion HTTPS sortante.', oauthStateExpired: 'La demande de connexion a expiré ou a déjà été utilisée. Recommencez.', oauthAuthFailed: 'Échec de la connexion tierce. Vérifiez la configuration et le journal de sécurité.'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,

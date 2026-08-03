@@ -215,7 +215,7 @@ const local: App.I18n.Schema = {
           welcomeBack: 'Bienvenido de nuevo, {userName} !',
           thirdPartyLogin: 'Inicio de sesión de terceros',
           continueWith: 'Continuar con {provider}',
-          providerUnavailable: 'El inicio de sesión con {provider} no está disponible'
+          providerUnavailable: 'El inicio de sesión con {provider} no está disponible', oauthAccountNotBound: 'No se puede vincular una cuenta coincidente. Use el mismo correo verificado o active la creación automática.', oauthProviderUnreachable: 'El servidor no puede acceder al proveedor. Compruebe la conexión HTTPS saliente.', oauthStateExpired: 'La solicitud de inicio de sesión caducó o ya se usó. Iníciela de nuevo.', oauthAuthFailed: 'Falló el inicio de sesión externo. Revise la configuración y el registro de seguridad.'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,

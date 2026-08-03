@@ -203,7 +203,7 @@ const local: App.I18n.Schema = {
         welcomeBack: 'Welcome back, {userName}!',
         thirdPartyLogin: 'Third-Party Login',
         continueWith: 'Continue with {provider}',
-        providerUnavailable: '{provider} login is unavailable'
+        providerUnavailable: '{provider} login is unavailable', oauthAccountNotBound: 'No matching account can be bound. Add the same verified email to the target account or enable automatic account creation.', oauthProviderUnreachable: 'The server cannot reach the login provider. Check outbound HTTPS connectivity and try again.', oauthStateExpired: 'The login request expired or was already used. Start the login again.', oauthAuthFailed: 'Third-party login failed. Check the provider configuration and audit log.'
       },
       pwdLogin: {
         title: 'Password Login',

@@ -417,6 +417,10 @@ declare namespace App {
             thirdPartyLogin: string;
             continueWith: string;
             providerUnavailable: string;
+            oauthAccountNotBound: string;
+            oauthProviderUnreachable: string;
+            oauthStateExpired: string;
+            oauthAuthFailed: string;
           };
           pwdLogin: {
             title: string;

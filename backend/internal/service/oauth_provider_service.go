@@ -727,6 +727,12 @@ func normalizeOAuthRedirectTarget(target string) string {
 	if !strings.HasPrefix(target, "/") {
 		target = "/" + target
 	}
+	// The admin SPA uses hash routing. A router path such as /system/oauth
+	// must therefore be returned as /#/system/oauth; otherwise the browser
+	// requests it from the Go server and receives a 404.
+	if !strings.HasPrefix(target, "/#/") {
+		target = "/#" + target
+	}
 	return target
 }
 

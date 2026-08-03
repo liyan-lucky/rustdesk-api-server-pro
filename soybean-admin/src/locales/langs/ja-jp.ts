@@ -196,7 +196,7 @@ const local: App.I18n.Schema = {
         "welcomeBack": "おかえりなさい、{userName} さん！",
         "thirdPartyLogin": "サードパーティーログイン",
         "continueWith": "{provider} でログイン",
-        "providerUnavailable": "{provider} ログインは現在利用できません"
+        "providerUnavailable": "{provider} ログインは現在利用できません", "oauthAccountNotBound": "一致するアカウントを連携できません。同じ確認済みメールを設定するか、自動作成を有効にしてください。", "oauthProviderUnreachable": "サーバーからログインプロバイダーへ接続できません。外向きHTTPS通信を確認してください。", "oauthStateExpired": "ログイン要求が期限切れか使用済みです。もう一度開始してください。", "oauthAuthFailed": "サードパーティログインに失敗しました。設定とセキュリティログを確認してください。"
       },
       "pwdLogin": {
         "title": "パスワードログイン",
