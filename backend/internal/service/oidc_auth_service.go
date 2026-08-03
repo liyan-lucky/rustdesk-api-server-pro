@@ -576,16 +576,7 @@ func (s *OIDCAuthService) normalizeSuccessRedirect(raw string) string {
 	if target == "" {
 		target = strings.TrimSpace(s.cfg.OIDC.SuccessRedirect)
 	}
-	if target == "" {
-		target = "/login"
-	}
-	if strings.HasPrefix(target, "http://") || strings.HasPrefix(target, "https://") || strings.HasPrefix(target, "//") {
-		return "/login"
-	}
-	if !strings.HasPrefix(target, "/") {
-		target = "/" + target
-	}
-	return target
+	return normalizeOAuthRedirectTarget(target)
 }
 
 func (s *OIDCAuthService) normalizeFailureRedirect(raw string) string {
@@ -593,16 +584,7 @@ func (s *OIDCAuthService) normalizeFailureRedirect(raw string) string {
 	if target == "" {
 		target = strings.TrimSpace(s.cfg.OIDC.FailureRedirect)
 	}
-	if target == "" {
-		target = "/login"
-	}
-	if strings.HasPrefix(target, "http://") || strings.HasPrefix(target, "https://") || strings.HasPrefix(target, "//") {
-		return "/login"
-	}
-	if !strings.HasPrefix(target, "/") {
-		target = "/" + target
-	}
-	return target
+	return normalizeOAuthRedirectTarget(target)
 }
 
 func (s *OIDCAuthService) scopes() []string {
