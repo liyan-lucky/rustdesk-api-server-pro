@@ -169,7 +169,7 @@ const local: App.I18n.Schema = {
     "system_mail": "메일 관리",
     "system_server": "서버 설정",
     "system_tokens": "사용자 토큰",
-    "system_oauth": "OAuth 관리",
+    "system_oauth": "타사 로그인",
     "audit_baselogs": "기본 로그",
     "audit_filetransferlogs": "파일 전송 로그",
     "audit_loginlogs": "로그인 로그",
@@ -354,7 +354,11 @@ const local: App.I18n.Schema = {
     "workspace": {
       "scopeTitle": "개인 작업 공간", "scopeTip": "본인의 장치, 세션, 보안 기록 및 권한이 있는 주소록만 표시됩니다.", "myDevices": "내 장치", "activeSessions": "활성 세션", "addressBooks": "주소록", "securityEvents": "보안 기록", "currentSession": "현재 세션", "revokeConfirm": "이 로그인 세션을 해제하시겠습니까?", "revoke": "해제", "accountRole": "계정 역할", "adminRole": "관리자", "userRole": "일반 사용자", "permissionScope": "권한 범위", "userScope": "개인 리소스 및 명시적으로 공유된 주소록", "active": "활성"
     },
+    "oauth": {
+      "configTitle": "타사 로그인 설정", "bindingsTitle": "계정 연결", "addProvider": "공급자 추가", "editProvider": "공급자 편집", "providerName": "공급자 키", "displayName": "표시 이름", "clientId": "클라이언트 ID", "clientSecret": "클라이언트 비밀", "secretPlaceholder": "설정된 비밀을 유지하려면 비워 두세요", "redirectUrl": "콜백 URL", "scopes": "권한 범위", "accountRole": "계정 역할", "allowedDomains": "허용 이메일 도메인", "bindByEmail": "확인된 이메일로 연결", "autoCreateAdmin": "관리자 자동 생성", "autoCreateUser": "사용자 자동 생성", "testConfig": "설정 테스트", "testSuccess": "설정이 완료되어 인증 URL을 생성했습니다", "copyCallback": "콜백 복사", "githubOnlyTip": "우선 GitHub를 지원합니다. 여기에서 설정하며 server.yaml은 호환성과 복구용입니다.", "adminRole": "관리자", "userRole": "사용자", "useDefault": "기본값 사용", "listPlaceholder": "여러 값은 공백이나 쉼표로 구분하세요", "copied": "복사됨"
+    },
     "about": {
+      "latestCommand": "latest로 업데이트", "pinnedCommand": "감지된 버전으로 업데이트 및 확인", "customCommand": "사용자 지정 명령 템플릿",
       "runningVersion": "실행 버전", "buildTime": "빌드 시간", "compatVersion": "호환 RustDesk 버전", "latestVersion": "최신 버전", "updateAvailable": "업데이트 있음", "upToDate": "최신 상태", "updateCheck": "온라인 업데이트 확인", "urlTip": "확인 URL은 변경할 수 있으며 이 브라우저에 저장됩니다. 대상 사이트에서 CORS를 허용해야 합니다.", "urlPlaceholder": "업데이트 확인 URL", "checkNow": "지금 확인", "restoreDefault": "기본값 복원", "checkFailed": "업데이트 확인 실패", "invalidUrl": "HTTP 또는 HTTPS URL만 지원합니다", "invalidResponse": "유효한 버전을 찾을 수 없습니다", "updateCommand": "컨테이너 업데이트 명령", "commandTip": "명령 템플릿을 편집할 수 있으며 {version}은 최신 버전으로 대체됩니다.", "copyCommand": "명령 복사"
     }
   },

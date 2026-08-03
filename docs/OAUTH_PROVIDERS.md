@@ -8,12 +8,16 @@
 
 ## GitHub OAuth App 配置
 
+登录管理后台后打开“系统管理 → 第三方登录”，点击“添加登录方式”，填写 GitHub Client ID、Client Secret、回调地址和账户角色，保存后使用“测试配置”确认能够生成授权地址。Client Secret 是只写字段：编辑时留空表示保留原密钥，列表和接口不会返回明文。
+
+下面的 `server.yaml` 配置只作为旧版兼容、自动化部署或后台不可用时的恢复方式；日常配置无需直接编辑该文件。页面保存后会原子更新实际配置，并立即用于后续登录请求，无需重启服务。
+
 在 GitHub OAuth App 中设置：
 
 - Homepage URL：后台公开访问地址，例如 `https://desk.example.com/`
 - Authorization callback URL：`https://desk.example.com/admin/auth/oauth/github/callback`
 
-`server.yaml` 示例：
+兼容用 `server.yaml` 示例：
 
 ```yaml
 oauth:
@@ -47,7 +51,7 @@ oauth:
 - GitHub API 请求使用 Bearer token、官方 JSON media type 和明确 API 版本头；访问令牌不会写入日志或 OAuth 账号表。
 - 回调成功后按 `provider + subject + role` 绑定 `oauth_account`，浏览器只能获得一次性 ticket，再换取站内 token。
 - `successRedirect` 与 `failureRedirect` 只允许站内路径，拒绝完整外部 URL，避免开放重定向。
-- `clientSecret` 只能保存在部署环境的 `server.yaml` 或密钥管理系统中，禁止提交仓库。
+- `clientSecret` 由第三方登录页面写入部署环境的实际配置文件，或由部署密钥管理系统注入，禁止提交仓库；后台接口不会回传明文。
 
 ## 验证
 

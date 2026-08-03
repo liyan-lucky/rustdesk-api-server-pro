@@ -167,7 +167,7 @@ const local: App.I18n.Schema = {
     system_mail: 'Gestione email',
     system_server: 'Configurazione server',
     system_tokens: 'Token utente',
-    system_oauth: 'Gestione OAuth',
+    system_oauth: 'Accesso di terze parti',
     audit_baselogs: 'Log di base',
     audit_filetransferlogs: 'Log trasferimenti file',
     audit_loginlogs: 'Log accessi',
@@ -352,7 +352,11 @@ const local: App.I18n.Schema = {
     workspace: {
       scopeTitle: 'Spazio personale', scopeTip: 'Sono mostrati solo i tuoi dispositivi, le sessioni, gli eventi di sicurezza e le rubriche autorizzate.', myDevices: 'I miei dispositivi', activeSessions: 'Sessioni attive', addressBooks: 'Rubriche', securityEvents: 'Eventi di sicurezza', currentSession: 'Sessione corrente', revokeConfirm: 'Revocare questa sessione?', revoke: 'Revoca', accountRole: 'Ruolo account', adminRole: 'Amministratore', userRole: 'Utente', permissionScope: 'Ambito autorizzazioni', userScope: 'Risorse personali e rubriche condivise esplicitamente', active: 'Attivo'
     },
+    oauth: {
+      configTitle: 'Configurazione accesso di terze parti', bindingsTitle: 'Collegamenti account', addProvider: 'Aggiungi provider', editProvider: 'Modifica provider', providerName: 'Chiave provider', displayName: 'Nome visualizzato', clientId: 'ID client', clientSecret: 'Segreto client', secretPlaceholder: 'Lascia vuoto per conservare il segreto', redirectUrl: 'URL di callback', scopes: 'Ambiti', accountRole: 'Ruolo account', allowedDomains: 'Domini email consentiti', bindByEmail: 'Collega tramite email verificata', autoCreateAdmin: 'Crea automaticamente amministratore', autoCreateUser: 'Crea automaticamente utente', testConfig: 'Verifica configurazione', testSuccess: 'Configurazione completa e URL autorizzazione generato', copyCallback: 'Copia callback', githubOnlyTip: 'GitHub è disponibile per primo. Configuralo qui; server.yaml resta per compatibilità e ripristino.', adminRole: 'Amministratore', userRole: 'Utente', useDefault: 'Usa predefinito', listPlaceholder: 'Separa i valori con spazi o virgole', copied: 'Copiato'
+    },
     about: {
+      latestCommand: 'Aggiorna a latest', pinnedCommand: 'Aggiorna e verifica la versione rilevata', customCommand: 'Modello comando personalizzato',
       runningVersion: 'Versione in esecuzione', buildTime: 'Data build', compatVersion: 'Versione RustDesk compatibile', latestVersion: 'Ultima versione', updateAvailable: 'Aggiornamento disponibile', upToDate: 'Aggiornato', updateCheck: 'Controllo aggiornamenti online', urlTip: 'L’indirizzo può essere modificato e viene salvato nel browser. Il sito deve consentire CORS.', urlPlaceholder: 'URL controllo aggiornamenti', checkNow: 'Controlla ora', restoreDefault: 'Ripristina predefinito', checkFailed: 'Controllo aggiornamenti non riuscito', invalidUrl: 'Sono supportati solo HTTP e HTTPS', invalidResponse: 'Nessuna versione valida nella risposta', updateCommand: 'Comando aggiornamento contenitore', commandTip: 'Modifica il modello; {version} viene sostituito con la versione più recente.', copyCommand: 'Copia comando'
     }
   },

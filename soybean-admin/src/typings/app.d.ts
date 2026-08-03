@@ -588,6 +588,9 @@ declare namespace App {
           userScope: string;
           active: string;
         };
+        oauth: {
+          configTitle: string; bindingsTitle: string; addProvider: string; editProvider: string; providerName: string; displayName: string; clientId: string; clientSecret: string; secretPlaceholder: string; redirectUrl: string; scopes: string; accountRole: string; allowedDomains: string; bindByEmail: string; autoCreateAdmin: string; autoCreateUser: string; testConfig: string; testSuccess: string; copyCallback: string; githubOnlyTip: string; adminRole: string; userRole: string; useDefault: string; listPlaceholder: string; copied: string;
+        };
         about: {
           runningVersion: string;
           buildTime: string;
@@ -606,6 +609,9 @@ declare namespace App {
           updateCommand: string;
           commandTip: string;
           copyCommand: string;
+          latestCommand: string;
+          pinnedCommand: string;
+          customCommand: string;
         };
       };
       dropdown: Record<Global.DropdownKey, string>;

@@ -7,15 +7,7 @@ on:
       - "v*.*.*"
   workflow_run:
     workflows:
-      - 后端质量检查
-      - 前端质量检查
       - 发布前检查
-      - 合规检查
-      - CodeQL 安全分析
-      - 依赖清单
-      - 兼容性检查
-      - 安全回归检查
-      - RustDesk 上游新版本检查
     types: [completed]
     branches: ["master", "main"]
   workflow_dispatch:

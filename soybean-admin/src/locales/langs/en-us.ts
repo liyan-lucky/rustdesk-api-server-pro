@@ -170,7 +170,7 @@ const local: App.I18n.Schema = {
     system_mail: 'Mail Management',
     system_server: 'Server Config',
     system_tokens: 'User Tokens',
-    system_oauth: 'OAuth Management',
+    system_oauth: 'Third-Party Login',
     audit_baselogs: 'Base Logs',
     audit_filetransferlogs: 'File Transfer Logs',
     audit_loginlogs: 'Login Logs',
@@ -375,8 +375,11 @@ const local: App.I18n.Schema = {
       userScope: 'Personal resources and explicitly shared address books',
       active: 'Active'
     },
+    oauth: {
+      configTitle: 'Third-party login configuration', bindingsTitle: 'Account bindings', addProvider: 'Add provider', editProvider: 'Edit provider', providerName: 'Provider key', displayName: 'Display name', clientId: 'Client ID', clientSecret: 'Client secret', secretPlaceholder: 'Leave blank to keep the configured secret', redirectUrl: 'Callback URL', scopes: 'Scopes', accountRole: 'Account role', allowedDomains: 'Allowed email domains', bindByEmail: 'Bind by verified email', autoCreateAdmin: 'Auto-create administrator', autoCreateUser: 'Auto-create user', testConfig: 'Test configuration', testSuccess: 'Configuration is complete and an authorization URL was generated', copyCallback: 'Copy callback', githubOnlyTip: 'GitHub is available first. Configure it here; server.yaml remains a compatibility and recovery option.', adminRole: 'Administrator', userRole: 'User', useDefault: 'Use default', listPlaceholder: 'Separate multiple values with spaces or commas', copied: 'Copied'
+    },
     about: {
-      runningVersion: 'Running version', buildTime: 'Build time', compatVersion: 'Compatible RustDesk version', latestVersion: 'Latest version', updateAvailable: 'Update available', upToDate: 'Up to date', updateCheck: 'Online update check', urlTip: 'The check URL is editable and saved in this browser. It may return a plain semantic version or JSON containing version, latest_version, tag_name, or server.version. The remote site must allow browser CORS requests.', urlPlaceholder: 'Update check URL', checkNow: 'Check now', restoreDefault: 'Restore default', checkFailed: 'Update check failed', invalidUrl: 'Only HTTP and HTTPS URLs are supported', invalidResponse: 'No semantic version was found in the response', updateCommand: 'Container update command', commandTip: 'Edit the command template for your deployment. {version} is replaced with the latest detected version.', copyCommand: 'Copy command'
+      runningVersion: 'Running version', buildTime: 'Build time', compatVersion: 'Compatible RustDesk version', latestVersion: 'Latest version', updateAvailable: 'Update available', upToDate: 'Up to date', updateCheck: 'Online update check', urlTip: 'The check URL is editable and saved in this browser. It may return a plain semantic version or JSON containing version, latest_version, tag_name, or server.version. The remote site must allow browser CORS requests.', urlPlaceholder: 'Update check URL', checkNow: 'Check now', restoreDefault: 'Restore default', checkFailed: 'Update check failed', invalidUrl: 'Only HTTP and HTTPS URLs are supported', invalidResponse: 'No semantic version was found in the response', updateCommand: 'Container update command', commandTip: 'Run the latest command directly. “Image is up to date” means it succeeded and the installed image was already current. Use the pinned command when you need to verify an exact version.', copyCommand: 'Copy command', latestCommand: 'Update to latest', pinnedCommand: 'Update and verify detected version', customCommand: 'Custom command template'
     }
   },
   dropdown: {

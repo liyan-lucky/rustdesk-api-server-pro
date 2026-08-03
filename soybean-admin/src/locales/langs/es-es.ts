@@ -193,7 +193,7 @@ const local: App.I18n.Schema = {
     workspace: 'Mi espacio', workspace_overview: 'Resumen', workspace_devices: 'Mis dispositivos', workspace_sessions: 'Sesiones de inicio', workspace_security: 'Eventos de seguridad', workspace_profile: 'Perfil', about: 'Acerca de y actualizaciones',
     system_server: 'Configuración del servidor',
     system_tokens: 'Token de usuario',
-    system_oauth: 'Gestión OAuth'
+    system_oauth: 'Inicio de sesión externo'
   },
   page: {
     ...enUs.page,

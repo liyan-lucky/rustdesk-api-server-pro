@@ -169,7 +169,7 @@ const local: App.I18n.Schema = {
     "system_mail": "Управление почтой",
     "system_server": "Конфигурация сервера",
     "system_tokens": "Токены пользователей",
-    "system_oauth": "Управление OAuth",
+    "system_oauth": "Сторонний вход",
     "audit_baselogs": "Базовые логи",
     "audit_filetransferlogs": "Логи передачи файлов",
     "audit_loginlogs": "Логи входа",
@@ -354,7 +354,11 @@ const local: App.I18n.Schema = {
     "workspace": {
       "scopeTitle": "Личное пространство", "scopeTip": "Здесь показаны только ваши устройства, сеансы, события безопасности и разрешённые адресные книги.", "myDevices": "Мои устройства", "activeSessions": "Активные сеансы", "addressBooks": "Адресные книги", "securityEvents": "События безопасности", "currentSession": "Текущий сеанс", "revokeConfirm": "Отозвать этот сеанс входа?", "revoke": "Отозвать", "accountRole": "Роль учётной записи", "adminRole": "Администратор", "userRole": "Пользователь", "permissionScope": "Область доступа", "userScope": "Личные ресурсы и явно предоставленные адресные книги", "active": "Активен"
     },
+    "oauth": {
+      "configTitle": "Настройка стороннего входа", "bindingsTitle": "Привязки учетных записей", "addProvider": "Добавить провайдера", "editProvider": "Изменить провайдера", "providerName": "Ключ провайдера", "displayName": "Отображаемое имя", "clientId": "Идентификатор клиента", "clientSecret": "Секрет клиента", "secretPlaceholder": "Оставьте пустым, чтобы сохранить настроенный секрет", "redirectUrl": "Адрес обратного вызова", "scopes": "Области доступа", "accountRole": "Роль учетной записи", "allowedDomains": "Разрешенные почтовые домены", "bindByEmail": "Привязать по подтвержденной почте", "autoCreateAdmin": "Автоматически создавать администратора", "autoCreateUser": "Автоматически создавать пользователя", "testConfig": "Проверить настройку", "testSuccess": "Настройка заполнена, адрес авторизации создан", "copyCallback": "Копировать адрес возврата", "githubOnlyTip": "Сначала доступен GitHub. Настройте его здесь; server.yaml остается для совместимости и восстановления.", "adminRole": "Администратор", "userRole": "Пользователь", "useDefault": "Использовать значение по умолчанию", "listPlaceholder": "Разделяйте значения пробелами или запятыми", "copied": "Скопировано"
+    },
     "about": {
+      "latestCommand": "Обновить до latest", "pinnedCommand": "Обновить и проверить найденную версию", "customCommand": "Свой шаблон команды",
       "runningVersion": "Текущая версия", "buildTime": "Время сборки", "compatVersion": "Совместимая версия RustDesk", "latestVersion": "Последняя версия", "updateAvailable": "Доступно обновление", "upToDate": "Установлена последняя версия", "updateCheck": "Проверка обновлений", "urlTip": "Адрес проверки можно изменить; он сохраняется в этом браузере. Сайт должен разрешать CORS.", "urlPlaceholder": "Адрес проверки обновлений", "checkNow": "Проверить", "restoreDefault": "Вернуть адрес по умолчанию", "checkFailed": "Ошибка проверки обновлений", "invalidUrl": "Поддерживаются только HTTP и HTTPS", "invalidResponse": "Версия не найдена в ответе", "updateCommand": "Команда обновления контейнера", "commandTip": "Шаблон можно изменить; {version} заменяется последней версией.", "copyCommand": "Копировать команду"
     }
   },

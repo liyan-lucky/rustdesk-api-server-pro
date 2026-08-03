@@ -3,11 +3,15 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"rustdesk-api-server-pro/util"
 	"strings"
+	"sync"
+
+	"rustdesk-api-server-pro/util"
 
 	"gopkg.in/yaml.v3"
 )
+
+var serverConfigWriteMu sync.Mutex
 
 type ServerConfig struct {
 	DebugMode  bool         `yaml:"debugMode"`
@@ -175,8 +179,40 @@ func GetServerConfig() *ServerConfig {
 }
 
 func WriteServerConfig(cfg *ServerConfig) {
-	bytes, _ := yaml.Marshal(cfg)
-	_ = os.WriteFile(yamlFile, bytes, 0600)
+	_ = SaveServerConfig(cfg)
+}
+
+// SaveServerConfig persists the complete configuration atomically. Callers that
+// expose configuration editing should use this variant so write failures are
+// visible to the administrator instead of being silently ignored.
+func SaveServerConfig(cfg *ServerConfig) error {
+	serverConfigWriteMu.Lock()
+	defer serverConfigWriteMu.Unlock()
+
+	bytes, err := yaml.Marshal(cfg)
+	if err != nil {
+		return err
+	}
+	dir := filepath.Dir(yamlFile)
+	if err = os.MkdirAll(dir, 0750); err != nil {
+		return err
+	}
+	tmp, err := os.CreateTemp(dir, ".server-*.yaml")
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+	defer os.Remove(tmpName)
+	if err = tmp.Chmod(0600); err == nil {
+		_, err = tmp.Write(bytes)
+	}
+	if closeErr := tmp.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		return err
+	}
+	return os.Rename(tmpName, yamlFile)
 }
 
 func IsUnsafeSignKey(signKey string) bool {

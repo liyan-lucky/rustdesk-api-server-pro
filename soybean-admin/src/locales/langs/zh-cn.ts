@@ -192,7 +192,7 @@ const local: App.I18n.Schema = {
     system_mail: '邮件管理',
     system_server: '服务器配置',
     system_tokens: '用户Token',
-    system_oauth: 'OAuth管理',
+    system_oauth: '第三方登录',
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
     audit_loginlogs: '登录日志',
@@ -417,9 +417,13 @@ const local: App.I18n.Schema = {
       userScope: '个人资源及明确授权的共享地址簿',
       active: '有效'
     },
+    oauth: {
+      ...enUs.page.oauth,
+      configTitle: '第三方登录配置', bindingsTitle: '账号绑定', addProvider: '添加登录方式', editProvider: '编辑登录方式', providerName: '提供方标识', displayName: '显示名称', clientId: '客户端 ID', clientSecret: '客户端密钥', secretPlaceholder: '已配置时留空可保留原密钥', redirectUrl: '回调地址', scopes: '授权范围', accountRole: '账户角色', allowedDomains: '允许的邮箱域名', bindByEmail: '按已验证邮箱绑定', autoCreateAdmin: '自动创建管理员', autoCreateUser: '自动创建普通用户', testConfig: '测试配置', testSuccess: '配置完整，已成功生成授权地址', copyCallback: '复制回调地址', githubOnlyTip: '目前先支持 GitHub，请直接在此页面配置；server.yaml 仅作为兼容和故障恢复方式。', adminRole: '管理员', userRole: '普通用户', useDefault: '使用默认值', listPlaceholder: '多个值用空格或逗号分隔', copied: '已复制'
+    },
     about: {
       ...enUs.page.about,
-      runningVersion: '运行版本', buildTime: '构建时间', compatVersion: '兼容的 RustDesk 版本', latestVersion: '最新版本', updateAvailable: '发现新版本', upToDate: '已是最新版本', updateCheck: '在线更新检查', urlTip: '检查地址可以修改并保存在当前浏览器。响应可为纯版本号，或包含 version、latest_version、tag_name、server.version 的 JSON；目标网站需允许浏览器跨域访问。', urlPlaceholder: '更新检查地址', checkNow: '立即检查', restoreDefault: '恢复默认地址', checkFailed: '更新检查失败', invalidUrl: '仅支持 HTTP 或 HTTPS 地址', invalidResponse: '响应中没有找到有效的语义版本号', updateCommand: '容器更新命令', commandTip: '可按部署环境修改命令模板，{version} 会替换为检查到的最新版本。', copyCommand: '复制命令'
+      runningVersion: '运行版本', buildTime: '构建时间', compatVersion: '兼容的 RustDesk 版本', latestVersion: '最新版本', updateAvailable: '发现新版本', upToDate: '已是最新版本', updateCheck: '在线更新检查', urlTip: '检查地址可以修改并保存在当前浏览器。响应可为纯版本号，或包含 version、latest_version、tag_name、server.version 的 JSON；目标网站需允许浏览器跨域访问。', urlPlaceholder: '更新检查地址', checkNow: '立即检查', restoreDefault: '恢复默认地址', checkFailed: '更新检查失败', invalidUrl: '仅支持 HTTP 或 HTTPS 地址', invalidResponse: '响应中没有找到有效的语义版本号', updateCommand: '容器更新命令', commandTip: '“更新到 latest”可直接执行；出现 Image is up to date 表示执行成功且原本就是最新版。需要确认准确版本时使用锁定版本命令。', copyCommand: '复制命令', latestCommand: '更新到 latest', pinnedCommand: '更新并校验检查到的版本', customCommand: '自定义命令模板'
     }
   },
   dropdown: {

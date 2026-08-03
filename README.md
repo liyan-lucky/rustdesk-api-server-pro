@@ -238,6 +238,8 @@ smtpConfig:
 
 第三方登录统一使用可扩展 Provider 架构，前端登录页会自动展示已启用的 Provider。GitHub 已完成端到端实现；Google 和通用 OIDC 保持兼容。
 
+管理员应优先在后台“第三方登录”页面添加、编辑、启用和测试 GitHub 配置；页面会给出可复制的回调地址，密钥编辑时留空会保留原值且接口不会返回密钥明文。`server.yaml` 仅保留用于旧版本兼容、自动化部署和后台无法访问时的故障恢复。
+
 - 传统单 provider：`oidc`
 - 多 provider：`oauth.providers`
 - 内置 provider 类型：`oidc`、`google`、`github`

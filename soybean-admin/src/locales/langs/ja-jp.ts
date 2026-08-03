@@ -169,7 +169,7 @@ const local: App.I18n.Schema = {
     "system_mail": "メール管理",
     "system_server": "サーバー設定",
     "system_tokens": "ユーザートークン",
-    "system_oauth": "OAuth管理",
+    "system_oauth": "サードパーティログイン",
     "audit_baselogs": "基本ログ",
     "audit_filetransferlogs": "ファイル転送ログ",
     "audit_loginlogs": "ログインログ",
@@ -354,7 +354,11 @@ const local: App.I18n.Schema = {
     "workspace": {
       "scopeTitle": "個人ワークスペース", "scopeTip": "自分のデバイス、セッション、セキュリティ履歴、許可されたアドレス帳のみ表示されます。", "myDevices": "マイデバイス", "activeSessions": "有効なセッション", "addressBooks": "アドレス帳", "securityEvents": "セキュリティ履歴", "currentSession": "現在のセッション", "revokeConfirm": "このセッションを無効にしますか？", "revoke": "無効化", "accountRole": "アカウント権限", "adminRole": "管理者", "userRole": "一般ユーザー", "permissionScope": "権限範囲", "userScope": "個人リソースと許可された共有アドレス帳", "active": "有効"
     },
+    "oauth": {
+      "configTitle": "サードパーティログイン設定", "bindingsTitle": "アカウント連携", "addProvider": "プロバイダーを追加", "editProvider": "プロバイダーを編集", "providerName": "プロバイダーキー", "displayName": "表示名", "clientId": "クライアントID", "clientSecret": "クライアントシークレット", "secretPlaceholder": "設定済みのシークレットを保持する場合は空欄", "redirectUrl": "コールバックURL", "scopes": "スコープ", "accountRole": "アカウント権限", "allowedDomains": "許可メールドメイン", "bindByEmail": "確認済みメールで連携", "autoCreateAdmin": "管理者を自動作成", "autoCreateUser": "ユーザーを自動作成", "testConfig": "設定をテスト", "testSuccess": "設定が完了し認証URLを生成しました", "copyCallback": "コールバックをコピー", "githubOnlyTip": "まずGitHubに対応しています。ここで設定し、server.yamlは互換性と復旧用に使用します。", "adminRole": "管理者", "userRole": "ユーザー", "useDefault": "既定値を使用", "listPlaceholder": "複数の値は空白またはカンマで区切ります", "copied": "コピーしました"
+    },
     "about": {
+      "latestCommand": "latestへ更新", "pinnedCommand": "検出バージョンへ更新して検証", "customCommand": "カスタムコマンドテンプレート",
       "runningVersion": "実行中のバージョン", "buildTime": "ビルド日時", "compatVersion": "対応RustDeskバージョン", "latestVersion": "最新バージョン", "updateAvailable": "更新があります", "upToDate": "最新です", "updateCheck": "オンライン更新確認", "urlTip": "確認URLは変更でき、このブラウザーに保存されます。対象サイトはCORSを許可する必要があります。", "urlPlaceholder": "更新確認URL", "checkNow": "今すぐ確認", "restoreDefault": "既定に戻す", "checkFailed": "更新確認に失敗しました", "invalidUrl": "HTTPまたはHTTPSのみ対応しています", "invalidResponse": "有効なバージョンが見つかりません", "updateCommand": "コンテナ更新コマンド", "commandTip": "テンプレートを編集できます。{version} は最新バージョンに置換されます。", "copyCommand": "コマンドをコピー"
     }
   },

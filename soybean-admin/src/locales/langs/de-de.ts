@@ -193,7 +193,7 @@ const local: App.I18n.Schema = {
     workspace: 'Mein Arbeitsbereich', workspace_overview: 'Übersicht', workspace_devices: 'Meine Geräte', workspace_sessions: 'Anmeldesitzungen', workspace_security: 'Sicherheitsereignisse', workspace_profile: 'Profil', about: 'Über & Updates',
     system_server: 'Serverkonfiguration',
     system_tokens: 'Benutzer-Token',
-    system_oauth: 'OAuth-Verwaltung'
+    system_oauth: 'Drittanbieter-Anmeldung'
   },
   page: {
     ...enUs.page,
@@ -380,7 +380,15 @@ const local: App.I18n.Schema = {
       ...enUs.page.workspace,
       scopeTitle: 'Persönlicher Arbeitsbereich', scopeTip: 'Hier werden nur Ihre Geräte, Sitzungen, Sicherheitsereignisse und freigegebenen Adressbücher angezeigt.', myDevices: 'Meine Geräte', activeSessions: 'Aktive Sitzungen', addressBooks: 'Adressbücher', securityEvents: 'Sicherheitsereignisse', currentSession: 'Aktuelle Sitzung', revokeConfirm: 'Diese Anmeldesitzung widerrufen?', revoke: 'Widerrufen', accountRole: 'Kontorolle', adminRole: 'Administrator', userRole: 'Benutzer', permissionScope: 'Berechtigungsumfang', userScope: 'Persönliche Ressourcen und ausdrücklich freigegebene Adressbücher', active: 'Aktiv'
     },
+    oauth: {
+      ...enUs.page.oauth,
+      configTitle: 'Konfiguration der Drittanbieter-Anmeldung',
+      bindingsTitle: 'Kontoverknüpfungen',
+      addProvider: 'Anbieter hinzufügen',
+      editProvider: 'Anbieter bearbeiten'
+    },
     about: {
+      latestCommand: 'Auf latest aktualisieren', pinnedCommand: 'Erkannte Version aktualisieren und prüfen', customCommand: 'Benutzerdefinierte Befehlsvorlage',
       runningVersion: 'Laufende Version', buildTime: 'Build-Zeit', compatVersion: 'Kompatible RustDesk-Version', latestVersion: 'Neueste Version', updateAvailable: 'Update verfügbar', upToDate: 'Aktuell', updateCheck: 'Online-Updateprüfung', urlTip: 'Die Prüfadresse kann geändert und in diesem Browser gespeichert werden. Sie darf eine semantische Version als Text oder JSON mit version, latest_version, tag_name oder server.version liefern. Die Zielseite muss Browser-CORS-Anfragen erlauben.', urlPlaceholder: 'Adresse für die Updateprüfung', checkNow: 'Jetzt prüfen', restoreDefault: 'Standard wiederherstellen', checkFailed: 'Updateprüfung fehlgeschlagen', invalidUrl: 'Nur HTTP- und HTTPS-Adressen werden unterstützt', invalidResponse: 'In der Antwort wurde keine semantische Version gefunden', updateCommand: 'Container-Aktualisierungsbefehl', commandTip: 'Die Befehlsvorlage ist editierbar; {version} wird durch die neueste Version ersetzt.', copyCommand: 'Befehl kopieren'
     }
   },

@@ -158,12 +158,12 @@ func (c *AuthController) GetAuthOidcCallback() mvc.Result {
 }
 
 func (c *AuthController) GetAuthOauthProviders() mvc.Result {
-	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	service := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 	return c.Success(service.ListEnabledProviders(), "ok")
 }
 
 func (c *AuthController) GetAuthOauthUrl() mvc.Result {
-	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	service := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 	provider := c.Ctx.URLParamDefault("provider", "")
 	redirect := c.Ctx.URLParamDefault("redirect", "")
 	authURL, enabled, err := service.BuildAdminAuthURL(provider, c.currentBaseURL(), redirect)
@@ -177,7 +177,7 @@ func (c *AuthController) GetAuthOauthUrl() mvc.Result {
 }
 
 func (c *AuthController) GetAuthOauthToken() mvc.Result {
-	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	service := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 	ticket := c.Ctx.URLParamDefault("ticket", "")
 	token, err := service.ExchangeAdminTicket(ticket)
 	if err != nil {
@@ -191,7 +191,7 @@ func (c *AuthController) GetAuthOauthToken() mvc.Result {
 }
 
 func (c *AuthController) HandleOauthCallback() mvc.Result {
-	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	service := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 	provider := c.Ctx.Params().Get("provider")
 	code := c.Ctx.URLParamDefault("code", "")
 	state := c.Ctx.URLParamDefault("state", "")
