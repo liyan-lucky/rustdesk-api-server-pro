@@ -165,7 +165,8 @@ if grep -n 'withQuery(redirectTo, "oidc_error", err.Error())\|withQuery(redirect
   fail "OAuth/OIDC redirect errors must not expose raw internal errors"
 fi
 grep -q 'withQuery(redirectTo, "oidc_error", "auth_failed")' backend/app/controller/admin/auth.go || fail "OIDC redirect error must use sanitized code"
-grep -q 'withQuery(redirectTo, "oauth_error", "auth_failed")' backend/app/controller/admin/auth.go || fail "OAuth redirect error must use sanitized code"
+grep -q 'withQuery(redirectTo, "oauth_error", oauthCallbackErrorCode(err))' backend/app/controller/admin/auth.go || fail "OAuth redirect error must use sanitized code mapping"
+grep -q 'func oauthCallbackErrorCode(err error) string' backend/app/controller/admin/auth.go || fail "OAuth redirect error sanitizer missing"
 
 # Generic OAuth provider must not rely on plaintext AuthToken writes or timing-sensitive state signature checks.
 if awk '
