@@ -38,3 +38,15 @@ func TestOAuthCallbackErrorCode(t *testing.T) {
 		}
 	}
 }
+
+func TestMaskOAuthSecret(t *testing.T) {
+	if actual := maskOAuthSecret("github-secret-a0f09583"); actual != "********a0f09583" {
+		t.Fatalf("unexpected secret hint: %q", actual)
+	}
+	if actual := maskOAuthSecret("short"); actual != "********" {
+		t.Fatalf("short secrets must not be exposed: %q", actual)
+	}
+	if actual := maskOAuthSecret(""); actual != "" {
+		t.Fatalf("empty secret hint should stay empty: %q", actual)
+	}
+}

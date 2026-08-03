@@ -129,6 +129,7 @@ func (c *OAuthController) HandleProviderConfigs() mvc.Result {
 		list = append(list, iris.Map{
 			"type": p.Type, "name": p.Name, "displayName": p.DisplayName, "enabled": p.Enabled,
 			"clientId": p.ClientID, "secretConfigured": strings.TrimSpace(p.ClientSecret) != "",
+			"secretHint": maskOAuthSecret(p.ClientSecret),
 			"redirectUrl": p.RedirectURL, "scopes": p.Scopes, "accountRole": p.AccountRole,
 			"bindByEmail": p.BindByEmail, "autoCreateAdmin": p.AutoCreateAdmin,
 			"autoCreateUser": p.AutoCreateUser, "allowedEmailDomains": p.AllowedEmailDomains,
@@ -181,7 +182,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		}
 	}
 	secret := strings.TrimSpace(form.ClientSecret)
-	if secret == "********" {
+	if index >= 0 && (secret == "********" || secret == maskOAuthSecret(cfg.OAuth.Providers[index].ClientSecret)) {
 		secret = ""
 	}
 	if index >= 0 && secret == "" {
@@ -314,4 +315,16 @@ func cleanOAuthValues(values []string) []string {
 		cleaned = append(cleaned, value)
 	}
 	return cleaned
+}
+
+func maskOAuthSecret(secret string) string {
+	secret = strings.TrimSpace(secret)
+	if secret == "" {
+		return ""
+	}
+	const suffixLength = 8
+	if len(secret) <= suffixLength {
+		return "********"
+	}
+	return "********" + secret[len(secret)-suffixLength:]
 }

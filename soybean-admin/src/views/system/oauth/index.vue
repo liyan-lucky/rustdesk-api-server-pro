@@ -16,12 +16,14 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const providerConfigs = ref<any[]>([]);
 const secretMask = '********';
+const savedSecretHint = ref('');
 const form = reactive({ originalName: '', type: 'github', name: 'github', displayName: 'GitHub', enabled: true, clientId: '', clientSecret: '', redirectUrl: '', scopesText: 'read:user user:email', accountRole: 'admin', bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false, allowedDomainsText: '' });
 const defaultCallback = computed(() => `${window.location.origin}/admin/auth/oauth/${form.name || 'github'}/callback`);
 
 function values(value: string) { return value.split(/[\s,;]+/).map(item => item.trim()).filter(Boolean); }
 function resetForm(row?: any) {
-  Object.assign(form, row ? { originalName: row.name, type: row.type, name: row.name, displayName: row.displayName, enabled: row.enabled, clientId: row.clientId, clientSecret: row.secretConfigured ? secretMask : '', redirectUrl: row.redirectUrl || '', scopesText: (row.scopes || []).join(' '), accountRole: row.accountRole || 'admin', bindByEmail: row.bindByEmail, autoCreateAdmin: row.autoCreateAdmin, autoCreateUser: row.autoCreateUser, allowedDomainsText: (row.allowedEmailDomains || []).join(' ') } : { originalName: '', type: 'github', name: 'github', displayName: 'GitHub', enabled: true, clientId: '', clientSecret: '', redirectUrl: `${window.location.origin}/admin/auth/oauth/github/callback`, scopesText: 'read:user user:email', accountRole: 'admin', bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false, allowedDomainsText: '' });
+  savedSecretHint.value = row?.secretHint || (row?.secretConfigured ? secretMask : '');
+  Object.assign(form, row ? { originalName: row.name, type: row.type, name: row.name, displayName: row.displayName, enabled: row.enabled, clientId: row.clientId, clientSecret: savedSecretHint.value, redirectUrl: row.redirectUrl || '', scopesText: (row.scopes || []).join(' '), accountRole: row.accountRole || 'admin', bindByEmail: row.bindByEmail, autoCreateAdmin: row.autoCreateAdmin, autoCreateUser: row.autoCreateUser, allowedDomainsText: (row.allowedEmailDomains || []).join(' ') } : { originalName: '', type: 'github', name: 'github', displayName: 'GitHub', enabled: true, clientId: '', clientSecret: '', redirectUrl: `${window.location.origin}/admin/auth/oauth/github/callback`, scopesText: 'read:user user:email', accountRole: 'admin', bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false, allowedDomainsText: '' });
   showModal.value = true;
 }
 async function copyText(value: string) {
@@ -37,7 +39,7 @@ async function loadProviderConfigs() {
 async function saveProvider() {
   saving.value = true;
   try {
-    const payload = { ...form, clientSecret: form.clientSecret === secretMask ? '' : form.clientSecret, scopes: values(form.scopesText), allowedEmailDomains: values(form.allowedDomainsText) };
+    const payload = { ...form, clientSecret: form.clientSecret === savedSecretHint.value ? '' : form.clientSecret, scopes: values(form.scopesText), allowedEmailDomains: values(form.allowedDomainsText) };
     const { error } = await request({ url: '/oauth/provider', method: 'post', data: payload });
     if (!error) { showModal.value = false; window.$message?.success($t('common.updateSuccess')); await loadProviderConfigs(); }
   } finally { saving.value = false; }
