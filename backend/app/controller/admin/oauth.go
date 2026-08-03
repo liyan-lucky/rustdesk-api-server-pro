@@ -280,4 +280,3 @@ func cleanOAuthValues(values []string) []string {
 	}
 	return cleaned
 }
-	"strings"

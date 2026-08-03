@@ -385,7 +385,7 @@ const local: App.I18n.Schema = {
       configTitle: 'Konfiguration der Drittanbieter-Anmeldung',
       bindingsTitle: 'Kontoverknüpfungen',
       addProvider: 'Anbieter hinzufügen',
-      editProvider: 'Anbieter bearbeiten'
+      editProvider: 'Anbieter bearbeiten', providerName: 'Anbieterschlüssel', displayName: 'Anzeigename', clientId: 'Client-ID', clientSecret: 'Client-Geheimnis', secretPlaceholder: 'Leer lassen, um das konfigurierte Geheimnis beizubehalten', redirectUrl: 'Callback-Adresse', scopes: 'Berechtigungen', accountRole: 'Kontorolle', allowedDomains: 'Zulässige E-Mail-Domänen', bindByEmail: 'Über bestätigte E-Mail verknüpfen', autoCreateAdmin: 'Administrator automatisch erstellen', autoCreateUser: 'Benutzer automatisch erstellen', testConfig: 'Konfiguration testen', testSuccess: 'Konfiguration vollständig und Autorisierungsadresse erzeugt', copyCallback: 'Callback kopieren', githubOnlyTip: 'GitHub ist zuerst verfügbar. Hier konfigurieren; server.yaml bleibt für Kompatibilität und Wiederherstellung.', adminRole: 'Administrator', userRole: 'Benutzer', useDefault: 'Standard verwenden', listPlaceholder: 'Mehrere Werte durch Leerzeichen oder Kommas trennen', copied: 'Kopiert'
     },
     about: {
       latestCommand: 'Auf latest aktualisieren', pinnedCommand: 'Erkannte Version aktualisieren und prüfen', customCommand: 'Benutzerdefinierte Befehlsvorlage',

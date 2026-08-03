@@ -24,8 +24,10 @@ if grep -n '"tfa_secret"' backend/app/controller/admin/users.go; then
 fi
 grep -q '"has_2fa"' backend/app/controller/admin/users.go || fail "admin users API should expose has_2fa instead of tfa_secret"
 
-# Generated config files must be owner-only readable/writable.
-grep -q 'os.WriteFile(yamlFile, bytes, 0600)' backend/config/config.go || fail "server.yaml write permission must be 0600"
+# Generated config files must be written atomically and owner-only readable/writable.
+grep -q 'os.CreateTemp(dir, ".server-\*.yaml")' backend/config/config.go || fail "server.yaml must use a temporary file"
+grep -q 'tmp.Chmod(0600)' backend/config/config.go || fail "server.yaml write permission must be 0600"
+grep -q 'os.Rename(tmpName, yamlFile)' backend/config/config.go || fail "server.yaml write must be atomic"
 
 # Unsafe static sign keys must be blocked at startup.
 grep -q 'IsUnsafeSignKey' backend/app/main.go || fail "startup signKey safety check missing"
