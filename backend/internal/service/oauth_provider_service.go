@@ -65,6 +65,12 @@ type oauthStateEntry struct {
 	CallbackURL  string
 	ExpiresAt    time.Time
 	CodeVerifier string
+	RustdeskId   string
+	Uuid         string
+	DeviceOs     string
+	DeviceType   string
+	DeviceName   string
+	PollToken    string
 }
 
 type oauthSignedStatePayload struct {
@@ -79,6 +85,11 @@ type oauthTicketEntry struct {
 	UserID    int
 	IsAdmin   bool
 	ExpiresAt time.Time
+	RustdeskId string
+	Uuid       string
+	DeviceOs   string
+	DeviceType string
+	DeviceName string
 }
 
 type oauthMetadataEntry struct {
@@ -90,12 +101,19 @@ type oauthRuntimeStore struct {
 	mu       sync.Mutex
 	states   map[string]oauthStateEntry
 	tickets  map[string]oauthTicketEntry
+	polls    map[string]oauthPollEntry
 	metadata map[string]oauthMetadataEntry
+}
+
+type oauthPollEntry struct {
+	Ticket    string
+	ExpiresAt time.Time
 }
 
 var globalOAuthRuntimeStore = &oauthRuntimeStore{
 	states:   map[string]oauthStateEntry{},
 	tickets:  map[string]oauthTicketEntry{},
+	polls:    map[string]oauthPollEntry{},
 	metadata: map[string]oauthMetadataEntry{},
 }
 
@@ -886,7 +904,7 @@ func (s *OAuthProviderService) isAllowedEmailDomain(provider config.OAuthProvide
 func (s *OAuthProviderService) setState(key string, value oauthStateEntry) error {
 	if s.db != nil {
 		_, _ = s.db.Where("expires_at < ? or status = 0", time.Now()).Delete(&model.OAuthLoginSession{})
-		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "state", KeyHash: util.Sha256Hex(key), Provider: value.ProviderName, RedirectTo: value.RedirectTo, CallbackURL: value.CallbackURL, CodeVerifier: value.CodeVerifier, ExpiresAt: value.ExpiresAt, Status: 1})
+		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "state", KeyHash: util.Sha256Hex(key), Provider: value.ProviderName, RedirectTo: value.RedirectTo, CallbackURL: value.CallbackURL, CodeVerifier: value.CodeVerifier, RustdeskId: value.RustdeskId, Uuid: value.Uuid, DeviceOs: value.DeviceOs, DeviceType: value.DeviceType, DeviceName: value.DeviceName, PollToken: value.PollToken, ExpiresAt: value.ExpiresAt, Status: 1})
 		return err
 	}
 	now := time.Now()
@@ -912,7 +930,7 @@ func (s *OAuthProviderService) popState(key string) (oauthStateEntry, bool) {
 		if err != nil || updated != 1 {
 			return oauthStateEntry{}, false
 		}
-		return oauthStateEntry{ProviderName: session.Provider, RedirectTo: session.RedirectTo, CallbackURL: session.CallbackURL, CodeVerifier: session.CodeVerifier, ExpiresAt: session.ExpiresAt}, true
+		return oauthStateEntry{ProviderName: session.Provider, RedirectTo: session.RedirectTo, CallbackURL: session.CallbackURL, CodeVerifier: session.CodeVerifier, RustdeskId: session.RustdeskId, Uuid: session.Uuid, DeviceOs: session.DeviceOs, DeviceType: session.DeviceType, DeviceName: session.DeviceName, PollToken: session.PollToken, ExpiresAt: session.ExpiresAt}, true
 	}
 	now := time.Now()
 	globalOAuthRuntimeStore.mu.Lock()
@@ -930,7 +948,7 @@ func (s *OAuthProviderService) popState(key string) (oauthStateEntry, bool) {
 
 func (s *OAuthProviderService) setTicket(key string, value oauthTicketEntry) error {
 	if s.db != nil {
-		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "ticket", KeyHash: util.Sha256Hex(key), UserId: value.UserID, IsAdmin: value.IsAdmin, ExpiresAt: value.ExpiresAt, Status: 1})
+		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "ticket", KeyHash: util.Sha256Hex(key), UserId: value.UserID, IsAdmin: value.IsAdmin, RustdeskId: value.RustdeskId, Uuid: value.Uuid, DeviceOs: value.DeviceOs, DeviceType: value.DeviceType, DeviceName: value.DeviceName, ExpiresAt: value.ExpiresAt, Status: 1})
 		return err
 	}
 	now := time.Now()
@@ -956,7 +974,7 @@ func (s *OAuthProviderService) popTicket(key string) (oauthTicketEntry, bool) {
 		if err != nil || updated != 1 {
 			return oauthTicketEntry{}, false
 		}
-		return oauthTicketEntry{UserID: session.UserId, IsAdmin: session.IsAdmin, ExpiresAt: session.ExpiresAt}, true
+		return oauthTicketEntry{UserID: session.UserId, IsAdmin: session.IsAdmin, RustdeskId: session.RustdeskId, Uuid: session.Uuid, DeviceOs: session.DeviceOs, DeviceType: session.DeviceType, DeviceName: session.DeviceName, ExpiresAt: session.ExpiresAt}, true
 	}
 	now := time.Now()
 	globalOAuthRuntimeStore.mu.Lock()
@@ -1231,4 +1249,288 @@ func defaultIfEmpty(value, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+// ListClientProviders returns enabled OAuth providers available for client login.
+// Only providers with accountRole=user are exposed to desktop/mobile clients.
+func (s *OAuthProviderService) ListClientProviders() []OAuthProviderMeta {
+	metas := make([]OAuthProviderMeta, 0)
+	if s == nil || s.cfg == nil {
+		return metas
+	}
+	for _, provider := range s.cfg.OAuthProviders() {
+		normalized := normalizeOAuthProvider(provider)
+		if !s.isProviderEnabled(normalized) {
+			continue
+		}
+		if normalized.AccountRole != "user" {
+			continue
+		}
+		metas = append(metas, OAuthProviderMeta{
+			Name:        normalized.Name,
+			DisplayName: normalized.DisplayName,
+			Type:        normalized.Type,
+			AccountRole: normalized.AccountRole,
+		})
+	}
+	return metas
+}
+
+// BuildClientAuthURL builds the OAuth authorization URL for a desktop/mobile client.
+// It returns the authorization URL, a one-time poll token the client uses to poll
+// for the login ticket, whether the provider is enabled, and any error.
+func (s *OAuthProviderService) BuildClientAuthURL(providerName, requestBaseURL, rustdeskId, uuid, deviceOs, deviceType, deviceName string) (string, string, bool, error) {
+	provider, ok := s.getProvider(providerName)
+	if !ok {
+		return "", "", false, nil
+	}
+	if !s.isProviderEnabled(provider) {
+		return "", "", false, nil
+	}
+	if provider.AccountRole != "user" {
+		return "", "", false, nil
+	}
+
+	metadata, err := s.getMetadata(provider)
+	if err != nil {
+		return "", "", true, err
+	}
+
+	callbackURL, err := s.resolveClientCallbackURL(provider, requestBaseURL)
+	if err != nil {
+		return "", "", true, err
+	}
+
+	pollToken := randomOAuthToken(24)
+	if pollToken == "" {
+		return "", "", true, errors.New("failed to generate poll token")
+	}
+
+	stateEntry := oauthStateEntry{
+		ProviderName: provider.Name,
+		CallbackURL:  callbackURL,
+		ExpiresAt:    time.Now().Add(s.stateTTL(provider)),
+		RustdeskId:   rustdeskId,
+		Uuid:         uuid,
+		DeviceOs:     deviceOs,
+		DeviceType:   deviceType,
+		DeviceName:   deviceName,
+		PollToken:    pollToken,
+	}
+	stateEntry.CodeVerifier = randomOAuthToken(32)
+	state := randomOAuthToken(24)
+	if state == "" {
+		return "", "", true, errors.New("failed to generate state")
+	}
+
+	if err = s.setState(state, stateEntry); err != nil {
+		return "", "", true, err
+	}
+
+	query := url.Values{}
+	query.Set("client_id", provider.ClientID)
+	query.Set("response_type", "code")
+	scopeSeparator := " "
+	if provider.Type == "qq" {
+		scopeSeparator = ","
+	}
+	query.Set("scope", strings.Join(s.scopes(provider), scopeSeparator))
+	query.Set("redirect_uri", callbackURL)
+	query.Set("state", state)
+	if provider.Type != "qq" {
+		challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
+		query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
+		query.Set("code_challenge_method", "S256")
+	}
+	if prompt := strings.TrimSpace(provider.Prompt); prompt != "" {
+		query.Set("prompt", prompt)
+	}
+
+	return metadata.AuthorizationEndpoint + "?" + query.Encode(), pollToken, true, nil
+}
+
+// ConsumeClientCallback handles the OAuth provider redirect for a client login flow.
+// It exchanges the authorization code, resolves the local user, issues a one-time
+// client ticket, and stores it under the poll token so the client can retrieve it.
+// Returns the poll token so the callback page can display it to the user.
+func (s *OAuthProviderService) ConsumeClientCallback(providerName, code, state string) (string, error) {
+	provider, ok := s.getProvider(providerName)
+	if !ok {
+		return "", errors.New("provider not found")
+	}
+	if !s.isProviderEnabled(provider) {
+		return "", errors.New("provider disabled")
+	}
+	if provider.AccountRole != "user" {
+		return "", errors.New("provider not available for client login")
+	}
+	if strings.TrimSpace(code) == "" || strings.TrimSpace(state) == "" {
+		return "", errors.New("missing code or state")
+	}
+
+	stored, ok := s.popState(state)
+	if !ok || stored.ProviderName != provider.Name {
+		return "", errors.New("state invalid or expired")
+	}
+	if stored.PollToken == "" {
+		return "", errors.New("poll token missing from state")
+	}
+
+	tokenResp, err := s.exchangeCode(provider, code, stored.CallbackURL, stored.CodeVerifier)
+	if err != nil {
+		return "", err
+	}
+
+	claims, err := s.fetchUserClaims(provider, tokenResp)
+	if err != nil {
+		return "", err
+	}
+
+	user, err := s.resolveOAuthUser(provider, claims)
+	if err != nil {
+		return "", err
+	}
+
+	ticket := randomOAuthToken(24)
+	if ticket == "" {
+		return "", errors.New("failed to generate ticket")
+	}
+
+	ticketTTL := s.ticketTTL(provider)
+	if err = s.setTicket(ticket, oauthTicketEntry{
+		UserID:     user.Id,
+		IsAdmin:    false,
+		ExpiresAt:  time.Now().Add(ticketTTL),
+		RustdeskId: stored.RustdeskId,
+		Uuid:       stored.Uuid,
+		DeviceOs:   stored.DeviceOs,
+		DeviceType: stored.DeviceType,
+		DeviceName: stored.DeviceName,
+	}); err != nil {
+		return "", err
+	}
+
+	if err = s.setPollEntry(stored.PollToken, ticket, time.Now().Add(ticketTTL)); err != nil {
+		return "", err
+	}
+
+	return stored.PollToken, nil
+}
+
+// PollClientTicket peeks the one-time login ticket associated with the poll token.
+// The poll entry is not consumed so the client can poll repeatedly until it is ready;
+// the ticket itself is consumed atomically during ExchangeClientTicket.
+// Returns the ticket and true when ready, or empty string and false when pending.
+func (s *OAuthProviderService) PollClientTicket(pollToken string) (string, bool, error) {
+	if strings.TrimSpace(pollToken) == "" {
+		return "", false, errors.New("poll token required")
+	}
+	ticket, ok := s.peekPollEntry(pollToken)
+	if !ok {
+		return "", false, nil
+	}
+	return ticket, true, nil
+}
+
+// ExchangeClientTicket swaps a one-time client OAuth ticket for a long-lived client
+// access token (90 days, is_admin=false, bound to rustdesk_id and uuid) and returns
+// the resolved user so the caller can build a login response.
+func (s *OAuthProviderService) ExchangeClientTicket(ticket string) (string, *model.User, error) {
+	if strings.TrimSpace(ticket) == "" {
+		return "", nil, errors.New("ticket required")
+	}
+	item, ok := s.popTicket(ticket)
+	if !ok {
+		return "", nil, errors.New("ticket invalid or expired")
+	}
+	if item.IsAdmin {
+		return "", nil, errors.New("client ticket expected")
+	}
+	var user model.User
+	has, err := s.db.Where("id = ? and is_admin = 0 and status > 0", item.UserID).Get(&user)
+	if err != nil {
+		return "", nil, err
+	}
+	if !has {
+		return "", nil, errors.New("oauth ticket user not available")
+	}
+	token, err := s.issueClientOAuthToken(&user, item.RustdeskId, item.Uuid, item.DeviceOs, item.DeviceType, item.DeviceName)
+	if err != nil {
+		return "", nil, err
+	}
+	return token, &user, nil
+}
+
+func (s *OAuthProviderService) issueClientOAuthToken(user *model.User, rustdeskId, uuid, deviceOs, deviceType, deviceName string) (string, error) {
+	_, _ = s.db.Where("user_id = ? and rustdesk_id = ? and status = 1 and is_admin = 0", user.Id, rustdeskId).Cols("status").Update(&model.AuthToken{Status: 0})
+	signStr := fmt.Sprintf("%s_%s_%d_%s", rustdeskId, uuid, user.Id, time.Now().String())
+	token := util.HmacSha256(signStr, s.cfg.SignKey)
+	expired := 90 * 24 * time.Hour
+	authToken := &model.AuthToken{
+		UserId:     user.Id,
+		RustdeskId: rustdeskId,
+		Uuid:       uuid,
+		DeviceOs:   deviceOs,
+		DeviceType: deviceType,
+		DeviceName: deviceName,
+		TokenHash:  util.Sha256Hex(token),
+		Expired:    time.Now().Add(expired),
+		IsAdmin:    false,
+		Status:     1,
+	}
+	_, err := s.db.Insert(authToken)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+func (s *OAuthProviderService) resolveClientCallbackURL(provider config.OAuthProviderConfig, requestBaseURL string) (string, error) {
+	if explicit := strings.TrimSpace(provider.RedirectURL); explicit != "" {
+		return explicit, nil
+	}
+	base := strings.TrimRight(strings.TrimSpace(requestBaseURL), "/")
+	if base == "" {
+		return "", errors.New("oauth redirect url missing and request base unavailable")
+	}
+	return fmt.Sprintf("%s/api/oauth/%s/callback", base, provider.Name), nil
+}
+
+func (s *OAuthProviderService) setPollEntry(pollToken, ticket string, expiresAt time.Time) error {
+	if s.db != nil {
+		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "poll", KeyHash: util.Sha256Hex(pollToken), Ticket: ticket, ExpiresAt: expiresAt, Status: 1})
+		return err
+	}
+	now := time.Now()
+	globalOAuthRuntimeStore.mu.Lock()
+	defer globalOAuthRuntimeStore.mu.Unlock()
+	for k, v := range globalOAuthRuntimeStore.polls {
+		if now.After(v.ExpiresAt) {
+			delete(globalOAuthRuntimeStore.polls, k)
+		}
+	}
+	globalOAuthRuntimeStore.polls[pollToken] = oauthPollEntry{Ticket: ticket, ExpiresAt: expiresAt}
+	return nil
+}
+
+func (s *OAuthProviderService) peekPollEntry(pollToken string) (string, bool) {
+	if s.db != nil {
+		var session model.OAuthLoginSession
+		has, err := s.db.Where("kind = ? and key_hash = ? and status = 1 and expires_at > ?", "poll", util.Sha256Hex(pollToken), time.Now()).Get(&session)
+		if err != nil || !has {
+			return "", false
+		}
+		return session.Ticket, true
+	}
+	now := time.Now()
+	globalOAuthRuntimeStore.mu.Lock()
+	defer globalOAuthRuntimeStore.mu.Unlock()
+	v, ok := globalOAuthRuntimeStore.polls[pollToken]
+	if !ok {
+		return "", false
+	}
+	if now.After(v.ExpiresAt) {
+		return "", false
+	}
+	return v.Ticket, true
 }

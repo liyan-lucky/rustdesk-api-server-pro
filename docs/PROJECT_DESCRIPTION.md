@@ -654,7 +654,7 @@ docker build -t rustdesk-api-server-pro:local .
 
 需要注意的限制：
 
-- 客户端 OIDC 是兼容响应，不是完整客户端 OIDC 登录实现。
+- 客户端第三方登录已通过 `/api/oauth/*` 实现（服务端回调 + 客户端轮询），复用 `accountRole: user` 的 Provider，签发 90 天客户端 token；`/api/oidc/*` 仍为兼容占位。
 - plugin-sign 不是官方真实签名服务。
 - `/api/devices/deploy` 仅返回官方客户端可识别的兼容状态，不会写入 hbbs 显式部署白名单。
 - 企业分组、策略、accessible 权限是最小兼容模型，不是完整官方权限模型。
@@ -691,7 +691,7 @@ docker build -t rustdesk-api-server-pro:local .
 
 1. 补齐接口自动化测试，优先覆盖登录、地址簿、心跳、审计、OAuth。
 2. 为客户端 API 和后台 API 补充 OpenAPI 或接口清单。
-3. 实现完整客户端 OIDC 登录，而不是仅返回兼容响应。
+3. 客户端第三方登录已通过 `/api/oauth/*` 实现（服务端回调 + 客户端轮询），后续可补充更多 Provider 和端到端客户端验收。
 4. 实现真实 plugin-sign 签名服务，包括密钥管理和验签链路。
 5. 完善企业权限模型，包括用户组、设备组、策略、accessible 查询的一致性。
 6. 为录屏上传增加索引、清理策略、访问控制和容量限制。

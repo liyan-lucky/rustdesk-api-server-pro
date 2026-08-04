@@ -207,20 +207,24 @@ rustdesk-api-server-pro.exe sync
 - 如果你的目标是“客户端页面可正常打开，不报错”：当前行为是可接受的
 - 如果你的目标是“完整企业级分组权限”：需要继续开发
 
-## 8. OIDC 登录不可用
+## 8. 客户端第三方登录（/api/oauth/*）
 
 ### 现象
 
-- 客户端触发 OIDC 登录流程，但无法完成登录
+- 客户端希望通过 GitHub/QQ 等 Provider 登录，但不确定服务端是否支持
 
-### 原因
+### 说明
 
-当前 `/api/oidc/auth` 与 `/api/oidc/auth-query` 仅为兼容返回，未实现完整 OIDC 流程。
+客户端第三方登录已通过 `/api/oauth/*` 接口族实现，采用**服务端回调 + 客户端轮询**流程，复用后台 `oauth.providers` 中 `accountRole: user` 的 Provider。完整流程见 `docs/OAUTH_PROVIDERS.md`“客户端第三方登录”章节。
 
-### 处理建议
+### 排查
 
-- 不使用 OIDC：可忽略（避免 404 即可）
-- 需要 OIDC：必须继续开发真实 OIDC 对接逻辑
+- 客户端调用 `GET /api/oauth/providers` 无返回：检查后台是否配置了 `accountRole: user` 且 `enabled: true` 的 Provider。
+- `POST /api/oauth/start` 返回 `enabled:false`：Provider 未启用或 `accountRole` 不是 `user`。
+- 回调页显示 `oauth_state_expired`：state 超时（默认 180 秒），用户授权过慢，调大 `stateTtlSeconds`。
+- 回调页显示 `oauth_account_not_bound`：未配置 `bindByEmail` 或 `autoCreateUser`，且无已绑定账号。
+- 轮询一直 `ready:false`：回调未完成或失败，检查浏览器是否成功跳转到 Provider 授权页。
+- `/api/oidc/auth` 与 `/api/oidc/auth-query` 仍为兼容占位，不用于客户端 OAuth 登录。
 
 ## 9. 插件签名（plugin-sign）不可用或签名结果不符合预期
 

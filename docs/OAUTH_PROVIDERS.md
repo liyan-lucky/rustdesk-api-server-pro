@@ -74,3 +74,39 @@ curl "https://desk.example.com/admin/auth/oauth/url?provider=github"
 ## 其他国内 Provider 状态
 
 微信开放平台等 Provider 尚未实现。接入前必须重新查阅其当前官方文档并确认：应用审核类型、网站应用资质、公开 HTTPS 回调域名、Client ID/AppID 与 Secret、授权/换 token/userinfo 端点、unionid/openid 身份规则和国内网络可达性。没有完成官方协议、错误处理、安全测试和真实回调验收前，只能标记为“计划”，不得仅增加按钮。
+
+## 客户端第三方登录（/api/oauth/*）
+
+桌面和移动客户端没有浏览器地址栏，无法像 Web 后台那样接收 OAuth 回调重定向。因此客户端第三方登录采用**服务端回调 + 客户端轮询**流程，复用同一套 `oauth.providers` 配置，仅暴露 `accountRole: user` 的 Provider。
+
+### 接口清单
+
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| GET | `/api/oauth/providers` | 列出客户端可用的已启用 Provider（仅 accountRole=user） |
+| POST | `/api/oauth/start` | 生成授权 URL 和一次性 poll_token，绑定客户端设备标识 |
+| GET | `/api/oauth/{provider}/callback` | Provider 授权后回调服务端，处理后返回 HTML 提示页 |
+| POST | `/api/oauth/poll` | 客户端轮询拿一次性 ticket（未就绪返回 ready=false） |
+| POST | `/api/oauth/exchange` | 用 ticket 换客户端 access_token（90 天，绑定 rustdesk_id+uuid） |
+
+### 完整流程
+
+1. 客户端调用 `POST /api/oauth/start`，请求体 `{provider, id, uuid, deviceInfo:{os,type,name}}`，服务端生成 state+PKCE+poll_token 并持久化，返回 `{enabled, url, poll_token}`。
+2. 客户端用系统浏览器打开返回的 `url`，用户在 Provider 页面授权。
+3. Provider 回调 `GET /api/oauth/{provider}/callback?code=xxx&state=xxx`，服务端换 token、获取用户 claims、绑定/创建账号、签发一次性 client ticket，用 poll_token 关联存储，返回 HTML 提示页“已成功登录，请回到客户端继续”。
+4. 客户端每隔 2 秒调用 `POST /api/oauth/poll`，请求体 `{poll_token}`，未就绪返回 `{ready:false}`，就绪返回 `{ready:true, ticket}`。
+5. 客户端拿到 ticket 后调用 `POST /api/oauth/exchange`，请求体 `{ticket}`，返回 `{access_token, type:"access_token", user:{...}}`，与 `/api/login` 成功响应格式一致。
+
+### 安全机制
+
+- state、poll_token、ticket 均为一次性随机值，仅持久化 SHA-256，有短有效期（默认 180 秒）。
+- 客户端 token 签发与 `/api/login` 一致：90 天有效期、`is_admin=false`、绑定 `rustdesk_id`+`uuid`，新 token 签发前作废同设备旧 token。
+- 仅 `accountRole: user` 的 Provider 暴露给客户端；`accountRole: admin` 的 Provider 仅供后台使用。
+- 回调地址默认为 `{baseURL}/api/oauth/{provider}/callback`，也可在 Provider 配置的 `redirectUrl` 中显式指定。
+- 回调成功/失败均返回中文 HTML 提示页，不暴露内部状态；失败页显示白名单错误码（`oauth_account_not_bound`/`oauth_provider_unreachable`/`oauth_state_expired`/`oauth_provider_not_for_client`/`oauth_auth_failed`）。
+
+### Provider 配置要求
+
+客户端 OAuth 复用后台 `oauth.providers` 配置，无需额外配置段。要将某个 Provider 同时用于客户端登录，设置 `accountRole: user` 即可。Provider 的 `redirectUrl` 若显式配置，需同时覆盖后台和客户端回调；未配置时后台用 `/admin/auth/oauth/{provider}/callback`，客户端用 `/api/oauth/{provider}/callback`，由服务端各自推导。
+
+> 注意：同一 Provider 若要同时服务后台和客户端，`redirectUrl` 不能写死单一回调路径，应留空让服务端按请求路径推导，或注册两个 Provider 实例（一个 admin 一个 user）分别配置回调。
