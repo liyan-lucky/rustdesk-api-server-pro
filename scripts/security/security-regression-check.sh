@@ -49,7 +49,7 @@ if grep -n 'panic(err)' backend/app/jobs.go; then
   fail "scheduler startup must return errors instead of panicking"
 fi
 grep -q 'func StartJobs(cfg \*config.ServerConfig, dbEngine \*xorm.Engine) error' backend/app/jobs.go || fail "StartJobs must accept the app DB engine and return an error"
-grep -q 'job db engine is nil' backend/app/jobs.go || fail "StartJobs must reject nil DB engine"
+grep -q 'dbEngine == nil' backend/app/jobs.go || fail "StartJobs must reject nil DB engine"
 if grep -n 'db.NewEngine' backend/app/jobs.go; then
   fail "StartJobs must reuse the app DB engine instead of creating a second engine"
 fi
@@ -57,7 +57,7 @@ grep -q 'dbEngine, err := db.NewEngine(cfg.Db)' backend/app/main.go || fail "ser
 grep -q 'newApp(cfg, dbEngine)' backend/app/main.go || fail "app initialization must receive the shared DB engine"
 grep -q 'if err := StartJobs(cfg, dbEngine); err != nil' backend/app/main.go || fail "server startup must fail when jobs fail"
 grep -q 'func newApp(cfg \*config.ServerConfig, dbEngine \*xorm.Engine)' backend/app/main.go || fail "newApp must accept the shared DB engine"
-grep -q 'db engine is nil' backend/app/main.go || fail "newApp must reject nil DB engine"
+grep -q 'dbEngine == nil' backend/app/main.go || fail "newApp must reject nil DB engine"
 grep -q 'return fmt.Errorf("create scheduler:' backend/app/jobs.go || fail "StartJobs must return scheduler creation errors"
 grep -q 's.NewJob' backend/app/jobs.go || fail "device check job creation missing"
 grep -q 'return fmt.Errorf("create device check job:' backend/app/jobs.go || fail "StartJobs must return job creation errors"
