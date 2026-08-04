@@ -6,11 +6,10 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"io"
 	"math/big"
 	"net/http"
+	"rustdesk-api-server-pro/internal/errcode"
 	"strings"
 	"time"
 )
@@ -37,7 +36,7 @@ type oidcJWK struct {
 func (s *OIDCAuthService) verifyIDTokenSignature(idToken string, metadata *oidcMetadata) error {
 	parts := strings.Split(idToken, ".")
 	if len(parts) != 3 {
-		return errors.New("invalid id token")
+		return errcode.New(errcode.ERR3013.Code, errcode.ERR3013.Message)
 	}
 
 	headerBytes, err := base64.RawURLEncoding.DecodeString(parts[0])
@@ -49,13 +48,13 @@ func (s *OIDCAuthService) verifyIDTokenSignature(idToken string, metadata *oidcM
 		return err
 	}
 	if strings.TrimSpace(header.Kid) == "" {
-		return errors.New("id token kid missing")
+		return errcode.New(errcode.ERR3025.Code, errcode.ERR3025.Message)
 	}
 	if header.Alg != "RS256" {
-		return fmt.Errorf("unsupported id token alg %s", header.Alg)
+		return errcode.Errorf(errcode.ERR3026.Code, errcode.ERR3026.Message, header.Alg)
 	}
 	if metadata == nil || strings.TrimSpace(metadata.JWKSURI) == "" {
-		return errors.New("oidc jwks_uri missing")
+		return errcode.New(errcode.ERR3027.Code, errcode.ERR3027.Message)
 	}
 
 	key, err := s.fetchRS256JWK(metadata.JWKSURI, header.Kid)
@@ -87,7 +86,7 @@ func (s *OIDCAuthService) fetchRS256JWK(jwksURL, kid string) (*rsa.PublicKey, er
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("oidc jwks fetch failed with status %d", resp.StatusCode)
+		return nil, errcode.Errorf(errcode.ERR3028.Code, errcode.ERR3028.Message, resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 1024*1024))
@@ -114,7 +113,7 @@ func (s *OIDCAuthService) fetchRS256JWK(jwksURL, kid string) (*rsa.PublicKey, er
 		}
 		return publicKey, nil
 	}
-	return nil, errors.New("matching oidc jwk not found")
+	return nil, errcode.New(errcode.ERR3029.Code, errcode.ERR3029.Message)
 }
 
 func rsaPublicKeyFromJWK(key oidcJWK) (*rsa.PublicKey, error) {
@@ -127,14 +126,14 @@ func rsaPublicKeyFromJWK(key oidcJWK) (*rsa.PublicKey, error) {
 		return nil, err
 	}
 	if len(nBytes) == 0 || len(eBytes) == 0 {
-		return nil, errors.New("invalid rsa jwk")
+		return nil, errcode.New(errcode.ERR3030.Code, errcode.ERR3030.Message)
 	}
 	e := 0
 	for _, b := range eBytes {
 		e = e<<8 + int(b)
 	}
 	if e == 0 {
-		return nil, errors.New("invalid rsa exponent")
+		return nil, errcode.New(errcode.ERR3031.Code, errcode.ERR3031.Message)
 	}
 	return &rsa.PublicKey{N: new(big.Int).SetBytes(nBytes), E: e}, nil
 }

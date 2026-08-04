@@ -1,10 +1,10 @@
 package api
 
 import (
-	"errors"
 	"io"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 	"xorm.io/xorm"
 )
 
-var errAddressBookNotFound = errors.New("address book not found")
+var errAddressBookNotFound = errcode.New(errcode.ERR5001.Code, errcode.ERR5001.Message)
 
 type basicController struct {
 	Ctx iris.Context

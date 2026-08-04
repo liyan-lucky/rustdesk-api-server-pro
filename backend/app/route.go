@@ -18,6 +18,7 @@ func SetRoute(app *iris.Application) {
 	apiMvc.Handle(new(api.AuditController))
 	apiMvc.Handle(new(api.CompatPublicController))
 	apiMvc.Handle(new(api.OAuthController))
+	apiMvc.Handle(new(api.ErrCodeController))
 
 	licWebApiParty := app.Party("/lic/web/api")
 	licWebApiMvc := mvc.New(licWebApiParty)

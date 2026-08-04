@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -14,6 +13,7 @@ import (
 	"net/url"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/util"
 	"strings"
 	"sync"
@@ -190,7 +190,7 @@ func (s *OAuthProviderService) BuildAdminAuthURL(providerName, requestBaseURL, r
 	stateEntry.CodeVerifier = randomOAuthToken(32)
 	state := randomOAuthToken(24)
 	if state == "" {
-		return "", true, errors.New("failed to generate state")
+		return "", true, errcode.New(errcode.ERR2005.Code, errcode.ERR2005.Message)
 	}
 
 	if err = s.setState(state, stateEntry); err != nil {
@@ -225,19 +225,19 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 	provider, ok := s.getProvider(providerName)
 	failureRedirect := s.normalizeFailureRedirect(config.OAuthProviderConfig{}, "")
 	if !ok {
-		return "", failureRedirect, errors.New("provider not found")
+		return "", failureRedirect, errcode.New(errcode.ERR2001.Code, errcode.ERR2001.Message)
 	}
 	failureRedirect = s.normalizeFailureRedirect(provider, "")
 	if !s.isProviderEnabled(provider) {
-		return "", failureRedirect, errors.New("provider disabled")
+		return "", failureRedirect, errcode.New(errcode.ERR2002.Code, errcode.ERR2002.Message)
 	}
 	if strings.TrimSpace(code) == "" || strings.TrimSpace(state) == "" {
-		return "", failureRedirect, errors.New("missing code or state")
+		return "", failureRedirect, errcode.New(errcode.ERR2003.Code, errcode.ERR2003.Message)
 	}
 
 	stored, ok := s.popState(state)
 	if !ok || stored.ProviderName != provider.Name {
-		return "", failureRedirect, errors.New("state invalid or expired")
+		return "", failureRedirect, errcode.New(errcode.ERR2004.Code, errcode.ERR2004.Message)
 	}
 
 	tokenResp, err := s.exchangeCode(provider, code, stored.CallbackURL, stored.CodeVerifier)
@@ -257,7 +257,7 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 
 	ticket := randomOAuthToken(24)
 	if ticket == "" {
-		return "", failureRedirect, errors.New("failed to generate ticket")
+		return "", failureRedirect, errcode.New(errcode.ERR2006.Code, errcode.ERR2006.Message)
 	}
 
 	if err = s.setTicket(ticket, oauthTicketEntry{
@@ -273,11 +273,11 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 
 func (s *OAuthProviderService) ExchangeAdminTicket(ticket string) (string, error) {
 	if strings.TrimSpace(ticket) == "" {
-		return "", errors.New("ticket required")
+		return "", errcode.New(errcode.ERR2007.Code, errcode.ERR2007.Message)
 	}
 	item, ok := s.popTicket(ticket)
 	if !ok {
-		return "", errors.New("ticket invalid or expired")
+		return "", errcode.New(errcode.ERR2008.Code, errcode.ERR2008.Message)
 	}
 	var user model.User
 	has, err := s.db.Where("id = ? and is_admin = ? and status > 0", item.UserID, item.IsAdmin).Get(&user)
@@ -285,7 +285,7 @@ func (s *OAuthProviderService) ExchangeAdminTicket(ticket string) (string, error
 		return "", err
 	}
 	if !has {
-		return "", errors.New("oauth ticket user not available")
+		return "", errcode.New(errcode.ERR2009.Code, errcode.ERR2009.Message)
 	}
 	return s.issueOAuthToken(&user)
 }
@@ -334,7 +334,7 @@ func (s *OAuthProviderService) getMetadata(provider config.OAuthProviderConfig) 
 
 	issuer := strings.TrimRight(strings.TrimSpace(provider.Issuer), "/")
 	if issuer == "" {
-		return nil, errors.New("oauth issuer required")
+		return nil, errcode.New(errcode.ERR2010.Code, errcode.ERR2010.Message)
 	}
 	if meta, ok := s.getCachedMetadata(issuer); ok {
 		return &meta, nil
@@ -348,7 +348,7 @@ func (s *OAuthProviderService) getMetadata(provider config.OAuthProviderConfig) 
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("oauth discovery failed with status %d", resp.StatusCode)
+		return nil, errcode.Errorf(errcode.ERR2030.Code, errcode.ERR2030.Message, resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
@@ -361,7 +361,7 @@ func (s *OAuthProviderService) getMetadata(provider config.OAuthProviderConfig) 
 		return nil, err
 	}
 	if metadata.AuthorizationEndpoint == "" || metadata.TokenEndpoint == "" {
-		return nil, errors.New("oauth metadata missing required endpoints")
+		return nil, errcode.New(errcode.ERR2011.Code, errcode.ERR2011.Message)
 	}
 
 	s.setCachedMetadata(issuer, metadata)
@@ -415,7 +415,7 @@ func (s *OAuthProviderService) doTokenRequest(req *http.Request) (*oauthTokenRes
 		return nil, err
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("token exchange failed with status %d", resp.StatusCode)
+		return nil, errcode.Errorf(errcode.ERR2031.Code, errcode.ERR2031.Message, resp.StatusCode)
 	}
 
 	var tokenResp oauthTokenResponse
@@ -423,7 +423,7 @@ func (s *OAuthProviderService) doTokenRequest(req *http.Request) (*oauthTokenRes
 		return nil, err
 	}
 	if tokenResp.AccessToken == "" && tokenResp.IDToken == "" {
-		return nil, errors.New("oauth token response missing token")
+		return nil, errcode.New(errcode.ERR2012.Code, errcode.ERR2012.Message)
 	}
 	return &tokenResp, nil
 }
@@ -464,7 +464,7 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 		userinfoSubject := strings.TrimSpace(anyToOAuthString(claims[subjectClaim]))
 		idTokenSubject := strings.TrimSpace(anyToOAuthString(idTokenClaims[subjectClaim]))
 		if userinfoSubject != "" && idTokenSubject != "" && userinfoSubject != idTokenSubject {
-			return nil, errors.New("oauth userinfo subject mismatch")
+			return nil, errcode.New(errcode.ERR2013.Code, errcode.ERR2013.Message)
 		}
 	}
 
@@ -478,16 +478,16 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 	userClaims.EmailVerified, _ = claims["email_verified"].(bool)
 
 	if userClaims.Subject == "" {
-		return nil, errors.New("oauth subject claim missing")
+		return nil, errcode.New(errcode.ERR2014.Code, errcode.ERR2014.Message)
 	}
 	if provider.Type == "github" && provider.BindByEmail && !userClaims.EmailVerified {
-		return nil, errors.New("verified github email required")
+		return nil, errcode.New(errcode.ERR2015.Code, errcode.ERR2015.Message)
 	}
 	if (provider.BindByEmail || len(provider.AllowedEmailDomains) > 0) && userClaims.Email == "" {
-		return nil, errors.New("verified oauth email required")
+		return nil, errcode.New(errcode.ERR2016.Code, errcode.ERR2016.Message)
 	}
 	if !s.isAllowedEmailDomain(provider, userClaims.Email) {
-		return nil, errors.New("email domain not allowed")
+		return nil, errcode.New(errcode.ERR2017.Code, errcode.ERR2017.Message)
 	}
 	return userClaims, nil
 }
@@ -509,7 +509,7 @@ func (s *OAuthProviderService) fillQQClaims(provider config.OAuthProviderConfig,
 			return err
 		}
 		if me.Error != 0 || strings.TrimSpace(me.OpenID) == "" {
-			return errors.New("qq openid response invalid")
+			return errcode.New(errcode.ERR2018.Code, errcode.ERR2018.Message)
 		}
 		openid = me.OpenID
 	}
@@ -537,7 +537,7 @@ func (s *OAuthProviderService) fillQQClaims(provider config.OAuthProviderConfig,
 		return err
 	}
 	if profile.Ret != 0 {
-		return fmt.Errorf("qq userinfo failed with ret %d", profile.Ret)
+		return errcode.Errorf(errcode.ERR2032.Code, errcode.ERR2032.Message, profile.Ret)
 	}
 	claims[defaultIfEmpty(provider.SubjectClaim, "openid")] = openid
 	claims[defaultIfEmpty(provider.NameClaim, "nickname")] = profile.Nickname
@@ -559,7 +559,7 @@ func (s *OAuthProviderService) getQQJSON(endpoint string, target interface{}) er
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("qq api failed with status %d", resp.StatusCode)
+		return errcode.Errorf(errcode.ERR2033.Code, errcode.ERR2033.Message, resp.StatusCode)
 	}
 	return json.NewDecoder(resp.Body).Decode(target)
 }
@@ -567,10 +567,10 @@ func (s *OAuthProviderService) getQQJSON(endpoint string, target interface{}) er
 func (s *OAuthProviderService) verifyOAuthIDToken(provider config.OAuthProviderConfig, metadata *oauthMetadata, idToken string, claims map[string]interface{}) error {
 	expectedIssuer := strings.TrimRight(strings.TrimSpace(provider.Issuer), "/")
 	if expectedIssuer == "" {
-		return errors.New("oauth issuer required for id token")
+		return errcode.New(errcode.ERR2019.Code, errcode.ERR2019.Message)
 	}
 	if metadata == nil || strings.TrimSpace(metadata.JWKSURI) == "" {
-		return errors.New("oauth jwks_uri missing for id token")
+		return errcode.New(errcode.ERR2020.Code, errcode.ERR2020.Message)
 	}
 	oidcVerifier := &OIDCAuthService{httpClient: s.httpClient}
 	if err := oidcVerifier.verifyIDTokenSignature(idToken, &oidcMetadata{JWKSURI: metadata.JWKSURI}); err != nil {
@@ -595,7 +595,7 @@ func (s *OAuthProviderService) fillClaimsByUserinfo(provider config.OAuthProvide
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("userinfo failed with status %d", resp.StatusCode)
+		return errcode.Errorf(errcode.ERR2034.Code, errcode.ERR2034.Message, resp.StatusCode)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -655,7 +655,7 @@ func (s *OAuthProviderService) fillGithubEmail(provider config.OAuthProviderConf
 func fillClaimsByOAuthIDToken(idToken, expectedIssuer, expectedAudience string, claims map[string]interface{}) error {
 	parts := strings.Split(idToken, ".")
 	if len(parts) != 3 {
-		return errors.New("invalid id token")
+		return errcode.New(errcode.ERR2021.Code, errcode.ERR2021.Message)
 	}
 	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
@@ -681,7 +681,7 @@ func (s *OAuthProviderService) resolveOAuthUser(provider config.OAuthProviderCon
 			return nil, err
 		}
 		if !ok {
-			return nil, errors.New("bound admin user not available")
+			return nil, errcode.New(errcode.ERR2022.Code, errcode.ERR2022.Message)
 		}
 		account.Email = claims.Email
 		account.Name = claims.Name
@@ -728,7 +728,7 @@ func (s *OAuthProviderService) matchOrCreateOAuthUser(provider config.OAuthProvi
 	}
 
 	if (isAdmin && !provider.AutoCreateAdmin) || (!isAdmin && !provider.AutoCreateUser) {
-		return nil, errors.New("no bindable oauth account")
+		return nil, errcode.New(errcode.ERR2023.Code, errcode.ERR2023.Message)
 	}
 
 	nameSeed := claims.Login
@@ -787,7 +787,7 @@ func (s *OAuthProviderService) makeUniqueUsername(base string) (string, error) {
 		}
 		username = fmt.Sprintf("%s_%d", base, i+1)
 	}
-	return "", errors.New("failed to allocate unique username")
+	return "", errcode.New(errcode.ERR2024.Code, errcode.ERR2024.Message)
 }
 
 func (s *OAuthProviderService) issueOAuthToken(user *model.User) (string, error) {
@@ -816,7 +816,7 @@ func (s *OAuthProviderService) resolveCallbackURL(provider config.OAuthProviderC
 	}
 	base := strings.TrimRight(strings.TrimSpace(requestBaseURL), "/")
 	if base == "" {
-		return "", errors.New("oauth redirect url missing and request base unavailable")
+		return "", errcode.New(errcode.ERR2025.Code, errcode.ERR2025.Message)
 	}
 	return fmt.Sprintf("%s/admin/auth/oauth/%s/callback", base, provider.Name), nil
 }
@@ -1036,7 +1036,7 @@ func (s *OAuthProviderService) buildSignedState(entry oauthStateEntry) string {
 func (s *OAuthProviderService) parseSignedState(state string) (oauthStateEntry, error) {
 	parts := strings.Split(state, ".")
 	if len(parts) != 2 {
-		return oauthStateEntry{}, errors.New("invalid state format")
+		return oauthStateEntry{}, errcode.New(errcode.ERR2026.Code, errcode.ERR2026.Message)
 	}
 
 	expectedSignature := util.HmacSha256(parts[0], s.cfg.SignKey)
@@ -1045,7 +1045,7 @@ func (s *OAuthProviderService) parseSignedState(state string) (oauthStateEntry, 
 		return oauthStateEntry{}, err
 	}
 	if !util.ConstantTimeStringEqual(string(rawSignature), expectedSignature) {
-		return oauthStateEntry{}, errors.New("state signature mismatch")
+		return oauthStateEntry{}, errcode.New(errcode.ERR2027.Code, errcode.ERR2027.Message)
 	}
 
 	payloadBytes, err := base64.RawURLEncoding.DecodeString(parts[0])
@@ -1065,10 +1065,10 @@ func (s *OAuthProviderService) parseSignedState(state string) (oauthStateEntry, 
 		ExpiresAt:    time.Unix(payload.ExpiresAt, 0),
 	}
 	if entry.ProviderName == "" || entry.CallbackURL == "" {
-		return oauthStateEntry{}, errors.New("state payload incomplete")
+		return oauthStateEntry{}, errcode.New(errcode.ERR2028.Code, errcode.ERR2028.Message)
 	}
 	if time.Now().After(entry.ExpiresAt) {
-		return oauthStateEntry{}, errors.New("state expired")
+		return oauthStateEntry{}, errcode.New(errcode.ERR2029.Code, errcode.ERR2029.Message)
 	}
 	return entry, nil
 }
@@ -1303,7 +1303,7 @@ func (s *OAuthProviderService) BuildClientAuthURL(providerName, requestBaseURL, 
 
 	pollToken := randomOAuthToken(24)
 	if pollToken == "" {
-		return "", "", true, errors.New("failed to generate poll token")
+		return "", "", true, errcode.New(errcode.ERR2207.Code, errcode.ERR2207.Message)
 	}
 
 	stateEntry := oauthStateEntry{
@@ -1320,7 +1320,7 @@ func (s *OAuthProviderService) BuildClientAuthURL(providerName, requestBaseURL, 
 	stateEntry.CodeVerifier = randomOAuthToken(32)
 	state := randomOAuthToken(24)
 	if state == "" {
-		return "", "", true, errors.New("failed to generate state")
+		return "", "", true, errcode.New(errcode.ERR2005.Code, errcode.ERR2005.Message)
 	}
 
 	if err = s.setState(state, stateEntry); err != nil {
@@ -1356,24 +1356,24 @@ func (s *OAuthProviderService) BuildClientAuthURL(providerName, requestBaseURL, 
 func (s *OAuthProviderService) ConsumeClientCallback(providerName, code, state string) (string, error) {
 	provider, ok := s.getProvider(providerName)
 	if !ok {
-		return "", errors.New("provider not found")
+		return "", errcode.New(errcode.ERR2001.Code, errcode.ERR2001.Message)
 	}
 	if !s.isProviderEnabled(provider) {
-		return "", errors.New("provider disabled")
+		return "", errcode.New(errcode.ERR2002.Code, errcode.ERR2002.Message)
 	}
 	if provider.AccountRole != "user" {
-		return "", errors.New("provider not available for client login")
+		return "", errcode.New(errcode.ERR2203.Code, errcode.ERR2203.Message)
 	}
 	if strings.TrimSpace(code) == "" || strings.TrimSpace(state) == "" {
-		return "", errors.New("missing code or state")
+		return "", errcode.New(errcode.ERR2003.Code, errcode.ERR2003.Message)
 	}
 
 	stored, ok := s.popState(state)
 	if !ok || stored.ProviderName != provider.Name {
-		return "", errors.New("state invalid or expired")
+		return "", errcode.New(errcode.ERR2004.Code, errcode.ERR2004.Message)
 	}
 	if stored.PollToken == "" {
-		return "", errors.New("poll token missing from state")
+		return "", errcode.New(errcode.ERR2204.Code, errcode.ERR2204.Message)
 	}
 
 	tokenResp, err := s.exchangeCode(provider, code, stored.CallbackURL, stored.CodeVerifier)
@@ -1393,7 +1393,7 @@ func (s *OAuthProviderService) ConsumeClientCallback(providerName, code, state s
 
 	ticket := randomOAuthToken(24)
 	if ticket == "" {
-		return "", errors.New("failed to generate ticket")
+		return "", errcode.New(errcode.ERR2006.Code, errcode.ERR2006.Message)
 	}
 
 	ticketTTL := s.ticketTTL(provider)
@@ -1423,7 +1423,7 @@ func (s *OAuthProviderService) ConsumeClientCallback(providerName, code, state s
 // Returns the ticket and true when ready, or empty string and false when pending.
 func (s *OAuthProviderService) PollClientTicket(pollToken string) (string, bool, error) {
 	if strings.TrimSpace(pollToken) == "" {
-		return "", false, errors.New("poll token required")
+		return "", false, errcode.New(errcode.ERR2205.Code, errcode.ERR2205.Message)
 	}
 	ticket, ok := s.peekPollEntry(pollToken)
 	if !ok {
@@ -1437,14 +1437,14 @@ func (s *OAuthProviderService) PollClientTicket(pollToken string) (string, bool,
 // the resolved user so the caller can build a login response.
 func (s *OAuthProviderService) ExchangeClientTicket(ticket string) (string, *model.User, error) {
 	if strings.TrimSpace(ticket) == "" {
-		return "", nil, errors.New("ticket required")
+		return "", nil, errcode.New(errcode.ERR2007.Code, errcode.ERR2007.Message)
 	}
 	item, ok := s.popTicket(ticket)
 	if !ok {
-		return "", nil, errors.New("ticket invalid or expired")
+		return "", nil, errcode.New(errcode.ERR2008.Code, errcode.ERR2008.Message)
 	}
 	if item.IsAdmin {
-		return "", nil, errors.New("client ticket expected")
+		return "", nil, errcode.New(errcode.ERR2206.Code, errcode.ERR2206.Message)
 	}
 	var user model.User
 	has, err := s.db.Where("id = ? and is_admin = 0 and status > 0", item.UserID).Get(&user)
@@ -1452,7 +1452,7 @@ func (s *OAuthProviderService) ExchangeClientTicket(ticket string) (string, *mod
 		return "", nil, err
 	}
 	if !has {
-		return "", nil, errors.New("oauth ticket user not available")
+		return "", nil, errcode.New(errcode.ERR2009.Code, errcode.ERR2009.Message)
 	}
 	token, err := s.issueClientOAuthToken(&user, item.RustdeskId, item.Uuid, item.DeviceOs, item.DeviceType, item.DeviceName)
 	if err != nil {
@@ -1491,7 +1491,7 @@ func (s *OAuthProviderService) resolveClientCallbackURL(provider config.OAuthPro
 	}
 	base := strings.TrimRight(strings.TrimSpace(requestBaseURL), "/")
 	if base == "" {
-		return "", errors.New("oauth redirect url missing and request base unavailable")
+		return "", errcode.New(errcode.ERR2025.Code, errcode.ERR2025.Message)
 	}
 	return fmt.Sprintf("%s/api/oauth/%s/callback", base, provider.Name), nil
 }

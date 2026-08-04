@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"errors"
 	"net/url"
 	"regexp"
 	"strings"
@@ -9,6 +8,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 	v2service "rustdesk-api-server-pro/internal/service"
 
 	"github.com/kataras/iris/v12"
@@ -303,7 +303,7 @@ func validateOAuthRedirectURL(raw string) error {
 	}
 	u, err := url.Parse(value)
 	if err != nil || u.Host == "" || (u.Scheme != "https" && u.Scheme != "http") {
-		return errors.New("InvalidRedirectUrl")
+		return errcode.New(errcode.ERR2110.Code, errcode.ERR2110.Message)
 	}
 	return nil
 }

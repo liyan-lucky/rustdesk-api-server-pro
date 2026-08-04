@@ -2,12 +2,12 @@ package service
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 	"strings"
 
 	"rustdesk-api-server-pro/internal/core"
@@ -176,10 +176,10 @@ func (s *CompatService) HandleRecord(cmd core.CompatRecordCommand) error {
 	op := strings.ToLower(strings.TrimSpace(cmd.Op))
 	fileName := sanitizeRecordFileName(cmd.FileName)
 	if op == "" {
-		return errors.New("type required")
+		return errcode.New(errcode.ERR7001.Code, errcode.ERR7001.Message)
 	}
 	if fileName == "" {
-		return errors.New("file required")
+		return errcode.New(errcode.ERR7002.Code, errcode.ERR7002.Message)
 	}
 
 	fullPath, err := prepareRecordPath(fileName)
@@ -196,7 +196,7 @@ func (s *CompatService) HandleRecord(cmd core.CompatRecordCommand) error {
 		return f.Close()
 	case "part":
 		if cmd.Offset < 0 {
-			return errors.New("invalid offset")
+			return errcode.New(errcode.ERR7003.Code, errcode.ERR7003.Message)
 		}
 		if err = ensureRecordWriteWithinLimit(cmd.Offset, int64(len(cmd.Body))); err != nil {
 			return err
@@ -232,7 +232,7 @@ func (s *CompatService) HandleRecord(cmd core.CompatRecordCommand) error {
 		}
 		return nil
 	default:
-		return errors.New("unsupported record op")
+		return errcode.New(errcode.ERR7004.Code, errcode.ERR7004.Message)
 	}
 }
 
@@ -267,7 +267,7 @@ func prepareRecordPath(fileName string) (string, error) {
 
 func ensureRecordWriteWithinLimit(offset, bodySize int64) error {
 	if bodySize < 0 || offset < 0 {
-		return errors.New("invalid record write size")
+		return errcode.New(errcode.ERR7005.Code, errcode.ERR7005.Message)
 	}
 	if offset+bodySize > maxCompatRecordSize {
 		return fmt.Errorf("record file exceeds max size %d bytes", maxCompatRecordSize)

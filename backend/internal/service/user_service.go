@@ -1,12 +1,12 @@
 package service
 
 import (
-	"errors"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/repository"
 )
 
-var ErrAdminRequired = errors.New("Admin required!")
+var ErrAdminRequired = errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message)
 
 type UserService struct {
 	users repository.UserRepository

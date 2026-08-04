@@ -2,9 +2,9 @@ package admin
 
 import (
 	"encoding/json"
-	"errors"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/core"
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
@@ -16,7 +16,7 @@ import (
 	"xorm.io/xorm"
 )
 
-var errAddressBookNotFound = errors.New("address book not found")
+var errAddressBookNotFound = errcode.New(errcode.ERR5001.Code, errcode.ERR5001.Message)
 
 type AddressBookController struct {
 	basicController

@@ -3,6 +3,7 @@ package service
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"rustdesk-api-server-pro/internal/core"
@@ -100,7 +101,7 @@ func TestCompatServiceHandleRecordValidation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := svc.HandleRecord(tt.cmd)
-			if err == nil || err.Error() != tt.want {
+			if err == nil || !strings.Contains(err.Error(), tt.want) {
 				t.Fatalf("got err=%v, want %q", err, tt.want)
 			}
 		})

@@ -5,13 +5,13 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/util"
 	"strings"
 	"sync"
@@ -115,7 +115,7 @@ func (s *OIDCAuthService) BuildAdminAuthURL(requestBaseURL, redirectTo string) (
 
 	state := randomToken(32)
 	if state == "" {
-		return "", true, errors.New("failed to generate state")
+		return "", true, errcode.New(errcode.ERR3002.Code, errcode.ERR3002.Message)
 	}
 
 	redirect := s.normalizeSuccessRedirect(redirectTo)
@@ -141,15 +141,15 @@ func (s *OIDCAuthService) BuildAdminAuthURL(requestBaseURL, redirectTo string) (
 func (s *OIDCAuthService) ConsumeAdminCallback(code, state string) (string, string, error) {
 	failureRedirect := s.normalizeFailureRedirect("")
 	if !s.IsEnabled() {
-		return "", failureRedirect, errors.New("oidc disabled")
+		return "", failureRedirect, errcode.New(errcode.ERR3001.Code, errcode.ERR3001.Message)
 	}
 	if strings.TrimSpace(code) == "" || strings.TrimSpace(state) == "" {
-		return "", failureRedirect, errors.New("missing code or state")
+		return "", failureRedirect, errcode.New(errcode.ERR3003.Code, errcode.ERR3003.Message)
 	}
 
 	stored, ok := s.popState(state)
 	if !ok {
-		return "", failureRedirect, errors.New("state invalid or expired")
+		return "", failureRedirect, errcode.New(errcode.ERR3004.Code, errcode.ERR3004.Message)
 	}
 
 	tokenResp, err := s.exchangeCode(code, stored.CallbackURL)
@@ -174,7 +174,7 @@ func (s *OIDCAuthService) ConsumeAdminCallback(code, state string) (string, stri
 
 	ticket := randomToken(24)
 	if ticket == "" {
-		return "", failureRedirect, errors.New("failed to generate ticket")
+		return "", failureRedirect, errcode.New(errcode.ERR3005.Code, errcode.ERR3005.Message)
 	}
 	s.setTicket(ticket, oidcTicketEntry{
 		Token:     token,
@@ -186,12 +186,12 @@ func (s *OIDCAuthService) ConsumeAdminCallback(code, state string) (string, stri
 
 func (s *OIDCAuthService) ExchangeAdminTicket(ticket string) (string, error) {
 	if strings.TrimSpace(ticket) == "" {
-		return "", errors.New("ticket required")
+		return "", errcode.New(errcode.ERR3006.Code, errcode.ERR3006.Message)
 	}
 
 	item, ok := s.popTicket(ticket)
 	if !ok {
-		return "", errors.New("ticket invalid or expired")
+		return "", errcode.New(errcode.ERR3007.Code, errcode.ERR3007.Message)
 	}
 
 	return item.Token, nil
@@ -200,7 +200,7 @@ func (s *OIDCAuthService) ExchangeAdminTicket(ticket string) (string, error) {
 func (s *OIDCAuthService) getMetadata() (*oidcMetadata, error) {
 	issuer := strings.TrimRight(strings.TrimSpace(s.cfg.OIDC.Issuer), "/")
 	if issuer == "" {
-		return nil, errors.New("oidc issuer required")
+		return nil, errcode.New(errcode.ERR3008.Code, errcode.ERR3008.Message)
 	}
 
 	if meta, ok := s.getCachedMetadata(issuer); ok {
@@ -215,7 +215,7 @@ func (s *OIDCAuthService) getMetadata() (*oidcMetadata, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("oidc discovery failed with status %d", resp.StatusCode)
+		return nil, errcode.Errorf(errcode.ERR3022.Code, errcode.ERR3022.Message, resp.StatusCode)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -227,7 +227,7 @@ func (s *OIDCAuthService) getMetadata() (*oidcMetadata, error) {
 		return nil, err
 	}
 	if metadata.AuthorizationEndpoint == "" || metadata.TokenEndpoint == "" {
-		return nil, errors.New("oidc metadata missing required endpoints")
+		return nil, errcode.New(errcode.ERR3009.Code, errcode.ERR3009.Message)
 	}
 
 	s.setCachedMetadata(issuer, metadata)
@@ -261,7 +261,7 @@ func (s *OIDCAuthService) exchangeCode(code, callbackURL string) (*oidcTokenResp
 		return nil, err
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("token exchange failed with status %d", resp.StatusCode)
+		return nil, errcode.Errorf(errcode.ERR3023.Code, errcode.ERR3023.Message, resp.StatusCode)
 	}
 
 	var tokenResp oidcTokenResponse
@@ -269,7 +269,7 @@ func (s *OIDCAuthService) exchangeCode(code, callbackURL string) (*oidcTokenResp
 		return nil, err
 	}
 	if tokenResp.AccessToken == "" && tokenResp.IDToken == "" {
-		return nil, errors.New("oidc token response missing token")
+		return nil, errcode.New(errcode.ERR3010.Code, errcode.ERR3010.Message)
 	}
 	return &tokenResp, nil
 }
@@ -313,10 +313,10 @@ func (s *OIDCAuthService) fetchUserClaims(tokenResp *oidcTokenResponse) (*OIDCUs
 		Picture: strings.TrimSpace(anyToString(claims[pictureClaim])),
 	}
 	if userClaims.Subject == "" {
-		return nil, errors.New("oidc subject claim missing")
+		return nil, errcode.New(errcode.ERR3011.Code, errcode.ERR3011.Message)
 	}
 	if !s.isAllowedEmailDomain(userClaims.Email) {
-		return nil, errors.New("email domain not allowed")
+		return nil, errcode.New(errcode.ERR3012.Code, errcode.ERR3012.Message)
 	}
 	return userClaims, nil
 }
@@ -331,7 +331,7 @@ func (s *OIDCAuthService) fillClaimsByUserinfo(userinfoEndpoint, accessToken str
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("userinfo failed with status %d", resp.StatusCode)
+		return errcode.Errorf(errcode.ERR3024.Code, errcode.ERR3024.Message, resp.StatusCode)
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -343,7 +343,7 @@ func (s *OIDCAuthService) fillClaimsByUserinfo(userinfoEndpoint, accessToken str
 func fillClaimsByIDToken(idToken, expectedIssuer, expectedAudience string, claims map[string]interface{}) error {
 	parts := strings.Split(idToken, ".")
 	if len(parts) != 3 {
-		return errors.New("invalid id token")
+		return errcode.New(errcode.ERR3013.Code, errcode.ERR3013.Message)
 	}
 	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
@@ -361,17 +361,17 @@ func fillClaimsByIDToken(idToken, expectedIssuer, expectedAudience string, claim
 func validateIDTokenClaims(claims map[string]interface{}, expectedIssuer, expectedAudience string) error {
 	issuer := strings.TrimRight(strings.TrimSpace(anyToString(claims["iss"])), "/")
 	if issuer == "" || issuer != strings.TrimRight(strings.TrimSpace(expectedIssuer), "/") {
-		return errors.New("id token issuer invalid")
+		return errcode.New(errcode.ERR3014.Code, errcode.ERR3014.Message)
 	}
 	if !claimAudienceContains(claims["aud"], expectedAudience) {
-		return errors.New("id token audience invalid")
+		return errcode.New(errcode.ERR3015.Code, errcode.ERR3015.Message)
 	}
 	exp, ok := claimUnixTime(claims["exp"])
 	if !ok || time.Now().After(time.Unix(exp, 0)) {
-		return errors.New("id token expired")
+		return errcode.New(errcode.ERR3016.Code, errcode.ERR3016.Message)
 	}
 	if idTokenIssuedTooFarInFuture(claims, 2*time.Minute) {
-		return errors.New("id token issued-at invalid")
+		return errcode.New(errcode.ERR3017.Code, errcode.ERR3017.Message)
 	}
 	return nil
 }
@@ -432,7 +432,7 @@ func (s *OIDCAuthService) resolveAdminUser(claims *OIDCUserClaims) (*model.User,
 			return nil, err
 		}
 		if !ok {
-			return nil, errors.New("bound admin user not available")
+			return nil, errcode.New(errcode.ERR3018.Code, errcode.ERR3018.Message)
 		}
 		account.Email = claims.Email
 		account.Name = claims.Name
@@ -479,7 +479,7 @@ func (s *OIDCAuthService) matchOrCreateAdminUser(claims *OIDCUserClaims) (*model
 	}
 
 	if !s.cfg.OIDC.AutoCreateAdmin {
-		return nil, errors.New("no bindable admin account")
+		return nil, errcode.New(errcode.ERR3019.Code, errcode.ERR3019.Message)
 	}
 
 	nameSeed := claims.Email
@@ -535,7 +535,7 @@ func (s *OIDCAuthService) makeUniqueUsername(base string) (string, error) {
 		}
 		username = fmt.Sprintf("%s_%d", base, i+1)
 	}
-	return "", errors.New("failed to allocate unique username")
+	return "", errcode.New(errcode.ERR3020.Code, errcode.ERR3020.Message)
 }
 
 func (s *OIDCAuthService) issueAdminToken(user *model.User) (string, error) {
@@ -566,7 +566,7 @@ func (s *OIDCAuthService) resolveCallbackURL(requestBaseURL string) (string, err
 	base := strings.TrimSpace(requestBaseURL)
 	base = strings.TrimRight(base, "/")
 	if base == "" {
-		return "", errors.New("oidc redirect url missing and request base unavailable")
+		return "", errcode.New(errcode.ERR3021.Code, errcode.ERR3021.Message)
 	}
 	return base + "/admin/auth/oidc/callback", nil
 }

@@ -1,11 +1,11 @@
 package repository
 
 import (
-	"errors"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 )
 
-var ErrAddressBookNotFound = errors.New("address book not found")
+var ErrAddressBookNotFound = errcode.New(errcode.ERR5001.Code, errcode.ERR5001.Message)
 
 type AddressBookRepository interface {
 	GetLegacyAddressBook(query core.LegacyAddressBookGetQuery) (core.LegacyAddressBookGetResult, error)

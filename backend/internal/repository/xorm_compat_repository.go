@@ -2,10 +2,10 @@ package repository
 
 import (
 	"encoding/json"
-	"errors"
 
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"xorm.io/xorm"
 )
@@ -25,7 +25,7 @@ func (r *XormCompatRepository) ApplyDevicesCli(cmd core.CompatDevicesCliCommand)
 		return err
 	}
 	if !hasDevice {
-		return errors.New("device not found")
+		return errcode.New(errcode.ERR6006.Code, errcode.ERR6006.Message)
 	}
 	device := model.Device{}
 	deviceCols := make([]string, 0, 2)
@@ -98,7 +98,7 @@ func (r *XormCompatRepository) ApplyDevicesCli(cmd core.CompatDevicesCliCommand)
 			return err
 		}
 		if !has {
-			return errors.New("strategy not found")
+			return errcode.New(errcode.ERR6003.Code, errcode.ERR6003.Message)
 		}
 		if _, err = r.DB.Where("target_type = ? and target_guid = ?", "device", cmd.RustdeskID).Delete(&model.StrategyAssignment{}); err != nil {
 			return err
@@ -114,7 +114,7 @@ func (r *XormCompatRepository) ApplyDevicesCli(cmd core.CompatDevicesCliCommand)
 			return err
 		}
 		if !has {
-			return errors.New("device group not found")
+			return errcode.New(errcode.ERR6001.Code, errcode.ERR6001.Message)
 		}
 		count, err := r.DB.Where("group_guid = ? and rustdesk_id = ?", group.Guid, cmd.RustdeskID).Count(&model.DeviceGroupDevice{})
 		if err != nil {
@@ -133,7 +133,7 @@ func (r *XormCompatRepository) ApplyDevicesCli(cmd core.CompatDevicesCliCommand)
 			return err
 		}
 		if !has {
-			return errors.New("address book not found")
+			return errcode.New(errcode.ERR5001.Code, errcode.ERR5001.Message)
 		}
 		count, err := r.DB.Where("user_id = ? and ab_id = ? and rustdesk_id = ?", ab.UserId, ab.Id, cmd.RustdeskID).Count(&model.Peer{})
 		if err != nil {
