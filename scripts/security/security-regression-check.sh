@@ -58,9 +58,9 @@ grep -q 'newApp(cfg, dbEngine)' backend/app/main.go || fail "app initialization 
 grep -q 'if err := StartJobs(cfg, dbEngine); err != nil' backend/app/main.go || fail "server startup must fail when jobs fail"
 grep -q 'func newApp(cfg \*config.ServerConfig, dbEngine \*xorm.Engine)' backend/app/main.go || fail "newApp must accept the shared DB engine"
 grep -q 'dbEngine == nil' backend/app/main.go || fail "newApp must reject nil DB engine"
-grep -q 'return fmt.Errorf("create scheduler:' backend/app/jobs.go || fail "StartJobs must return scheduler creation errors"
+grep -q 'errcode.ERRB005' backend/app/jobs.go || fail "StartJobs must return scheduler creation errors"
 grep -q 's.NewJob' backend/app/jobs.go || fail "device check job creation missing"
-grep -q 'return fmt.Errorf("create device check job:' backend/app/jobs.go || fail "StartJobs must return job creation errors"
+grep -q 'errcode.ERRB006' backend/app/jobs.go || fail "StartJobs must return job creation errors"
 grep -q 'jobDuration <= 0' backend/app/jobs.go || fail "StartJobs must validate job duration"
 if grep -n 'Logger().Fatal' backend/app/main.go; then
   fail "app initialization must return errors instead of fatal-exiting"
