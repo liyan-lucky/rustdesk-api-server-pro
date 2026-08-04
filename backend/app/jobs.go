@@ -1,10 +1,9 @@
 package app
 
 import (
-	"errors"
-	"fmt"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 	"time"
 
 	"github.com/go-co-op/gocron/v2"
@@ -14,17 +13,17 @@ import (
 
 func StartJobs(cfg *config.ServerConfig, dbEngine *xorm.Engine) error {
 	if dbEngine == nil {
-		return errors.New("job db engine is nil")
+		return errcode.New(errcode.ERRB003.Code, errcode.ERRB003.Message)
 	}
 
 	s, err := gocron.NewScheduler()
 	if err != nil {
-		return fmt.Errorf("create scheduler: %w", err)
+		return errcode.Errorf(errcode.ERRB005.Code, errcode.ERRB005.Message)
 	}
 
 	jobDuration := time.Duration(cfg.JobsConfig.DeviceCheckJob.Duration) * time.Second
 	if jobDuration <= 0 {
-		return fmt.Errorf("invalid device check job duration: %s", jobDuration)
+		return errcode.New(errcode.ERRB004.Code, errcode.ERRB004.Message)
 	}
 
 	if _, err = s.NewJob(gocron.DurationJob(jobDuration), gocron.NewTask(func() {
@@ -33,7 +32,7 @@ func StartJobs(cfg *config.ServerConfig, dbEngine *xorm.Engine) error {
 			IsOnline: false,
 		})
 	})); err != nil {
-		return fmt.Errorf("create device check job: %w", err)
+		return errcode.Errorf(errcode.ERRB006.Code, errcode.ERRB006.Message)
 	}
 
 	s.Start()

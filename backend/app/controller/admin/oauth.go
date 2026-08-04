@@ -60,7 +60,7 @@ func (c *OAuthController) HandleListAccounts() mvc.Result {
 	pagination := db.NewPagination(currentPage, pageSize)
 	accountList := make([]model.OAuthAccount, 0)
 	if err := pagination.Paginate(query, &model.OAuthAccount{}, &accountList); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0, len(accountList))
@@ -95,7 +95,7 @@ func (c *OAuthController) HandleDeleteAccount() mvc.Result {
 
 	_, err := c.Db.ID(id).Delete(&model.OAuthAccount{})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(nil, "ok")
@@ -141,7 +141,7 @@ func (c *OAuthController) HandleProviderConfigs() mvc.Result {
 func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	var form oauthProviderForm
 	if err := c.Ctx.ReadJSON(&form); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	form.Type = strings.ToLower(strings.TrimSpace(form.Type))
 	form.Name = strings.ToLower(strings.TrimSpace(form.Name))
@@ -158,7 +158,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		form.AccountRole = "admin"
 	}
 	if err := validateOAuthRedirectURL(form.RedirectURL); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if form.Enabled && strings.TrimSpace(form.ClientID) == "" {
 		return c.Error(nil, "ClientIdRequired")
@@ -227,7 +227,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		cfg.OAuth.Providers = append(cfg.OAuth.Providers, provider)
 	}
 	if err := config.SaveServerConfig(cfg); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(iris.Map{"name": provider.Name, "secretConfigured": secret != ""}, "ok")
 }
@@ -246,7 +246,7 @@ func (c *OAuthController) HandleDeleteProvider() mvc.Result {
 	}
 	cfg.OAuth.Providers = providers
 	if err := config.SaveServerConfig(cfg); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(nil, "ok")
 }
@@ -276,13 +276,13 @@ func (c *OAuthController) HandleTestProvider() mvc.Result {
 		return c.Error(nil, "ClientSecretRequired")
 	}
 	if err := validateOAuthRedirectURL(provider.RedirectURL); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	svc := v2service.NewOAuthProviderService(cfg, c.Db)
 	authURL, enabled, err := svc.BuildAdminAuthURL(name, c.Ctx.URLParamDefault("baseUrl", ""), "/#/login")
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if !enabled || authURL == "" {
 		return c.Error(nil, "ProviderNotEnabledOrIncomplete")

@@ -94,7 +94,9 @@ const lastConnectivityCheckSource = ref<ConnectivityCheckSource | ''>('');
 const nowTick = ref(Date.now());
 let tickTimer: ReturnType<typeof setInterval> | null = null;
 let latestLoadRequestId = 0;
-const connectivity = ref<Record<ConfigKey, { status: ConnectivityStatus; message: string; target: string; durationMs?: number }>>({
+const connectivity = ref<
+  Record<ConfigKey, { status: ConnectivityStatus; message: string; target: string; durationMs?: number }>
+>({
   idServer: { status: 'idle', message: '', target: '' },
   relayServer: { status: 'idle', message: '', target: '' },
   apiServer: { status: 'idle', message: '', target: '' },
@@ -288,12 +290,11 @@ const connectivityCheckSourceLabel = computed(() => {
   return t(`page.home.serverConfig.connectivity.checkSourceType.${lastConnectivityCheckSource.value}`);
 });
 
-const cacheTtlHint = computed(
-  () =>
-    t('page.home.serverConfig.cacheTtlHint', {
-      configSeconds: Math.floor(SERVER_CONFIG_CACHE_TTL_MS / 1000),
-      connectivitySeconds: Math.floor(CONNECTIVITY_CACHE_TTL_MS / 1000)
-    })
+const cacheTtlHint = computed(() =>
+  t('page.home.serverConfig.cacheTtlHint', {
+    configSeconds: Math.floor(SERVER_CONFIG_CACHE_TTL_MS / 1000),
+    connectivitySeconds: Math.floor(CONNECTIVITY_CACHE_TTL_MS / 1000)
+  })
 );
 
 const lastConnectivityCheckedText = computed(() => {
@@ -520,7 +521,9 @@ async function checkConnectivityItem(target: ConfigKey) {
     if (connectivityCache) {
       writeConnectivitySessionCache(connectivityCache);
     }
-    window.$message?.success(t('page.home.serverConfig.connectivity.checkedOne', { field: t(`page.home.serverConfig.${target}`) }));
+    window.$message?.success(
+      t('page.home.serverConfig.connectivity.checkedOne', { field: t(`page.home.serverConfig.${target}`) })
+    );
   } catch {
     window.$message?.error(t('page.home.serverConfig.connectivity.checkFailed'));
   } finally {
@@ -591,7 +594,7 @@ watch(
 </script>
 
 <template>
-  <NCard :bordered="false" size="small" class="card-wrapper server-config-card">
+  <NCard :bordered="false" size="small" class="server-config-card card-wrapper">
     <template #header>
       <div class="server-config-title">{{ $t('page.home.serverConfig.title') }}</div>
     </template>
@@ -629,9 +632,7 @@ watch(
       {{ $t('page.home.serverConfig.tip') }}
     </NAlert>
     <div v-if="sourceLabel || lastUpdatedText" class="config-meta mb-12px">
-      <span v-if="sourceLabel">
-        {{ $t('page.home.serverConfig.source') }}: {{ sourceLabel }}
-      </span>
+      <span v-if="sourceLabel">{{ $t('page.home.serverConfig.source') }}: {{ sourceLabel }}</span>
       <span v-if="lastUpdatedText">
         {{ $t('page.home.serverConfig.lastUpdated') }}: {{ lastUpdatedText }} ({{ lastUpdatedAgeText }})
       </span>
@@ -646,8 +647,12 @@ watch(
         }})
       </span>
       <span class="is-ok">{{ $t('page.home.serverConfig.connectivity.status.ok') }}: {{ connectivityStats.ok }}</span>
-      <span class="is-error">{{ $t('page.home.serverConfig.connectivity.status.error') }}: {{ connectivityStats.error }}</span>
-      <span class="is-skip">{{ $t('page.home.serverConfig.connectivity.status.skip') }}: {{ connectivityStats.skip }}</span>
+      <span class="is-error">
+        {{ $t('page.home.serverConfig.connectivity.status.error') }}: {{ connectivityStats.error }}
+      </span>
+      <span class="is-skip">
+        {{ $t('page.home.serverConfig.connectivity.status.skip') }}: {{ connectivityStats.skip }}
+      </span>
     </div>
     <NAlert v-if="loadError" type="warning" :show-icon="false" class="mb-12px">
       {{ loadError }}
@@ -712,13 +717,7 @@ watch(
           </div>
         </NSpin>
         <div class="qr-tip">{{ $t('page.home.serverConfig.qrTip') }}</div>
-        <NInput
-          :value="qrPayload"
-          type="textarea"
-          readonly
-          :autosize="{ minRows: 2, maxRows: 4 }"
-          class="qr-payload"
-        />
+        <NInput :value="qrPayload" type="textarea" readonly :autosize="{ minRows: 2, maxRows: 4 }" class="qr-payload" />
         <NSpace :size="8" justify="center">
           <NButton size="small" secondary :disabled="!qrPayload" @click="copyQrPayload">
             {{ $t('page.home.serverConfig.copyTemplate') }}

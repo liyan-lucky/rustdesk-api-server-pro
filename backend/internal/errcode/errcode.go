@@ -57,7 +57,10 @@ var (
 	ERR1007 = register("ERR-1007", "Admin required!", "auth", "需要管理员权限", "当前用户不是管理员，无法执行此操作")
 	ERR1008 = register("ERR-1008", "token required", "auth", "缺少认证 Token", "请求必须携带有效的 Authorization Token")
 	ERR1009 = register("ERR-1009", "id required", "auth", "缺少设备 ID", "CLI 设备操作必须提供设备 ID")
+	ERR1010 = register("ERR-1010", "unauthorized", "auth", "未授权访问", "请先登录，或检查 Token 是否有效")
 )
+
+var ErrUnauthorized = New(ERR1010.Code, ERR1010.Message)
 
 // ── OAuth Admin (ERR-2xxx) ───────────────────────────────────────────
 
@@ -266,6 +269,9 @@ var (
 	ERRB002 = register("ERR-B002", "unsafe signKey", "infra", "signKey 不安全", "在 server.yaml 中设置至少 32 字符的随机密钥，不要使用默认值")
 	ERRB003 = register("ERR-B003", "job db engine is nil", "infra", "定时任务数据库引擎未初始化", "检查数据库配置")
 	ERRB004 = register("ERR-B004", "invalid device check job duration", "infra", "设备检查定时任务间隔无效", "在 server.yaml 中设置有效的 jobsConfig.deviceCheckJob.duration（分钟）")
+	ERRB005 = register("ERR-B005", "create scheduler failed", "infra", "创建定时调度器失败", "检查 gocron 调度器配置，查看服务端日志获取详细错误")
+	ERRB006 = register("ERR-B006", "create device check job failed", "infra", "创建设备检查定时任务失败", "检查定时任务配置，查看服务端日志获取详细错误")
+	ERRB010 = register("ERR-B010", "database error", "infra", "数据库操作错误", "检查数据库连接和配置，查看服务端日志获取详细错误")
 )
 
 // ── HTTP/File Utils (ERR-C0xx) ───────────────────────────────────────
@@ -288,4 +294,23 @@ var (
 	ERRD001 = register("ERR-D001", "unsupported operating system", "rustdesk", "不支持的操作系统", "目前仅支持 Linux、Windows、macOS")
 	ERRD002 = register("ERR-D002", "hbbr start error", "rustdesk", "hbbr 启动失败", "检查 hbbr 二进制文件是否存在且可执行，确认端口未被占用")
 	ERRD003 = register("ERR-D003", "hbbs start error", "rustdesk", "hbbs 启动失败", "检查 hbbs 二进制文件是否存在且可执行，确认端口未被占用")
+	ERRD004 = register("ERR-D004", "write hbbr pid file error", "rustdesk", "写入 hbbr PID 文件失败", "检查 rustdesk-server 目录的写入权限")
+	ERRD005 = register("ERR-D005", "write hbbs pid file error", "rustdesk", "写入 hbbs PID 文件失败", "检查 rustdesk-server 目录的写入权限")
+)
+
+// ── GitHub API (ERR-E0xx) ────────────────────────────────────────────
+
+var (
+	ERRE001 = register("ERR-E001", "get releases request failed", "github", "获取 GitHub Releases 请求失败", "检查网络连通性和 GitHub API 访问权限")
+	ERRE002 = register("ERR-E002", "decode releases response failed", "github", "解析 GitHub Releases 响应失败", "GitHub API 返回了非预期格式，检查 API 版本兼容性")
+	ERRE003 = register("ERR-E003", "get latest release request failed", "github", "获取最新 Release 请求失败", "检查网络连通性和 GitHub API 访问权限")
+	ERRE004 = register("ERR-E004", "decode latest release response failed", "github", "解析最新 Release 响应失败", "GitHub API 返回了非预期格式，检查 API 版本兼容性")
+	ERRE005 = register("ERR-E005", "get release by tag request failed", "github", "按标签获取 Release 请求失败", "检查网络连通性和 GitHub API 访问权限")
+	ERRE006 = register("ERR-E006", "decode release by tag response failed", "github", "按标签解析 Release 响应失败", "GitHub API 返回了非预期格式，检查 API 版本兼容性")
+)
+
+// ── Audit (ERR-F0xx) ────────────────────────────────────────────────
+
+var (
+	ERRF001 = register("ERR-F001", "guid required", "audit", "审计记录 GUID 不能为空", "提供有效的审计记录 GUID")
 )

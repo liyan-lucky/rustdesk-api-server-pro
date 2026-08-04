@@ -7,11 +7,11 @@ defineOptions({
 <template>
   <DarkModeContainer class="h-full flex-center">
     <a
-      href="https://github.com/lantongxue/rustdesk-api-server-pro/blob/master/LICENSE"
+      href="https://github.com/liyan-lucky/rustdesk-api-server-pro/blob/main/LICENSE"
       target="_blank"
       rel="noopener noreferrer"
     >
-      Copyright MIT © 2024 lantongxue
+      Copyright MIT © 2024 liyan-lucky
     </a>
   </DarkModeContainer>
 </template>

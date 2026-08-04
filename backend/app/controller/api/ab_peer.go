@@ -6,6 +6,7 @@ import (
 
 	abform "rustdesk-api-server-pro/app/form/api"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/transport/httpdto"
 )
 
@@ -28,7 +29,7 @@ func (c *AddressBookPeerController) PostAbPeers() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	result, err := c.addressBookService().ListPeers(core.AddressBookPeerListQuery{
 		UserID:   user.Id,
@@ -53,7 +54,7 @@ func (c *AddressBookPeerController) HandleAbPeerAdd() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
@@ -110,7 +111,7 @@ func (c *AddressBookPeerController) HandleAbPeerUpdate() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
@@ -150,7 +151,7 @@ func (c *AddressBookPeerController) HandleAbPeerDelete() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {

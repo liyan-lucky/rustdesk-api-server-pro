@@ -41,8 +41,16 @@ export function setupElegantRouter() {
       }
 
       const adminOnlyRoutes: RouteKey[] = [
-        'home', 'user_list', 'user_sessions', 'audit_baselogs', 'audit_filetransferlogs',
-        'system_mail', 'system_mail_logs', 'system_mail_template', 'system_oauth', 'system_tokens'
+        'home',
+        'user_list',
+        'user_sessions',
+        'audit_baselogs',
+        'audit_filetransferlogs',
+        'system_mail',
+        'system_mail_logs',
+        'system_mail_template',
+        'system_oauth',
+        'system_tokens'
       ];
       if (adminOnlyRoutes.includes(key)) {
         meta.roles = ['R_SUPER'];

@@ -21,6 +21,8 @@ declare module "@elegant-router/types" {
     "404": "/404";
     "500": "/500";
     "about": "/about";
+    "about_version": "/about/version";
+    "about_help": "/about/help";
     "audit": "/audit";
     "audit_baselogs": "/audit/baselogs";
     "audit_filetransferlogs": "/audit/filetransferlogs";
@@ -115,7 +117,8 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
-    | "about"
+    | "about_version"
+    | "about_help"
     | "audit_baselogs"
     | "audit_filetransferlogs"
     | "audit_loginlogs"

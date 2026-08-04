@@ -2,11 +2,11 @@ package util
 
 import (
 	"archive/zip"
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"rustdesk-api-server-pro/internal/errcode"
 	"strings"
 )
 
@@ -39,7 +39,7 @@ func Unzip(file, dst string) error {
 			return err
 		}
 		if f.FileInfo().Mode()&os.ModeSymlink != 0 {
-			return fmt.Errorf("zip entry %q is a symlink", f.Name)
+			return errcode.Errorf(errcode.ERRC007.Code, errcode.ERRC007.Message, f.Name)
 		}
 
 		if f.FileInfo().IsDir() {
@@ -83,10 +83,10 @@ func Unzip(file, dst string) error {
 
 func safeZipDestination(dst, name string) (string, error) {
 	if strings.TrimSpace(name) == "" {
-		return "", errors.New("empty zip entry name")
+		return "", errcode.New(errcode.ERRC006.Code, errcode.ERRC006.Message)
 	}
 	if filepath.IsAbs(name) {
-		return "", fmt.Errorf("zip entry %q uses absolute path", name)
+		return "", errcode.Errorf(errcode.ERRC008.Code, errcode.ERRC008.Message, name)
 	}
 
 	cleanDst := filepath.Clean(dst)
@@ -99,7 +99,7 @@ func safeZipDestination(dst, name string) (string, error) {
 		return target, nil
 	}
 	if rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
-		return "", fmt.Errorf("zip entry %q escapes destination", name)
+		return "", errcode.Errorf(errcode.ERRC009.Code, errcode.ERRC009.Message, name)
 	}
 	return target, nil
 }

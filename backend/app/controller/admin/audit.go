@@ -67,7 +67,7 @@ func (c *AuditController) HandleList() mvc.Result {
 	auditList := make([]model.Audit, 0)
 	err := pagination.Paginate(query, &model.Audit{}, &auditList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0)
@@ -126,7 +126,7 @@ func (c *AuditController) HandleFileTransferList() mvc.Result {
 	fileTransferList := make([]model.FileTransfer, 0)
 	err := pagination.Paginate(query, &model.FileTransfer{}, &fileTransferList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0)

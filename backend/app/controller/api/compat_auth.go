@@ -5,6 +5,7 @@ import (
 
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -28,7 +29,7 @@ func (c *CompatAuthController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *CompatAuthController) HandleMe() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	return mvc.Response{Object: iris.Map{
 		"id":       user.Id,
@@ -92,7 +93,7 @@ func (c *CompatAuthController) HandleDevicesCli() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	cmd := core.CompatDevicesCliCommand{
 		UserID:     user.Id,

@@ -42,13 +42,37 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'about',
     path: '/about',
-    component: 'layout.base$view.about',
+    component: 'layout.base',
     meta: {
       title: 'about',
       i18nKey: 'route.about',
       icon: 'mdi:information-outline',
       order: 99
-    }
+    },
+    children: [
+      {
+        name: 'about_version',
+        path: '/about/version',
+        component: 'view.about_version',
+        meta: {
+          title: 'about_version',
+          i18nKey: 'route.about_version',
+          icon: 'mdi:information-outline',
+          order: 1
+        }
+      },
+      {
+        name: 'about_help',
+        path: '/about/help',
+        component: 'view.about_help',
+        meta: {
+          title: 'about_help',
+          i18nKey: 'route.about_help',
+          icon: 'mdi:help-circle-outline',
+          order: 2
+        }
+      }
+    ]
   },
   {
     name: 'audit',

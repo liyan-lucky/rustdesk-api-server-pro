@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 	"time"
 
 	"github.com/kataras/iris/v12"
@@ -23,24 +24,24 @@ func (c *AccountController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *AccountController) HandleOverview() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errcode.ErrUnauthorized.Error())
 	}
 	now := time.Now().Format(config.TimeFormat)
 	sessions, err := c.Db.Where("user_id = ? and status = 1 and expired > ?", user.Id, now).Count(new(model.AuthToken))
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	books, err := c.Db.Where("user_id = ?", user.Id).Count(new(model.AddressBook))
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	events, err := c.Db.Where("user_id = ?", user.Id).Count(new(model.SecurityAudit))
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	deviceIDs := make([]string, 0)
 	if err = c.Db.Table(new(model.AuthToken)).Where("user_id = ? and rustdesk_id <> ''", user.Id).Distinct("rustdesk_id").Find(&deviceIDs); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(iris.Map{"devices": len(deviceIDs), "sessions": sessions, "address_books": books, "security_events": events, "licensed_devices": user.LicensedDevices}, "ok")
 }
@@ -48,7 +49,7 @@ func (c *AccountController) HandleOverview() mvc.Result {
 func (c *AccountController) HandleSessions() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errcode.ErrUnauthorized.Error())
 	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	size := c.Ctx.URLParamIntDefault("size", 10)
@@ -58,7 +59,7 @@ func (c *AccountController) HandleSessions() mvc.Result {
 	pagination := db.NewPagination(current, size)
 	var sessions []model.AuthToken
 	if err := pagination.Paginate(query, new(model.AuthToken), &sessions); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	currentToken, _ := c.Ctx.Values().Get(config.WebAuthToken).(*model.AuthToken)
 	records := make([]iris.Map, 0, len(sessions))
@@ -71,11 +72,11 @@ func (c *AccountController) HandleSessions() mvc.Result {
 func (c *AccountController) HandleSessionsDelete() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errcode.ErrUnauthorized.Error())
 	}
 	var ids []int
 	if err := c.Ctx.ReadJSON(&ids); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	currentToken, _ := c.Ctx.Values().Get(config.WebAuthToken).(*model.AuthToken)
 	if currentToken != nil {
@@ -89,7 +90,7 @@ func (c *AccountController) HandleSessionsDelete() mvc.Result {
 	}
 	if len(ids) > 0 {
 		if _, err := c.Db.Where("user_id = ?", user.Id).In("id", ids).Cols("status").Update(&model.AuthToken{Status: 0}); err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 	}
 	return c.Success(nil, "ok")
@@ -98,7 +99,7 @@ func (c *AccountController) HandleSessionsDelete() mvc.Result {
 func (c *AccountController) HandleSecurityEvents() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errcode.ErrUnauthorized.Error())
 	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	size := c.Ctx.URLParamIntDefault("size", 10)
@@ -108,7 +109,7 @@ func (c *AccountController) HandleSecurityEvents() mvc.Result {
 	pagination := db.NewPagination(current, size)
 	var events []model.SecurityAudit
 	if err := pagination.Paginate(query, new(model.SecurityAudit), &events); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	records := make([]iris.Map, 0, len(events))
 	for _, event := range events {

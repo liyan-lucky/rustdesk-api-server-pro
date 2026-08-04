@@ -2,6 +2,7 @@ package api
 
 import (
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12/mvc"
 	"github.com/tidwall/gjson"
@@ -139,7 +140,7 @@ func (c *AuditController) HandleAuditUpdate() mvc.Result {
 
 	guid := gjson.GetBytes(body, "guid").String()
 	if guid == "" {
-		return c.failMsg("guid required")
+		return c.fail(errcode.New(errcode.ERRF001.Code, errcode.ERRF001.Message))
 	}
 
 	if err := c.auditService().UpdateNoteByGuid(core.AuditGuidNoteUpdateCommand{

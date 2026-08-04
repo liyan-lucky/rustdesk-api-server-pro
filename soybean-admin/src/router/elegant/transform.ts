@@ -167,6 +167,8 @@ const routeMap: RouteMap = {
   "404": "/404",
   "500": "/500",
   "about": "/about",
+  "about_version": "/about/version",
+  "about_help": "/about/help",
   "audit": "/audit",
   "audit_baselogs": "/audit/baselogs",
   "audit_filetransferlogs": "/audit/filetransferlogs",

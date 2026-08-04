@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/kataras/iris/v12/mvc"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/transport/httpdto"
 )
 
@@ -18,7 +19,7 @@ func (c *PeerController) GetPeers() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	result, err := c.peerService().ListPeers(core.PeerListQuery{
 		UserID:             user.Id,

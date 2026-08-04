@@ -3,8 +3,8 @@ import {
   dateEnUS,
   dateEsAR,
   dateFrFR,
-  dateJaJP,
   dateItIT,
+  dateJaJP,
   dateKoKR,
   dateRuRU,
   dateZhCN,
@@ -12,8 +12,8 @@ import {
   enUS,
   esAR,
   frFR,
-  jaJP,
   itIT,
+  jaJP,
   koKR,
   ruRU,
   zhCN
@@ -29,7 +29,7 @@ export const naiveLocales: Record<App.I18n.LangType, NLocale> = {
   'de-DE': deDE,
   'es-ES': esAR,
   'ru-RU': ruRU,
-  'it-IT': itIT,
+  'it-IT': itIT
 };
 
 export const naiveDateLocales: Record<App.I18n.LangType, NDateLocale> = {
@@ -41,5 +41,5 @@ export const naiveDateLocales: Record<App.I18n.LangType, NDateLocale> = {
   'de-DE': dateDeDE,
   'es-ES': dateEsAR,
   'ru-RU': dateRuRU,
-  'it-IT': dateItIT,
+  'it-IT': dateItIT
 };

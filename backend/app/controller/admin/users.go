@@ -68,7 +68,7 @@ func (c *UsersController) HandleList() mvc.Result {
 	userList := make([]model.User, 0)
 	err := pagination.Paginate(query, &model.User{}, &userList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0)
@@ -100,7 +100,7 @@ func (c *UsersController) HandleAdd() mvc.Result {
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_add", "", nil, sanitizeUserFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if form.Username == "" {
@@ -109,7 +109,7 @@ func (c *UsersController) HandleAdd() mvc.Result {
 	}
 	if has, err := c.Db.Where("username = ?", form.Username).Get(&model.User{}); err != nil {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	} else if has {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "UserExists")
 		return c.Error(nil, "UserExists")
@@ -131,7 +131,7 @@ func (c *UsersController) HandleAdd() mvc.Result {
 	p, err := util.Password(form.Password)
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	user := &model.User{
@@ -158,7 +158,7 @@ func (c *UsersController) HandleAdd() mvc.Result {
 	_, err = c.Db.Insert(user)
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	resourceID := strconv.Itoa(user.Id)
@@ -171,7 +171,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_edit", "", nil, sanitizeUserFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if form.Id <= 0 {
@@ -188,7 +188,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 		p, err = util.Password(form.Password)
 		if err != nil {
 			c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), nil, sanitizeUserFormForAudit(form), "failure", err.Error())
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 	}
 
@@ -214,7 +214,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	has, err := c.Db.Where("id = ?", form.Id).Get(&user)
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), nil, sanitizeUserFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if !has {
 		c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), nil, sanitizeUserFormForAudit(form), "failure", "UserNotExists")
@@ -234,7 +234,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	_, err = c.Db.Where("id = ?", form.Id).MustCols("licensed_devices", "status", "is_admin").Update(newUser)
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), beforeAudit, sanitizeUserFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	var updated model.User
@@ -251,7 +251,7 @@ func (c *UsersController) HandleDelete() mvc.Result {
 	err := c.Ctx.ReadJSON(&params)
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_delete", "", nil, iris.Map{"ids": params.Ids}, "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	ids := util.RemoveElement(params.Ids, 1)
 	if len(ids) == 0 {
@@ -269,7 +269,7 @@ func (c *UsersController) HandleDelete() mvc.Result {
 	_, err = c.Db.In("id", ids).Delete(&model.User{})
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "success", "")
 	return c.Success(nil, "UserDeleteSuccess")
@@ -279,7 +279,7 @@ func (c *UsersController) HandleTOTP() mvc.Result {
 	var form admin.UserForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	key, err := totp.Generate(totp.GenerateOpts{
@@ -288,7 +288,7 @@ func (c *UsersController) HandleTOTP() mvc.Result {
 	})
 
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(iris.Map{

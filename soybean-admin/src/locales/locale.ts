@@ -17,7 +17,7 @@ const locales: Record<App.I18n.LangType, App.I18n.Schema> = {
   'de-DE': deDE,
   'es-ES': esES,
   'ru-RU': ruRU,
-  'it-IT': itIT,
+  'it-IT': itIT
 };
 
 export default locales;

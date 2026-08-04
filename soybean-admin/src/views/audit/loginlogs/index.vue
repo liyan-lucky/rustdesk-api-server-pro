@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { computed, onMounted, ref } from 'vue';
-import { NTag, NSpace, NInput, NButton, NSelect } from 'naive-ui';
+import { NButton, NInput, NSelect, NSpace, NTag } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
@@ -38,7 +38,11 @@ const columns = [
     key: 'success',
     title: $t('dataMap.loginLog.success'),
     align: 'center' as const,
-    render: (row: any) => <NTag type={row.success ? 'success' : 'error'} size="small">{row.success ? $t('common.yesOrNo.yes') : $t('common.yesOrNo.no')}</NTag>
+    render: (row: any) => (
+      <NTag type={row.success ? 'success' : 'error'} size="small">
+        {row.success ? $t('common.yesOrNo.yes') : $t('common.yesOrNo.no')}
+      </NTag>
+    )
   },
   { key: 'reason', title: $t('dataMap.loginLog.reason'), align: 'center' as const },
   { key: 'created_at', title: $t('dataMap.audit.created_at'), align: 'center' as const }
@@ -60,19 +64,44 @@ async function loadData() {
   }
 }
 
-function handleSearch() { currentPage.value = 1; loadData(); }
-function handlePageChange(page: number) { currentPage.value = page; loadData(); }
-function handlePageSizeChange(size: number) { pageSize.value = size; currentPage.value = 1; loadData(); }
+function handleSearch() {
+  currentPage.value = 1;
+  loadData();
+}
+function handlePageChange(page: number) {
+  currentPage.value = page;
+  loadData();
+}
+function handlePageSizeChange(size: number) {
+  pageSize.value = size;
+  currentPage.value = 1;
+  loadData();
+}
 
-onMounted(() => { loadData(); });
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <NCard :bordered="false" size="small">
       <NSpace align="center">
-        <NInput v-if="isAdmin" v-model:value="searchUsername" :placeholder="$t('dataMap.user.username')" clearable style="width: 200px" @keyup.enter="handleSearch" />
-        <NSelect v-model:value="searchEvent" :options="eventOptions" :placeholder="$t('dataMap.loginLog.event')" clearable style="width: 200px" />
+        <NInput
+          v-if="isAdmin"
+          v-model:value="searchUsername"
+          :placeholder="$t('dataMap.user.username')"
+          clearable
+          style="width: 200px"
+          @keyup.enter="handleSearch"
+        />
+        <NSelect
+          v-model:value="searchEvent"
+          :options="eventOptions"
+          :placeholder="$t('dataMap.loginLog.event')"
+          clearable
+          style="width: 200px"
+        />
         <NButton type="primary" @click="handleSearch">{{ $t('common.search') }}</NButton>
       </NSpace>
     </NCard>
@@ -87,7 +116,15 @@ onMounted(() => { loadData(); });
         :loading="loading"
         remote
         :row-key="(row: any) => row.id"
-        :pagination="{ page: currentPage, pageSize: pageSize, itemCount: total, showSizePicker: true, pageSizes: [10, 20, 50], onChange: handlePageChange, onUpdatePageSize: handlePageSizeChange }"
+        :pagination="{
+          page: currentPage,
+          pageSize: pageSize,
+          itemCount: total,
+          showSizePicker: true,
+          pageSizes: [10, 20, 50],
+          onChange: handlePageChange,
+          onUpdatePageSize: handlePageSizeChange
+        }"
         class="sm:h-full"
       />
     </NCard>

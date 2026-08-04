@@ -2,11 +2,11 @@ package app
 
 import (
 	"context"
-	"errors"
 
 	"rustdesk-api-server-pro/app/middleware"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12"
 	"xorm.io/xorm"
@@ -15,7 +15,7 @@ import (
 func newApp(cfg *config.ServerConfig, dbEngine *xorm.Engine) (*iris.Application, error) {
 	app := iris.Default()
 	if dbEngine == nil {
-		return nil, errors.New("db engine is nil")
+		return nil, errcode.New(errcode.ERRB001.Code, errcode.ERRB001.Message)
 	}
 	app.RegisterDependency(dbEngine, cfg)
 
@@ -42,7 +42,7 @@ func StartServer() (bool, error) {
 func StartServerWithContext(ctx context.Context) (bool, error) {
 	cfg := config.GetServerConfig()
 	if config.IsUnsafeSignKey(cfg.SignKey) {
-		return false, errors.New("unsafe signKey: set a unique random signKey with at least 32 characters before starting the server")
+		return false, errcode.New(errcode.ERRB002.Code, errcode.ERRB002.Message)
 	}
 
 	dbEngine, err := db.NewEngine(cfg.Db)

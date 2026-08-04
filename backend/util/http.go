@@ -1,13 +1,12 @@
 package util
 
 import (
-	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"rustdesk-api-server-pro/internal/errcode"
 	"strings"
 	"time"
 
@@ -35,7 +34,7 @@ func HttpClient() (*http.Client, error) {
 		scheme := strings.ToLower(proxyUrl.Scheme)
 		allowSchemes := []string{"http", "https", "socks5"}
 		if !InArray(allowSchemes, scheme) {
-			return nil, errors.New("only support http, https, socks5 proxy protocols")
+			return nil, errcode.New(errcode.ERRC001.Code, errcode.ERRC001.Message)
 		}
 
 		client.Transport = &http.Transport{
@@ -60,17 +59,17 @@ func HttpGetString(remoteAddr string) (string, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return "", fmt.Errorf("http get failed with status %d", resp.StatusCode)
+		return "", errcode.Errorf(errcode.ERRC003.Code, errcode.ERRC003.Message, resp.StatusCode)
 	}
 	if resp.ContentLength > maxHTTPStringSize {
-		return "", fmt.Errorf("http response too large: %d bytes", resp.ContentLength)
+		return "", errcode.Errorf(errcode.ERRC002.Code, errcode.ERRC002.Message)
 	}
 	body, err := io.ReadAll(io.LimitReader(resp.Body, maxHTTPStringSize+1))
 	if err != nil {
 		return "", err
 	}
 	if len(body) > maxHTTPStringSize {
-		return "", errors.New("http response too large")
+		return "", errcode.New(errcode.ERRC002.Code, errcode.ERRC002.Message)
 	}
 	return string(body), nil
 }
@@ -90,10 +89,10 @@ func DownloadFile(remoteAddr, filename string, showConsoleProgressBar bool) erro
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return fmt.Errorf("download failed with status %d", resp.StatusCode)
+		return errcode.Errorf(errcode.ERRC004.Code, errcode.ERRC004.Message, resp.StatusCode)
 	}
 	if resp.ContentLength > maxDownloadSize {
-		return fmt.Errorf("download too large: %d bytes", resp.ContentLength)
+		return errcode.New(errcode.ERRC005.Code, errcode.ERRC005.Message)
 	}
 
 	dir := filepath.Dir(filename)
@@ -123,7 +122,7 @@ func DownloadFile(remoteAddr, filename string, showConsoleProgressBar bool) erro
 	}
 	if written > maxDownloadSize {
 		_ = tmpFile.Close()
-		return errors.New("download too large")
+		return errcode.New(errcode.ERRC005.Code, errcode.ERRC005.Message)
 	}
 	if err = tmpFile.Chmod(0644); err != nil {
 		_ = tmpFile.Close()

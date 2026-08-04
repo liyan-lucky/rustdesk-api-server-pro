@@ -61,7 +61,7 @@ func (c *MaiLogsController) HandleList() mvc.Result {
 	mailLogList := make([]MailLog, 0)
 	err := pagination.Paginate(query, &MailLog{}, &mailLogList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0)
@@ -95,7 +95,7 @@ func (c *MaiLogsController) HandleInfo() mvc.Result {
 	var log model.MailLogs
 	_, err := c.Db.Where("uuid = ?", uuid).Get(&log)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(iris.Map{

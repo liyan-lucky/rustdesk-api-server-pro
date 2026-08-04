@@ -45,7 +45,7 @@ func (c *SecurityAuditController) HandleList() mvc.Result {
 	pagination := db.NewPagination(currentPage, pageSize)
 	list := make([]model.SecurityAudit, 0)
 	if err := pagination.Paginate(query, &model.SecurityAudit{}, &list); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	records := make([]iris.Map, 0, len(list))

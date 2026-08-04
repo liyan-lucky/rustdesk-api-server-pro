@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { onMounted, ref } from 'vue';
-import { NButton, NSpace, NPopconfirm, NTag } from 'naive-ui';
+import { NButton, NPopconfirm, NSpace, NTag } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { request } from '@/service/request';
@@ -23,13 +23,21 @@ const columns = [
     key: 'is_admin',
     title: $t('dataMap.token.is_admin'),
     align: 'center' as const,
-    render: (row: any) => <NTag type={row.is_admin ? 'warning' : 'default'} size="small">{row.is_admin ? $t('dataMap.token.is_admin') : $t('dataMap.user.statusLabel.normal')}</NTag>
+    render: (row: any) => (
+      <NTag type={row.is_admin ? 'warning' : 'default'} size="small">
+        {row.is_admin ? $t('dataMap.token.is_admin') : $t('dataMap.user.statusLabel.normal')}
+      </NTag>
+    )
   },
   {
     key: 'status',
     title: $t('dataMap.token.status'),
     align: 'center' as const,
-    render: (row: any) => <NTag type={row.status === 1 ? 'success' : 'error'} size="small">{row.status === 1 ? $t('common.yesOrNo.yes') : $t('common.yesOrNo.no')}</NTag>
+    render: (row: any) => (
+      <NTag type={row.status === 1 ? 'success' : 'error'} size="small">
+        {row.status === 1 ? $t('common.yesOrNo.yes') : $t('common.yesOrNo.no')}
+      </NTag>
+    )
   },
   { key: 'expired', title: $t('dataMap.session.expired'), align: 'center' as const },
   { key: 'created_at', title: $t('dataMap.audit.created_at'), align: 'center' as const },
@@ -40,7 +48,14 @@ const columns = [
     render: (row: any) => (
       <NSpace size="small" justify="center">
         <NPopconfirm onPositiveClick={() => handleKill(row)}>
-          {{ default: () => $t('common.confirmDelete'), trigger: () => <NButton type="error" size="small" quaternary>{$t('page.user.sessions.kill')}</NButton> }}
+          {{
+            default: () => $t('common.confirmDelete'),
+            trigger: () => (
+              <NButton type="error" size="small" quaternary>
+                {$t('page.user.sessions.kill')}
+              </NButton>
+            )
+          }}
         </NPopconfirm>
       </NSpace>
     )
@@ -50,7 +65,10 @@ const columns = [
 async function loadData() {
   loading.value = true;
   try {
-    const { data: res, error } = await request({ url: '/tokens/list', params: { current: currentPage.value, size: pageSize.value } });
+    const { data: res, error } = await request({
+      url: '/tokens/list',
+      params: { current: currentPage.value, size: pageSize.value }
+    });
     if (!error && res) {
       data.value = res.records || [];
       total.value = res.total || 0;
@@ -68,10 +86,19 @@ async function handleKill(row: any) {
   }
 }
 
-function handlePageChange(page: number) { currentPage.value = page; loadData(); }
-function handlePageSizeChange(size: number) { pageSize.value = size; currentPage.value = 1; loadData(); }
+function handlePageChange(page: number) {
+  currentPage.value = page;
+  loadData();
+}
+function handlePageSizeChange(size: number) {
+  pageSize.value = size;
+  currentPage.value = 1;
+  loadData();
+}
 
-onMounted(() => { loadData(); });
+onMounted(() => {
+  loadData();
+});
 </script>
 
 <template>
@@ -86,7 +113,15 @@ onMounted(() => { loadData(); });
         :loading="loading"
         remote
         :row-key="(row: any) => row.id"
-        :pagination="{ page: currentPage, pageSize: pageSize, itemCount: total, showSizePicker: true, pageSizes: [10, 20, 50], onChange: handlePageChange, onUpdatePageSize: handlePageSizeChange }"
+        :pagination="{
+          page: currentPage,
+          pageSize: pageSize,
+          itemCount: total,
+          showSizePicker: true,
+          pageSizes: [10, 20, 50],
+          onChange: handlePageChange,
+          onUpdatePageSize: handlePageSizeChange
+        }"
         class="sm:h-full"
       />
     </NCard>

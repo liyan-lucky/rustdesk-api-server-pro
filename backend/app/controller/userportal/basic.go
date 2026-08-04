@@ -3,6 +3,7 @@ package userportal
 import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -40,4 +41,8 @@ func (c *basicController) Error(data interface{}, message string) mvc.Result {
 			"data":    data,
 		},
 	}
+}
+
+func (c *basicController) dbError(err error) mvc.Result {
+	return c.Error(nil, errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error())
 }

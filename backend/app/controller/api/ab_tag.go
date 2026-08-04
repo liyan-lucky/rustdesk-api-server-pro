@@ -1,6 +1,8 @@
 package api
 
 import (
+	"rustdesk-api-server-pro/internal/errcode"
+
 	"github.com/kataras/iris/v12/mvc"
 	"rustdesk-api-server-pro/app/form/api"
 	"rustdesk-api-server-pro/internal/core"
@@ -25,7 +27,7 @@ func (c *AddressBookTagController) HandleAbTags() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	tags, err := c.addressBookService().ListTags(core.AddressBookTagListQuery{
 		UserID: user.Id,
@@ -51,7 +53,7 @@ func (c *AddressBookTagController) HandleAbTagAdd() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
@@ -85,7 +87,7 @@ func (c *AddressBookTagController) HandleAbTagUpdate() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
@@ -119,7 +121,7 @@ func (c *AddressBookTagController) HandleAbTagRename() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {
@@ -157,7 +159,7 @@ func (c *AddressBookTagController) HandleAbTagDelete() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	ab, err := c.getAddressBookByGuid(user.Id, abGuid)
 	if err != nil {

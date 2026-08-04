@@ -1,4 +1,4 @@
-import { createFlatRequest, BACKEND_ERROR_CODE } from '@sa/axios';
+import { BACKEND_ERROR_CODE, createFlatRequest } from '@sa/axios';
 import { $t } from '@/locales';
 import { localStg } from '@/utils/storage';
 import { showErrorMsg } from './shared';

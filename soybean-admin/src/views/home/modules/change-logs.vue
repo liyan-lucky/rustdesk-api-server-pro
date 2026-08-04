@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { $t } from '@/locales';
 import { fetchStat } from '@/service/api/home';
-import { getVersionTag, getBuildTime } from '@/utils/version';
+import { getBuildTime, getVersionTag } from '@/utils/version';
 
 defineOptions({
   name: 'ChangeLogs'

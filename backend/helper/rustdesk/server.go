@@ -1,10 +1,10 @@
 package rustdesk
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"rustdesk-api-server-pro/internal/errcode"
 	"runtime"
 	"strconv"
 	"strings"
@@ -43,7 +43,7 @@ func GetRustdeskServerBin() (hbbr, hbbs string) {
 func StartServer() (bool, error) {
 	hbbr, hbbs := GetRustdeskServerBin()
 	if strings.TrimSpace(hbbr) == "" || strings.TrimSpace(hbbs) == "" {
-		return false, fmt.Errorf("unsupported operating system: %s", runtime.GOOS)
+		return false, errcode.Errorf(errcode.ERRD001.Code, errcode.ERRD001.Message, runtime.GOOS)
 	}
 	if err := os.MkdirAll(serverBinDir, 0755); err != nil {
 		return false, err
@@ -52,11 +52,11 @@ func StartServer() (bool, error) {
 	pHbbr := exec.Command(hbbr)
 	pHbbr.Dir = serverBinDir
 	if err := pHbbr.Start(); err != nil {
-		return false, fmt.Errorf("hbbr start error: %w", err)
+		return false, errcode.Errorf(errcode.ERRD002.Code, errcode.ERRD002.Message)
 	}
 	if err := writePidFile(hbbrPidFile, pHbbr.Process.Pid); err != nil {
 		_ = pHbbr.Process.Kill()
-		return false, fmt.Errorf("write hbbr pid file error: %w", err)
+		return false, errcode.New(errcode.ERRD004.Code, errcode.ERRD004.Message)
 	}
 
 	pHbbs := exec.Command(hbbs)
@@ -64,13 +64,13 @@ func StartServer() (bool, error) {
 	if err := pHbbs.Start(); err != nil {
 		_ = pHbbr.Process.Kill()
 		_ = os.Remove(hbbrPidFile)
-		return false, fmt.Errorf("hbbs start error: %w", err)
+		return false, errcode.Errorf(errcode.ERRD003.Code, errcode.ERRD003.Message)
 	}
 	if err := writePidFile(hbbsPidFile, pHbbs.Process.Pid); err != nil {
 		_ = pHbbr.Process.Kill()
 		_ = pHbbs.Process.Kill()
 		_ = os.Remove(hbbrPidFile)
-		return false, fmt.Errorf("write hbbs pid file error: %w", err)
+		return false, errcode.New(errcode.ERRD005.Code, errcode.ERRD005.Message)
 	}
 	return true, nil
 }

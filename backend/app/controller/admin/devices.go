@@ -70,7 +70,7 @@ func (c *DevicesController) HandleList() mvc.Result {
 
 	err := pagination.Paginate(query, &model.Device{}, &deviceList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0)

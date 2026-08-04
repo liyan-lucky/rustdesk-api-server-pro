@@ -6,6 +6,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/util"
 	"strconv"
 	"strings"
@@ -46,13 +47,13 @@ func (service *UserService) Login(loginForm api.LoginForm) iris.Map {
 
 	if !get {
 		return iris.Map{
-			"error": "Username Or Password Error",
+			"error": errcode.New(errcode.ERR1004.Code, errcode.ERR1004.Message).Error(),
 		}
 	}
 
 	if !util.PasswordVerify(loginForm.Password, user.Password) {
 		return iris.Map{
-			"error": "Username Or Password Error",
+			"error": errcode.New(errcode.ERR1004.Code, errcode.ERR1004.Message).Error(),
 		}
 	}
 
@@ -60,7 +61,7 @@ func (service *UserService) Login(loginForm api.LoginForm) iris.Map {
 	if user.LoginVerify == model.LOGIN_EMAIL_CHECK {
 		if user.Email == "" {
 			return iris.Map{
-				"error": "No Email Address",
+				"error": errcode.New(errcode.ERR1005.Code, errcode.ERR1005.Message).Error(),
 			}
 		}
 
@@ -188,7 +189,7 @@ func (service *UserService) LoginVerifyByEmailCode(loginForm api.LoginForm) iris
 	}
 	if !get {
 		return iris.Map{
-			"error": "Verification Code Error",
+			"error": errcode.New(errcode.ERR1006.Code, errcode.ERR1006.Message).Error(),
 		}
 	}
 	if verifyCode.Expired.Before(time.Now()) {
@@ -196,12 +197,12 @@ func (service *UserService) LoginVerifyByEmailCode(loginForm api.LoginForm) iris
 		db.DbEngine.ID(verifyCode.Id).Update(&verifyCode)
 
 		return iris.Map{
-			"error": "Verification Code Error",
+			"error": errcode.New(errcode.ERR1006.Code, errcode.ERR1006.Message).Error(),
 		}
 	}
 	if verifyCode.Code != loginForm.VerificationCode {
 		return iris.Map{
-			"error": "Verification Code Error",
+			"error": errcode.New(errcode.ERR1006.Code, errcode.ERR1006.Message).Error(),
 		}
 	}
 
@@ -244,7 +245,7 @@ func (service *UserService) LoginVerifyBy2FACode(loginForm api.LoginForm) iris.M
 	}
 	if !get {
 		return iris.Map{
-			"error": "Verification Code Error",
+			"error": errcode.New(errcode.ERR1006.Code, errcode.ERR1006.Message).Error(),
 		}
 	}
 
@@ -258,13 +259,13 @@ func (service *UserService) LoginVerifyBy2FACode(loginForm api.LoginForm) iris.M
 
 	if !get {
 		return iris.Map{
-			"error": "Username Or Password Error",
+			"error": errcode.New(errcode.ERR1004.Code, errcode.ERR1004.Message).Error(),
 		}
 	}
 
 	if !totp.Validate(loginForm.TfaCode, user.TwoFactorAuthSecret) {
 		return iris.Map{
-			"error": "Verification Code Error",
+			"error": errcode.New(errcode.ERR1006.Code, errcode.ERR1006.Message).Error(),
 		}
 	}
 

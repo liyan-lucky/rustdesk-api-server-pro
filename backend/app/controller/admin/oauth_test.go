@@ -2,6 +2,7 @@ package admin
 
 import (
 	"errors"
+	"rustdesk-api-server-pro/internal/errcode"
 	"testing"
 )
 
@@ -27,14 +28,25 @@ func TestCleanOAuthValues(t *testing.T) {
 
 func TestOAuthCallbackErrorCode(t *testing.T) {
 	tests := map[string]string{
-		"no bindable oauth account":          "oauth_account_not_bound",
-		"context deadline exceeded":          "oauth_provider_unreachable",
-		"state invalid or expired":           "oauth_state_expired",
-		"provider returned invalid response": "oauth_auth_failed",
+		"no bindable oauth account":          errcode.ERR2208.Message,
+		"context deadline exceeded":          errcode.ERR2209.Message,
+		"state invalid or expired":           errcode.ERR2210.Message,
+		"provider returned invalid response": errcode.ERR2212.Message,
 	}
 	for message, expected := range tests {
 		if actual := oauthCallbackErrorCode(errors.New(message)); actual != expected {
 			t.Fatalf("oauthCallbackErrorCode(%q) = %q, want %q", message, actual, expected)
+		}
+	}
+	errcodeTests := map[errcode.Entry]string{
+		errcode.ERR2023: errcode.ERR2208.Message,
+		errcode.ERR2004: errcode.ERR2210.Message,
+		errcode.ERR2030: errcode.ERR2209.Message,
+	}
+	for entry, expected := range errcodeTests {
+		err := errcode.New(entry.Code, entry.Message)
+		if actual := oauthCallbackErrorCode(err); actual != expected {
+			t.Fatalf("oauthCallbackErrorCode(%q) = %q, want %q", err.Error(), actual, expected)
 		}
 	}
 }

@@ -104,14 +104,7 @@ onMounted(() => {
       </div>
     </NFormItem>
     <NSpace vertical :size="16">
-      <NButton
-        attr-type="submit"
-        type="primary"
-        size="large"
-        round
-        block
-        @click="handleSubmit"
-      >
+      <NButton attr-type="submit" type="primary" size="large" round block @click="handleSubmit">
         {{ $t('common.confirm') }}
       </NButton>
       <NButton text type="primary" @click="switchToAdmin">

@@ -59,7 +59,7 @@ func (c *MailTemplateController) HandleList() mvc.Result {
 	templateList := make([]model.MailTemplate, 0)
 	err := pagination.Paginate(query, &model.MailTemplate{}, &templateList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0)
@@ -86,7 +86,7 @@ func (c *MailTemplateController) HandleAdd() mvc.Result {
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
 		c.recordMailTemplateOperationAudit("admin_mail_template_add", "", nil, nil, "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if form.Name == "" {
@@ -112,7 +112,7 @@ func (c *MailTemplateController) HandleAdd() mvc.Result {
 	_, err = c.Db.Insert(template)
 	if err != nil {
 		c.recordMailTemplateOperationAudit("admin_mail_template_add", "", nil, sanitizeMailTemplateFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	c.recordMailTemplateOperationAudit("admin_mail_template_add", strconv.Itoa(template.Id), nil, sanitizeMailTemplateForAudit(template), "success", "")
@@ -124,7 +124,7 @@ func (c *MailTemplateController) HandleEdit() mvc.Result {
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
 		c.recordMailTemplateOperationAudit("admin_mail_template_edit", "", nil, nil, "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if form.Id <= 0 {
@@ -136,7 +136,7 @@ func (c *MailTemplateController) HandleEdit() mvc.Result {
 	has, err := c.Db.Where("id = ?", form.Id).Get(&before)
 	if err != nil {
 		c.recordMailTemplateOperationAudit("admin_mail_template_edit", strconv.Itoa(form.Id), nil, sanitizeMailTemplateFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if !has {
 		c.recordMailTemplateOperationAudit("admin_mail_template_edit", strconv.Itoa(form.Id), nil, sanitizeMailTemplateFormForAudit(form), "failure", "MailTemplateNotFound")
@@ -153,7 +153,7 @@ func (c *MailTemplateController) HandleEdit() mvc.Result {
 	_, err = c.Db.Where("id = ?", form.Id).Update(template)
 	if err != nil {
 		c.recordMailTemplateOperationAudit("admin_mail_template_edit", strconv.Itoa(form.Id), sanitizeMailTemplateForAudit(&before), sanitizeMailTemplateFormForAudit(form), "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	var after model.MailTemplate

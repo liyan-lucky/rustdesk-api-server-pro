@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 	"time"
 
 	"github.com/kataras/iris/v12"
@@ -22,7 +23,7 @@ func (c *DevicesController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *DevicesController) HandleMyDevices() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errcode.ErrUnauthorized.Error())
 	}
 	currentPage := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("size", 10)
@@ -43,7 +44,7 @@ func (c *DevicesController) listAllDevices(currentPage, pageSize int) mvc.Result
 
 	err := pagination.Paginate(query, &model.Device{}, &deviceList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0, len(deviceList))
@@ -82,7 +83,7 @@ func (c *DevicesController) listMyDevices(userID int, currentPage, pageSize int)
 		Where("user_id = ? and status = 1 and expired > ?", userID, time.Now().Format(config.TimeFormat)).
 		Cols("rustdesk_id").
 		Find(&idRows); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	myRustdeskIds := make([]string, 0, len(idRows))
@@ -112,7 +113,7 @@ func (c *DevicesController) listMyDevices(userID int, currentPage, pageSize int)
 
 	err := pagination.Paginate(query, &model.Device{}, &deviceList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0, len(deviceList))

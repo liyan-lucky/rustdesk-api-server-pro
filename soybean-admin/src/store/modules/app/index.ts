@@ -1,4 +1,4 @@
-﻿import { effectScope, nextTick, onScopeDispose, ref, watch } from 'vue';
+import { effectScope, nextTick, onScopeDispose, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { breakpointsTailwind, useBreakpoints, useEventListener, useTitle } from '@vueuse/core';
 import { useBoolean } from '@sa/hooks';

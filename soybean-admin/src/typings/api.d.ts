@@ -167,11 +167,7 @@ declare namespace Api {
     }>;
     type DevicesList = Common.PaginatingQueryRecord<Device>;
     type DeviceSearchParams = CommonType.RecordNullable<
-      Pick<
-        Api.Devices.Device,
-        'username' | 'hostname' | 'rustdesk_id'
-      > &
-        Api.Common.CommonSearchParams
+      Pick<Api.Devices.Device, 'username' | 'hostname' | 'rustdesk_id'> & Api.Common.CommonSearchParams
     >;
   }
 
@@ -192,8 +188,7 @@ declare namespace Api {
     };
     type PeerList = Common.PaginatingQueryRecord<Peer>;
     type PeerSearchParams = CommonType.RecordNullable<
-      Pick<Api.AddressBook.Peer, 'username' | 'hostname' | 'id'> &
-        Api.Common.CommonSearchParams
+      Pick<Api.AddressBook.Peer, 'username' | 'hostname' | 'id'> & Api.Common.CommonSearchParams
     >;
 
     type AddressBook = Common.CommonRecord<{

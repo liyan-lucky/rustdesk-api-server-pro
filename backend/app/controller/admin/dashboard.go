@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"strings"
 	"sync"
@@ -29,22 +30,22 @@ func (c *DashboardController) GetDashboardStat() mvc.Result {
 
 	userCount, err := c.Db.Count(&model.User{})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	deviceCount, err := c.Db.Count(&model.Device{})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	onlineCount, err := c.Db.Where("is_online = 1").Count(&model.Device{})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	visitsCount, err := c.Db.Count(&model.Audit{})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(iris.Map{
@@ -74,7 +75,7 @@ func (c *DashboardController) GetDashboardLineCharts() mvc.Result {
 	var userList = make([]lineChartsData, 0)
 	err := c.Db.Table(&model.User{}).Select("count(*) as `value`, date(created_at) as `date`").Where("created_at between ? and ?", startOfWeekString, endOfWeekString).GroupBy("`date`").Find(&userList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	var userData = make(map[string]int)
@@ -85,7 +86,7 @@ func (c *DashboardController) GetDashboardLineCharts() mvc.Result {
 	var peerList = make([]lineChartsData, 0)
 	err = c.Db.Table(&model.Peer{}).Select("count(*) as `value`, date(created_at) as `date`").Where("created_at between ? and ?", startOfWeekString, endOfWeekString).GroupBy("`date`").Find(&peerList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	var peerData = make(map[string]int)
@@ -157,7 +158,7 @@ left join (
 group by name
 `).Find(&rawRows)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	merged := make(map[string]int)
@@ -275,7 +276,7 @@ func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
 		case "key":
 			return c.Success(iris.Map{"key": probeKeyConfig(key)}, "ok")
 		default:
-			return c.Error(nil, "invalid connectivity target")
+			return c.Error(nil, errcode.New(errcode.ERRA001.Code, errcode.ERRA001.Message).Error())
 		}
 	}
 
@@ -520,7 +521,7 @@ func probeTCPServer(value, defaultPort string) iris.Map {
 func tcpDialTarget(value, defaultPort string) (string, error) {
 	raw := strings.TrimSpace(value)
 	if raw == "" {
-		return "", fmt.Errorf("empty target")
+		return "", errcode.New(errcode.ERRA002.Code, errcode.ERRA002.Message)
 	}
 
 	if strings.Contains(raw, "://") {
@@ -532,7 +533,7 @@ func tcpDialTarget(value, defaultPort string) (string, error) {
 	}
 	raw = strings.TrimSpace(raw)
 	if raw == "" {
-		return "", fmt.Errorf("empty host")
+		return "", errcode.New(errcode.ERRA003.Code, errcode.ERRA003.Message)
 	}
 
 	if _, _, err := net.SplitHostPort(raw); err == nil {
@@ -541,7 +542,7 @@ func tcpDialTarget(value, defaultPort string) (string, error) {
 
 	host := strings.Trim(raw, "[]")
 	if host == "" {
-		return "", fmt.Errorf("empty host")
+		return "", errcode.New(errcode.ERRA003.Code, errcode.ERRA003.Message)
 	}
 	return net.JoinHostPort(host, defaultPort), nil
 }
@@ -559,7 +560,7 @@ func probeHTTPServer(value string) iris.Map {
 	u, err := url.Parse(target)
 	if err != nil || u.Scheme == "" || u.Host == "" {
 		if err == nil {
-			err = fmt.Errorf("invalid url")
+			err = errcode.New(errcode.ERRA004.Code, errcode.ERRA004.Message)
 		}
 		return iris.Map{"status": "error", "message": err.Error(), "target": target, "durationMs": time.Since(start).Milliseconds()}
 	}
@@ -593,7 +594,7 @@ func doHTTPProbeRequest(client *http.Client, target, method string) (*http.Respo
 
 func probeKeyConfig(value string) iris.Map {
 	if strings.TrimSpace(value) == "" {
-		return iris.Map{"status": "error", "message": "key is empty", "target": "", "durationMs": 0}
+		return iris.Map{"status": "error", "message": errcode.New(errcode.ERRA005.Code, errcode.ERRA005.Message).Error(), "target": "", "durationMs": 0}
 	}
 	return iris.Map{"status": "ok", "message": "configured", "target": "", "durationMs": 0}
 }

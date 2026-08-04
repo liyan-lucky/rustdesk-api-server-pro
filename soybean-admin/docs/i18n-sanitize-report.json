@@ -1,11 +1,7 @@
 {
   "dryRun": true,
   "failOnDetect": true,
-  "targetLocales": [
-    "ja-JP",
-    "ko-KR",
-    "ru-RU"
-  ],
+  "targetLocales": ["ja-JP", "ko-KR", "ru-RU"],
   "totalReplaced": 0,
   "report": [
     {

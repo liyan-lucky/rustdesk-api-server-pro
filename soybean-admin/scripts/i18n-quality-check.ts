@@ -72,7 +72,9 @@ function readQualityConfig(): QualityConfig {
         typeof parsed.maxExtraPerLocale === 'number' && parsed.maxExtraPerLocale >= 0
           ? parsed.maxExtraPerLocale
           : fallback.maxExtraPerLocale,
-      ignoreKeyPrefixes: Array.isArray(parsed.ignoreKeyPrefixes) ? parsed.ignoreKeyPrefixes : fallback.ignoreKeyPrefixes,
+      ignoreKeyPrefixes: Array.isArray(parsed.ignoreKeyPrefixes)
+        ? parsed.ignoreKeyPrefixes
+        : fallback.ignoreKeyPrefixes,
       ignoreExactKeys: Array.isArray(parsed.ignoreExactKeys) ? parsed.ignoreExactKeys : fallback.ignoreExactKeys,
       maxFallbackRatio: parsed.maxFallbackRatio || fallback.maxFallbackRatio,
       minTranslatedRatio: parsed.minTranslatedRatio || {},
@@ -104,13 +106,13 @@ function main() {
   const strictMode = cli.strict || qualityConfig.mode === 'strict';
 
   const maxSuspectPerLocale = strictMode
-    ? qualityConfig.strictOverrides?.maxSuspectPerLocale ?? qualityConfig.maxSuspectPerLocale
+    ? (qualityConfig.strictOverrides?.maxSuspectPerLocale ?? qualityConfig.maxSuspectPerLocale)
     : qualityConfig.maxSuspectPerLocale;
   const maxMissingPerLocale = strictMode
-    ? qualityConfig.strictOverrides?.maxMissingPerLocale ?? qualityConfig.maxMissingPerLocale
+    ? (qualityConfig.strictOverrides?.maxMissingPerLocale ?? qualityConfig.maxMissingPerLocale)
     : qualityConfig.maxMissingPerLocale;
   const maxExtraPerLocale = strictMode
-    ? qualityConfig.strictOverrides?.maxExtraPerLocale ?? qualityConfig.maxExtraPerLocale
+    ? (qualityConfig.strictOverrides?.maxExtraPerLocale ?? qualityConfig.maxExtraPerLocale)
     : qualityConfig.maxExtraPerLocale;
   const localeSummaries: Array<{
     locale: string;
@@ -190,7 +192,9 @@ function main() {
         console.log(`  sample: ${sample.join(', ')}`);
       }
       if (!cli.json && translatedRatio < minRatio) {
-        console.log(`  ratio threshold failed: got ${(translatedRatio * 100).toFixed(2)}% < required ${(minRatio * 100).toFixed(2)}%`);
+        console.log(
+          `  ratio threshold failed: got ${(translatedRatio * 100).toFixed(2)}% < required ${(minRatio * 100).toFixed(2)}%`
+        );
       }
       if (!cli.json && fallbackRatio > maxFallbackRatio) {
         console.log(

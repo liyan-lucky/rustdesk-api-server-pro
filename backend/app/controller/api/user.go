@@ -6,6 +6,7 @@ import (
 	"rustdesk-api-server-pro/app/form/api"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"rustdesk-api-server-pro/internal/transport/httpdto"
 	"rustdesk-api-server-pro/util"
@@ -28,7 +29,7 @@ func (c *UserController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *UserController) HandleCurrentUser() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	return mvc.Response{
 		Object: httpdto.NewUserResponse(c.userService().CurrentUserView(user.Name, user.Email, user.Note, user.Status, user.IsAdmin)),
@@ -38,7 +39,7 @@ func (c *UserController) HandleCurrentUser() mvc.Result {
 func (c *UserController) GetUsers() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	hasAccessibleParam := c.Ctx.Request().URL.Query().Has("accessible")
 	current := c.Ctx.URLParamIntDefault("current", 1)
@@ -67,7 +68,7 @@ func (c *UserController) GetUsers() mvc.Result {
 func (c *UserController) HandleLogout() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	rustdeskID := c.Ctx.URLParamDefault("id", "")
 	if rustdeskID == "" {

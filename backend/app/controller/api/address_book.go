@@ -5,6 +5,7 @@ import (
 	"rustdesk-api-server-pro/app/form/api"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/transport/httpdto"
 	"rustdesk-api-server-pro/util"
 
@@ -39,7 +40,7 @@ func (c *AddressBookController) ownedAddressBook(guid string) (*model.AddressBoo
 func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	var body map[string]any
 	if err := c.readJSONBody(&body); err != nil {
@@ -129,7 +130,7 @@ func (c *AddressBookController) HandleAbSharedDelete() mvc.Result {
 func (c *AddressBookController) HandleAbRules() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	abGuid := c.Ctx.URLParamDefault("ab", "")
 	if abGuid == "" {
@@ -259,7 +260,7 @@ func (c *AddressBookController) HandleAbGet() mvc.Result {
 func (c *AddressBookController) GetAb() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	result, err := c.addressBookService().GetLegacyAddressBook(core.LegacyAddressBookGetQuery{
 		UserID: user.Id,
@@ -296,7 +297,7 @@ func (c *AddressBookController) PostAb() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	if user.LicensedDevices > 0 && len(abData.Peers) > user.LicensedDevices {
 		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, sanitizeLegacyAddressBookForAudit(abData), "failure", "Number of equipment in excess of licenses")
@@ -338,7 +339,7 @@ func (c *AddressBookController) PostAb() mvc.Result {
 func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	result, err := c.addressBookService().EnsurePersonalAddressBook(core.PersonalAddressBookEnsureCommand{
 		UserID:         user.Id,
@@ -356,7 +357,7 @@ func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 func (c *AddressBookController) HandleAbSettings() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	result, err := c.addressBookService().GetSettings(core.AddressBookSettingsQuery{UserID: user.Id})
 	if err != nil {
@@ -368,7 +369,7 @@ func (c *AddressBookController) HandleAbSettings() mvc.Result {
 func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.failMsg("unauthorized")
+		return c.fail(errcode.ErrUnauthorized)
 	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 10)

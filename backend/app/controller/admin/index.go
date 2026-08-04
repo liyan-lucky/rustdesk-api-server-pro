@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"rustdesk-api-server-pro/internal/errcode"
+
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
@@ -16,7 +18,7 @@ func (c *IndexController) BeforeActivation(b mvc.BeforeActivation) {
 func (c *IndexController) HandleUserInfo() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errcode.ErrUnauthorized.Error())
 	}
 	roles := []string{}
 	if user.IsAdmin {

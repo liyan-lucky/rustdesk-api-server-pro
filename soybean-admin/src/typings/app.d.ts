@@ -593,7 +593,31 @@ declare namespace App {
           active: string;
         };
         oauth: {
-          configTitle: string; bindingsTitle: string; addProvider: string; editProvider: string; providerName: string; displayName: string; clientId: string; clientSecret: string; secretPlaceholder: string; redirectUrl: string; scopes: string; accountRole: string; allowedDomains: string; bindByEmail: string; autoCreateAdmin: string; autoCreateUser: string; testConfig: string; testSuccess: string; copyCallback: string; githubOnlyTip: string; adminRole: string; userRole: string; useDefault: string; listPlaceholder: string; copied: string;
+          configTitle: string;
+          bindingsTitle: string;
+          addProvider: string;
+          editProvider: string;
+          providerName: string;
+          displayName: string;
+          clientId: string;
+          clientSecret: string;
+          secretPlaceholder: string;
+          redirectUrl: string;
+          scopes: string;
+          accountRole: string;
+          allowedDomains: string;
+          bindByEmail: string;
+          autoCreateAdmin: string;
+          autoCreateUser: string;
+          testConfig: string;
+          testSuccess: string;
+          copyCallback: string;
+          githubOnlyTip: string;
+          adminRole: string;
+          userRole: string;
+          useDefault: string;
+          listPlaceholder: string;
+          copied: string;
         };
         about: {
           runningVersion: string;
@@ -673,12 +697,12 @@ declare namespace App {
           created_at: string;
         };
         device: {
-        username: string,
-        hostname: string,
-        version: string,
-        memory: string,
-        os: string,
-        rustdesk_id: string,
+          username: string;
+          hostname: string;
+          version: string;
+          memory: string;
+          os: string;
+          rustdesk_id: string;
         };
         ab: {
           rustdesk_id: string;

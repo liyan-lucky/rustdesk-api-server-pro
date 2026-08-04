@@ -49,7 +49,9 @@ function buildReport(localeName: string, baseFlat: FlatMap, targetFlat: FlatMap)
     }
   }
 
-  const extraKeys = Object.keys(targetFlat).filter(key => !(key in baseFlat)).sort();
+  const extraKeys = Object.keys(targetFlat)
+    .filter(key => !(key in baseFlat))
+    .sort();
 
   return {
     locale: localeName,
@@ -69,7 +71,10 @@ function pct(numerator: number, denominator: number): string {
 
 function formatSample(keys: string[]): string {
   if (keys.length === 0) return '-';
-  const sample = keys.slice(0, sampleLimit).map(key => `  - \`${key}\``).join('\n');
+  const sample = keys
+    .slice(0, sampleLimit)
+    .map(key => `  - \`${key}\``)
+    .join('\n');
   const remaining = keys.length - Math.min(keys.length, sampleLimit);
   return remaining > 0 ? `${sample}\n  - ... and ${remaining} more` : sample;
 }

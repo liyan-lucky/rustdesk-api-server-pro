@@ -3,6 +3,7 @@ package admin
 import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
 
@@ -50,6 +51,10 @@ func (c *basicController) Success(data interface{}, message string) mvc.Result {
 
 func (c *basicController) Error(data interface{}, message string) mvc.Result {
 	return c.response(500, data, message)
+}
+
+func (c *basicController) dbError(err error) mvc.Result {
+	return c.Error(nil, errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error())
 }
 
 func (c *basicController) response(code int, data interface{}, message string) mvc.Result {

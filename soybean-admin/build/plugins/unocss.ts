@@ -1,9 +1,9 @@
 import process from 'node:process';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import unocss from '@unocss/vite';
 import presetIcons from '@unocss/preset-icons';
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders';
-import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const antDesign = require('@iconify-json/ant-design/icons.json');

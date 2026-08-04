@@ -1,7 +1,7 @@
 import { h } from 'vue';
 import { NButton } from 'naive-ui';
-import { $t } from '../locales';
 import { appendVersion, getVersionTag } from '@/utils/version';
+import { $t } from '../locales';
 
 export function setupAppVersionNotification() {
   let isShow = false;
@@ -18,18 +18,37 @@ export function setupAppVersionNotification() {
       content: `${appendVersion($t('system.updateContent'))} Server: ${target}`,
       action() {
         return h('div', { style: { display: 'flex', justifyContent: 'end', gap: '12px', width: '325px' } }, [
-          h(NButton, { onClick() { n?.destroy(); } }, () => $t('system.updateCancel')),
-          h(NButton, { type: 'primary', onClick() { location.reload(); } }, () => $t('system.updateConfirm'))
+          h(
+            NButton,
+            {
+              onClick() {
+                n?.destroy();
+              }
+            },
+            () => $t('system.updateCancel')
+          ),
+          h(
+            NButton,
+            {
+              type: 'primary',
+              onClick() {
+                location.reload();
+              }
+            },
+            () => $t('system.updateConfirm')
+          )
         ]);
       },
-      onClose() { isShow = false; }
+      onClose() {
+        isShow = false;
+      }
     });
   };
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') void checkVersion();
   });
-	window.setTimeout(() => void checkVersion(), 10_000);
+  window.setTimeout(() => void checkVersion(), 10_000);
   window.setInterval(() => void checkVersion(), 5 * 60 * 1000);
 }
 
@@ -40,7 +59,9 @@ async function getServerVersion() {
     if (!res.ok) return '';
     const data = await res.json();
     return String(data?.compat_target?.server?.version || '').replace(/^v/, '');
-  } catch { return ''; }
+  } catch {
+    return '';
+  }
 }
 
 async function getHtmlBuildTime() {

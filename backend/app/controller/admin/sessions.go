@@ -50,7 +50,7 @@ func (c *SessionsController) HandleList() mvc.Result {
 	sessionList := make([]Session, 0)
 	err := pagination.Paginate(query, &Session{}, &sessionList)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0)
@@ -79,7 +79,7 @@ func (c *SessionsController) HandleKill() mvc.Result {
 	err := c.Ctx.ReadJSON(&params)
 	if err != nil {
 		c.recordSessionOperationAudit("admin_session_kill", "", nil, iris.Map{"ids": params.Ids}, "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	ids := util.RemoveElement(params.Ids, 1)
 	if len(ids) == 0 {
@@ -100,7 +100,7 @@ func (c *SessionsController) HandleKill() mvc.Result {
 	})
 	if err != nil {
 		c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids, "status": 0}, "failure", err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids, "status": 0}, "success", "")

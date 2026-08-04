@@ -7,6 +7,7 @@ import (
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/helper/captcha"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"rustdesk-api-server-pro/util"
 	"strconv"
@@ -34,7 +35,7 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 	err := c.Ctx.ReadJSON(&loginForm)
 	if err != nil {
 		c.recordAdminLoginAudit(0, "", false, "decode_error: "+err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if !captcha.VerifyCode(loginForm.CaptchaId, loginForm.Code) {
@@ -46,7 +47,7 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 	get, err := c.Db.Where("username = ? and status > 0", loginForm.Username).Get(&user)
 	if err != nil {
 		c.recordAdminLoginAudit(0, loginForm.Username, false, err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if !get {
@@ -78,7 +79,7 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 	_, err = c.Db.Insert(authToken)
 	if err != nil {
 		c.recordAdminLoginAudit(user.Id, loginForm.Username, false, err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if user.IsAdmin {
@@ -117,7 +118,7 @@ func (c *AuthController) GetAuthOidcUrl() mvc.Result {
 	redirect := c.Ctx.URLParamDefault("redirect", "")
 	authURL, enabled, err := service.BuildAdminAuthURL(c.currentBaseURL(), redirect)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(iris.Map{
 		"enabled": enabled,
@@ -131,7 +132,7 @@ func (c *AuthController) GetAuthOidcToken() mvc.Result {
 	token, err := service.ExchangeAdminTicket(ticket)
 	if err != nil {
 		c.recordAdminSecurityAudit("admin_oidc_token_exchange", false, err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	c.recordAdminSecurityAudit("admin_oidc_token_exchange", true, "token")
 	return c.Success(iris.Map{
@@ -168,7 +169,7 @@ func (c *AuthController) GetAuthOauthUrl() mvc.Result {
 	redirect := c.Ctx.URLParamDefault("redirect", "")
 	authURL, enabled, err := service.BuildAdminAuthURL(provider, c.currentBaseURL(), redirect)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(iris.Map{
 		"enabled": enabled,
@@ -182,7 +183,7 @@ func (c *AuthController) GetAuthOauthToken() mvc.Result {
 	token, err := service.ExchangeAdminTicket(ticket)
 	if err != nil {
 		c.recordAdminSecurityAudit("admin_oauth_token_exchange", false, err.Error())
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	c.recordAdminSecurityAudit("admin_oauth_token_exchange", true, "token")
 	return c.Success(iris.Map{
@@ -211,18 +212,31 @@ func (c *AuthController) HandleOauthCallback() mvc.Result {
 
 func oauthCallbackErrorCode(err error) string {
 	if err == nil {
-		return "oauth_auth_failed"
+		return errcode.ERR2212.Message
 	}
-	message := strings.ToLower(err.Error())
+	msg := err.Error()
+	if strings.HasPrefix(msg, "ERR-") {
+		code := strings.SplitN(msg, ":", 2)[0]
+		switch code {
+		case errcode.ERR2023.Code, errcode.ERR2022.Code:
+			return errcode.ERR2208.Message
+		case errcode.ERR2004.Code, errcode.ERR2029.Code:
+			return errcode.ERR2210.Message
+		case errcode.ERR2030.Code, errcode.ERR2031.Code, errcode.ERR2034.Code:
+			return errcode.ERR2209.Message
+		default:
+			return errcode.ERR2212.Message
+		}
+	}
 	switch {
-	case strings.Contains(message, "no bindable oauth account"), strings.Contains(message, "bound admin user not available"):
-		return "oauth_account_not_bound"
-	case strings.Contains(message, "timeout"), strings.Contains(message, "deadline exceeded"), strings.Contains(message, "connection refused"):
-		return "oauth_provider_unreachable"
-	case strings.Contains(message, "state invalid"), strings.Contains(message, "state expired"):
-		return "oauth_state_expired"
+	case strings.Contains(msg, "no bindable oauth account"), strings.Contains(msg, "bound admin user not available"):
+		return errcode.ERR2208.Message
+	case strings.Contains(msg, "timeout"), strings.Contains(msg, "deadline exceeded"), strings.Contains(msg, "connection refused"):
+		return errcode.ERR2209.Message
+	case strings.Contains(msg, "state invalid"), strings.Contains(msg, "state expired"):
+		return errcode.ERR2210.Message
 	default:
-		return "oauth_auth_failed"
+		return errcode.ERR2212.Message
 	}
 }
 

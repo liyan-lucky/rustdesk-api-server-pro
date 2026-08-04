@@ -270,7 +270,7 @@ func ensureRecordWriteWithinLimit(offset, bodySize int64) error {
 		return errcode.New(errcode.ERR7005.Code, errcode.ERR7005.Message)
 	}
 	if offset+bodySize > maxCompatRecordSize {
-		return fmt.Errorf("record file exceeds max size %d bytes", maxCompatRecordSize)
+		return errcode.Errorf(errcode.ERR7006.Code, errcode.ERR7006.Message, maxCompatRecordSize)
 	}
 	return nil
 }

@@ -219,7 +219,12 @@ onMounted(async () => {
           <p class="stat-hint">{{ viewDetailHint }}</p>
           <div class="flex justify-between pt-12px">
             <SvgIcon :icon="item.icon" class="stat-icon" />
-            <CountTo :prefix="item.unit" :start-value="1" :end-value="item.value" class="stat-value text-white dark:text-dark" />
+            <CountTo
+              :prefix="item.unit"
+              :start-value="1"
+              :end-value="item.value"
+              class="stat-value text-white dark:text-dark"
+            />
           </div>
         </GradientBg>
       </NGi>

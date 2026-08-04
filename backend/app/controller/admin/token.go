@@ -42,7 +42,7 @@ func (c *TokenController) HandleList() mvc.Result {
 	pagination := db.NewPagination(currentPage, pageSize)
 	tokenList := make([]TokenRow, 0)
 	if err := pagination.Paginate(query, &TokenRow{}, &tokenList); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	list := make([]iris.Map, 0, len(tokenList))
@@ -77,7 +77,7 @@ func (c *TokenController) HandleKill() mvc.Result {
 		Ids []int `json:"ids"`
 	}
 	if err := c.Ctx.ReadJSON(&params); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if len(params.Ids) == 0 {
 		return c.Error(nil, "NoTokenIds")
@@ -85,7 +85,7 @@ func (c *TokenController) HandleKill() mvc.Result {
 
 	_, err := c.Db.In("id", params.Ids).Cols("status").Update(&model.AuthToken{Status: 0})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(nil, "ok")

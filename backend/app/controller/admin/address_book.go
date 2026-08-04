@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/db"
-	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"rustdesk-api-server-pro/util"
@@ -17,6 +17,7 @@ import (
 )
 
 var errAddressBookNotFound = errcode.New(errcode.ERR5001.Code, errcode.ERR5001.Message)
+var errUnauthorized = errcode.ErrUnauthorized
 
 type AddressBookController struct {
 	basicController
@@ -56,7 +57,7 @@ func (c *AddressBookController) HandleAbPeers() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	if abGuid == "" {
 		return c.listAccountPeers(user, current, pageSize)
@@ -73,7 +74,7 @@ func (c *AddressBookController) HandleAbPeers() mvc.Result {
 		PageSize: pageSize,
 	})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(iris.Map{
@@ -88,10 +89,10 @@ func (c *AddressBookController) listAccountPeers(user *model.User, current, page
 	books := make([]model.AddressBook, 0)
 	if user.IsAdmin {
 		if err := c.Db.Find(&books); err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 	} else if err := c.Db.Where("user_id = ?", user.Id).Find(&books); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	bookIDs := make([]int, 0, len(books))
 	bookByID := make(map[int]model.AddressBook, len(books))
@@ -136,7 +137,7 @@ func (c *AddressBookController) listAccountPeers(user *model.User, current, page
 	pagination := db.NewPagination(current, pageSize)
 	peers := make([]model.Peer, 0)
 	if err := pagination.Paginate(query, &model.Peer{}, &peers); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	records := make([]iris.Map, 0, len(peers))
 	for _, peer := range peers {
@@ -165,7 +166,7 @@ func (c *AddressBookController) listAllPeers(abGuid string, current, pageSize in
 	pagination := db.NewPagination(current, pageSize)
 	peerList := make([]model.Peer, 0)
 	if err := pagination.Paginate(query, &model.Peer{}, &peerList); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	records := make([]iris.Map, 0, len(peerList))
@@ -198,7 +199,7 @@ func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	query := func() *xorm.Session {
 		q := c.Db.Where("shared = ?", true)
@@ -210,10 +211,10 @@ func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 	var books []model.AddressBook
 	total, err := query().Count(new(model.AddressBook))
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if err = query().Limit(pageSize, (current-1)*pageSize).Find(&books); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	records := make([]iris.Map, 0, len(books))
 	for _, ab := range books {
@@ -237,7 +238,7 @@ func (c *AddressBookController) HandleAbSharedProfiles() mvc.Result {
 func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	result, err := c.addressBookService().EnsurePersonalAddressBook(core.PersonalAddressBookEnsureCommand{
 		UserID:         user.Id,
@@ -247,7 +248,7 @@ func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 		DefaultMaxPeer: 0,
 	})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(iris.Map{"guid": result.Guid}, "ok")
 }
@@ -255,16 +256,16 @@ func (c *AddressBookController) HandleAbPersonal() mvc.Result {
 func (c *AddressBookController) HandleAbList() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	list := make([]model.AddressBook, 0)
 	if user.IsAdmin {
 		if err := c.Db.Find(&list); err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 	} else {
 		if err := c.Db.Where("user_id = ?", user.Id).Find(&list); err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 	}
 	records := make([]iris.Map, 0, len(list))
@@ -296,28 +297,28 @@ func (c *AddressBookController) HandleAbList() mvc.Result {
 func (c *AddressBookController) HandleAbTagAdd() mvc.Result {
 	ab, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), true)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var body struct {
 		Name  string `json:"name"`
 		Color int64  `json:"color"`
 	}
 	if err = c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if body.Name == "" {
 		return c.Error(nil, "name required")
 	}
 	count, err := c.Db.Where("ab_id = ? and name = ?", ab.Id, body.Name).Count(new(model.AddressBookTag))
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if count > 0 {
 		return c.Error(nil, "tag already exists")
 	}
 	_, err = c.Db.Insert(&model.AddressBookTag{UserId: ab.UserId, AbId: ab.Id, Name: body.Name, Color: body.Color})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(nil, "ok")
 }
@@ -325,18 +326,18 @@ func (c *AddressBookController) HandleAbTagAdd() mvc.Result {
 func (c *AddressBookController) HandleAbTagUpdate() mvc.Result {
 	ab, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), true)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var body struct {
 		Name  string `json:"name"`
 		Color int64  `json:"color"`
 	}
 	if err = c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	affected, err := c.Db.Where("ab_id = ? and name = ?", ab.Id, body.Name).Cols("color").Update(&model.AddressBookTag{Color: body.Color})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if affected == 0 {
 		return c.Error(nil, "tag not found")
@@ -347,20 +348,20 @@ func (c *AddressBookController) HandleAbTagUpdate() mvc.Result {
 func (c *AddressBookController) HandleAbTagRename() mvc.Result {
 	ab, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), true)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var body struct {
 		Old string `json:"old"`
 		New string `json:"new"`
 	}
 	if err = c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if body.Old == "" || body.New == "" {
 		return c.Error(nil, "old and new required")
 	}
 	if err = c.addressBookService().RenameTag(core.AddressBookTagRenameCommand{UserID: ab.UserId, AbID: ab.Id, Old: body.Old, New: body.New}); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(nil, "ok")
 }
@@ -380,17 +381,17 @@ type adminPeerPayload struct {
 func (c *AddressBookController) HandleAbPeerAdd() mvc.Result {
 	ab, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), true)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var body adminPeerPayload
 	if err = c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if body.ID == "" {
 		return c.Error(nil, "device id required")
 	}
 	if err = c.addressBookService().AddPeer(core.AddressBookPeerCreateCommand{UserID: ab.UserId, AbID: ab.Id, RustdeskID: body.ID, Hash: body.Hash, Username: body.Username, Password: body.Password, Hostname: body.Hostname, Platform: body.Platform, Alias: body.Alias, Tags: body.Tags, Note: body.Note}); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(nil, "ok")
 }
@@ -398,21 +399,21 @@ func (c *AddressBookController) HandleAbPeerAdd() mvc.Result {
 func (c *AddressBookController) HandleAbPeerUpdate() mvc.Result {
 	ab, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), true)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var body adminPeerPayload
 	if err = c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	tags, err := json.Marshal(body.Tags)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	tagsJSON := string(tags)
 	cmd := core.AddressBookPeerUpdateCommand{UserID: ab.UserId, AbID: ab.Id, RustdeskID: body.ID, Tags: &tagsJSON, Alias: &body.Alias, Hash: &body.Hash, Password: &body.Password, Note: &body.Note, Username: &body.Username, Hostname: &body.Hostname, Platform: &body.Platform}
 	has, err := c.addressBookService().UpdatePeer(cmd)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if !has {
 		return c.Error(nil, "peer not found")
@@ -423,7 +424,7 @@ func (c *AddressBookController) HandleAbPeerUpdate() mvc.Result {
 func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	var body struct {
 		UserID  int    `json:"user_id"`
@@ -433,7 +434,7 @@ func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 		MaxPeer int    `json:"max_peer"`
 	}
 	if err := c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if body.Name == "" {
 		return c.Error(nil, "name required")
@@ -454,7 +455,7 @@ func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 	}
 	book := model.AddressBook{UserId: owner.Id, Guid: util.GetUUID(), Name: body.Name, Owner: owner.Username, Note: body.Note, Rule: body.Rule, MaxPeer: body.MaxPeer, Shared: true, CreatedByAdmin: createdByAdmin}
 	if _, err := c.Db.Insert(&book); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(iris.Map{"guid": book.Guid}, "ok")
 }
@@ -468,11 +469,11 @@ func (c *AddressBookController) HandleAbSharedUpdate() mvc.Result {
 		MaxPeer int    `json:"max_peer"`
 	}
 	if err := c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	book, err := c.manageableAddressBook(body.Guid, false)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if !book.Shared {
 		return c.Error(nil, "personal address book is read-only")
@@ -482,7 +483,7 @@ func (c *AddressBookController) HandleAbSharedUpdate() mvc.Result {
 	}
 	_, err = c.Db.Where("id = ?", book.Id).Cols("name", "note", "rule", "max_peer").Update(&model.AddressBook{Name: body.Name, Note: body.Note, Rule: body.Rule, MaxPeer: body.MaxPeer})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(nil, "ok")
 }
@@ -490,12 +491,12 @@ func (c *AddressBookController) HandleAbSharedUpdate() mvc.Result {
 func (c *AddressBookController) HandleAbSharedDelete() mvc.Result {
 	var guids []string
 	if err := c.Ctx.ReadJSON(&guids); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	for _, guid := range guids {
 		book, err := c.manageableAddressBook(guid, false)
 		if err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 		if !book.Shared {
 			return c.Error(nil, "personal address book cannot be deleted")
@@ -505,7 +506,7 @@ func (c *AddressBookController) HandleAbSharedDelete() mvc.Result {
 			return c.Error(nil, "administrator-created address book cannot be deleted by user")
 		}
 		if err = c.deleteAddressBook(book); err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 	}
 	return c.Success(nil, "ok")
@@ -518,11 +519,11 @@ func canDeleteAddressBook(user *model.User, book *model.AddressBook) bool {
 func (c *AddressBookController) HandleAbRules() mvc.Result {
 	book, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), false)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var rules []model.AddressBookRule
 	if err = c.Db.Where("ab_guid = ?", book.Guid).Find(&rules); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	data := make([]iris.Map, 0, len(rules))
 	for _, rule := range rules {
@@ -541,11 +542,11 @@ type addressBookRulePayload struct {
 func (c *AddressBookController) HandleAbRuleAdd() mvc.Result {
 	book, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), false)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var body addressBookRulePayload
 	if err = c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if body.Rule < 1 || body.Rule > 3 {
 		return c.Error(nil, "invalid rule")
@@ -555,18 +556,18 @@ func (c *AddressBookController) HandleAbRuleAdd() mvc.Result {
 		return c.Error(nil, "target type and target guid required")
 	}
 	if _, err = c.Db.Insert(&rule); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(addressBookRuleData(rule), "ok")
 }
 func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
 	book, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), false)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var body addressBookRulePayload
 	if err = c.Ctx.ReadJSON(&body); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if body.Rule < 1 || body.Rule > 3 {
 		return c.Error(nil, "invalid rule")
@@ -577,7 +578,7 @@ func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
 	update := model.AddressBookRule{TargetType: body.TargetType, TargetGuid: body.TargetGuid, Rule: body.Rule}
 	affected, err := c.Db.Where("guid = ? and ab_guid = ?", body.Guid, book.Guid).Cols("target_type", "target_guid", "rule").Update(&update)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if affected == 0 {
 		return c.Error(nil, "rule not found")
@@ -599,15 +600,15 @@ func addressBookRuleData(rule model.AddressBookRule) iris.Map {
 func (c *AddressBookController) HandleAbRuleDelete() mvc.Result {
 	book, err := c.manageableAddressBook(c.Ctx.Params().Get("guid"), false)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	var guids []string
 	if err = c.Ctx.ReadJSON(&guids); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	_, err = c.Db.Where("ab_guid = ?", book.Guid).In("guid", guids).Delete(new(model.AddressBookRule))
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	return c.Success(nil, "ok")
 }
@@ -660,7 +661,7 @@ func (c *AddressBookController) HandleAbTags() mvc.Result {
 	abGuid := c.Ctx.Params().Get("guid")
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 
 	if user.IsAdmin {
@@ -672,7 +673,7 @@ func (c *AddressBookController) HandleAbTags() mvc.Result {
 		AbGuid: abGuid,
 	})
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(tagsToData(tags), "ok")
@@ -681,21 +682,21 @@ func (c *AddressBookController) HandleAbTags() mvc.Result {
 func (c *AddressBookController) HandleAbAllTags() mvc.Result {
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	books := make([]model.AddressBook, 0)
 	if user.IsAdmin {
 		if err := c.Db.Find(&books); err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 	} else if err := c.Db.Where("user_id = ?", user.Id).Find(&books); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	data := make([]iris.Map, 0)
 	for _, book := range books {
 		tags := make([]model.AddressBookTag, 0)
 		if err := c.Db.Where("ab_id = ?", book.Id).Find(&tags); err != nil {
-			return c.Error(nil, err.Error())
+			return c.dbError(err)
 		}
 		for _, tag := range tags {
 			data = append(data, iris.Map{
@@ -711,7 +712,7 @@ func (c *AddressBookController) listAllTags(abGuid string) mvc.Result {
 	var ab model.AddressBook
 	has, err := c.Db.Where("guid = ?", abGuid).Get(&ab)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if !has {
 		return c.Error(nil, errAddressBookNotFound.Error())
@@ -719,7 +720,7 @@ func (c *AddressBookController) listAllTags(abGuid string) mvc.Result {
 
 	tags := make([]model.AddressBookTag, 0)
 	if err := c.Db.Where("ab_id = ?", ab.Id).Find(&tags); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	data := make([]iris.Map, 0, len(tags))
@@ -740,7 +741,7 @@ func (c *AddressBookController) HandleAbPeerDelete() mvc.Result {
 
 	var ids []string
 	if err := c.Ctx.ReadBody(&ids); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if len(ids) == 0 {
 		return c.Error(nil, "NoPeerIds")
@@ -748,11 +749,11 @@ func (c *AddressBookController) HandleAbPeerDelete() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	ab, err := c.findAddressBook(user, abGuid)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if err := c.addressBookService().DeletePeers(core.AddressBookPeerDeleteCommand{
@@ -760,7 +761,7 @@ func (c *AddressBookController) HandleAbPeerDelete() mvc.Result {
 		AbID:   ab.Id,
 		IDs:    ids,
 	}); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(nil, "ok")
@@ -771,7 +772,7 @@ func (c *AddressBookController) HandleAbTagDelete() mvc.Result {
 
 	var names []string
 	if err := c.Ctx.ReadBody(&names); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 	if len(names) == 0 {
 		return c.Error(nil, "NoTagNames")
@@ -779,11 +780,11 @@ func (c *AddressBookController) HandleAbTagDelete() mvc.Result {
 
 	user := c.GetUser()
 	if user == nil {
-		return c.Error(nil, "unauthorized")
+		return c.Error(nil, errUnauthorized.Error())
 	}
 	ab, err := c.findAddressBook(user, abGuid)
 	if err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	if err := c.addressBookService().DeleteTags(core.AddressBookTagDeleteCommand{
@@ -791,7 +792,7 @@ func (c *AddressBookController) HandleAbTagDelete() mvc.Result {
 		AbID:   ab.Id,
 		Names:  names,
 	}); err != nil {
-		return c.Error(nil, err.Error())
+		return c.dbError(err)
 	}
 
 	return c.Success(nil, "ok")

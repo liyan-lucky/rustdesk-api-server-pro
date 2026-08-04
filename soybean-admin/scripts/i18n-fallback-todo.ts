@@ -65,7 +65,9 @@ function main() {
 
   const output = targetLocales.map(locale => {
     const targetFlat = flattenLeaves(locales[locale as keyof typeof locales]);
-    const fallbackKeys = baseKeys.filter(key => key in targetFlat && normalize(baseFlat[key]) === normalize(targetFlat[key]));
+    const fallbackKeys = baseKeys.filter(
+      key => key in targetFlat && normalize(baseFlat[key]) === normalize(targetFlat[key])
+    );
     const topKeys = fallbackKeys.slice(0, cli.top);
     return {
       locale,
