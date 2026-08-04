@@ -51,17 +51,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
-        name: 'about_version',
-        path: '/about/version',
-        component: 'view.about_version',
-        meta: {
-          title: 'about_version',
-          i18nKey: 'route.about_version',
-          icon: 'mdi:information-outline',
-          order: 1
-        }
-      },
-      {
         name: 'about_help',
         path: '/about/help',
         component: 'view.about_help',
@@ -70,6 +59,17 @@ export const generatedRoutes: GeneratedRoute[] = [
           i18nKey: 'route.about_help',
           icon: 'mdi:help-circle-outline',
           order: 2
+        }
+      },
+      {
+        name: 'about_version',
+        path: '/about/version',
+        component: 'view.about_version',
+        meta: {
+          title: 'about_version',
+          i18nKey: 'route.about_version',
+          icon: 'mdi:information-outline',
+          order: 1
         }
       }
     ]
