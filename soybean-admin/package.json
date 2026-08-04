@@ -106,7 +106,7 @@
     "@types/qrcode": "^1.5.6",
     "@unocss/core": "66.7.4",
     "@unocss/eslint-config": "0.62.1",
-    "@unocss/preset-icons": "0.62.1",
+    "@unocss/preset-icons": "66.7.5",
     "@unocss/preset-uno": "0.62.1",
     "@unocss/transformer-directives": "0.62.1",
     "@unocss/transformer-variant-group": "0.62.1",
