@@ -36,33 +36,44 @@ const form = reactive({
 const defaultCallback = computed(() => `${window.location.origin}/admin/auth/oauth/${form.name || 'github'}/callback`);
 
 function applyProviderPreset(type: string) {
-  if (type === 'qq') {
-    Object.assign(form, {
-      type: 'qq',
-      name: 'qq',
-      displayName: 'QQ',
-      redirectUrl: `${window.location.origin}/admin/auth/oauth/qq/callback`,
-      scopesText: 'get_user_info',
-      accountRole: 'user',
-      bindByEmail: false,
-      autoCreateAdmin: false,
-      autoCreateUser: true,
-      allowedDomainsText: ''
-    });
-  } else {
-    Object.assign(form, {
-      type: 'github',
-      name: 'github',
-      displayName: 'GitHub',
-      redirectUrl: `${window.location.origin}/admin/auth/oauth/github/callback`,
-      scopesText: 'read:user user:email',
-      accountRole: 'admin',
-      bindByEmail: true,
-      autoCreateAdmin: false,
-      autoCreateUser: false,
-      allowedDomainsText: ''
-    });
-  }
+  const presets: Record<string, any> = {
+    github: {
+      type: 'github', name: 'github', displayName: 'GitHub',
+      scopesText: 'read:user user:email', accountRole: 'admin',
+      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+    },
+    qq: {
+      type: 'qq', name: 'qq', displayName: 'QQ',
+      scopesText: 'get_user_info', accountRole: 'user',
+      bindByEmail: false, autoCreateAdmin: false, autoCreateUser: true
+    },
+    google: {
+      type: 'google', name: 'google', displayName: 'Google',
+      scopesText: 'openid profile email', accountRole: 'admin',
+      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+    },
+    microsoft: {
+      type: 'microsoft', name: 'microsoft', displayName: 'Microsoft',
+      scopesText: 'openid profile email', accountRole: 'admin',
+      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+    },
+    gitee: {
+      type: 'gitee', name: 'gitee', displayName: 'Gitee',
+      scopesText: 'user_info', accountRole: 'admin',
+      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+    },
+    gitlab: {
+      type: 'gitlab', name: 'gitlab', displayName: 'GitLab',
+      scopesText: 'read_user', accountRole: 'admin',
+      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+    }
+  };
+  const preset = presets[type] || presets.github;
+  Object.assign(form, {
+    ...preset,
+    redirectUrl: `${window.location.origin}/admin/auth/oauth/${preset.name}/callback`,
+    allowedDomainsText: ''
+  });
 }
 
 function values(value: string) {
@@ -341,6 +352,10 @@ onMounted(() => {
             v-model:value="form.type"
             :options="[
               { label: 'GitHub', value: 'github' },
+              { label: 'Google', value: 'google' },
+              { label: 'Microsoft', value: 'microsoft' },
+              { label: 'GitLab', value: 'gitlab' },
+              { label: 'Gitee (码云)', value: 'gitee' },
               { label: 'QQ', value: 'qq' }
             ]"
             :disabled="Boolean(form.originalName)"

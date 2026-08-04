@@ -148,7 +148,16 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	form.OriginalName = strings.ToLower(strings.TrimSpace(form.OriginalName))
 	form.DisplayName = strings.TrimSpace(form.DisplayName)
 	form.AccountRole = strings.ToLower(strings.TrimSpace(form.AccountRole))
-	if form.Type != "github" && form.Type != "qq" {
+	validProviderTypes := map[string]bool{
+		"github":    true,
+		"qq":        true,
+		"google":    true,
+		"microsoft": true,
+		"gitee":     true,
+		"gitlab":    true,
+		"oidc":      true,
+	}
+	if !validProviderTypes[form.Type] {
 		return c.Error(nil, "UnsupportedOAuthProvider")
 	}
 	if !oauthProviderNamePattern.MatchString(form.Name) {
@@ -215,11 +224,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		provider.AllowedEmailDomains = nil
 	}
 	if provider.DisplayName == "" {
-		if provider.Type == "qq" {
-			provider.DisplayName = "QQ"
-		} else {
-			provider.DisplayName = "GitHub"
-		}
+		provider.DisplayName = provider.Type
 	}
 	if index >= 0 {
 		cfg.OAuth.Providers[index] = provider

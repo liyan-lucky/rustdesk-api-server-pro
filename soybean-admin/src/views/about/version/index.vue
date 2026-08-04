@@ -22,10 +22,11 @@ const hasUpdate = computed(() => latestVersion.value && compareVersions(latestVe
 const resolvedUpdateCommand = computed(() =>
   commandTemplate.value.replaceAll('{version}', latestVersion.value || runningVersion.value)
 );
-const latestUpdateCommand = computed(() => updateScript);
+const cleanupCommand = 'docker image prune -f --filter "label=org.opencontainers.image.source=https://github.com/liyan-lucky/rustdesk-api-server-pro" 2>/dev/null; docker image prune -f 2>/dev/null';
+const latestUpdateCommand = computed(() => `${updateScript} && ${cleanupCommand}`);
 const pinnedUpdateCommand = computed(
   () =>
-    `IMAGE=ghcr.io/liyan-lucky/rustdesk-api-server-pro:${latestVersion.value || runningVersion.value} EXPECTED_VERSION=${latestVersion.value || runningVersion.value} ${updateScript}`
+    `IMAGE=ghcr.io/liyan-lucky/rustdesk-api-server-pro:${latestVersion.value || runningVersion.value} EXPECTED_VERSION=${latestVersion.value || runningVersion.value} ${updateScript} && ${cleanupCommand}`
 );
 
 function normalizeVersion(value: string) {

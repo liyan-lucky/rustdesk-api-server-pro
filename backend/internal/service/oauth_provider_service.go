@@ -1091,6 +1091,12 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 			provider.Name = "google"
 		case "qq":
 			provider.Name = "qq"
+		case "microsoft":
+			provider.Name = "microsoft"
+		case "gitee":
+			provider.Name = "gitee"
+		case "gitlab":
+			provider.Name = "gitlab"
 		default:
 			provider.Name = "oidc"
 		}
@@ -1103,6 +1109,12 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 			provider.DisplayName = "Google"
 		case "qq":
 			provider.DisplayName = "QQ"
+		case "microsoft":
+			provider.DisplayName = "Microsoft"
+		case "gitee":
+			provider.DisplayName = "Gitee"
+		case "gitlab":
+			provider.DisplayName = "GitLab"
 		default:
 			provider.DisplayName = "OIDC"
 		}
@@ -1113,6 +1125,34 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		}
 		if len(provider.Scopes) == 0 {
 			provider.Scopes = []string{"openid", "profile", "email"}
+		}
+	} else if provider.Type == "microsoft" {
+		if provider.Issuer == "" {
+			provider.Issuer = "https://login.microsoftonline.com/common/v2.0"
+		}
+		if provider.AuthorizationEndpoint == "" {
+			provider.AuthorizationEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+		}
+		if provider.TokenEndpoint == "" {
+			provider.TokenEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+		}
+		if provider.UserinfoEndpoint == "" {
+			provider.UserinfoEndpoint = "https://graph.microsoft.com/oidc/userinfo"
+		}
+		if len(provider.Scopes) == 0 {
+			provider.Scopes = []string{"openid", "profile", "email"}
+		}
+		if provider.SubjectClaim == "" {
+			provider.SubjectClaim = "sub"
+		}
+		if provider.EmailClaim == "" {
+			provider.EmailClaim = "email"
+		}
+		if provider.NameClaim == "" {
+			provider.NameClaim = "name"
+		}
+		if provider.PictureClaim == "" {
+			provider.PictureClaim = "picture"
 		}
 	} else if provider.Type == "github" {
 		if provider.AuthorizationEndpoint == "" {
@@ -1126,6 +1166,56 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		}
 		if len(provider.Scopes) == 0 {
 			provider.Scopes = []string{"read:user", "user:email"}
+		}
+		if provider.SubjectClaim == "" {
+			provider.SubjectClaim = "id"
+		}
+		if provider.EmailClaim == "" {
+			provider.EmailClaim = "email"
+		}
+		if provider.NameClaim == "" {
+			provider.NameClaim = "name"
+		}
+		if provider.PictureClaim == "" {
+			provider.PictureClaim = "avatar_url"
+		}
+	} else if provider.Type == "gitee" {
+		if provider.AuthorizationEndpoint == "" {
+			provider.AuthorizationEndpoint = "https://gitee.com/oauth/authorize"
+		}
+		if provider.TokenEndpoint == "" {
+			provider.TokenEndpoint = "https://gitee.com/oauth/token"
+		}
+		if provider.UserinfoEndpoint == "" {
+			provider.UserinfoEndpoint = "https://gitee.com/api/v5/user"
+		}
+		if len(provider.Scopes) == 0 {
+			provider.Scopes = []string{"user_info"}
+		}
+		if provider.SubjectClaim == "" {
+			provider.SubjectClaim = "id"
+		}
+		if provider.EmailClaim == "" {
+			provider.EmailClaim = "email"
+		}
+		if provider.NameClaim == "" {
+			provider.NameClaim = "name"
+		}
+		if provider.PictureClaim == "" {
+			provider.PictureClaim = "avatar_url"
+		}
+	} else if provider.Type == "gitlab" {
+		if provider.AuthorizationEndpoint == "" {
+			provider.AuthorizationEndpoint = "https://gitlab.com/oauth/authorize"
+		}
+		if provider.TokenEndpoint == "" {
+			provider.TokenEndpoint = "https://gitlab.com/oauth/token"
+		}
+		if provider.UserinfoEndpoint == "" {
+			provider.UserinfoEndpoint = "https://gitlab.com/api/v4/user"
+		}
+		if len(provider.Scopes) == 0 {
+			provider.Scopes = []string{"read_user"}
 		}
 		if provider.SubjectClaim == "" {
 			provider.SubjectClaim = "id"
