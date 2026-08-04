@@ -1,4 +1,4 @@
-﻿import enUs from './en-us';
+import enUs from './en-us';
 
 const local: App.I18n.Schema = {
   ...enUs,
@@ -389,7 +389,7 @@ const local: App.I18n.Schema = {
     },
     about: {
       latestCommand: 'Auf latest aktualisieren', pinnedCommand: 'Erkannte Version aktualisieren und prüfen', customCommand: 'Benutzerdefinierte Befehlsvorlage',
-      runningVersion: 'Laufende Version', buildTime: 'Build-Zeit', compatVersion: 'Kompatible RustDesk-Version', latestVersion: 'Neueste Version', updateAvailable: 'Update verfügbar', upToDate: 'Aktuell', updateCheck: 'Online-Updateprüfung', urlTip: 'Die Prüfadresse kann geändert und in diesem Browser gespeichert werden. Sie darf eine semantische Version als Text oder JSON mit version, latest_version, tag_name oder server.version liefern. Die Zielseite muss Browser-CORS-Anfragen erlauben.', urlPlaceholder: 'Adresse für die Updateprüfung', checkNow: 'Jetzt prüfen', restoreDefault: 'Standard wiederherstellen', checkFailed: 'Updateprüfung fehlgeschlagen', invalidUrl: 'Nur HTTP- und HTTPS-Adressen werden unterstützt', invalidResponse: 'In der Antwort wurde keine semantische Version gefunden', updateCommand: 'Container-Aktualisierungsbefehl', commandTip: 'Die Befehlsvorlage ist editierbar; {version} wird durch die neueste Version ersetzt.', copyCommand: 'Befehl kopieren'
+      runningVersion: 'Laufende Version', buildTime: 'Build-Zeit', compatVersion: 'Kompatible RustDesk-Version', latestVersion: 'Neueste Version', updateAvailable: 'Update verfügbar', upToDate: 'Aktuell', updateCheck: 'Online-Updateprüfung', urlTip: 'Die Prüfadresse kann geändert und in diesem Browser gespeichert werden. Sie darf eine semantische Version als Text oder JSON mit version, latest_version, tag_name oder server.version liefern. Die Zielseite muss Browser-CORS-Anfragen erlauben.', urlPlaceholder: 'Adresse für die Updateprüfung', checkNow: 'Jetzt prüfen', restoreDefault: 'Standard wiederherstellen', checkFailed: 'Updateprüfung fehlgeschlagen', invalidUrl: 'Nur HTTP- und HTTPS-Adressen werden unterstützt', invalidResponse: 'In der Antwort wurde keine semantische Version gefunden', updateCommand: 'Container-Aktualisierungsbefehl', commandTip: 'Die Befehlsvorlage ist editierbar; {version} wird durch die neueste Version ersetzt.',       copyCommand: 'Befehl kopieren', versionInfo: 'Versionsinformationen', errorHelp: 'Fehlercode-Hilfe', errcodeTip: 'Alle vom Server zurückgegebenen Fehlercodes sind unten aufgelistet. Wenn ein Fehler auftritt, suchen Sie den Code, um Ursache und Lösung zu finden.', searchPlaceholder: 'Code, Nachricht oder Beschreibung suchen', moduleFilter: 'Nach Modul filtern', errCode: 'Code', errMessage: 'Nachricht', errModule: 'Modul', errDescription: 'Beschreibung', errSolution: 'Lösung'
     }
   },
   dataMap: {

@@ -359,7 +359,7 @@ const local: App.I18n.Schema = {
     },
     "about": {
       "latestCommand": "latestへ更新", "pinnedCommand": "検出バージョンへ更新して検証", "customCommand": "カスタムコマンドテンプレート",
-      "runningVersion": "実行中のバージョン", "buildTime": "ビルド日時", "compatVersion": "対応RustDeskバージョン", "latestVersion": "最新バージョン", "updateAvailable": "更新があります", "upToDate": "最新です", "updateCheck": "オンライン更新確認", "urlTip": "確認URLは変更でき、このブラウザーに保存されます。対象サイトはCORSを許可する必要があります。", "urlPlaceholder": "更新確認URL", "checkNow": "今すぐ確認", "restoreDefault": "既定に戻す", "checkFailed": "更新確認に失敗しました", "invalidUrl": "HTTPまたはHTTPSのみ対応しています", "invalidResponse": "有効なバージョンが見つかりません", "updateCommand": "コンテナ更新コマンド", "commandTip": "テンプレートを編集できます。{version} は最新バージョンに置換されます。", "copyCommand": "コマンドをコピー"
+      "runningVersion": "実行中のバージョン", "buildTime": "ビルド日時", "compatVersion": "対応RustDeskバージョン", "latestVersion": "最新バージョン", "updateAvailable": "更新があります", "upToDate": "最新です", "updateCheck": "オンライン更新確認", "urlTip": "確認URLは変更でき、このブラウザーに保存されます。対象サイトはCORSを許可する必要があります。", "urlPlaceholder": "更新確認URL", "checkNow": "今すぐ確認", "restoreDefault": "既定に戻す", "checkFailed": "更新確認に失敗しました", "invalidUrl": "HTTPまたはHTTPSのみ対応しています", "invalidResponse": "有効なバージョンが見つかりません", "updateCommand": "コンテナ更新コマンド", "commandTip": "テンプレートを編集できます。{version} は最新バージョンに置換されます。",       "copyCommand": "コマンドをコピー", "versionInfo": "バージョン情報", "errorHelp": "エラーコードヘルプ", "errcodeTip": "サーバーが返すすべてのエラーコードを以下に一覧表示します。エラーが発生した場合は、コードを検索して原因と解決策を確認してください。", "searchPlaceholder": "コード、メッセージ、説明を検索", "moduleFilter": "モジュールで絞り込み", "errCode": "コード", "errMessage": "メッセージ", "errModule": "モジュール", "errDescription": "説明", "errSolution": "解決策"
     }
   },
   "dropdown": {

@@ -1,24 +1,24 @@
-Ôªøimport enUs from './en-us';
+import enUs from './en-us';
 
 const local: App.I18n.Schema = {
   ...enUs,
   system: { ...enUs.system, title: 'Rustdesk Api Server' },
   common: {
     ...enUs.common,
-    action: 'Acci√≥n',
+    action: 'AcciÛn',
     add: 'Agregar',
-    addSuccess: 'Agregado con √âxito',
+    addSuccess: 'Agregado con …xito',
     backToHome: 'Volver al inicio',
     batchDelete: 'Eliminar por lote',
     cancel: 'Cancelar',
     close: 'Cerrar',
     check: 'Comprobar',
     expandColumn: 'Expandir columna',
-    columnSetting: 'configuraci√≥n de columnas',
-    config: 'configuraci√≥n',
+    columnSetting: 'configuraciÛn de columnas',
+    config: 'configuraciÛn',
     confirm: 'Confirmar',
     delete: 'Eliminar',
-    deleteSuccess: 'Eliminado con √âxito',
+    deleteSuccess: 'Eliminado con …xito',
     confirmDelete: '?Seguro que deseas eliminar?',
     edit: 'Editar',
     import: 'Importar CSV',
@@ -26,16 +26,16 @@ const local: App.I18n.Schema = {
     look: 'Ver',
     warning: 'Advertencia',
     error: 'Error',
-    index: '√çndice',
+    index: 'Õndice',
     keywordSearch: 'Introduce una palabra clave',
-    logout: 'Cerrar sesi√≥n',
-    logoutConfirm: '?Seguro que deseas cerrar sesi√≥n?',
-    lookForward: 'Pr√≥ximamente',
+    logout: 'Cerrar sesiÛn',
+    logoutConfirm: '?Seguro que deseas cerrar sesiÛn?',
+    lookForward: 'PrÛximamente',
     modify: 'Modificar',
-    modifySuccess: 'Modificado con √âxito',
+    modifySuccess: 'Modificado con …xito',
     noData: 'Sin datos',
-    operate: 'operaci√≥n',
-    pleaseCheckValue: 'Comprueba si el valor es v√°lido',
+    operate: 'operaciÛn',
+    pleaseCheckValue: 'Comprueba si el valor es v·lido',
     refresh: 'Actualizar',
     reset: 'Restablecer',
     search: 'Buscar',
@@ -43,7 +43,7 @@ const local: App.I18n.Schema = {
     tip: 'Consejo',
     trigger: 'Activar',
     update: 'Actualizar',
-    updateSuccess: 'Actualizaci√≥n exitosa',
+    updateSuccess: 'ActualizaciÛn exitosa',
     userCenter: 'Centro de usuario',
     yesOrNo: {
       yes: 'S?',
@@ -52,10 +52,10 @@ const local: App.I18n.Schema = {
   },
   request: {
     ...enUs.request,
-    logout: 'Cerrar sesi√≥n del usuario tras error de solicitud',
-    logoutMsg: 'Estado de usuario inv√°lido, inicia sesi√≥n de nuevo',
-    logoutWithModal: 'Mostrar di√°logo tras error de solicitud y luego cerrar sesi√≥n',
-    logoutWithModalMsg: 'Estado de usuario inv√°lido, inicia sesi√≥n de nuevo',
+    logout: 'Cerrar sesiÛn del usuario tras error de solicitud',
+    logoutMsg: 'Estado de usuario inv·lido, inicia sesiÛn de nuevo',
+    logoutWithModal: 'Mostrar di·logo tras error de solicitud y luego cerrar sesiÛn',
+    logoutWithModalMsg: 'Estado de usuario inv·lido, inicia sesiÛn de nuevo',
     refreshToken: 'El token expir?, se actualizar?',
     tokenExpired: 'El token de la solicitud ha expirado'
   },
@@ -72,12 +72,12 @@ const local: App.I18n.Schema = {
     colourWeakness: 'Deficiencia de color',
     layoutMode: {
       ...enUs.theme.layoutMode,
-      title: 'Modo de dise√±o',
-      vertical: 'Men√∫ vertical',
-      horizontal: 'Men√∫ horizontal',
+      title: 'Modo de diseÒo',
+      vertical: 'Men˙ vertical',
+      horizontal: 'Men˙ horizontal',
       'vertical-mix': 'Modo mixto vertical',
       'horizontal-mix': 'Modo mixto horizontal',
-      reverseHorizontalMix: 'Invertir posici√≥n de Men√∫s de primer y segundo nivel'
+      reverseHorizontalMix: 'Invertir posiciÛn de Men˙s de primer y segundo nivel'
     },
     recommendColor: 'Aplicar algoritmo de color recomendado',
     recommendColorDesc: 'El algoritmo de color recomendado se refiere a',
@@ -86,7 +86,7 @@ const local: App.I18n.Schema = {
       title: 'Color del tema',
       primary: 'Primario',
       info: 'Info',
-      success: '√âxito',
+      success: '…xito',
       warning: 'Advertencia',
       error: 'Error',
       followPrimary: 'Seguir color primario'
@@ -99,10 +99,10 @@ const local: App.I18n.Schema = {
     },
     page: {
       ...enUs.theme.page,
-      animate: 'Animaci√≥n de p√°gina',
+      animate: 'AnimaciÛn de p·gina',
       mode: {
         ...enUs.theme.page.mode,
-        title: 'Modo de animaci√≥n',
+        title: 'Modo de animaciÛn',
         fade: 'Desvanecer',
         'fade-slide': 'Deslizar',
         'fade-bottom': 'Zoom desvanecido',
@@ -112,7 +112,7 @@ const local: App.I18n.Schema = {
         none: 'Ninguno'
       }
     },
-    fixedHeaderAndTab: 'Fijar cabecera y pesta√±as',
+    fixedHeaderAndTab: 'Fijar cabecera y pestaÒas',
     header: {
       ...enUs.theme.header,
       height: 'Altura de cabecera',
@@ -124,14 +124,14 @@ const local: App.I18n.Schema = {
     },
     tab: {
       ...enUs.theme.tab,
-      visible: 'pesta√±as visibles',
-      cache: 'Cach√© de pesta√±as',
-      height: 'Altura de pesta√±as',
+      visible: 'pestaÒas visibles',
+      cache: 'CachÈ de pestaÒas',
+      height: 'Altura de pestaÒas',
       mode: {
         ...enUs.theme.tab.mode,
-        title: 'Modo de pesta√±as',
+        title: 'Modo de pestaÒas',
         chrome: 'Chrome',
-        button: 'Bot√≥n'
+        button: 'BotÛn'
       }
     },
     sider: {
@@ -141,7 +141,7 @@ const local: App.I18n.Schema = {
       collapsedWidth: 'Ancho colapsado',
       mixWidth: 'Ancho modo mixto',
       mixCollapsedWidth: 'Ancho colapsado mixto',
-      mixChildMenuWidth: 'Ancho subMen√∫ mixto'
+      mixChildMenuWidth: 'Ancho subMen˙ mixto'
     },
     footer: {
       ...enUs.theme.footer,
@@ -155,26 +155,26 @@ const local: App.I18n.Schema = {
       visible: 'Marca de agua visible en pantalla completa',
       text: 'Texto de marca de agua'
     },
-    themeDrawerTitle: 'configuraci√≥n de tema',
-    pageFunTitle: 'Funciones de p√°gina',
+    themeDrawerTitle: 'configuraciÛn de tema',
+    pageFunTitle: 'Funciones de p·gina',
     configOperation: {
       ...enUs.theme.configOperation,
-      copyConfig: 'Copiar configuraci√≥n',
+      copyConfig: 'Copiar configuraciÛn',
       copySuccessMsg: 'Copia correcta, sustituye la variable "themeSettings" en "src/theme/settings.ts"',
-      resetConfig: 'Restablecer configuraci√≥n',
-      resetSuccessMsg: 'Restablecido con √âxito'
+      resetConfig: 'Restablecer configuraciÛn',
+      resetSuccessMsg: 'Restablecido con …xito'
     }
   },
   route: {
     ...enUs.route,
-    login: 'Iniciar sesi√≥n',
+    login: 'Iniciar sesiÛn',
     403: 'Sin permiso',
-    404: 'p√°gina no encontrada',
+    404: 'p·gina no encontrada',
     500: 'Error del servidor',
     'iframe-page': 'Iframe',
     home: 'Inicio',
-    audit: 'Auditor√≠a',
-    user: 'Gesti√≥n de usuarios',
+    audit: 'AuditorÌa',
+    user: 'GestiÛn de usuarios',
     user_list: 'Lista de usuarios',
     user_sessions: 'Sesiones',
     user_profile: 'Perfil',
@@ -184,16 +184,16 @@ const local: App.I18n.Schema = {
     system_mail: 'Correo',
     audit_baselogs: 'registros base',
     audit_filetransferlogs: 'registros de transferencia',
-    audit_loginlogs: 'registros de inicio de sesi√≥n',
+    audit_loginlogs: 'registros de inicio de sesiÛn',
     devices: 'Dispositivos',
     'my-devices': 'Contactos',
     'my-devices_peers': 'Mis contactos',
-    'my-devices_manage': 'Gesti√≥n de libretas',
-    'my-devices_tags': 'Gesti√≥n de etiquetas',
+    'my-devices_manage': 'GestiÛn de libretas',
+    'my-devices_tags': 'GestiÛn de etiquetas',
     workspace: 'Mi espacio', workspace_overview: 'Resumen', workspace_devices: 'Mis dispositivos', workspace_sessions: 'Sesiones de inicio', workspace_security: 'Eventos de seguridad', workspace_profile: 'Perfil', about: 'Acerca de y actualizaciones',
-    system_server: 'Configuraci√≥n del servidor',
+    system_server: 'ConfiguraciÛn del servidor',
     system_tokens: 'Token de usuario',
-    system_oauth: 'Inicio de sesi√≥n externo'
+    system_oauth: 'Inicio de sesiÛn externo'
   },
   page: {
     ...enUs.page,
@@ -201,39 +201,39 @@ const local: App.I18n.Schema = {
         ...enUs.page.login,
         common: {
           ...enUs.page.login.common,
-          loginOrRegister: 'Iniciar sesi√≥n / Registrarse',
+          loginOrRegister: 'Iniciar sesiÛn / Registrarse',
           userNamePlaceholder: 'Introduce el nombre de usuario',
-          phonePlaceholder: 'Introduce el n√∫mero de tel√©fono',
-          codePlaceholder: 'Introduce el c√≥digo de verificaci√≥n',
-          passwordPlaceholder: 'Introduce la contrase√±a',
-          confirmPasswordPlaceholder: 'Introduce la contrase√±a de nuevo',
-          codeLogin: 'Inicio con c√≥digo',
+          phonePlaceholder: 'Introduce el n˙mero de telÈfono',
+          codePlaceholder: 'Introduce el cÛdigo de verificaciÛn',
+          passwordPlaceholder: 'Introduce la contraseÒa',
+          confirmPasswordPlaceholder: 'Introduce la contraseÒa de nuevo',
+          codeLogin: 'Inicio con cÛdigo',
           confirm: 'Confirmar',
           back: 'Volver',
-          validateSuccess: 'verificaci√≥n correcta',
-          loginSuccess: 'Inicio de sesi√≥n correcto',
+          validateSuccess: 'verificaciÛn correcta',
+          loginSuccess: 'Inicio de sesiÛn correcto',
           welcomeBack: 'Bienvenido de nuevo, {userName} !',
-          thirdPartyLogin: 'Inicio de sesi√≥n de terceros',
+          thirdPartyLogin: 'Inicio de sesiÛn de terceros',
           continueWith: 'Continuar con {provider}',
-          providerUnavailable: 'El inicio de sesi√≥n con {provider} no est√° disponible', oauthAccountNotBound: 'No se puede vincular una cuenta coincidente. Use el mismo correo verificado o active la creaci√≥n autom√°tica.', oauthProviderUnreachable: 'El servidor no puede acceder al proveedor. Compruebe la conexi√≥n HTTPS saliente.', oauthStateExpired: 'La solicitud de inicio de sesi√≥n caduc√≥ o ya se us√≥. In√≠ciela de nuevo.', oauthAuthFailed: 'Fall√≥ el inicio de sesi√≥n externo. Revise la configuraci√≥n y el registro de seguridad.'
+          providerUnavailable: 'El inicio de sesiÛn con {provider} no est· disponible', oauthAccountNotBound: 'No se puede vincular una cuenta coincidente. Use el mismo correo verificado o active la creaciÛn autom·tica.', oauthProviderUnreachable: 'El servidor no puede acceder al proveedor. Compruebe la conexiÛn HTTPS saliente.', oauthStateExpired: 'La solicitud de inicio de sesiÛn caducÛ o ya se usÛ. InÌciela de nuevo.', oauthAuthFailed: 'FallÛ el inicio de sesiÛn externo. Revise la configuraciÛn y el registro de seguridad.'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,
-          title: 'Inicio con contrase√±a',
+          title: 'Inicio con contraseÒa',
           rememberMe: 'Recordarme',
-          switchToUser: 'Inicio de sesi√≥n de usuario'
+          switchToUser: 'Inicio de sesiÛn de usuario'
          },
          userLogin: {
-           title: 'Inicio de sesi√≥n de usuario',
-           switchToAdmin: 'Inicio de sesi√≥n de admin'
+           title: 'Inicio de sesiÛn de usuario',
+           switchToAdmin: 'Inicio de sesiÛn de admin'
         }
       },
     home: {
       ...enUs.page.home,
-      greeting: 'Buenos d√≠as, {userName}!',
+      greeting: 'Buenos dÌas, {userName}!',
       userCount: 'Usuarios',
       deviceCount: 'Dispositivos',
-      onlineCount: 'En l√≠nea',
+      onlineCount: 'En lÌnea',
       visitsCount: 'Visitas',
       operatingSystem: 'Sistema operativo',
       oneWeek: 'Una semana',
@@ -252,8 +252,8 @@ const local: App.I18n.Schema = {
       },
       serverConfig: {
         ...enUs.page.home.serverConfig,
-        title: 'configuraci√≥n de conexi√≥n del cliente',
-        tip: 'Copia los siguientes valores en el cliente RustDesk. Si KEY est√° vac√≠o, configura `RUSTDESK_KEY` como variable de entorno del contenedor.',
+        title: 'configuraciÛn de conexiÛn del cliente',
+        tip: 'Copia los siguientes valores en el cliente RustDesk. Si KEY est· vacÌo, configura `RUSTDESK_KEY` como variable de entorno del contenedor.',
         idServer: 'Servidor ID',
         relayServer: 'Servidor relay',
         apiServer: 'Servidor API',
@@ -265,58 +265,58 @@ const local: App.I18n.Schema = {
         copy: 'Copiar',
         copyAll: 'Copiar todo',
         copyTemplate: 'Copiar plantilla RustDesk',
-        showQr: 'Mostrar c√≥digo QR',
-        qrTitle: 'C√≥digo QR de importaci√≥n RustDesk',
-        qrTip: 'Escanee este c√≥digo QR en la aplicaci√≥n RustDesk m√≥vil para importar la configuraci√≥n.',
+        showQr: 'Mostrar cÛdigo QR',
+        qrTitle: 'CÛdigo QR de importaciÛn RustDesk',
+        qrTip: 'Escanee este cÛdigo QR en la aplicaciÛn RustDesk mÛvil para importar la configuraciÛn.',
         qrPayload: 'Texto de plantilla RustDesk',
-        qrFailed: 'Error al generar c√≥digo QR',
-        refresh: 'Actualizar configuraci√≥n',
-        clearCacheReload: 'Limpiar Cach√© y recargar',
+        qrFailed: 'Error al generar cÛdigo QR',
+        refresh: 'Actualizar configuraciÛn',
+        clearCacheReload: 'Limpiar CachÈ y recargar',
         source: 'Origen',
         lastUpdated: 'Ultima actualizacion',
         show: 'Mostrar',
         hide: 'Ocultar',
-        missingTip: 'Los siguientes campos est√°n vac√≠os. Config√∫ralos primero en las variables de entorno del contenedor: {fields}',
-        copyEmpty: '{label} est√° vac√≠o y no se puede copiar',
+        missingTip: 'Los siguientes campos est·n vacÌos. Config˙ralos primero en las variables de entorno del contenedor: {fields}',
+        copyEmpty: '{label} est· vacÌo y no se puede copiar',
         copySuccess: '{label} copiado',
         copyFailed: 'Error al copiar {label}',
-        fetchFailed: 'No se pudo cargar la configuraci√≥n del servidor',
-        cacheCleared: 'Cach√© limpiada, recargando configuraci√≥n del servidor',
+        fetchFailed: 'No se pudo cargar la configuraciÛn del servidor',
+        cacheCleared: 'CachÈ limpiada, recargando configuraciÛn del servidor',
         sourceType: {
           ...enUs.page.home.serverConfig.sourceType,
           remote: 'Remoto',
-          'memory-cache': 'Cach√© en memoria',
-          'session-cache': 'Cach√© de sesi√≥n',
+          'memory-cache': 'CachÈ en memoria',
+          'session-cache': 'CachÈ de sesiÛn',
           env: 'Entorno',
           inferred: 'Inferido',
-          empty: 'Vac√≠o',
+          empty: 'VacÌo',
            auto: 'Auto-detectado'
         },
         sourceHint: {
           ...enUs.page.home.serverConfig.sourceHint,
           env: 'Este valor proviene de una variable de entorno del contenedor.',
-          inferred: 'Este valor se infiere autom√°ticamente de la direcci√≥n de acceso actual.',
-          empty: 'A√∫n no hay valor configurado ni inferido.'
+          inferred: 'Este valor se infiere autom·ticamente de la direcciÛn de acceso actual.',
+          empty: 'A˙n no hay valor configurado ni inferido.'
         },
         connectivity: {
           ...enUs.page.home.serverConfig.connectivity,
           clear: 'Limpiar resultados',
           check: 'Comprobar conectividad',
           checkOne: 'Comprobar',
-          checked: 'Comprobaci√≥n de conectividad completada',
+          checked: 'ComprobaciÛn de conectividad completada',
           checkedOne: 'Conectividad de {field} comprobada',
-          checkedCached: 'Usando resultado reciente de conectividad (Cach√©)',
-          checkFailed: 'Error en la comprobaci√≥n de conectividad',
+          checkedCached: 'Usando resultado reciente de conectividad (CachÈ)',
+          checkFailed: 'Error en la comprobaciÛn de conectividad',
           cleared: 'Resultados de conectividad limpiados',
-          source: 'Origen de comprobaci√≥n',
-          lastChecked: '√öltima comprobaci√≥n',
+          source: 'Origen de comprobaciÛn',
+          lastChecked: '⁄ltima comprobaciÛn',
           target: 'Destino',
-          duration: 'Duraci√≥n',
-          notChecked: 'A√∫n no comprobado',
+          duration: 'DuraciÛn',
+          notChecked: 'A˙n no comprobado',
           checkSourceType: {
             ...enUs.page.home.serverConfig.connectivity.checkSourceType,
             remote: 'Remoto',
-            cache: 'Cach√©'
+            cache: 'CachÈ'
           },
           status: {
             ...enUs.page.home.serverConfig.connectivity.status,
@@ -339,11 +339,11 @@ const local: App.I18n.Schema = {
       sessions: {
         ...enUs.page.user.sessions,
         kill: 'Finalizar',
-        confirmKill: '¬øFinalizar esta sesi√≥n?'
+        confirmKill: 'øFinalizar esta sesiÛn?'
       },
       audit: {
         ...enUs.page.user.audit,
-        logsSearchPlaceholder: 'Usuario/Acci√≥n/RustdeskID/IP'
+        logsSearchPlaceholder: 'Usuario/AcciÛn/RustdeskID/IP'
       },
       devices: {
         ...enUs.page.user.devices,
@@ -370,22 +370,22 @@ const local: App.I18n.Schema = {
       title: 'Contactos',
       welcome: 'Bienvenido, {userName}',
       status: 'Estado',
-      online: 'En l√≠nea',
+      online: 'En lÌnea',
       offline: 'Desconectado',
       conns: 'Conexiones',
-      lastSync: '√öltima sincronizaci√≥n',
-      logout: 'Cerrar sesi√≥n'
+      lastSync: '⁄ltima sincronizaciÛn',
+      logout: 'Cerrar sesiÛn'
     },
     workspace: {
       ...enUs.page.workspace,
-      scopeTitle: 'Espacio personal', scopeTip: 'Aqu√≠ solo se muestran tus dispositivos, sesiones, eventos de seguridad y libretas autorizadas.', myDevices: 'Mis dispositivos', activeSessions: 'Sesiones activas', addressBooks: 'Libretas de direcciones', securityEvents: 'Eventos de seguridad', currentSession: 'Sesi√≥n actual', revokeConfirm: '¬øRevocar esta sesi√≥n?', revoke: 'Revocar', accountRole: 'Rol de la cuenta', adminRole: 'Administrador', userRole: 'Usuario', permissionScope: '√Åmbito de permisos', userScope: 'Recursos personales y libretas compartidas expl√≠citamente', active: 'Activo'
+      scopeTitle: 'Espacio personal', scopeTip: 'AquÌ solo se muestran tus dispositivos, sesiones, eventos de seguridad y libretas autorizadas.', myDevices: 'Mis dispositivos', activeSessions: 'Sesiones activas', addressBooks: 'Libretas de direcciones', securityEvents: 'Eventos de seguridad', currentSession: 'SesiÛn actual', revokeConfirm: 'øRevocar esta sesiÛn?', revoke: 'Revocar', accountRole: 'Rol de la cuenta', adminRole: 'Administrador', userRole: 'Usuario', permissionScope: '¡mbito de permisos', userScope: 'Recursos personales y libretas compartidas explÌcitamente', active: 'Activo'
     },
     oauth: {
-      configTitle: 'Configuraci√≥n de inicio de sesi√≥n externo', bindingsTitle: 'Vinculaciones de cuentas', addProvider: 'A√±adir proveedor', editProvider: 'Editar proveedor', providerName: 'Clave del proveedor', displayName: 'Nombre visible', clientId: 'ID de cliente', clientSecret: 'Secreto de cliente', secretPlaceholder: 'D√©jelo vac√≠o para conservar el secreto configurado', redirectUrl: 'URL de retorno', scopes: '√Åmbitos', accountRole: 'Rol de la cuenta', allowedDomains: 'Dominios de correo permitidos', bindByEmail: 'Vincular por correo verificado', autoCreateAdmin: 'Crear administrador autom√°ticamente', autoCreateUser: 'Crear usuario autom√°ticamente', testConfig: 'Probar configuraci√≥n', testSuccess: 'Configuraci√≥n completa y URL de autorizaci√≥n generada', copyCallback: 'Copiar URL de retorno', githubOnlyTip: 'GitHub est√° disponible primero. Config√∫relo aqu√≠; server.yaml queda para compatibilidad y recuperaci√≥n.', adminRole: 'Administrador', userRole: 'Usuario', useDefault: 'Usar valor predeterminado', listPlaceholder: 'Separe varios valores con espacios o comas', copied: 'Copiado'
+      configTitle: 'ConfiguraciÛn de inicio de sesiÛn externo', bindingsTitle: 'Vinculaciones de cuentas', addProvider: 'AÒadir proveedor', editProvider: 'Editar proveedor', providerName: 'Clave del proveedor', displayName: 'Nombre visible', clientId: 'ID de cliente', clientSecret: 'Secreto de cliente', secretPlaceholder: 'DÈjelo vacÌo para conservar el secreto configurado', redirectUrl: 'URL de retorno', scopes: '¡mbitos', accountRole: 'Rol de la cuenta', allowedDomains: 'Dominios de correo permitidos', bindByEmail: 'Vincular por correo verificado', autoCreateAdmin: 'Crear administrador autom·ticamente', autoCreateUser: 'Crear usuario autom·ticamente', testConfig: 'Probar configuraciÛn', testSuccess: 'ConfiguraciÛn completa y URL de autorizaciÛn generada', copyCallback: 'Copiar URL de retorno', githubOnlyTip: 'GitHub est· disponible primero. Config˙relo aquÌ; server.yaml queda para compatibilidad y recuperaciÛn.', adminRole: 'Administrador', userRole: 'Usuario', useDefault: 'Usar valor predeterminado', listPlaceholder: 'Separe varios valores con espacios o comas', copied: 'Copiado'
     },
     about: {
       ...enUs.page.about,
-      runningVersion: 'Versi√≥n en ejecuci√≥n', buildTime: 'Hora de compilaci√≥n', compatVersion: 'Versi√≥n RustDesk compatible', latestVersion: '√öltima versi√≥n', updateAvailable: 'Actualizaci√≥n disponible', upToDate: 'Actualizado', updateCheck: 'Comprobaci√≥n de actualizaciones', urlTip: 'La direcci√≥n se puede modificar y se guarda en este navegador. El sitio debe permitir solicitudes CORS.', urlPlaceholder: 'URL de comprobaci√≥n', checkNow: 'Comprobar ahora', restoreDefault: 'Restaurar valor predeterminado', checkFailed: 'Fall√≥ la comprobaci√≥n', invalidUrl: 'Solo se admiten HTTP y HTTPS', invalidResponse: 'No se encontr√≥ una versi√≥n v√°lida en la respuesta', updateCommand: 'Comando de actualizaci√≥n', commandTip: 'Edite la plantilla; {version} se reemplaza por la √∫ltima versi√≥n.', copyCommand: 'Copiar comando'
+      runningVersion: 'VersiÛn en ejecuciÛn', buildTime: 'Hora de compilaciÛn', compatVersion: 'VersiÛn RustDesk compatible', latestVersion: '⁄ltima versiÛn', updateAvailable: 'ActualizaciÛn disponible', upToDate: 'Actualizado', updateCheck: 'ComprobaciÛn de actualizaciones', urlTip: 'La direcciÛn se puede modificar y se guarda en este navegador. El sitio debe permitir solicitudes CORS.', urlPlaceholder: 'URL de comprobaciÛn', checkNow: 'Comprobar ahora', restoreDefault: 'Restaurar valor predeterminado', checkFailed: 'FallÛ la comprobaciÛn', invalidUrl: 'Solo se admiten HTTP y HTTPS', invalidResponse: 'No se encontrÛ una versiÛn v·lida en la respuesta', updateCommand: 'Comando de actualizaciÛn', commandTip: 'Edite la plantilla; {version} se reemplaza por la ˙ltima versiÛn.', copyCommand: 'Copiar comando'
     }
   },
   dataMap: {
@@ -393,15 +393,15 @@ const local: App.I18n.Schema = {
     user: {
       ...enUs.dataMap.user,
       username: 'Usuario',
-        password: 'Contrase√±a',
+        password: 'ContraseÒa',
       name: 'Apodo',
       email: 'Correo',
       licensed_devices: 'Dispositivos licenciados',
-      login_verify: 'Verificaci√≥n de acceso',
+      login_verify: 'VerificaciÛn de acceso',
       status: 'Estado',
       is_admin: 'Admin',
         tfa_secret: 'Secreto 2FA',
-        tfa_code: 'C√≥digo 2FA',
+        tfa_code: 'CÛdigo 2FA',
       created_at: 'Creado el',
       statusLabel: {
         ...enUs.dataMap.user.statusLabel,
@@ -412,7 +412,7 @@ const local: App.I18n.Schema = {
       loginVerifyLabel: {
         ...enUs.dataMap.user.loginVerifyLabel,
         none: 'Ninguna',
-        emailCheck: 'Verificaci√≥n por correo',
+        emailCheck: 'VerificaciÛn por correo',
         tfaCheck: '2FA'
       }
     },
@@ -425,7 +425,7 @@ const local: App.I18n.Schema = {
       ...enUs.dataMap.device,
       username: 'Usuario',
       hostname: 'Nombre del host',
-      version: 'Versi√≥n de RustDesk',
+      version: 'VersiÛn de RustDesk',
         memory: 'Memoria',
       os: 'SO',
       rustdesk_id: 'Rustdesk ID'
@@ -443,7 +443,7 @@ const local: App.I18n.Schema = {
       user_id: 'ID de usuario',
       guid: 'GUID',
       rule: 'Regla',
-      max_peer: 'Contactos m√°x.',
+      max_peer: 'Contactos m·x.',
       shared: 'Compartido',
       ab_id: 'ID de libreta',
       tagName: 'Nombre',
@@ -463,24 +463,24 @@ const local: App.I18n.Schema = {
       subject: 'Sujeto',
       email: 'Correo',
       name: 'Nombre',
-      last_login_at: '√öltimo inicio'
+      last_login_at: '⁄ltimo inicio'
     },
     loginLog: {
       allEvents: 'Todos los eventos',
       event: 'Evento',
       userAgent: 'Agente de usuario',
-      success: '√âxito',
-      reason: 'Raz√≥n'
+      success: '…xito',
+      reason: 'RazÛn'
     },
     audit: {
       ...enUs.dataMap.audit,
       username: 'Usuario',
       type: 'Tipo',
-        conn_id: 'ID de conexi√≥n',
+        conn_id: 'ID de conexiÛn',
       rustdesk_id: 'Rustdesk ID',
         peer_id: 'ID de peer',
       ip: 'IP',
-        session_id: 'ID de sesi√≥n',
+        session_id: 'ID de sesiÛn',
         uuid: 'UUID',
       created_at: 'Creado el',
         closed_at: 'Cerrado el',
@@ -488,7 +488,7 @@ const local: App.I18n.Schema = {
         ...enUs.dataMap.audit.typeLabel,
         remote_control: 'Control remoto',
         file_transfer: 'Transferencia de archivos',
-        tcp_tunnel: 'T√∫nel TCP'
+        tcp_tunnel: 'T˙nel TCP'
       },
       fileTransferTypeLabel: {
         ...enUs.dataMap.audit.fileTransferTypeLabel,
@@ -506,8 +506,8 @@ const local: App.I18n.Schema = {
       created_at: 'Creado el',
       typeLabel: {
         ...enUs.dataMap.mailTemplate.typeLabel,
-        loginVerify: 'Verificaci√≥n de inicio de sesi√≥n',
-        registerVerify: 'Verificaci√≥n de registro',
+        loginVerify: 'VerificaciÛn de inicio de sesiÛn',
+        registerVerify: 'VerificaciÛn de registro',
         other: 'Otro'
       }
     },
@@ -523,7 +523,7 @@ const local: App.I18n.Schema = {
       created_at: 'Enviado el',
       statusLabel: {
         ...enUs.dataMap.mailLog.statusLabel,
-        ok: '√âxito',
+        ok: '…xito',
         err: 'Error'
       }
     }
@@ -532,24 +532,24 @@ const local: App.I18n.Schema = {
     ...enUs.api,
     CaptchaError: 'Error de CAPTCHA',
     UserNotExists: 'El usuario no existe',
-    UsernameOrPasswordError: 'Cuenta o contrase√±a incorrecta',
-    UserExists: 'El nombre de usuario ya est√° en uso',
-    UsernameEmpty: 'El nombre de usuario no puede estar vac√≠o',
-    PasswordEmpty: 'La contrase√±a no puede estar vac√≠a',
+    UsernameOrPasswordError: 'Cuenta o contraseÒa incorrecta',
+    UserExists: 'El nombre de usuario ya est· en uso',
+    UsernameEmpty: 'El nombre de usuario no puede estar vacÌo',
+    PasswordEmpty: 'La contraseÒa no puede estar vacÌa',
     UserAddSuccess: 'Usuario creado correctamente',
     DataError: 'Error de datos',
     RequestError: 'Solicitud fallida',
     UserUpdateSuccess: 'Usuario actualizado correctamente',
     UserDeleteSuccess: 'Usuario eliminado correctamente',
-    SessionKillSuccess: 'Sesi√≥n finalizada correctamente',
-    MailTemplateNameEmpty: 'El nombre no puede estar vac√≠o',
-    MailTemplateSubjectEmpty: 'El asunto no puede estar vac√≠o',
-    MailTemplateContentsEmpty: 'El contenido no puede estar vac√≠o',
+    SessionKillSuccess: 'SesiÛn finalizada correctamente',
+    MailTemplateNameEmpty: 'El nombre no puede estar vacÌo',
+    MailTemplateSubjectEmpty: 'El asunto no puede estar vacÌo',
+    MailTemplateContentsEmpty: 'El contenido no puede estar vacÌo',
     MailTemplateAddSuccess: 'Plantilla de correo creada correctamente',
     MailTemplateUpdateSuccess: 'Plantilla de correo actualizada correctamente',
-    NoEmailAddress: 'No hay direcci√≥n de correo configurada',
-    VerificationCodeError: 'Error en el c√≥digo de verificaci√≥n',
-    UUIDEmpty: 'UUID no puede estar vac√≠o'
+    NoEmailAddress: 'No hay direcciÛn de correo configurada',
+    VerificationCodeError: 'Error en el cÛdigo de verificaciÛn',
+    UUIDEmpty: 'UUID no puede estar vacÌo'
   },
   dropdown: {
     ...enUs.dropdown,
@@ -561,14 +561,14 @@ const local: App.I18n.Schema = {
   },
   icon: {
     ...enUs.icon,
-    themeConfig: 'configuraci√≥n de tema',
+    themeConfig: 'configuraciÛn de tema',
     themeSchema: 'Esquema de tema',
     lang: 'Cambiar idioma',
     fullscreen: 'Pantalla completa',
     fullscreenExit: 'Salir de pantalla completa',
-    reload: 'Recargar p√°gina',
-    collapse: 'Colapsar Men√∫',
-    expand: 'Expandir Men√∫',
+    reload: 'Recargar p·gina',
+    collapse: 'Colapsar Men˙',
+    expand: 'Expandir Men˙',
     pin: 'Fijar',
     unpin: 'Desfijar'
   },

@@ -190,18 +190,18 @@ grep -q 'verifyOAuthIDToken' backend/internal/service/oauth_provider_service.go 
 grep -q 'verifyIDTokenSignature(idToken' backend/internal/service/oauth_provider_service.go || fail "OAuth provider ID token signature verification call missing"
 grep -q 'fillClaimsByOAuthIDToken(idToken, expectedIssuer, provider.ClientID, claims)' backend/internal/service/oauth_provider_service.go || fail "OAuth provider ID token claim validation call missing"
 grep -q 'validateIDTokenClaims(claims, expectedIssuer, expectedAudience)' backend/internal/service/oauth_provider_service.go || fail "OAuth provider ID token claim validation missing"
-grep -q 'oauth userinfo subject mismatch' backend/internal/service/oauth_provider_service.go || fail "OAuth provider userinfo/id_token subject consistency check missing"
+grep -q 'oauth userinfo subject mismatch' backend/internal/service/oauth_provider_service.go || grep -q 'ERR-2013.*oauth userinfo subject mismatch' backend/internal/errcode/errcode.go || fail "OAuth provider userinfo/id_token subject consistency check missing"
 
 # OIDC ID token fallback must verify signature and validate high-value claims before trusting payload data.
 grep -q 'verifyIDTokenSignature' backend/internal/service/oidc_auth_service.go || fail "OIDC ID token signature verification call missing"
 grep -q 'JWKSURI.*json:"jwks_uri"' backend/internal/service/oidc_auth_service.go || fail "OIDC jwks_uri metadata support missing"
 grep -q 'rsa.VerifyPKCS1v15' backend/internal/service/oidc_jwks_verify.go || fail "OIDC RS256 signature verification missing"
-grep -q 'unsupported id token alg' backend/internal/service/oidc_jwks_verify.go || fail "OIDC alg allowlist missing"
+grep -q 'unsupported id token alg' backend/internal/service/oidc_jwks_verify.go || grep -q 'ERR-3026' backend/internal/errcode/errcode.go || fail "OIDC alg allowlist missing"
 grep -q 'validateIDTokenClaims' backend/internal/service/oidc_auth_service.go || fail "OIDC ID token claim validation missing"
-grep -q 'id token issuer invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC issuer validation missing"
-grep -q 'id token audience invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC audience validation missing"
-grep -q 'id token expired' backend/internal/service/oidc_auth_service.go || fail "OIDC expiry validation missing"
-grep -q 'id token issued-at invalid' backend/internal/service/oidc_auth_service.go || fail "OIDC issued-at validation missing"
+grep -q 'id token issuer invalid' backend/internal/service/oidc_auth_service.go || grep -q 'ERR-3014' backend/internal/errcode/errcode.go || fail "OIDC issuer validation missing"
+grep -q 'id token audience invalid' backend/internal/service/oidc_auth_service.go || grep -q 'ERR-3015' backend/internal/errcode/errcode.go || fail "OIDC audience validation missing"
+grep -q 'id token expired' backend/internal/service/oidc_auth_service.go || grep -q 'ERR-3016' backend/internal/errcode/errcode.go || fail "OIDC expiry validation missing"
+grep -q 'id token issued-at invalid' backend/internal/service/oidc_auth_service.go || grep -q 'ERR-3017' backend/internal/errcode/errcode.go || fail "OIDC issued-at validation missing"
 
 # Recording uploads must have a hard size limit and private directory permissions.
 grep -q 'maxCompatRecordSize' backend/internal/service/compat_service.go || fail "record upload size limit missing"

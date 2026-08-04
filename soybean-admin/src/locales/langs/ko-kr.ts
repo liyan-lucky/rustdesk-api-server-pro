@@ -359,7 +359,7 @@ const local: App.I18n.Schema = {
     },
     "about": {
       "latestCommand": "latest로 업데이트", "pinnedCommand": "감지된 버전으로 업데이트 및 확인", "customCommand": "사용자 지정 명령 템플릿",
-      "runningVersion": "실행 버전", "buildTime": "빌드 시간", "compatVersion": "호환 RustDesk 버전", "latestVersion": "최신 버전", "updateAvailable": "업데이트 있음", "upToDate": "최신 상태", "updateCheck": "온라인 업데이트 확인", "urlTip": "확인 URL은 변경할 수 있으며 이 브라우저에 저장됩니다. 대상 사이트에서 CORS를 허용해야 합니다.", "urlPlaceholder": "업데이트 확인 URL", "checkNow": "지금 확인", "restoreDefault": "기본값 복원", "checkFailed": "업데이트 확인 실패", "invalidUrl": "HTTP 또는 HTTPS URL만 지원합니다", "invalidResponse": "유효한 버전을 찾을 수 없습니다", "updateCommand": "컨테이너 업데이트 명령", "commandTip": "명령 템플릿을 편집할 수 있으며 {version}은 최신 버전으로 대체됩니다.", "copyCommand": "명령 복사"
+      "runningVersion": "실행 버전", "buildTime": "빌드 시간", "compatVersion": "호환 RustDesk 버전", "latestVersion": "최신 버전", "updateAvailable": "업데이트 있음", "upToDate": "최신 상태", "updateCheck": "온라인 업데이트 확인", "urlTip": "확인 URL은 변경할 수 있으며 이 브라우저에 저장됩니다. 대상 사이트에서 CORS를 허용해야 합니다.", "urlPlaceholder": "업데이트 확인 URL", "checkNow": "지금 확인", "restoreDefault": "기본값 복원", "checkFailed": "업데이트 확인 실패", "invalidUrl": "HTTP 또는 HTTPS URL만 지원합니다", "invalidResponse": "유효한 버전을 찾을 수 없습니다", "updateCommand": "컨테이너 업데이트 명령", "commandTip": "명령 템플릿을 편집할 수 있으며 {version}은 최신 버전으로 대체됩니다.",       "copyCommand": "명령 복사", "versionInfo": "버전 정보", "errorHelp": "오류 코드 도움말", "errcodeTip": "서버가 반환하는 모든 오류 코드가 아래에 나열됩니다. 오류 발생 시 코드를 검색하여 원인과 해결 방법을 확인하세요.", "searchPlaceholder": "코드, 메시지 또는 설명 검색", "moduleFilter": "모듈별 필터", "errCode": "코드", "errMessage": "메시지", "errModule": "모듈", "errDescription": "설명", "errSolution": "해결 방법"
     }
   },
   "dropdown": {

@@ -1,4 +1,4 @@
-ï»¿import enUs from './en-us';
+import enUs from './en-us';
 
 const local: App.I18n.Schema = {
   ...enUs,
@@ -7,18 +7,18 @@ const local: App.I18n.Schema = {
     ...enUs.common,
     action: 'Action',
     add: 'Ajouter',
-    addSuccess: 'Ajout rÃ©ussi',
+    addSuccess: 'Ajout réussi',
     backToHome: 'Retour ? l\'accueil',
     batchDelete: 'Suppression par lot',
     cancel: 'Annuler',
     close: 'Fermer',
-    check: 'vÃ©rifier',
-    expandColumn: 'DÃ©velopper la colonne',
-    columnSetting: 'ParamÃ¨tres des colonnes',
+    check: 'vérifier',
+    expandColumn: 'Développer la colonne',
+    columnSetting: 'Paramètres des colonnes',
     config: 'Configuration',
     confirm: 'Confirmer',
     delete: 'Supprimer',
-    deleteSuccess: 'Suppression rÃ©ussie',
+    deleteSuccess: 'Suppression réussie',
     confirmDelete: 'Voulez-vous vraiment supprimer ?',
     edit: 'Modifier',
     import: 'Importer CSV',
@@ -27,23 +27,23 @@ const local: App.I18n.Schema = {
     warning: 'Avertissement',
     error: 'Erreur',
     index: 'Index',
-    keywordSearch: 'Veuillez saisir un mot-clÃ©',
-    logout: 'Se dÃ©connecter',
-    logoutConfirm: 'Voulez-vous vraiment vous dÃ©connecter ?',
-    lookForward: 'BientÃ´t disponible',
+    keywordSearch: 'Veuillez saisir un mot-clé',
+    logout: 'Se déconnecter',
+    logoutConfirm: 'Voulez-vous vraiment vous déconnecter ?',
+    lookForward: 'Bientôt disponible',
     modify: 'Modifier',
-    modifySuccess: 'Modification rÃ©ussie',
-    noData: 'Aucune donnÃ©e',
-    operate: 'opÃ©ration',
-    pleaseCheckValue: 'Veuillez vÃ©rifier si la valeur est valide',
+    modifySuccess: 'Modification réussie',
+    noData: 'Aucune donnée',
+    operate: 'opération',
+    pleaseCheckValue: 'Veuillez vérifier si la valeur est valide',
     refresh: 'Actualiser',
-    reset: 'RÃ©initialiser',
+    reset: 'Réinitialiser',
     search: 'Rechercher',
     switch: 'Basculer',
     tip: 'Conseil',
-    trigger: 'DÃ©clencher',
-    update: 'Mettre Ã  jour',
-    updateSuccess: 'Mise Ã  jour rÃ©ussie',
+    trigger: 'Déclencher',
+    update: 'Mettre à jour',
+    updateSuccess: 'Mise à jour réussie',
     userCenter: 'Centre utilisateur',
     yesOrNo: {
       yes: 'Oui',
@@ -52,24 +52,24 @@ const local: App.I18n.Schema = {
   },
   request: {
     ...enUs.request,
-    logout: 'dÃ©connecter lâ€™utilisateur aprÃ¨s Ã©chec de requÃªte',
-    logoutMsg: 'Ã‰tat utilisateur invalide, veuillez vous reconnecter',
-    logoutWithModal: 'Afficher une fenÃªtre aprÃ¨s Ã©chec de requÃªte puis dÃ©connecter',
-    logoutWithModalMsg: 'Ã‰tat utilisateur invalide, veuillez vous reconnecter',
+    logout: 'déconnecter l’utilisateur après échec de requête',
+    logoutMsg: 'État utilisateur invalide, veuillez vous reconnecter',
+    logoutWithModal: 'Afficher une fenêtre après échec de requête puis déconnecter',
+    logoutWithModalMsg: 'État utilisateur invalide, veuillez vous reconnecter',
     refreshToken: 'Le jeton a expir?, actualisation du jeton',
-    tokenExpired: 'Le jeton de la requÃªte a expir?'
+    tokenExpired: 'Le jeton de la requête a expir?'
   },
   theme: {
     ...enUs.theme,
     themeSchema: {
       ...enUs.theme.themeSchema,
-      title: 'SchÃ©ma de thÃ¨me',
+      title: 'Schéma de thème',
       light: 'Clair',
       dark: 'Sombre',
-      auto: 'Suivre le systÃ¨me'
+      auto: 'Suivre le système'
     },
     grayscale: 'Niveaux de gris',
-    colourWeakness: 'DÃ©ficience des couleurs',
+    colourWeakness: 'Déficience des couleurs',
     layoutMode: {
       ...enUs.theme.layoutMode,
       title: 'Mode de mise en page',
@@ -79,21 +79,21 @@ const local: App.I18n.Schema = {
       'horizontal-mix': 'Mode mixte horizontal',
       reverseHorizontalMix: 'Inverser la position des menus de niveau 1 et enfants'
     },
-    recommendColor: 'Appliquer lâ€™algorithme de couleur recommandÃ©',
-    recommendColorDesc: "L'algorithme de couleur recommandÃ© fait rÃ©fÃ©rence Ã ",
+    recommendColor: 'Appliquer l’algorithme de couleur recommandé',
+    recommendColorDesc: "L'algorithme de couleur recommandé fait référence à",
     themeColor: {
       ...enUs.theme.themeColor,
-      title: 'Couleur du thÃ¨me',
+      title: 'Couleur du thème',
       primary: 'Primaire',
       info: 'Info',
-      success: 'SuccÃ¨s',
+      success: 'Succès',
       warning: 'Avertissement',
       error: 'Erreur',
       followPrimary: 'Suivre la couleur primaire'
     },
     scrollMode: {
       ...enUs.theme.scrollMode,
-      title: 'Mode de dÃ©filement',
+      title: 'Mode de défilement',
       wrapper: 'Conteneur',
       content: 'Contenu'
     },
@@ -102,24 +102,24 @@ const local: App.I18n.Schema = {
       animate: 'Animation de page',
       mode: {
         ...enUs.theme.page.mode,
-        title: 'Mode dâ€™animation',
+        title: 'Mode d’animation',
         fade: 'Fondu',
         'fade-slide': 'Glisser',
         'fade-bottom': 'Fondu zoom',
-        'fade-scale': 'Fondu Ã©chelle',
+        'fade-scale': 'Fondu échelle',
         'zoom-fade': 'Zoom fondu',
-        'zoom-out': 'Zoom arriÃ¨re',
+        'zoom-out': 'Zoom arrière',
         none: 'Aucun'
       }
     },
-    fixedHeaderAndTab: 'En-tÃªte et onglets fixes',
+    fixedHeaderAndTab: 'En-tête et onglets fixes',
     header: {
       ...enUs.theme.header,
-      height: 'Hauteur de l?En-tÃªte',
+      height: 'Hauteur de l?En-tête',
       breadcrumb: {
         ...enUs.theme.header.breadcrumb,
-        visible: 'Fil dâ€™Ariane visible',
-        showIcon: 'IcÃ´ne du fil dâ€™Ariane visible'
+        visible: 'Fil d’Ariane visible',
+        showIcon: 'Icône du fil d’Ariane visible'
       }
     },
     tab: {
@@ -136,11 +136,11 @@ const local: App.I18n.Schema = {
     },
     sider: {
       ...enUs.theme.sider,
-      inverted: 'Barre latÃ©rale sombre',
-      width: 'Largeur de la barre latÃ©rale',
-      collapsedWidth: 'Largeur repliÃ©e',
+      inverted: 'Barre latérale sombre',
+      width: 'Largeur de la barre latérale',
+      collapsedWidth: 'Largeur repliée',
       mixWidth: 'Largeur mixte',
-      mixCollapsedWidth: 'Largeur mixte repliÃ©e',
+      mixCollapsedWidth: 'Largeur mixte repliée',
       mixChildMenuWidth: 'Largeur du sous-menu mixte'
     },
     footer: {
@@ -152,23 +152,23 @@ const local: App.I18n.Schema = {
     },
     watermark: {
       ...enUs.theme.watermark,
-      visible: 'Filigrane visible en plein Ã©cran',
+      visible: 'Filigrane visible en plein écran',
       text: 'Texte du filigrane'
     },
-    themeDrawerTitle: 'Configuration du thÃ¨me',
+    themeDrawerTitle: 'Configuration du thème',
     pageFunTitle: 'Fonctions de page',
     configOperation: {
       ...enUs.theme.configOperation,
       copyConfig: 'Copier la configuration',
-      copySuccessMsg: 'Copie rÃ©ussie, veuillez remplacer la variable "themeSettings" dans "src/theme/settings.ts"',
-      resetConfig: 'RÃ©initialiser la configuration',
-      resetSuccessMsg: 'RÃ©initialisation rÃ©ussie'
+      copySuccessMsg: 'Copie réussie, veuillez remplacer la variable "themeSettings" dans "src/theme/settings.ts"',
+      resetConfig: 'Réinitialiser la configuration',
+      resetSuccessMsg: 'Réinitialisation réussie'
     }
   },
   route: {
     ...enUs.route,
     login: 'connexion',
-    403: 'AccÃ¨s refusÃ©',
+    403: 'Accès refusé',
     404: 'Page introuvable',
     500: 'Erreur serveur',
     'iframe-page': 'Iframe',
@@ -179,7 +179,7 @@ const local: App.I18n.Schema = {
     user_sessions: 'Sessions',
     user_profile: 'Profil',
     system: 'Gestion systeme',
-    system_mail_template: 'ModÃ¨les e-mail',
+    system_mail_template: 'Modèles e-mail',
     system_mail_logs: 'Logs e-mail',
     system_mail: 'E-mail',
     audit_baselogs: 'Journaux de base',
@@ -190,7 +190,7 @@ const local: App.I18n.Schema = {
     'my-devices_peers': 'Mes contacts',
     'my-devices_manage': 'Gestion des carnets',
     'my-devices_tags': 'Gestion des tags',
-    workspace: 'Mon espace', workspace_overview: 'Vue dâ€™ensemble', workspace_devices: 'Mes appareils', workspace_sessions: 'Sessions de connexion', workspace_security: 'Ã‰vÃ©nements de sÃ©curitÃ©', workspace_profile: 'Profil', about: 'Ã€ propos et mises Ã  jour',
+    workspace: 'Mon espace', workspace_overview: 'Vue d’ensemble', workspace_devices: 'Mes appareils', workspace_sessions: 'Sessions de connexion', workspace_security: 'Événements de sécurité', workspace_profile: 'Profil', about: 'À propos et mises à jour',
     system_server: 'Configuration serveur',
     system_tokens: 'Jeton utilisateur',
     system_oauth: 'Connexion tierce'
@@ -202,20 +202,20 @@ const local: App.I18n.Schema = {
         common: {
           ...enUs.page.login.common,
           loginOrRegister: 'connexion / Inscription',
-          userNamePlaceholder: 'Veuillez saisir le nom dâ€™utilisateur',
-          phonePlaceholder: 'Veuillez saisir le numÃ©ro de tÃ©lÃ©phone',
-          codePlaceholder: 'Veuillez saisir le code de vÃ©rification',
+          userNamePlaceholder: 'Veuillez saisir le nom d’utilisateur',
+          phonePlaceholder: 'Veuillez saisir le numéro de téléphone',
+          codePlaceholder: 'Veuillez saisir le code de vérification',
           passwordPlaceholder: 'Veuillez saisir le mot de passe',
           confirmPasswordPlaceholder: 'Veuillez saisir ? nouveau le mot de passe',
           codeLogin: 'connexion par code',
           confirm: 'Confirmer',
           back: 'Retour',
-          validateSuccess: 'VÃ©rification rÃ©ussie',
-          loginSuccess: 'connexion rÃ©ussie',
+          validateSuccess: 'Vérification réussie',
+          loginSuccess: 'connexion réussie',
           welcomeBack: 'Bon retour, {userName} !',
           thirdPartyLogin: 'connexion tierce',
           continueWith: 'Continuer avec {provider}',
-          providerUnavailable: 'La connexion {provider} est indisponible', oauthAccountNotBound: 'Aucun compte correspondant ne peut Ãªtre liÃ©. Utilisez le mÃªme courriel vÃ©rifiÃ© ou activez la crÃ©ation automatique.', oauthProviderUnreachable: 'Le serveur ne peut pas joindre le fournisseur. VÃ©rifiez la connexion HTTPS sortante.', oauthStateExpired: 'La demande de connexion a expirÃ© ou a dÃ©jÃ  Ã©tÃ© utilisÃ©e. Recommencez.', oauthAuthFailed: 'Ã‰chec de la connexion tierce. VÃ©rifiez la configuration et le journal de sÃ©curitÃ©.'
+          providerUnavailable: 'La connexion {provider} est indisponible', oauthAccountNotBound: 'Aucun compte correspondant ne peut être lié. Utilisez le même courriel vérifié ou activez la création automatique.', oauthProviderUnreachable: 'Le serveur ne peut pas joindre le fournisseur. Vérifiez la connexion HTTPS sortante.', oauthStateExpired: 'La demande de connexion a expiré ou a déjà été utilisée. Recommencez.', oauthAuthFailed: 'Échec de la connexion tierce. Vérifiez la configuration et le journal de sécurité.'
         },
         pwdLogin: {
           ...enUs.page.login.pwdLogin,
@@ -230,7 +230,7 @@ const local: App.I18n.Schema = {
       },
     home: {
       ...enUs.page.home,
-      greeting: 'Bonjour {userName}, excellente journÃ©e !',
+      greeting: 'Bonjour {userName}, excellente journée !',
       userCount: 'Utilisateurs',
       deviceCount: 'Appareils',
       onlineCount: 'En ligne',
@@ -253,7 +253,7 @@ const local: App.I18n.Schema = {
       serverConfig: {
         ...enUs.page.home.serverConfig,
         title: 'Configuration de connexion client',
-        tip: 'Copiez les valeurs suivantes dans le client RustDesk. Si KEY est vide, dÃ©finissez `RUSTDESK_KEY` dans les variables dâ€™environnement du conteneur.',
+        tip: 'Copiez les valeurs suivantes dans le client RustDesk. Si KEY est vide, définissez `RUSTDESK_KEY` dans les variables d’environnement du conteneur.',
         idServer: 'Serveur ID',
         relayServer: 'Serveur relais',
         apiServer: 'Serveur API',
@@ -264,55 +264,55 @@ const local: App.I18n.Schema = {
         keyPlaceholder: 'Fournir via la variable RUSTDESK_KEY',
         copy: 'Copier',
         copyAll: 'Tout copier',
-        copyTemplate: 'Copier le modÃ¨le RustDesk',
+        copyTemplate: 'Copier le modèle RustDesk',
         showQr: 'Afficher le code QR',
         qrTitle: 'Code QR d\'importation RustDesk',
         qrTip: 'Scannez ce code QR dans l\'application RustDesk mobile pour importer la configuration.',
-        qrPayload: 'Texte du modÃ¨le RustDesk',
-        qrFailed: 'Ã‰chec de la gÃ©nÃ©ration du code QR',
+        qrPayload: 'Texte du modèle RustDesk',
+        qrFailed: 'Échec de la génération du code QR',
         refresh: 'Actualiser la configuration',
         clearCacheReload: 'Vider le cache et recharger',
         source: 'Source',
         lastUpdated: 'Derniere mise a jour',
         show: 'Afficher',
         hide: 'Masquer',
-        missingTip: 'Les champs suivants sont vides. Veuillez dâ€™abord les configurer dans les variables dâ€™environnement du conteneur : {fields}',
-        copyEmpty: '{label} est vide et ne peut pas Ãªtre copiÃ©',
-        copySuccess: '{label} copiÃ©',
-        copyFailed: 'Ã©chec de la copie de {label}',
-        fetchFailed: 'Ã©chec du chargement de la configuration serveur',
+        missingTip: 'Les champs suivants sont vides. Veuillez d’abord les configurer dans les variables d’environnement du conteneur : {fields}',
+        copyEmpty: '{label} est vide et ne peut pas être copié',
+        copySuccess: '{label} copié',
+        copyFailed: 'échec de la copie de {label}',
+        fetchFailed: 'échec du chargement de la configuration serveur',
         cacheCleared: 'Cache vid?, rechargement de la configuration serveur',
         sourceType: {
           ...enUs.page.home.serverConfig.sourceType,
           remote: 'Distant',
-          'memory-cache': 'Cache mÃ©moire',
+          'memory-cache': 'Cache mémoire',
           'session-cache': 'Cache session',
           env: 'Env',
-          inferred: 'DÃ©duit',
+          inferred: 'Déduit',
           empty: 'Vide',
-           auto: 'Auto-dÃ©tectÃ©'
+           auto: 'Auto-détecté'
         },
         sourceHint: {
           ...enUs.page.home.serverConfig.sourceHint,
-          env: 'Cette valeur provient dâ€™une variable dâ€™environnement du conteneur.',
-          inferred: 'Cette valeur est dÃ©duite automatiquement de lâ€™adresse dâ€™accÃ¨s actuelle.',
-          empty: 'Aucune valeur configurÃ©e ni dÃ©duite pour le moment.'
+          env: 'Cette valeur provient d’une variable d’environnement du conteneur.',
+          inferred: 'Cette valeur est déduite automatiquement de l’adresse d’accès actuelle.',
+          empty: 'Aucune valeur configurée ni déduite pour le moment.'
         },
         connectivity: {
           ...enUs.page.home.serverConfig.connectivity,
-          clear: 'Effacer les rÃ©sultats',
-          check: 'Tester la connectivitÃ©',
+          clear: 'Effacer les résultats',
+          check: 'Tester la connectivité',
           checkOne: 'Tester',
-          checked: 'VÃ©rification de connectivitÃ© terminÃ©e',
-          checkedOne: 'Connectivit? de {field} vÃ©rifiÃ©e',
-          checkedCached: 'RÃ©sultat rÃ©cent de connectivitÃ© utilisÃ© (cache)',
-          checkFailed: 'Ã©chec de la vÃ©rification de connectivitÃ©',
-          cleared: 'RÃ©sultats de connectivitÃ© effacÃ©s',
-          source: 'Source de vÃ©rification',
-          lastChecked: 'DerniÃ¨re vÃ©rification',
+          checked: 'Vérification de connectivité terminée',
+          checkedOne: 'Connectivit? de {field} vérifiée',
+          checkedCached: 'Résultat récent de connectivité utilisé (cache)',
+          checkFailed: 'échec de la vérification de connectivité',
+          cleared: 'Résultats de connectivité effacés',
+          source: 'Source de vérification',
+          lastChecked: 'Dernière vérification',
           target: 'Cible',
-          duration: 'DurÃ©e',
-          notChecked: 'Pas encore vÃ©rifiÃ©',
+          duration: 'Durée',
+          notChecked: 'Pas encore vérifié',
           checkSourceType: {
             ...enUs.page.home.serverConfig.connectivity.checkSourceType,
             remote: 'Distant',
@@ -320,10 +320,10 @@ const local: App.I18n.Schema = {
           },
           status: {
             ...enUs.page.home.serverConfig.connectivity.status,
-            idle: 'Non vÃ©rifiÃ©',
+            idle: 'Non vérifié',
             ok: 'Accessible',
-            error: 'Ã©chec',
-            skip: 'ignorÃ©'
+            error: 'échec',
+            skip: 'ignoré'
           }
         }
       }
@@ -333,7 +333,7 @@ const local: App.I18n.Schema = {
       list: {
         ...enUs.page.user.list,
         addUser: 'Ajouter un utilisateur',
-        editUser: 'Modifier lâ€™utilisateur',
+        editUser: 'Modifier l’utilisateur',
         searchPlaceholder: 'Nom utilisateur/Pseudo/E-mail'
       },
       sessions: {
@@ -347,23 +347,23 @@ const local: App.I18n.Schema = {
       },
       devices: {
         ...enUs.page.user.devices,
-        logsSearchPlaceholder: 'Utilisateur/HÃ´te/RustdeskID'
+        logsSearchPlaceholder: 'Utilisateur/Hôte/RustdeskID'
       }
     },
     system: {
       ...enUs.page.system,
       mailTemplate: {
         ...enUs.page.system.mailTemplate,
-        addMailTemplate: 'Ajouter un modÃ¨le',
-        editMailTemplate: 'Modifier le modÃ¨le',
+        addMailTemplate: 'Ajouter un modèle',
+        editMailTemplate: 'Modifier le modèle',
         inputName: 'Saisir le nom',
         inputSubject: 'Saisir le sujet',
         inputContents: 'Saisir le contenu',
-        selectType: 'SÃ©lectionner le type'
+        selectType: 'Sélectionner le type'
       },
       mailLog: {
         ...enUs.page.system.mailLog,
-        info: 'DÃ©tail'
+        info: 'Détail'
       }
     },
     myDevices: {
@@ -373,19 +373,19 @@ const local: App.I18n.Schema = {
       online: 'En ligne',
       offline: 'Hors ligne',
       conns: 'connexions',
-      lastSync: 'DerniÃ¨re synchro',
-      logout: 'DÃ©connexion'
+      lastSync: 'Dernière synchro',
+      logout: 'Déconnexion'
     },
     workspace: {
       ...enUs.page.workspace,
-      scopeTitle: 'Espace personnel', scopeTip: 'Seuls vos appareils, sessions, Ã©vÃ©nements de sÃ©curitÃ© et carnets autorisÃ©s sont affichÃ©s ici.', myDevices: 'Mes appareils', activeSessions: 'Sessions actives', addressBooks: 'Carnets dâ€™adresses', securityEvents: 'Ã‰vÃ©nements de sÃ©curitÃ©', currentSession: 'Session actuelle', revokeConfirm: 'RÃ©voquer cette session de connexion ?', revoke: 'RÃ©voquer', accountRole: 'RÃ´le du compte', adminRole: 'Administrateur', userRole: 'Utilisateur', permissionScope: 'PÃ©rimÃ¨tre des droits', userScope: 'Ressources personnelles et carnets explicitement partagÃ©s', active: 'Actif'
+      scopeTitle: 'Espace personnel', scopeTip: 'Seuls vos appareils, sessions, événements de sécurité et carnets autorisés sont affichés ici.', myDevices: 'Mes appareils', activeSessions: 'Sessions actives', addressBooks: 'Carnets d’adresses', securityEvents: 'Événements de sécurité', currentSession: 'Session actuelle', revokeConfirm: 'Révoquer cette session de connexion ?', revoke: 'Révoquer', accountRole: 'Rôle du compte', adminRole: 'Administrateur', userRole: 'Utilisateur', permissionScope: 'Périmètre des droits', userScope: 'Ressources personnelles et carnets explicitement partagés', active: 'Actif'
     },
     oauth: {
-      configTitle: 'Configuration de la connexion tierce', bindingsTitle: 'Liaisons de comptes', addProvider: 'Ajouter un fournisseur', editProvider: 'Modifier le fournisseur', providerName: 'ClÃ© du fournisseur', displayName: 'Nom affichÃ©', clientId: 'Identifiant client', clientSecret: 'Secret client', secretPlaceholder: 'Laisser vide pour conserver le secret configurÃ©', redirectUrl: 'Adresse de rappel', scopes: 'Autorisations', accountRole: 'RÃ´le du compte', allowedDomains: 'Domaines de messagerie autorisÃ©s', bindByEmail: 'Lier par courriel vÃ©rifiÃ©', autoCreateAdmin: 'CrÃ©er automatiquement un administrateur', autoCreateUser: 'CrÃ©er automatiquement un utilisateur', testConfig: 'Tester la configuration', testSuccess: 'Configuration complÃ¨te et adresse dâ€™autorisation gÃ©nÃ©rÃ©e', copyCallback: 'Copier le rappel', githubOnlyTip: 'GitHub est disponible en premier. Configurez-le ici ; server.yaml reste rÃ©servÃ© Ã  la compatibilitÃ© et Ã  la rÃ©cupÃ©ration.', adminRole: 'Administrateur', userRole: 'Utilisateur', useDefault: 'Utiliser la valeur par dÃ©faut', listPlaceholder: 'SÃ©parer les valeurs par des espaces ou des virgules', copied: 'CopiÃ©'
+      configTitle: 'Configuration de la connexion tierce', bindingsTitle: 'Liaisons de comptes', addProvider: 'Ajouter un fournisseur', editProvider: 'Modifier le fournisseur', providerName: 'Clé du fournisseur', displayName: 'Nom affiché', clientId: 'Identifiant client', clientSecret: 'Secret client', secretPlaceholder: 'Laisser vide pour conserver le secret configuré', redirectUrl: 'Adresse de rappel', scopes: 'Autorisations', accountRole: 'Rôle du compte', allowedDomains: 'Domaines de messagerie autorisés', bindByEmail: 'Lier par courriel vérifié', autoCreateAdmin: 'Créer automatiquement un administrateur', autoCreateUser: 'Créer automatiquement un utilisateur', testConfig: 'Tester la configuration', testSuccess: 'Configuration complète et adresse d’autorisation générée', copyCallback: 'Copier le rappel', githubOnlyTip: 'GitHub est disponible en premier. Configurez-le ici ; server.yaml reste réservé à la compatibilité et à la récupération.', adminRole: 'Administrateur', userRole: 'Utilisateur', useDefault: 'Utiliser la valeur par défaut', listPlaceholder: 'Séparer les valeurs par des espaces ou des virgules', copied: 'Copié'
     },
     about: {
-      latestCommand: 'Mettre Ã  jour vers latest', pinnedCommand: 'Mettre Ã  jour et vÃ©rifier la version dÃ©tectÃ©e', customCommand: 'ModÃ¨le de commande personnalisÃ©',
-      runningVersion: 'Version en cours', buildTime: 'Date de compilation', compatVersion: 'Version RustDesk compatible', latestVersion: 'DerniÃ¨re version', updateAvailable: 'Mise Ã  jour disponible', upToDate: 'Ã€ jour', updateCheck: 'Recherche de mise Ã  jour en ligne', urlTip: 'Lâ€™adresse de vÃ©rification est modifiable et enregistrÃ©e dans ce navigateur. Elle peut renvoyer une version sÃ©mantique en texte ou un JSON contenant version, latest_version, tag_name ou server.version. Le site distant doit autoriser les requÃªtes CORS du navigateur.', urlPlaceholder: 'Adresse de vÃ©rification des mises Ã  jour', checkNow: 'VÃ©rifier maintenant', restoreDefault: 'RÃ©tablir lâ€™adresse par dÃ©faut', checkFailed: 'Ã‰chec de la vÃ©rification', invalidUrl: 'Seules les adresses HTTP et HTTPS sont acceptÃ©es', invalidResponse: 'Aucune version sÃ©mantique trouvÃ©e dans la rÃ©ponse', updateCommand: 'Commande de mise Ã  jour', commandTip: 'Modifiez le modÃ¨le; {version} est remplacÃ© par la derniÃ¨re version.', copyCommand: 'Copier la commande'
+      latestCommand: 'Mettre à jour vers latest', pinnedCommand: 'Mettre à jour et vérifier la version détectée', customCommand: 'Custom command template', versionInfo: 'Version Info', errorHelp: 'Error Code Help', errcodeTip: 'All error codes returned by the server are listed below. When you encounter an error, look up the code to find the cause and solution.', searchPlaceholder: 'Search code, message, or description', moduleFilter: 'Filter by module', errCode: 'Code', errMessage: 'Message', errModule: 'Module', errDescription: 'Description', errSolution: 'Solution',
+      runningVersion: 'Version en cours', buildTime: 'Date de compilation', compatVersion: 'Version RustDesk compatible', latestVersion: 'Dernière version', updateAvailable: 'Mise à jour disponible', upToDate: 'À jour', updateCheck: 'Recherche de mise à jour en ligne', urlTip: 'L’adresse de vérification est modifiable et enregistrée dans ce navigateur. Elle peut renvoyer une version sémantique en texte ou un JSON contenant version, latest_version, tag_name ou server.version. Le site distant doit autoriser les requêtes CORS du navigateur.', urlPlaceholder: 'Adresse de vérification des mises à jour', checkNow: 'Vérifier maintenant', restoreDefault: 'Rétablir l’adresse par défaut', checkFailed: 'Échec de la vérification', invalidUrl: 'Seules les adresses HTTP et HTTPS sont acceptées', invalidResponse: 'Aucune version sémantique trouvée dans la réponse', updateCommand: 'Commande de mise à jour', commandTip: 'Modifiez le modèle; {version} est remplacé par la dernière version.', copyCommand: 'Copier la commande'
     }
   },
   dataMap: {
@@ -396,37 +396,37 @@ const local: App.I18n.Schema = {
         password: 'Mot de passe',
       name: 'Pseudo',
       email: 'E-mail',
-      licensed_devices: 'Appareils autorisÃ©s',
-      login_verify: 'VÃ©rification connexion',
+      licensed_devices: 'Appareils autorisés',
+      login_verify: 'Vérification connexion',
       status: 'Statut',
       is_admin: 'Admin',
         tfa_secret: 'Secret 2FA',
         tfa_code: 'Code 2FA',
-      created_at: 'CrÃ©Ã© le',
+      created_at: 'Créé le',
       statusLabel: {
         ...enUs.dataMap.user.statusLabel,
-        disabled: 'DÃ©sactivÃ©',
-        unverified: 'Non vÃ©rifiÃ©',
+        disabled: 'Désactivé',
+        unverified: 'Non vérifié',
         normal: 'Normal'
       },
       loginVerifyLabel: {
         ...enUs.dataMap.user.loginVerifyLabel,
         none: 'Aucune',
-        emailCheck: 'VÃ©rification e-mail',
+        emailCheck: 'Vérification e-mail',
         tfaCheck: '2FA'
       }
     },
       session: {
         ...enUs.dataMap.session,
         expired: 'Expire le',
-        created_at: 'CrÃ©Ã© le'
+        created_at: 'Créé le'
       },
     device: {
       ...enUs.dataMap.device,
       username: 'Nom utilisateur',
-      hostname: "Nom de l'hÃ´te",
+      hostname: "Nom de l'hôte",
       version: 'Version RustDesk',
-        memory: 'MÃ©moire',
+        memory: 'Mémoire',
       os: 'OS',
       rustdesk_id: 'Rustdesk ID'
     },
@@ -434,22 +434,22 @@ const local: App.I18n.Schema = {
       ...enUs.dataMap.ab,
       rustdesk_id: 'Identifiant Rustdesk',
       username: 'Nom d\'utilisateur',
-      hostname: "Nom d'hÃ´te",
-      tags: 'Ã‰tiquettes',
+      hostname: "Nom d'hôte",
+      tags: 'Étiquettes',
       alias: 'Alias',
       hash: 'Hash',
-      owner: 'PropriÃ©taire',
+      owner: 'Propriétaire',
       name: 'Nom du carnet',
       user_id: 'ID utilisateur',
       guid: 'GUID',
-      rule: 'RÃ¨gle',
+      rule: 'Règle',
       max_peer: 'Contacts max',
-      shared: 'PartagÃ©',
+      shared: 'Partagé',
       ab_id: 'ID carnet',
       tagName: 'Nom',
       tagColor: 'Couleur',
-      updated_at: 'Mis Ã  jour le',
-      personal: "Mon carnet d'adresses", legacy: "Carnet d'adresses hÃ©ritÃ©", note: 'Note', platform: 'Plateforme', personalReadOnly: 'Personnel (lecture seule)', nameRequired: 'Le nom est obligatoire', deviceIdRequired: "Lâ€™identifiant de lâ€™appareil est obligatoire", tagsHint: 'SÃ©parez les Ã©tiquettes par des virgules', read: 'Lecture', readWrite: 'Lecture et Ã©criture', fullControl: 'ContrÃ´le total'
+      updated_at: 'Mis à jour le',
+      personal: "Mon carnet d'adresses", legacy: "Carnet d'adresses hérité", note: 'Note', platform: 'Plateforme', personalReadOnly: 'Personnel (lecture seule)', nameRequired: 'Le nom est obligatoire', deviceIdRequired: "L’identifiant de l’appareil est obligatoire", tagsHint: 'Séparez les étiquettes par des virgules', read: 'Lecture', readWrite: 'Lecture et écriture', fullControl: 'Contrôle total'
     },
     token: {
       device_os: 'SE appareil',
@@ -463,13 +463,13 @@ const local: App.I18n.Schema = {
       subject: 'Sujet',
       email: 'Courriel',
       name: 'Nom',
-      last_login_at: 'DerniÃ¨re connexion'
+      last_login_at: 'Dernière connexion'
     },
     loginLog: {
-      allEvents: 'Tous les Ã©vÃ©nements',
-      event: 'Ã‰vÃ©nement',
+      allEvents: 'Tous les événements',
+      event: 'Événement',
       userAgent: 'Agent utilisateur',
-      success: 'SuccÃ¨s',
+      success: 'Succès',
       reason: 'Raison'
     },
     audit: {
@@ -482,18 +482,18 @@ const local: App.I18n.Schema = {
       ip: 'IP',
         session_id: 'ID de session',
         uuid: 'UUID',
-      created_at: 'CrÃ©Ã© le',
-        closed_at: 'fermÃ© le',
+      created_at: 'Créé le',
+        closed_at: 'fermé le',
       typeLabel: {
         ...enUs.dataMap.audit.typeLabel,
-        remote_control: 'ContrÃ´le Ã  distance',
+        remote_control: 'Contrôle à distance',
         file_transfer: 'Transfert de fichiers',
         tcp_tunnel: 'Tunnel TCP'
       },
       fileTransferTypeLabel: {
         ...enUs.dataMap.audit.fileTransferTypeLabel,
-        master_controlled: 'ContrÃ´leur -> ContrÃ´lÃ©',
-        controlled_master: 'ContrÃ´lÃ© -> ContrÃ´leur'
+        master_controlled: 'Contrôleur -> Contrôlé',
+        controlled_master: 'Contrôlé -> Contrôleur'
       },
         path: 'Chemin'
     },
@@ -503,11 +503,11 @@ const local: App.I18n.Schema = {
       type: 'Type',
       subject: 'Sujet',
       contents: 'Contenu',
-      created_at: 'CrÃ©Ã© le',
+      created_at: 'Créé le',
       typeLabel: {
         ...enUs.dataMap.mailTemplate.typeLabel,
-        loginVerify: 'VÃ©rification de connexion',
-        registerVerify: 'VÃ©rification dâ€™inscription',
+        loginVerify: 'Vérification de connexion',
+        registerVerify: 'Vérification d’inscription',
         other: 'Autre'
       }
     },
@@ -516,14 +516,14 @@ const local: App.I18n.Schema = {
       username: 'Utilisateur',
         uuid: 'UUID',
       from: 'De',
-      to: 'Ã€',
+      to: 'À',
       subject: 'Sujet',
         contents: 'Contenu',
       status: 'Statut',
-      created_at: 'EnvoyÃ© le',
+      created_at: 'Envoyé le',
       statusLabel: {
         ...enUs.dataMap.mailLog.statusLabel,
-        ok: 'SuccÃ¨s',
+        ok: 'Succès',
         err: 'Erreur'
       }
     }
@@ -531,25 +531,25 @@ const local: App.I18n.Schema = {
   api: {
     ...enUs.api,
     CaptchaError: 'Erreur CAPTCHA',
-    UserNotExists: 'Lâ€™utilisateur nâ€™existe pas',
+    UserNotExists: 'L’utilisateur n’existe pas',
     UsernameOrPasswordError: 'Compte ou mot de passe incorrect',
-    UserExists: 'Le nom dâ€™utilisateur est dÃ©jÃ  utilisÃ©',
-    UsernameEmpty: 'Le nom dâ€™utilisateur ne peut pas Ãªtre vide',
-    PasswordEmpty: 'Le mot de passe ne peut pas Ãªtre vide',
-    UserAddSuccess: 'Utilisateur crÃ©Ã© avec succÃ¨s',
-    DataError: 'Erreur de donnÃ©es',
-    RequestError: 'Ã‰chec de la requÃªte',
-    UserUpdateSuccess: 'Utilisateur modifiÃ© avec succÃ¨s',
-    UserDeleteSuccess: 'Utilisateur supprimÃ© avec succÃ¨s',
-    SessionKillSuccess: 'Session terminÃ©e avec succÃ¨s',
-    MailTemplateNameEmpty: 'Le nom ne peut pas Ãªtre vide',
-    MailTemplateSubjectEmpty: 'Le sujet ne peut pas Ãªtre vide',
-    MailTemplateContentsEmpty: 'Le contenu ne peut pas Ãªtre vide',
-    MailTemplateAddSuccess: 'ModÃ¨le e-mail crÃ©Ã© avec succÃ¨s',
-    MailTemplateUpdateSuccess: 'ModÃ¨le e-mail modifiÃ© avec succÃ¨s',
-    NoEmailAddress: 'Aucune adresse e-mail dÃ©finie',
-    VerificationCodeError: 'Code de vÃ©rification incorrect',
-    UUIDEmpty: 'UUID ne peut pas Ãªtre vide'
+    UserExists: 'Le nom d’utilisateur est déjà utilisé',
+    UsernameEmpty: 'Le nom d’utilisateur ne peut pas être vide',
+    PasswordEmpty: 'Le mot de passe ne peut pas être vide',
+    UserAddSuccess: 'Utilisateur créé avec succès',
+    DataError: 'Erreur de données',
+    RequestError: 'Échec de la requête',
+    UserUpdateSuccess: 'Utilisateur modifié avec succès',
+    UserDeleteSuccess: 'Utilisateur supprimé avec succès',
+    SessionKillSuccess: 'Session terminée avec succès',
+    MailTemplateNameEmpty: 'Le nom ne peut pas être vide',
+    MailTemplateSubjectEmpty: 'Le sujet ne peut pas être vide',
+    MailTemplateContentsEmpty: 'Le contenu ne peut pas être vide',
+    MailTemplateAddSuccess: 'Modèle e-mail créé avec succès',
+    MailTemplateUpdateSuccess: 'Modèle e-mail modifié avec succès',
+    NoEmailAddress: 'Aucune adresse e-mail définie',
+    VerificationCodeError: 'Code de vérification incorrect',
+    UUIDEmpty: 'UUID ne peut pas être vide'
   },
   dropdown: {
     ...enUs.dropdown,
@@ -561,20 +561,20 @@ const local: App.I18n.Schema = {
   },
   icon: {
     ...enUs.icon,
-    themeConfig: 'Configuration du thÃ¨me',
-    themeSchema: 'SchÃ©ma de thÃ¨me',
+    themeConfig: 'Configuration du thème',
+    themeSchema: 'Schéma de thème',
     lang: 'Changer de langue',
-    fullscreen: 'Plein Ã©cran',
-    fullscreenExit: 'Quitter le plein Ã©cran',
+    fullscreen: 'Plein écran',
+    fullscreenExit: 'Quitter le plein écran',
     reload: 'Recharger la page',
-    collapse: 'RÃ©duire le menu',
-    expand: 'DÃ©velopper le menu',
-    pin: 'Ã‰pingler',
-    unpin: 'DÃ©sÃ©pingler'
+    collapse: 'Réduire le menu',
+    expand: 'Développer le menu',
+    pin: 'Épingler',
+    unpin: 'Désépingler'
   },
   datatable: {
     ...enUs.datatable,
-    itemCount: 'Total {total} Ã©lÃ©ments'
+    itemCount: 'Total {total} éléments'
   }
 };
 

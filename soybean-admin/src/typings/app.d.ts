@@ -616,6 +616,16 @@ declare namespace App {
           latestCommand: string;
           pinnedCommand: string;
           customCommand: string;
+          versionInfo: string;
+          errorHelp: string;
+          errcodeTip: string;
+          searchPlaceholder: string;
+          moduleFilter: string;
+          errCode: string;
+          errMessage: string;
+          errModule: string;
+          errDescription: string;
+          errSolution: string;
         };
       };
       dropdown: Record<Global.DropdownKey, string>;
