@@ -229,7 +229,7 @@ const local: App.I18n.Schema = {
         loginSuccess: 'Accesso riuscito',
         welcomeBack: 'Bentornato, {userName}!',
         thirdPartyLogin: 'Accesso terze parti',
-        continueWith: 'Continua con {provider}',
+        continueWith: '{provider}',
         providerUnavailable: 'L’accesso {provider} non è disponibile',
         oauthAccountNotBound:
           'Nessun account corrispondente può essere associato. Aggiungi la stessa email verificata all’account di destinazione o abilita la creazione automatica degli account.',

@@ -180,7 +180,7 @@ const local: App.I18n.Schema = {
         loginSuccess: 'Login successfully',
         welcomeBack: 'Welcome back, {userName}!',
         thirdPartyLogin: 'Third-Party Login',
-        continueWith: 'Continue with {provider}',
+        continueWith: '{provider}',
         providerUnavailable: '{provider} login is unavailable',
         oauthAccountNotBound:
           'No matching account can be bound. Add the same verified email to the target account or enable automatic account creation.',

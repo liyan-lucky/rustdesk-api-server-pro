@@ -198,7 +198,7 @@ const local: App.I18n.Schema = {
         loginSuccess: '登录成功',
         welcomeBack: '欢迎回来，{userName}！',
         thirdPartyLogin: '第三方登录',
-        continueWith: '使用 {provider} 登录',
+        continueWith: '{provider} 登录',
         providerUnavailable: '{provider} 登录暂不可用',
         oauthAccountNotBound: '没有可绑定的账户。请为目标账户填写与第三方一致的已验证邮箱，或启用自动创建账户。',
         oauthProviderUnreachable: '服务器无法连接第三方登录服务，请检查服务器出站 HTTPS 网络后重试。',

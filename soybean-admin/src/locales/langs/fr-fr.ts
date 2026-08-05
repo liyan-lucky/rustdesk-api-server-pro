@@ -231,7 +231,7 @@ const local: App.I18n.Schema = {
         loginSuccess: 'Connexion réussie',
         welcomeBack: 'Bienvenue, {userName} !',
         thirdPartyLogin: 'Connexion tierce',
-        continueWith: 'Continuer avec {provider}',
+        continueWith: '{provider}',
         providerUnavailable: 'La connexion {provider} n’est pas disponible',
         oauthAccountNotBound:
           'Aucun compte correspondant ne peut être lié. Ajoutez la même adresse e-mail vérifiée au compte cible ou activez la création automatique de compte.',

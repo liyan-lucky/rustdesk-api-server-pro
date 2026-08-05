@@ -221,7 +221,7 @@ const local: App.I18n.Schema = {
         loginSuccess: 'Inicio de sesión correcto',
         welcomeBack: 'Bienvenido de nuevo, {userName} !',
         thirdPartyLogin: 'Inicio de sesión de terceros',
-        continueWith: 'Continuar con {provider}',
+        continueWith: '{provider}',
         providerUnavailable: 'El inicio de sesión con {provider} no está disponible',
         oauthAccountNotBound:
           'No se puede vincular una cuenta coincidente. Use el mismo correo verificado o active la creación automática.',

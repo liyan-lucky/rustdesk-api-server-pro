@@ -214,7 +214,7 @@ const local: App.I18n.Schema = {
         loginSuccess: 'Anmeldung erfolgreich',
         welcomeBack: 'Willkommen Zurück, {userName} !',
         thirdPartyLogin: 'Drittanbieter-Anmeldung',
-        continueWith: 'Mit {provider} fortfahren',
+        continueWith: '{provider}',
         providerUnavailable: '{provider}-Anmeldung ist derzeit nicht verfügbar',
         oauthAccountNotBound:
           'Kein passendes Konto kann verknüpft werden. Verwenden Sie dieselbe bestätigte E-Mail oder aktivieren Sie die automatische Erstellung.',
