@@ -322,6 +322,7 @@ onMounted(() => {
         :data="providerConfigs"
         :row-key="(row: any) => row.name"
         :scroll-x="1000"
+        :flex-height="!appStore.isMobile"
       />
     </NCard>
     <NCard :title="$t('page.oauth.bindingsTitle')" :bordered="false" size="small">
@@ -349,9 +350,9 @@ onMounted(() => {
       v-model:show="showModal"
       preset="card"
       :title="form.originalName ? $t('page.oauth.editProvider') : $t('page.oauth.addProvider')"
-      class="max-w-95vw w-720px"
+      class="max-w-95vw w-720px lt-sm:w-full"
     >
-      <NForm label-placement="left" label-width="150">
+      <NForm :label-placement="appStore.isMobile ? 'top' : 'left'" :label-width="appStore.isMobile ? undefined : 150">
         <NFormItem :label="$t('dataMap.oauth.provider')">
           <NSelect
             v-model:value="form.type"

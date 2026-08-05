@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { getBuildTime, getVersionTag } from '@/utils/version';
 import { $t } from '@/locales';
+import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
 
 const defaultCheckUrl = 'https://raw.githubusercontent.com/liyan-lucky/rustdesk-api-server-pro/main/VERSION';
@@ -10,6 +11,7 @@ const commandStorageKey = 'rustdesk-api-update-command-template';
 const updateScript = '/vol1/docker/rustdesk-api-server-pro/update-rustdesk-api.sh';
 const defaultCommandTemplate = updateScript;
 const authStore = useAuthStore();
+const appStore = useAppStore();
 const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 const checkUrl = ref(localStorage.getItem(storageKey) || defaultCheckUrl);
 const commandTemplate = ref(localStorage.getItem(commandStorageKey) || defaultCommandTemplate);
@@ -236,19 +238,19 @@ onMounted(() => {
         <NSpace vertical size="large" class="mt-16px">
           <NCard :bordered="false">
             <NAlert type="info" class="mb-16px">{{ $t('page.about.errcodeTip') }}</NAlert>
-            <NSpace align="center" class="mb-16px">
+            <NSpace align="center" wrap class="mb-16px" :class="appStore.isMobile ? 'flex-col items-stretch' : ''">
               <NInput
                 v-model:value="searchQuery"
                 :placeholder="$t('page.about.searchPlaceholder')"
                 clearable
-                style="width: 300px"
+                :class="appStore.isMobile ? 'w-full' : 'w-300px'"
               />
               <NSelect
                 v-model:value="selectedModule"
                 :options="modules.map(m => ({ label: m, value: m }))"
                 :placeholder="$t('page.about.moduleFilter')"
                 clearable
-                style="width: 160px"
+                :class="appStore.isMobile ? 'w-full' : 'w-160px'"
               />
             </NSpace>
             <NSpin :show="errorCodesLoading">

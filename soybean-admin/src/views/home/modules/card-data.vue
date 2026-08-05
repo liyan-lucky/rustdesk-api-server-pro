@@ -7,10 +7,13 @@ import { fetchStat } from '@/service/api/home';
 import { fetchAuditLogList } from '@/service/api/audit';
 import { fetchDevicesList } from '@/service/api/devices';
 import { fetchUserList } from '@/service/api/user_management';
+import { useAppStore } from '@/store/modules/app';
 
 defineOptions({
   name: 'CardData'
 });
+
+const appStore = useAppStore();
 
 interface CardData {
   key: 'userCount' | 'deviceCount' | 'onlineCount' | 'visitCount';
@@ -230,7 +233,7 @@ onMounted(async () => {
       </NGi>
     </NGrid>
 
-    <NDrawer v-model:show="drawerVisible" :width="420" placement="right" :trap-focus="false">
+    <NDrawer v-model:show="drawerVisible" :width="appStore.isMobile ? '100%' : 420" placement="right" :trap-focus="false">
       <NDrawerContent v-if="activeCard" :title="drawerTitle" closable>
         <div class="drawer-body">
           <div class="drawer-value">

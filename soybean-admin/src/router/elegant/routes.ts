@@ -97,6 +97,17 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       },
       {
+        name: 'audit_error-logs',
+        path: '/audit/error-logs',
+        component: 'view.audit_error-logs',
+        meta: {
+          title: 'audit_error-logs',
+          i18nKey: 'route.audit_error-logs',
+          icon: 'mdi:alert-circle-outline',
+          roles: ['R_SUPER']
+        }
+      },
+      {
         name: 'audit_filetransferlogs',
         path: '/audit/filetransferlogs',
         component: 'view.audit_filetransferlogs',
@@ -115,17 +126,6 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'audit_loginlogs',
           i18nKey: 'route.audit_loginlogs',
           icon: 'ic:baseline-login'
-        }
-      },
-      {
-        name: 'audit_error-logs',
-        path: '/audit/error-logs',
-        component: 'view.audit_error-logs',
-        meta: {
-          title: 'audit_error-logs',
-          i18nKey: 'route.audit_error-logs',
-          icon: 'mdi:alert-circle-outline',
-          roles: ['R_SUPER']
         }
       }
     ]

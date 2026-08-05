@@ -208,9 +208,9 @@ onMounted(async () => {
       v-model:show="modalVisible"
       preset="card"
       :title="editing ? $t('common.edit') : $t('common.add')"
-      class="max-w-560px"
+      class="max-w-560px lt-sm:w-full lt-sm:max-w-full"
     >
-      <NForm label-placement="left" label-width="120">
+      <NForm :label-placement="appStore.isMobile ? 'top' : 'left'" :label-width="appStore.isMobile ? undefined : 120">
         <NFormItem v-if="isAdmin && !editing" :label="$t('dataMap.ab.owner')">
           <NSelect v-model:value="form.user_id" :options="userOptions" filterable />
         </NFormItem>

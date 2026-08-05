@@ -3,6 +3,8 @@ import { onMounted, ref } from 'vue';
 import { NTag } from 'naive-ui';
 import { fetchMyDevices } from '@/service/api/user-portal';
 import { $t } from '@/locales';
+import { useAppStore } from '@/store/modules/app';
+const appStore = useAppStore();
 const loading = ref(false);
 const data = ref<any[]>([]);
 const total = ref(0);
@@ -43,8 +45,9 @@ onMounted(load);
       :columns="columns"
       :data="data"
       :loading="loading"
+      :flex-height="!appStore.isMobile"
       :scroll-x="1000"
-      :pagination="{page,pageSize:size,itemCount:total,onChange:(v:number)=>{page=v;load()},onUpdatePageSize:(v:number)=>{size=v;page=1;load()},showSizePicker:true}"
+      :pagination="{page,pageSize:size,itemCount:total,onChange:(v:number)=>{page=v;load()},onUpdatePageSize:(v:number)=>{size=v;page=1;load()},showSizePicker:true,pageSlot:appStore.isMobile?3:9}"
     />
   </NCard>
 </template>

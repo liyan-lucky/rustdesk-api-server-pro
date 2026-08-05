@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from '@/store/modules/auth';
+import { useAppStore } from '@/store/modules/app';
 import { fetchUserPortalInfo } from '@/service/api/user-portal';
 import { $t } from '@/locales';
 const auth = useAuthStore();
+const appStore = useAppStore();
 const isAdmin = computed(() => auth.userInfo.roles.includes('R_SUPER'));
 const profile = ref<any>({});
 onMounted(async () => {
@@ -13,8 +15,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <NCard :title="$t('route.workspace_profile')" :bordered="false" class="max-w-720px">
-    <NDescriptions label-placement="left" bordered :column="1">
+  <NCard :title="$t('route.workspace_profile')" :bordered="false" :class="appStore.isMobile ? 'w-full' : 'max-w-720px'">
+    <NDescriptions :label-placement="appStore.isMobile ? 'top' : 'left'" bordered :column="1">
       <NDescriptionsItem :label="$t('dataMap.user.username')">{{ profile.username || '-' }}</NDescriptionsItem>
       <NDescriptionsItem :label="$t('dataMap.user.name')">{{ auth.userInfo.userName }}</NDescriptionsItem>
       <NDescriptionsItem :label="$t('dataMap.user.email')">{{ profile.email || '-' }}</NDescriptionsItem>

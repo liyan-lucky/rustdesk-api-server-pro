@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { $t } from '@/locales';
+import { useAppStore } from '@/store/modules/app';
+
+const appStore = useAppStore();
 
 const errorCodes = ref<ErrorCodeEntry[]>([]);
 const errorCodesLoading = ref(false);
@@ -63,19 +66,19 @@ onMounted(() => {
   <NSpace vertical size="large" class="mt-16px">
     <NCard :bordered="false">
       <NAlert type="info" class="mb-16px">{{ $t('page.about.errcodeTip') }}</NAlert>
-      <NSpace align="center" class="mb-16px">
+      <NSpace align="center" wrap class="mb-16px" :class="appStore.isMobile ? 'flex-col items-stretch' : ''">
         <NInput
           v-model:value="searchQuery"
           :placeholder="$t('page.about.searchPlaceholder')"
           clearable
-          style="width: 300px"
+          :class="appStore.isMobile ? 'w-full' : 'w-300px'"
         />
         <NSelect
           v-model:value="selectedModule"
           :options="modules.map(m => ({ label: m, value: m }))"
           :placeholder="$t('page.about.moduleFilter')"
           clearable
-          style="width: 160px"
+          :class="appStore.isMobile ? 'w-full' : 'w-160px'"
         />
       </NSpace>
       <NSpin :show="errorCodesLoading">

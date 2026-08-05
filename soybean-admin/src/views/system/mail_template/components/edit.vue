@@ -5,6 +5,7 @@ import { useNaiveForm } from '@/hooks/common/form';
 import RichEditor from '@/components/custom/rich-editor.vue';
 import { addMailTemplate, editMailTemplate } from '@/service/api/system';
 import { MailTemplateOptions, translateOptions } from '@/constants/business';
+import { useAppStore } from '@/store/modules/app';
 
 defineOptions({
   name: 'MailTemplateEdit'
@@ -24,6 +25,8 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>();
+
+const appStore = useAppStore();
 
 const visible = defineModel<boolean>('visible', {
   default: false
@@ -108,8 +111,8 @@ watch(visible, () => {
 
 <template>
   <NModal v-model:show="visible" display-directive="show">
-    <NCard :title="title" class="n-card">
-      <NForm ref="formRef" :model="model" :rules="rules">
+    <NCard :title="title" :class="appStore.isMobile ? 'n-card-mobile' : 'n-card'">
+      <NForm ref="formRef" :model="model" :rules="rules" :label-placement="appStore.isMobile ? 'top' : undefined">
         <NFormItem :label="$t('dataMap.mailTemplate.name')" path="name">
           <NInput v-model:value="model.name" :placeholder="$t('page.system.mailTemplate.inputName')" />
         </NFormItem>
@@ -136,5 +139,10 @@ watch(visible, () => {
 <style scoped>
 .n-card {
   width: 800px;
+}
+.n-card-mobile {
+  width: 100vw;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 </style>

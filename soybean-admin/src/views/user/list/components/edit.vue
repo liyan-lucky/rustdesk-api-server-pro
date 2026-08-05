@@ -4,6 +4,7 @@ import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { addUser, editUser, getTOTP } from '@/service/api/user_management';
 import { UserLoginVerifyOptions, UserStatusOptions, translateOptions } from '@/constants/business';
+import { useAppStore } from '@/store/modules/app';
 
 defineOptions({
   name: 'UserEdit'
@@ -23,6 +24,8 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>();
+
+const appStore = useAppStore();
 
 const visible = defineModel<boolean>('visible', {
   default: false
@@ -170,9 +173,9 @@ watch(visible, () => {
 </script>
 
 <template>
-  <NDrawer v-model:show="visible" display-directive="show" :width="360">
+  <NDrawer v-model:show="visible" display-directive="show" :width="appStore.isMobile ? '100%' : 360">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
-      <NForm ref="formRef" :model="model" :rules="rules">
+      <NForm ref="formRef" :model="model" :rules="rules" :label-placement="appStore.isMobile ? 'top' : undefined">
         <NFormItem :label="$t('dataMap.user.username')" path="username">
           <NInput v-model:value="model.username" :placeholder="$t('page.user.list.inputUsername')" />
         </NFormItem>
