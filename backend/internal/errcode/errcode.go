@@ -95,11 +95,13 @@ var (
 	ERR2032 = register("ERR-2032", "QqUserinfoFailedWithRet", "oauth", "QQ 用户信息接口返回错误", "检查 QQ 互联应用配置和用户授权范围")
 	ERR2033 = register("ERR-2033", "QqApiFailedWithStatus", "oauth", "QQ API 请求失败", "检查 QQ 互联应用配置和网络连通性")
 	ERR2034 = register("ERR-2034", "UserinfoFailedWithStatus", "oauth", "UserInfo 端点返回非 200 状态码", "检查 Provider 的 userinfo 端点是否正常，确认 access_token 有效")
+	ERR2035 = register("ERR-2035", "AppleClientSecretJwtFailed", "oauth", "Apple client_secret JWT 生成失败", "检查 Team ID、Key ID 和 Private Key 配置是否正确")
+	ERR2036 = register("ERR-2036", "AppleIdTokenClaimMissing", "oauth", "Apple ID Token 缺少必要声明", "确认 Apple 授权范围包含 email，检查 Service ID 配置")
 )
 
 var (
 	ERR2101 = register("ERR-2101", "InvalidAccountId", "oauth-admin", "无效的 OAuth 账号 ID", "使用正确的账号 ID 进行操作")
-	ERR2102 = register("ERR-2102", "UnsupportedOAuthProvider", "oauth-admin", "不支持的 OAuth Provider 类型", "目前支持 github、google、oidc、qq 类型")
+	ERR2102 = register("ERR-2102", "UnsupportedOAuthProvider", "oauth-admin", "不支持的 OAuth Provider 类型", "目前支持 github、google、microsoft、gitlab、gitee、qq、wechat、apple、oidc 类型")
 	ERR2103 = register("ERR-2103", "InvalidProviderName", "oauth-admin", "无效的 Provider 标识名", "标识名只能包含字母、数字、连字符和下划线")
 	ERR2104 = register("ERR-2104", "ClientIdRequired", "oauth-admin", "Client ID 不能为空", "填写 OAuth 应用注册时获得的 Client ID")
 	ERR2105 = register("ERR-2105", "ProviderNameExists", "oauth-admin", "Provider 标识名已存在", "使用不同的标识名，或编辑已有 Provider")

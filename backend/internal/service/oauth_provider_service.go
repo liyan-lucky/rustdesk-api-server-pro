@@ -2,10 +2,13 @@ package service
 
 import (
 	"bytes"
+	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"io"
 	"net"
@@ -19,6 +22,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/kataras/iris/v12"
 	"xorm.io/xorm"
 )
@@ -213,9 +217,9 @@ func (s *OAuthProviderService) BuildAdminAuthURL(providerName, requestBaseURL, r
 	query.Set("scope", strings.Join(s.scopes(provider), scopeSeparator))
 	query.Set("redirect_uri", callbackURL)
 	query.Set("state", state)
-	// QQ Connect and WeChat do not support PKCE. The persisted one-time state
+	// QQ Connect, WeChat and Apple do not support PKCE. The persisted one-time state
 	// still protects the callback against CSRF and replay attacks.
-	if provider.Type != "qq" && provider.Type != "wechat" {
+	if provider.Type != "qq" && provider.Type != "wechat" && provider.Type != "apple" {
 		challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
 		query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
 		query.Set("code_challenge_method", "S256")
@@ -391,8 +395,16 @@ func (s *OAuthProviderService) exchangeCode(provider config.OAuthProviderConfig,
 		form.Set("client_id", provider.ClientID)
 		form.Set("client_secret", provider.ClientSecret)
 	}
-	if provider.Type != "qq" && provider.Type != "wechat" {
+	if provider.Type != "qq" && provider.Type != "wechat" && provider.Type != "apple" {
 		form.Set("code_verifier", codeVerifier)
+	}
+	if provider.Type == "apple" {
+		clientSecret, jwtErr := generateAppleClientSecretJWT(provider)
+		if jwtErr != nil {
+			return nil, errcode.New(errcode.ERR2035.Code, errcode.ERR2035.Message)
+		}
+		form.Set("client_id", provider.ClientID)
+		form.Set("client_secret", clientSecret)
 	}
 	if provider.Type == "qq" {
 		form.Set("fmt", "json")
@@ -468,6 +480,10 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 		}
 	} else if provider.Type == "wechat" && tokenResp.AccessToken != "" {
 		if err = s.fillWechatClaims(provider, tokenResp, claims); err != nil {
+			return nil, err
+		}
+	} else if provider.Type == "apple" {
+		if err = s.fillAppleClaims(provider, idTokenClaims, claims); err != nil {
 			return nil, err
 		}
 	} else if metadata.UserinfoEndpoint != "" && tokenResp.AccessToken != "" {
@@ -610,6 +626,56 @@ func (s *OAuthProviderService) fillWechatClaims(provider config.OAuthProviderCon
 		claims[defaultIfEmpty(provider.PictureClaim, "headimgurl")] = profile.HeadImgURL
 	}
 	return nil
+}
+
+func (s *OAuthProviderService) fillAppleClaims(provider config.OAuthProviderConfig, idTokenClaims map[string]interface{}, claims map[string]interface{}) error {
+	sub := strings.TrimSpace(anyToOAuthString(idTokenClaims["sub"]))
+	if sub == "" {
+		return errcode.New(errcode.ERR2014.Code, errcode.ERR2014.Message)
+	}
+	claims[defaultIfEmpty(provider.SubjectClaim, "sub")] = sub
+	if email := anyToOAuthString(idTokenClaims["email"]); email != "" {
+		claims[defaultIfEmpty(provider.EmailClaim, "email")] = email
+	}
+	if verified, ok := idTokenClaims["email_verified"].(bool); ok {
+		claims["email_verified"] = verified
+	}
+	return nil
+}
+
+func generateAppleClientSecretJWT(provider config.OAuthProviderConfig) (string, error) {
+	teamID := strings.TrimSpace(provider.TeamID)
+	keyID := strings.TrimSpace(provider.KeyID)
+	privateKeyPEM := strings.TrimSpace(provider.PrivateKey)
+	if teamID == "" || keyID == "" || privateKeyPEM == "" {
+		return "", fmt.Errorf("apple: teamId, keyId and privateKey are required")
+	}
+	block, _ := pem.Decode([]byte(privateKeyPEM))
+	if block == nil {
+		return "", fmt.Errorf("apple: failed to decode PEM private key")
+	}
+	key, keyErr := x509.ParsePKCS8PrivateKey(block.Bytes)
+	if keyErr != nil {
+		return "", fmt.Errorf("apple: failed to parse private key: %w", keyErr)
+	}
+	ecKey, ok := key.(*ecdsa.PrivateKey)
+	if !ok {
+		return "", fmt.Errorf("apple: private key must be ECDSA (P-256)")
+	}
+	now := time.Now()
+	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+		"iss": teamID,
+		"iat": now.Unix(),
+		"exp": now.Add(180 * 24 * time.Hour).Unix(),
+		"aud": "https://appleid.apple.com",
+		"sub": provider.ClientID,
+	})
+	token.Header["kid"] = keyID
+	signed, signErr := token.SignedString(ecKey)
+	if signErr != nil {
+		return "", fmt.Errorf("apple: failed to sign JWT: %w", signErr)
+	}
+	return signed, nil
 }
 
 func (s *OAuthProviderService) getQQJSON(endpoint string, target interface{}) error {
@@ -1160,6 +1226,8 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 			provider.Name = "gitee"
 		case "gitlab":
 			provider.Name = "gitlab"
+		case "apple":
+			provider.Name = "apple"
 		default:
 			provider.Name = "oidc"
 		}
@@ -1178,6 +1246,8 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 			provider.DisplayName = "Gitee"
 		case "gitlab":
 			provider.DisplayName = "GitLab"
+		case "apple":
+			provider.DisplayName = "Apple"
 		default:
 			provider.DisplayName = "OIDC"
 		}
@@ -1328,6 +1398,28 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		provider.SubjectClaim = "openid"
 		provider.NameClaim = "nickname"
 		provider.PictureClaim = "headimgurl"
+	} else if provider.Type == "apple" {
+		if provider.Issuer == "" {
+			provider.Issuer = "https://appleid.apple.com"
+		}
+		if provider.AuthorizationEndpoint == "" {
+			provider.AuthorizationEndpoint = "https://appleid.apple.com/auth/authorize"
+		}
+		if provider.TokenEndpoint == "" {
+			provider.TokenEndpoint = "https://appleid.apple.com/auth/token"
+		}
+		if provider.JWKSURI == "" {
+			provider.JWKSURI = "https://appleid.apple.com/auth/keys"
+		}
+		if len(provider.Scopes) == 0 {
+			provider.Scopes = []string{"email", "name"}
+		}
+		if provider.SubjectClaim == "" {
+			provider.SubjectClaim = "sub"
+		}
+		if provider.EmailClaim == "" {
+			provider.EmailClaim = "email"
+		}
 	} else {
 		if len(provider.Scopes) == 0 {
 			provider.Scopes = []string{"openid", "profile", "email"}
@@ -1512,7 +1604,7 @@ func (s *OAuthProviderService) BuildClientAuthURL(providerName, requestBaseURL, 
 	query.Set("scope", strings.Join(s.scopes(provider), scopeSeparator))
 	query.Set("redirect_uri", callbackURL)
 	query.Set("state", state)
-	if provider.Type != "qq" && provider.Type != "wechat" {
+	if provider.Type != "qq" && provider.Type != "wechat" && provider.Type != "apple" {
 		challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
 		query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
 		query.Set("code_challenge_method", "S256")

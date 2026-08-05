@@ -90,6 +90,8 @@ github.com/gobwas/ws v1.3.0/go.mod h1:hRKAFb8wOxFROYNsT1bqfWnhX+b5MFeJM9r2ZSwg/K
 github.com/goccy/go-json v0.8.1 h1:4/Wjm0JIJaTDm8K1KcGrLHJoa8EsJ13YWeX+6Kfq6uI=
 github.com/goccy/go-json v0.8.1/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
 github.com/gofrs/uuid v4.0.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
+github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
+github.com/golang-jwt/jwt/v5 v5.3.1/go.mod h1:fxCRLWMO43lRc8nhHWY6LGqRcf+1gQWArsqaEUEa5bE=
 github.com/golang-module/carbon v1.7.3 h1:p5mUZj7Tg62MblrkF7XEoxVPvhVs20N/kimqsZOQ+/U=
 github.com/golang-module/carbon v1.7.3/go.mod h1:nUMnXq90Rv8a7h2+YOo2BGKS77Y0w/hMPm4/a8h19N8=
 github.com/golang-module/carbon/v2 v2.3.1 h1:lws5SBuUJ7QzB0/kFf9zMIV0C9tSe1E5CFGFQeS0s9A=

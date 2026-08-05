@@ -28,9 +28,9 @@ func TestCleanOAuthValues(t *testing.T) {
 
 func TestOAuthCallbackErrorCode(t *testing.T) {
 	tests := map[string]string{
-		"no bindable oauth account":          errcode.ERR2208.Message,
-		"context deadline exceeded":          errcode.ERR2209.Message,
-		"state invalid or expired":           errcode.ERR2210.Message,
+		"NoBindableOauthAccount":            errcode.ERR2208.Message,
+		"context deadline exceeded":         errcode.ERR2209.Message,
+		"StateInvalidOrExpired":             errcode.ERR2210.Message,
 		"provider returned invalid response": errcode.ERR2212.Message,
 	}
 	for message, expected := range tests {

@@ -40,6 +40,9 @@ type oauthProviderForm struct {
 	Enabled             bool     `json:"enabled"`
 	ClientID            string   `json:"clientId"`
 	ClientSecret        string   `json:"clientSecret"`
+	TeamID              string   `json:"teamId"`
+	KeyID               string   `json:"keyId"`
+	PrivateKey          string   `json:"privateKey"`
 	RedirectURL         string   `json:"redirectUrl"`
 	Scopes              []string `json:"scopes"`
 	AccountRole         string   `json:"accountRole"`
@@ -156,6 +159,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		"microsoft": true,
 		"gitee":     true,
 		"gitlab":    true,
+		"apple":     true,
 		"oidc":      true,
 	}
 	if !validProviderTypes[form.Type] {
@@ -198,7 +202,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	if index >= 0 && secret == "" {
 		secret = cfg.OAuth.Providers[index].ClientSecret
 	}
-	if form.Enabled && secret == "" {
+	if form.Enabled && secret == "" && form.Type != "apple" {
 		return c.Error(nil, errcode.New(errcode.ERR2106.Code, errcode.ERR2106.Message).Error())
 	}
 	provider := config.OAuthProviderConfig{}
@@ -213,6 +217,9 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	provider.Enabled = form.Enabled
 	provider.ClientID = strings.TrimSpace(form.ClientID)
 	provider.ClientSecret = secret
+	provider.TeamID = strings.TrimSpace(form.TeamID)
+	provider.KeyID = strings.TrimSpace(form.KeyID)
+	provider.PrivateKey = strings.TrimSpace(form.PrivateKey)
 	provider.RedirectURL = strings.TrimSpace(form.RedirectURL)
 	provider.Scopes = cleanOAuthValues(form.Scopes)
 	provider.AccountRole = form.AccountRole

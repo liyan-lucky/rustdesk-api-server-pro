@@ -26,6 +26,7 @@ require (
 	github.com/gobuffalo/envy v1.7.0 // indirect
 	github.com/gobuffalo/packd v0.3.0 // indirect
 	github.com/gobuffalo/packr v1.30.1 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect

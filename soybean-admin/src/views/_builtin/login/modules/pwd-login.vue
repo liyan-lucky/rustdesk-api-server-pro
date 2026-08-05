@@ -103,6 +103,7 @@ function providerIcon(type: string) {
     github: 'mdi:github',
     qq: 'ri:qq-fill',
     google: 'logos:google-icon',
+    apple: 'ic:baseline-apple',
     oidc: 'mdi:shield-account'
   };
   return icons[type] || 'mdi:login-variant';

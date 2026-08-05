@@ -93,6 +93,9 @@ type OAuthProviderConfig struct {
 	RedirectURL           string   `yaml:"redirectUrl"`
 	ClientID              string   `yaml:"clientId"`
 	ClientSecret          string   `yaml:"clientSecret"`
+	TeamID                string   `yaml:"teamId"`
+	KeyID                 string   `yaml:"keyId"`
+	PrivateKey            string   `yaml:"privateKey"`
 	Scopes                []string `yaml:"scopes"`
 	BindByEmail           bool     `yaml:"bindByEmail"`
 	AutoCreateAdmin       bool     `yaml:"autoCreateAdmin"`

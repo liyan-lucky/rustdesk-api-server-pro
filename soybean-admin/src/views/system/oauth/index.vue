@@ -25,6 +25,9 @@ const form = reactive({
   enabled: true,
   clientId: '',
   clientSecret: '',
+  teamId: '',
+  keyId: '',
+  privateKey: '',
   redirectUrl: '',
   scopesText: 'read:user user:email',
   accountRole: 'admin',
@@ -71,6 +74,11 @@ function applyProviderPreset(type: string) {
       type: 'wechat', name: 'wechat', displayName: 'WeChat',
       scopesText: 'snsapi_login', accountRole: 'user',
       bindByEmail: false, autoCreateAdmin: false, autoCreateUser: true
+    },
+    apple: {
+      type: 'apple', name: 'apple', displayName: 'Apple',
+      scopesText: 'email name', accountRole: 'admin',
+      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
     }
   };
   const preset = presets[type] || presets.github;
@@ -100,6 +108,9 @@ function resetForm(row?: any) {
           enabled: row.enabled,
           clientId: row.clientId,
           clientSecret: savedSecretHint.value,
+          teamId: row.teamId || '',
+          keyId: row.keyId || '',
+          privateKey: row.privateKey || '',
           redirectUrl: row.redirectUrl || '',
           scopesText: (row.scopes || []).join(' '),
           accountRole: row.accountRole || 'admin',
@@ -116,6 +127,9 @@ function resetForm(row?: any) {
           enabled: true,
           clientId: '',
           clientSecret: '',
+          teamId: '',
+          keyId: '',
+          privateKey: '',
           redirectUrl: `${window.location.origin}/admin/auth/oauth/github/callback`,
           scopesText: 'read:user user:email',
           accountRole: 'admin',
@@ -363,7 +377,8 @@ onMounted(() => {
               { label: 'GitLab', value: 'gitlab' },
               { label: 'Gitee (码云)', value: 'gitee' },
               { label: 'QQ', value: 'qq' },
-              { label: 'WeChat (微信)', value: 'wechat' }
+              { label: 'WeChat (微信)', value: 'wechat' },
+              { label: 'Apple', value: 'apple' }
             ]"
             :disabled="Boolean(form.originalName)"
             @update:value="applyProviderPreset"
@@ -374,11 +389,22 @@ onMounted(() => {
         <NFormItem :label="$t('page.oauth.clientId')"><NInput v-model:value="form.clientId" /></NFormItem>
         <NFormItem :label="$t('page.oauth.clientSecret')">
           <NInput
+            v-if="form.type !== 'apple'"
             v-model:value="form.clientSecret"
             type="password"
             show-password-on="click"
             :placeholder="$t('page.oauth.secretPlaceholder')"
           />
+          <NAlert v-else type="info" :bordered="false">{{ $t('page.oauth.appleSecretHint') }}</NAlert>
+        </NFormItem>
+        <NFormItem v-if="form.type === 'apple'" :label="$t('page.oauth.teamId')">
+          <NInput v-model:value="form.teamId" placeholder="e.g. ABCDEF1234" />
+        </NFormItem>
+        <NFormItem v-if="form.type === 'apple'" :label="$t('page.oauth.keyId')">
+          <NInput v-model:value="form.keyId" placeholder="e.g. ABC12DEF34" />
+        </NFormItem>
+        <NFormItem v-if="form.type === 'apple'" :label="$t('page.oauth.privateKey')">
+          <NInput v-model:value="form.privateKey" type="textarea" :autosize="{ minRows: 3, maxRows: 8 }" placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----" />
         </NFormItem>
         <NFormItem :label="$t('page.oauth.redirectUrl')">
           <NInput v-model:value="form.redirectUrl" />

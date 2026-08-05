@@ -79,22 +79,22 @@ func TestCompatServiceHandleRecordValidation(t *testing.T) {
 		{
 			name: "missing type",
 			cmd:  core.CompatRecordCommand{FileName: "a.rec"},
-			want: "type required",
+			want: "TypeRequired",
 		},
 		{
 			name: "missing file",
 			cmd:  core.CompatRecordCommand{Op: "new"},
-			want: "file required",
+			want: "FileRequired",
 		},
 		{
 			name: "invalid offset",
 			cmd:  core.CompatRecordCommand{Op: "part", FileName: "a.rec", Offset: -1},
-			want: "invalid offset",
+			want: "InvalidOffset",
 		},
 		{
 			name: "unsupported op",
 			cmd:  core.CompatRecordCommand{Op: "noop", FileName: "a.rec"},
-			want: "unsupported record op",
+			want: "UnsupportedRecordOp",
 		},
 	}
 
