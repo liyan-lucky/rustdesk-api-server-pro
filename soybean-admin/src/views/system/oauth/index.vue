@@ -448,7 +448,7 @@ onMounted(() => {
             v-model:value="form.privateKey"
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 8 }"
-            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+            placeholder="Paste your .p8 private key here"
           />
         </NFormItem>
         <NFormItem :label="$t('page.oauth.redirectUrl')">
