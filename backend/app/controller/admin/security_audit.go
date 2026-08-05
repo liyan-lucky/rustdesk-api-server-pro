@@ -16,6 +16,7 @@ type SecurityAuditController struct {
 
 func (c *SecurityAuditController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/security-audit/list", "HandleList")
+	b.Handle("DELETE", "/security-audit/clear", "HandleClear")
 }
 
 func (c *SecurityAuditController) HandleList() mvc.Result {
@@ -69,4 +70,12 @@ func (c *SecurityAuditController) HandleList() mvc.Result {
 		"current": currentPage,
 		"size":    pageSize,
 	}, "ok")
+}
+
+func (c *SecurityAuditController) HandleClear() mvc.Result {
+	_, err := c.Db.Exec("DELETE FROM security_audit")
+	if err != nil {
+		return c.dbError(err)
+	}
+	return c.Success(nil, "ok")
 }

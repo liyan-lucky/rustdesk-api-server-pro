@@ -803,6 +803,17 @@ declare namespace App {
           success: string;
           reason: string;
         };
+        errorLog: {
+          code: string;
+          message: string;
+          module: string;
+          path: string;
+          method: string;
+          user_name: string;
+          client_ip: string;
+          user_agent: string;
+          created_at: string;
+        };
       };
       api: {
         CaptchaError: string;

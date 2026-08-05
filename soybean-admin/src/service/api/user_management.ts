@@ -27,3 +27,11 @@ export function fetchSessionList(params: any) {
 export function killSession(data: any) {
   return request({ url: '/sessions/kill', method: 'post', data });
 }
+
+export function fetchSessionClear() {
+  return request<any>({ url: '/sessions/clear', method: 'delete' });
+}
+
+export function fetchSecurityAuditClear() {
+  return request<any>({ url: '/security-audit/clear', method: 'delete' });
+}

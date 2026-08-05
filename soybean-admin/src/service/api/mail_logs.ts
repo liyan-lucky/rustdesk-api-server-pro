@@ -7,3 +7,7 @@ export function fetchMailLogList(params: any) {
 export function fetchMailLogInfo(params: any) {
   return request<any>({ url: '/mail/logs/info', params });
 }
+
+export function fetchMailLogClear() {
+  return request<any>({ url: '/mail/logs/clear', method: 'delete' });
+}

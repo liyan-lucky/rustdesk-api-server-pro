@@ -18,6 +18,7 @@ type MaiLogsController struct {
 func (c *MaiLogsController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/mail/logs/list", "HandleList")
 	b.Handle("GET", "/mail/logs/info", "HandleInfo")
+	b.Handle("DELETE", "/mail/logs/clear", "HandleClear")
 }
 
 func (c *MaiLogsController) HandleList() mvc.Result {
@@ -102,4 +103,12 @@ func (c *MaiLogsController) HandleInfo() mvc.Result {
 	return c.Success(iris.Map{
 		"content": log.Contents,
 	}, "ok")
+}
+
+func (c *MaiLogsController) HandleClear() mvc.Result {
+	_, err := c.Db.Exec("DELETE FROM mail_logs")
+	if err != nil {
+		return c.dbError(err)
+	}
+	return c.Success(nil, "ok")
 }

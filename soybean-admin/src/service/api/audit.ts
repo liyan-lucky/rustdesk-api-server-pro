@@ -7,3 +7,11 @@ export function fetchAuditLogList(params: any) {
 export function fetchAuditFileTransferLogList(params: any) {
   return request<Api.Audit.AuditFileTransferList>({ url: '/audit/file-transfer-list', params });
 }
+
+export function fetchAuditLogClear() {
+  return request<any>({ url: '/audit/clear', method: 'delete' });
+}
+
+export function fetchAuditFileTransferLogClear() {
+  return request<any>({ url: '/audit/file-transfer-clear', method: 'delete' });
+}

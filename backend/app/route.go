@@ -58,6 +58,7 @@ func SetRoute(app *iris.Application) {
 		adminWithAuthMvc.Handle(new(admin.TokenController))
 		adminWithAuthMvc.Handle(new(admin.OAuthController))
 		adminWithAuthMvc.Handle(new(admin.SecurityAuditController))
+		adminWithAuthMvc.Handle(new(admin.ErrorLogController))
 	}
 
 	userPortalWithAuthParty := app.Party("/user-portal")

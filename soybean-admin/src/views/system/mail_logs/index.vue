@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { NButton, NSpace, NTag } from 'naive-ui';
 import { ref } from 'vue';
-import { fetchMailLogList } from '@/service/api/mail_logs';
+import { fetchMailLogList, fetchMailLogClear } from '@/service/api/mail_logs';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useTable, useTableOperate } from '@/hooks/common/table';
@@ -126,6 +126,19 @@ function handleInfoTable(row: Api.System.MailLog) {
   rowData.value = row;
   openDrawer();
 }
+
+async function handleClear() {
+  window.$dialog?.warning({
+    title: $t('common.tip'),
+    content: $t('common.confirmDelete'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
+    onPositiveClick: async () => {
+      await fetchMailLogClear();
+      getData();
+    }
+  });
+}
 </script>
 
 <template>
@@ -134,7 +147,7 @@ function handleInfoTable(row: Api.System.MailLog) {
 
     <NCard :title="$t('route.system_mail_logs')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
-        <TableHeader v-model:columns="columnChecks" :loading="loading" @refresh="getData" />
+        <TableHeader v-model:columns="columnChecks" :loading="loading" @refresh="getData" @clear="handleClear" />
       </template>
       <NDataTable
         :columns="columns"

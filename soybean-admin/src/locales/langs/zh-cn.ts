@@ -164,6 +164,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: '基础日志',
     audit_filetransferlogs: '文件传输日志',
     audit_loginlogs: '登录日志',
+    'audit_error-logs': '错误日志',
     devices: '设备管理',
     'my-devices': '通讯录',
     'my-devices_peers': '地址簿',
@@ -578,7 +579,18 @@ const local: App.I18n.Schema = {
       status: '有效'
     },
     oauth: { provider: '提供方', subject: '主体标识', email: '邮箱', name: '名称', last_login_at: '最后登录' },
-    loginLog: { allEvents: '全部事件', event: '事件', userAgent: '用户代理', success: '成功', reason: '原因' }
+    loginLog: { allEvents: '全部事件', event: '事件', userAgent: '用户代理', success: '成功', reason: '原因' },
+    errorLog: {
+      code: '错误码',
+      message: '错误消息',
+      module: '模块',
+      path: '路径',
+      method: '方法',
+      user_name: '用户',
+      client_ip: '客户端IP',
+      user_agent: '用户代理',
+      created_at: '时间'
+    }
   },
   api: {
     ...enUs.api,

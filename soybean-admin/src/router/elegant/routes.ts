@@ -116,6 +116,17 @@ export const generatedRoutes: GeneratedRoute[] = [
           i18nKey: 'route.audit_loginlogs',
           icon: 'ic:baseline-login'
         }
+      },
+      {
+        name: 'audit_error-logs',
+        path: '/audit/error-logs',
+        component: 'view.audit_error-logs',
+        meta: {
+          title: 'audit_error-logs',
+          i18nKey: 'route.audit_error-logs',
+          icon: 'mdi:alert-circle-outline',
+          roles: ['R_SUPER']
+        }
       }
     ]
   },

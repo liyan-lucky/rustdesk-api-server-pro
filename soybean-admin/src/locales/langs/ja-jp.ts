@@ -1,4 +1,4 @@
-const local: App.I18n.Schema = {
+﻿const local: App.I18n.Schema = {
   system: {
     title: 'Rustdesk Api Server',
     updateTitle: 'πé╖πé╣πâåπâáπâÉπâ╝πé╕πâºπâ│µ¢┤µû░',
@@ -150,6 +150,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'σƒ║µ£¼πâ¡πé░',
     audit_filetransferlogs: 'πâòπéíπéñπâ½Φ╗óΘÇüπâ¡πé░',
     audit_loginlogs: 'πâ¡πé░πéñπâ│πâ¡πé░',
+    'audit_error-logs': 'エラーログ',
     devices: 'πâçπâÉπéñπé╣',
     'my-devices': 'ΘÇúτ╡íσàê',
     'my-devices_peers': 'πâ₧πéñπâöπéó',
@@ -534,6 +535,17 @@ const local: App.I18n.Schema = {
       email: 'πâíπâ╝πâ½',
       name: 'σÉìσëì',
       last_login_at: 'µ£Çτ╡éπâ¡πé░πéñπâ│'
+    },
+    errorLog: {
+      code: 'Error Code',
+      message: 'Message',
+      module: 'Module',
+      path: 'Path',
+      method: 'Method',
+      user_name: 'User',
+      client_ip: 'Client IP',
+      user_agent: 'User Agent',
+      created_at: 'Time'
     },
     loginLog: {
       allEvents: 'σà¿πéñπâÖπâ│πâê',

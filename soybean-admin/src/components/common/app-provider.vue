@@ -27,7 +27,7 @@ const ContextHolder = defineComponent({
   <NLoadingBarProvider>
     <NDialogProvider>
       <NNotificationProvider>
-        <NMessageProvider>
+        <NMessageProvider :duration="8000" :keep-alive-on-hover="true">
           <ContextHolder />
           <slot></slot>
         </NMessageProvider>

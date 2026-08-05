@@ -3,6 +3,7 @@ package api
 import (
 	"io"
 	"rustdesk-api-server-pro/app/model"
+	"rustdesk-api-server-pro/app/service"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/repository"
@@ -55,6 +56,14 @@ func (c *basicController) okText(text string) mvc.Result {
 }
 
 func (c *basicController) fail(err error) mvc.Result {
+	user := c.GetUser()
+	userId := 0
+	userName := ""
+	if user != nil {
+		userId = user.Id
+		userName = user.Username
+	}
+	go service.RecordErrorLog(c.Db, "", err.Error(), "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
 	return mvc.Response{
 		Object: iris.Map{
 			"error": err.Error(),
@@ -63,6 +72,14 @@ func (c *basicController) fail(err error) mvc.Result {
 }
 
 func (c *basicController) failMsg(msg string) mvc.Result {
+	user := c.GetUser()
+	userId := 0
+	userName := ""
+	if user != nil {
+		userId = user.Id
+		userName = user.Username
+	}
+	go service.RecordErrorLog(c.Db, "", msg, "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
 	return mvc.Response{
 		Object: iris.Map{
 			"error": msg,

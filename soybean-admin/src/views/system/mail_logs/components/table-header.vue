@@ -14,6 +14,7 @@ defineProps<Props>();
 
 interface Emits {
   (e: 'refresh'): void;
+  (e: 'clear'): void;
 }
 
 const emit = defineEmits<Emits>();
@@ -25,11 +26,21 @@ const columns = defineModel<NaiveUI.TableColumnCheck[]>('columns', {
 function refresh() {
   emit('refresh');
 }
+
+function handleClear() {
+  emit('clear');
+}
 </script>
 
 <template>
   <NSpace :align="itemAlign" wrap justify="end" class="lt-sm:w-200px">
     <slot name="prefix"></slot>
+    <NButton size="small" type="error" @click="handleClear">
+      <template #icon>
+        <icon-ic-round-delete class="text-icon" />
+      </template>
+      {{ $t('common.delete') }}
+    </NButton>
     <NButton size="small" @click="refresh">
       <template #icon>
         <icon-mdi-refresh class="text-icon" :class="{ 'animate-spin': loading }" />

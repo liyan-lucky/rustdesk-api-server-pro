@@ -17,6 +17,8 @@ type AuditController struct {
 func (c *AuditController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/audit/list", "HandleList")
 	b.Handle("GET", "/audit/file-transfer-list", "HandleFileTransferList")
+	b.Handle("DELETE", "/audit/clear", "HandleClear")
+	b.Handle("DELETE", "/audit/file-transfer-clear", "HandleFileTransferClear")
 }
 
 func (c *AuditController) HandleList() mvc.Result {
@@ -147,4 +149,20 @@ func (c *AuditController) HandleFileTransferList() mvc.Result {
 		"current": currentPage,
 		"size":    pageSize,
 	}, "ok")
+}
+
+func (c *AuditController) HandleClear() mvc.Result {
+	_, err := c.Db.Exec("DELETE FROM audit")
+	if err != nil {
+		return c.dbError(err)
+	}
+	return c.Success(nil, "ok")
+}
+
+func (c *AuditController) HandleFileTransferClear() mvc.Result {
+	_, err := c.Db.Exec("DELETE FROM file_transfer")
+	if err != nil {
+		return c.dbError(err)
+	}
+	return c.Success(nil, "ok")
 }

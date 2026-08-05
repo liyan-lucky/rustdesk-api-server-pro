@@ -248,6 +248,23 @@ declare namespace Api {
       Pick<Api.Audit.AuditFileTransferLog, 'rustdesk_id' | 'peer_id' | 'uuid' | 'type' | 'created_at'> &
         Api.Common.CommonSearchParams
     >;
+
+    type ErrorLog = Common.CommonRecord<{
+      code: string;
+      message: string;
+      module: string;
+      path: string;
+      method: string;
+      user_id: number;
+      user_name: string;
+      client_ip: string;
+      user_agent: string;
+    }>;
+    type ErrorLogList = Common.PaginatingQueryRecord<ErrorLog>;
+    type ErrorLogSearchParams = CommonType.RecordNullable<
+      Pick<Api.Audit.ErrorLog, 'code' | 'module' | 'created_at'> &
+        Api.Common.CommonSearchParams
+    >;
   }
 
   namespace System {

@@ -1,4 +1,4 @@
-import enUs from './en-us';
+﻿import enUs from './en-us';
 
 const local: App.I18n.Schema = {
   ...enUs,
@@ -197,6 +197,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Journal de base',
     audit_filetransferlogs: 'Journaux de transfert de fichiers',
     audit_loginlogs: 'Journaux de connexion',
+    'audit_error-logs': 'Journaux d\'erreurs',
     devices: 'Appareils',
     'my-devices': 'Contacts',
     'my-devices_peers': 'Mes pairs',

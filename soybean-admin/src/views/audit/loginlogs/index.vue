@@ -5,6 +5,7 @@ import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
 import { request } from '@/service/request';
+import { fetchSecurityAuditClear } from '@/service/api/user_management';
 
 const appStore = useAppStore();
 const authStore = useAuthStore();
@@ -81,6 +82,19 @@ function handlePageSizeChange(size: number) {
 onMounted(() => {
   loadData();
 });
+
+async function handleClear() {
+  window.$dialog?.warning({
+    title: $t('common.tip'),
+    content: $t('common.confirmDelete'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
+    onPositiveClick: async () => {
+      await fetchSecurityAuditClear();
+      loadData();
+    }
+  });
+}
 </script>
 
 <template>
@@ -103,6 +117,12 @@ onMounted(() => {
           style="width: 200px"
         />
         <NButton type="primary" @click="handleSearch">{{ $t('common.search') }}</NButton>
+        <NButton v-if="isAdmin" type="error" @click="handleClear">
+          <template #icon>
+            <icon-ic-round-delete class="text-icon" />
+          </template>
+          {{ $t('common.delete') }}
+        </NButton>
       </NSpace>
     </NCard>
 

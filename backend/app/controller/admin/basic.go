@@ -2,6 +2,7 @@ package admin
 
 import (
 	"rustdesk-api-server-pro/app/model"
+	"rustdesk-api-server-pro/app/service"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/repository"
@@ -50,6 +51,14 @@ func (c *basicController) Success(data interface{}, message string) mvc.Result {
 }
 
 func (c *basicController) Error(data interface{}, message string) mvc.Result {
+	user := c.GetUser()
+	userId := 0
+	userName := ""
+	if user != nil {
+		userId = user.Id
+		userName = user.Username
+	}
+	go service.RecordErrorLog(c.Db, "", message, "admin", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
 	return c.response(500, data, message)
 }
 

@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { NTag } from 'naive-ui';
-import { fetchAuditLogList } from '@/service/api/audit';
+import { fetchAuditLogList, fetchAuditLogClear } from '@/service/api/audit';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useTable } from '@/hooks/common/table';
@@ -104,6 +104,19 @@ const {
     }
   ]
 });
+
+async function handleClear() {
+  window.$dialog?.warning({
+    title: $t('common.tip'),
+    content: $t('common.confirmDelete'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
+    onPositiveClick: async () => {
+      await fetchAuditLogClear();
+      getData();
+    }
+  });
+}
 </script>
 
 <template>
@@ -112,7 +125,7 @@ const {
 
     <NCard :title="$t('route.audit')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
-        <TableHeader v-model:columns="columnChecks" :loading="loading" @refresh="getData" />
+        <TableHeader v-model:columns="columnChecks" :loading="loading" @refresh="getData" @clear="handleClear" />
       </template>
       <NDataTable
         :columns="columns"

@@ -1,4 +1,4 @@
-const local: App.I18n.Schema = {
+﻿const local: App.I18n.Schema = {
   system: {
     title: 'Rustdesk Api Server',
     updateTitle: '╨₧╨▒╨╜╨╛╨▓╨╗╨╡╨╜╨╕╨╡ ╨▓╨╡╤Ç╤ü╨╕╨╕ ╤ü╨╕╤ü╤é╨╡╨╝╤ï',
@@ -150,6 +150,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: '╨æ╨░╨╖╨╛╨▓╤ï╨╡ ╨╗╨╛╨│╨╕',
     audit_filetransferlogs: '╨¢╨╛╨│╨╕ ╨┐╨╡╤Ç╨╡╨┤╨░╤ç╨╕ ╤ä╨░╨╣╨╗╨╛╨▓',
     audit_loginlogs: '╨¢╨╛╨│╨╕ ╨▓╤à╨╛╨┤╨░',
+    'audit_error-logs': 'Журналы ошибок',
     devices: '╨ú╤ü╤é╤Ç╨╛╨╣╤ü╤é╨▓╨░',
     'my-devices': '╨Ü╨╛╨╜╤é╨░╨║╤é╤ï',
     'my-devices_peers': '╨£╨╛╨╕ ╨┐╨╕╤Ç╤ï',
@@ -552,6 +553,17 @@ const local: App.I18n.Schema = {
       email: '╨ƒ╨╛╤ç╤é╨░',
       name: '╨ÿ╨╝╤Å',
       last_login_at: '╨ƒ╨╛╤ü╨╗╨╡╨┤╨╜╨╕╨╣ ╨▓╤à╨╛╨┤'
+    },
+    errorLog: {
+      code: 'Error Code',
+      message: 'Message',
+      module: 'Module',
+      path: 'Path',
+      method: 'Method',
+      user_name: 'User',
+      client_ip: 'Client IP',
+      user_agent: 'User Agent',
+      created_at: 'Time'
     },
     loginLog: {
       allEvents: '╨Æ╤ü╨╡ ╤ü╨╛╨▒╤ï╤é╨╕╤Å',

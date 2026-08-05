@@ -1,4 +1,4 @@
-import enUs from './en-us';
+﻿import enUs from './en-us';
 const local: App.I18n.Schema = {
   ...enUs,
   system: { ...enUs.system, title: 'Rustdesk Api Server' },
@@ -176,6 +176,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'registros base',
     audit_filetransferlogs: 'registros de transferencia',
     audit_loginlogs: 'registros de inicio de sesión',
+    'audit_error-logs': 'Registros de errores',
     devices: 'Dispositivos',
     'my-devices': 'Contactos',
     'my-devices_peers': 'Mis contactos',

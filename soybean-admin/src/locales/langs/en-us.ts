@@ -149,6 +149,7 @@ const local: App.I18n.Schema = {
     audit_baselogs: 'Base Logs',
     audit_filetransferlogs: 'File Transfer Logs',
     audit_loginlogs: 'Login Logs',
+    'audit_error-logs': 'Error Logs',
     devices: 'Devices',
     'my-devices': 'Contacts',
     'my-devices_peers': 'My Peers',
@@ -515,7 +516,18 @@ const local: App.I18n.Schema = {
       status: 'Active'
     },
     oauth: { provider: 'Provider', subject: 'Subject', email: 'Email', name: 'Name', last_login_at: 'Last Login' },
-    loginLog: { allEvents: 'All Events', event: 'Event', userAgent: 'User Agent', success: 'Success', reason: 'Reason' }
+    loginLog: { allEvents: 'All Events', event: 'Event', userAgent: 'User Agent', success: 'Success', reason: 'Reason' },
+    errorLog: {
+      code: 'Error Code',
+      message: 'Message',
+      module: 'Module',
+      path: 'Path',
+      method: 'Method',
+      user_name: 'User',
+      client_ip: 'Client IP',
+      user_agent: 'User Agent',
+      created_at: 'Time'
+    }
   },
   api: {
     CaptchaError: 'CAPTCHA error',

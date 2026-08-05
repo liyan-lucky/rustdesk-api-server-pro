@@ -20,6 +20,7 @@ type SessionsController struct {
 func (c *SessionsController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/sessions/list", "HandleList")
 	b.Handle("POST", "/sessions/kill", "HandleKill")
+	b.Handle("DELETE", "/sessions/clear", "HandleClear")
 }
 
 func (c *SessionsController) HandleList() mvc.Result {
@@ -140,4 +141,12 @@ func sanitizeSessionForAudit(session *model.AuthToken) iris.Map {
 		"status":      session.Status,
 		"expired":     session.Expired.Format(config.TimeFormat),
 	}
+}
+
+func (c *SessionsController) HandleClear() mvc.Result {
+	_, err := c.Db.Where("is_admin = 0").Delete(&model.AuthToken{})
+	if err != nil {
+		return c.dbError(err)
+	}
+	return c.Success(nil, "ok")
 }
