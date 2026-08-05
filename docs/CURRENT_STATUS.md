@@ -1,6 +1,6 @@
 # 当前仓库状态
 
-更新时间：2026-08-03
+更新时间：2026-08-05
 
 ## 定位
 
@@ -17,7 +17,7 @@
 - Docker 镜像：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`。
 - RustDesk 兼容版本：1.4.9。
 - 服务端版本：由 VERSION 文件控制，CI 自动递增 PATCH 号并同步兼容清单；API、前端、镜像标签使用同一构建版本。
-- 当前已发布版本：`1.1.55`（版本提交 `95e71820`）；测试设备因 GHCR 链路异常暂时仍运行 `1.1.54`。
+- 当前已发布版本：`1.2.9`（版本提交 `d38a1d50`）。
 
 ## 当前能力边界
 
@@ -37,9 +37,10 @@
 - 版本自动递增系统：VERSION 文件为单一事实来源，CI 每次构建自动递增 PATCH 版本号。
 - 首页更新日志区域显示服务端版本与构建时间。
 - 管理后台前端已内置到镜像，旧 `rustdesk-web` / nginx 前端容器不再是必需组件。
-- 第三方登录统一使用 `oauth.providers`，管理员优先在“第三方登录”页面配置。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关；QQ 已完成网站应用 OAuth2、OpenID 身份与用户资料协议适配，等待真实回调验收。Client Secret 接口只返回 `********` 加末 8 位的识别提示，不返回明文；未修改提示直接保存会保留原密钥。
+- 第三方登录统一使用 `oauth.providers`，管理员优先在“第三方登录”页面配置。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关；QQ 已完成网站应用 OAuth2、OpenID 身份与用户资料协议适配，等待真实回调验收。Google、Microsoft、Gitee、GitLab、WeChat、Apple 已完成协议适配和前端配置界面；Apple 使用动态 JWT client_secret（ES256），WeChat 使用 appid 参数和逗号分隔 scope。Client Secret 接口只返回 `********` 加末 8 位的识别提示，不返回明文；未修改提示直接保存会保留原密钥。
 - OAuth/OIDC 成功目标和失败目标均已统一为前端 hash 路由；失败回调固定返回登录页，不再先进入受保护页面后闪退。错误码区分账户不可绑定、Provider 网络不可达、state 过期和其他失败。
-- Google 与通用 OIDC 保持兼容。微信、Gitee 等国内 Provider 目前仅在路线图中，尚未完成官方协议适配，不得在界面中宣称可用。
+- 错误码索引体系：`errcode.go` 注册 105+ 个错误码，Message 统一为 PascalCase 作为 i18n key；前端 `parseBackendMessage()` 从 `ERR-xxxx: Message` 提取编码和翻译；帮助页面提供错误码搜索和筛选；错误日志表 `ErrorLog` 全局记录后端错误。
+- Google 与通用 OIDC 保持兼容。微信、Gitee、Microsoft、GitLab、Apple 已完成协议适配。
 - plugin-sign、部分 OIDC 和高级企业能力仍以兼容占位或主流程兼容为主，不能宣称完整替代官方 Pro。
 
 ## 当前目录职责
@@ -79,7 +80,9 @@
 5. YAML 配置文件中安全相关字段不要加行尾注释（会导致 shell 脚本解析失败）。
 6. 启动脚本最后一行必须用 `exec`（确保 Go 进程成为 PID 1）。
 7. sed 替换 YAML 值时必须限定段范围（避免误改其他段的同名字段）。
-8. 新增前端 i18n key 时必须同步更新 `app.d.ts` 的 TypeScript 类型定义。
+8. 新增前端 i18n key 时必须同步更新 `app.d.ts` 的 TypeScript 类型定义和全部 9 种语言文件。
 9. 修改测试期望值后必须同步提交测试文件。
 10. 所有语言文件必须注册到 locale、语言选择器、Day.js 与 Naive UI 映射；发布前运行 i18n 严格检查和覆盖率报告，禁止遗漏语言或缺失键。
 11. 地址簿写入必须同时验证管理端 `/admin/ab/*` 和客户端 `/api/ab/*` 的真实增删改查；标签重命名、删除必须同步更新 peer 标签引用，并验证旧版 `/api/ab/get` 兼容读取结果。
+12. 错误消息必须带 `ERR-xxxx` 编码前缀，与帮助页错误码索引匹配；新增 errcode 时同步更新 `errcode.go`、`app.d.ts` 类型定义和全部语言文件。
+13. Apple 私钥 placeholder 不得包含 `-----BEGIN PRIVATE KEY-----` 文本，避免触发合规检查密钥检测。

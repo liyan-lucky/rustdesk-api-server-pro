@@ -84,7 +84,11 @@ GitHub OAuth 换 token 必须访问 `https://github.com/login/oauth/access_token
 
 ### 国内 Provider 测试
 
-QQ Provider 已实现网站应用 OAuth2 流程。必须使用已审核的 QQ 互联网站应用，并确保配置的回调地址与审核登记值一致；QQ 不提供邮箱，首次测试建议使用普通用户角色和自动创建普通用户。微信 Provider 仍未实现。
+QQ Provider 已实现网站应用 OAuth2 流程。必须使用已审核的 QQ 互联网站应用，并确保配置的回调地址与审核登记值一致；QQ 不提供邮箱，首次测试建议使用普通用户角色和自动创建普通用户。WeChat Provider 已完成协议适配，使用 appid 参数和逗号分隔 scope，不支持 PKCE。Apple Provider 已完成协议适配，使用动态 JWT client_secret，需配置 Team ID、Key ID 和 .p8 私钥。
+
+### 错误码 ERR-xxxx
+
+所有后端错误消息均带 `ERR-xxxx` 编码前缀。前端显示格式为 `[ERR-xxxx] 翻译后消息`。可在"关于 → 错误码帮助"页面搜索编码查看详细说明和解决方案。错误日志表 `ErrorLog` 全局记录后端错误，可在"审计 → 错误日志"页面查看。
 
 ## 3. 登录成功但部分页面/接口报错（尤其升级后）
 
@@ -224,7 +228,7 @@ rustdesk-api-server-pro.exe sync
 - 回调页显示 `oauth_state_expired`：state 超时（默认 180 秒），用户授权过慢，调大 `stateTtlSeconds`。
 - 回调页显示 `oauth_account_not_bound`：未配置 `bindByEmail` 或 `autoCreateUser`，且无已绑定账号。
 - 轮询一直 `ready:false`：回调未完成或失败，检查浏览器是否成功跳转到 Provider 授权页。
-- `/api/oidc/auth` 与 `/api/oidc/auth-query` 仍为兼容占位，不用于客户端 OAuth 登录。
+- `/api/oidc/auth` 与 `/api/oidc/auth-query` 已实现完整客户端兼容协议，复用 `/api/oauth/*` 的服务端回调+轮询逻辑。
 
 ## 9. 插件签名（plugin-sign）不可用或签名结果不符合预期
 

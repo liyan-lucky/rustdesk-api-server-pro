@@ -2,9 +2,20 @@
 
 ## 当前支持状态
 
-第三方登录统一使用 `oauth.providers`。GitHub 是第一套完成安全加固和端到端测试的 Provider；QQ 已完成网站应用 OAuth2 协议适配，等待使用已审核应用做真实回调验收；Google 与通用 OIDC 保持兼容。后续 Provider 应复用同一套一次性 state、短期 ticket、账号绑定和审计逻辑。
+第三方登录统一使用 `oauth.providers`。已完成协议适配的 Provider 包括：
 
-规划中的国际 Provider 包括 Microsoft、Apple、GitLab；国内 Provider 包括 Gitee、微信开放平台、支付宝、钉钉和飞书。未完成官方协议适配及测试前，不得仅添加一个按钮就宣称支持。
+- **GitHub**：第一套完成安全加固和端到端测试的 Provider，支持 PKCE S256、持久化一次性 state/ticket、已验证邮箱、admin/user 角色隔离。
+- **QQ**：网站应用 OAuth2、OpenID 身份与用户资料协议适配，等待使用已审核应用做真实回调验收。
+- **Google**：标准 OAuth2 + PKCE，支持已验证邮箱绑定和域名限制。
+- **Microsoft**：Azure AD v2.0 端点，支持 PKCE。
+- **Gitee**：标准 OAuth2，支持 PKCE。
+- **GitLab**：标准 OAuth2，支持 PKCE。
+- **WeChat**：开放平台网站应用，使用 appid 参数、逗号分隔 scope、GET token 请求，不支持 PKCE。
+- **Apple**：Sign in with Apple，使用动态 JWT client_secret（ES256 签名），不支持 PKCE，用户信息仅从 ID Token 获取。
+
+后续 Provider 应复用同一套一次性 state、PKCE verifier（Apple/WeChat/QQ 除外）、短期 ticket、账号绑定和审计逻辑。
+
+规划中的 Provider 包括支付宝、钉钉和飞书。未完成官方协议适配及测试前，不得仅添加一个按钮就宣称支持。
 
 ## QQ 网站应用配置
 
@@ -13,6 +24,30 @@
 QQ 的 token 接口使用 GET，用户身份需要通过 `openid` 识别，再调用 `get_user_info` 获取昵称和头像。QQ 不提供可信邮箱，因此配置会强制关闭按邮箱绑定和邮箱域名限制。新增 QQ 配置默认使用普通用户角色并允许自动创建普通用户，禁止自动创建管理员；管理员接入应先建立显式 OpenID 绑定。
 
 QQ Connect 当前不提供 PKCE 参数。服务端继续使用数据库持久化、一次性消费且短时有效的 state 防止 CSRF 和回放，回调成功后仅向浏览器返回一次性短期 ticket，不保存第三方 access token。
+
+## Apple Sign in 配置
+
+Apple 使用动态生成的 JWT 作为 `client_secret`，而非静态密钥。在后台"第三方登录"中选择 Apple 后，需填写：
+
+- **Client ID**：Apple Services ID（即 Service Identifier）
+- **Team ID**：Apple Developer 账户的 Team ID
+- **Key ID**：在 Apple Developer 创建的 Sign in with Apple 密钥的 Key ID
+- **Private Key (.p8)**：下载的 .p8 私钥内容
+
+Apple 不支持 PKCE，服务端会自动跳过 PKCE 流程。用户信息（邮箱、姓名）仅从 ID Token 获取，Apple 没有 UserInfo 端点。首次授权时 Apple 允许用户隐藏邮箱，此时 ID Token 中的 `email` 为 Apple 代理邮箱。
+
+默认回调路径为 `/admin/auth/oauth/apple/callback`。Apple 授权范围固定为 `email` 和 `name`。
+
+## WeChat 开放平台配置
+
+在微信开放平台创建并审核网站应用后，在后台"第三方登录"中选择 WeChat，填写 AppID、AppSecret 和审核时登记的回调地址。默认回调路径为 `/admin/auth/oauth/wechat/callback`。
+
+WeChat 的特殊性：
+- 使用 `appid` 参数代替 `client_id`
+- scope 使用逗号分隔（如 `snsapi_login`）
+- token 接口使用 GET 而非 POST
+- 不支持 PKCE
+- 不提供可信邮箱，配置会强制关闭按邮箱绑定和邮箱域名限制
 
 ## GitHub OAuth App 配置
 
@@ -53,7 +88,7 @@ oauth:
 
 ## 安全与生命周期
 
-- 授权请求使用 OAuth authorization code flow、随机一次性 state 和 PKCE S256。
+- 授权请求使用 OAuth authorization code flow、随机一次性 state 和 PKCE S256（Apple、WeChat、QQ 不支持 PKCE，自动跳过）。
 - state、PKCE verifier 与登录 ticket 持久化到 `oauth_login_session`，只保存浏览器值的 SHA-256，均为一次性并有短有效期，服务重启后流程仍可完成。
 - GitHub 私有邮箱通过 `/user/emails` 获取，只接受 `verified=true` 的主邮箱或首个已验证邮箱；按邮箱绑定时没有已验证邮箱会拒绝登录。
 - GitHub API 请求使用 Bearer token、官方 JSON media type 和明确 API 版本头；访问令牌不会写入日志或 OAuth 账号表。

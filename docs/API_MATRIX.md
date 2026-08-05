@@ -47,7 +47,7 @@
 
 | 模块 | 路径 | 状态 | 建议 |
 | --- | --- | --- | --- |
-| 后台登录 | `/admin/auth/*` | 完整（GitHub） | GitHub OAuth 使用 PKCE、持久化一次性 state/ticket、已验证邮箱与管理员/普通用户角色绑定；登录成功/失败、回调与 ticket 换 token、后台 token 无效均写入 `security_audit` |
+| 后台登录 | `/admin/auth/*` | 完整（GitHub/QQ/Google/Microsoft/Gitee/GitLab/WeChat/Apple） | GitHub OAuth 使用 PKCE、持久化一次性 state/ticket、已验证邮箱与管理员/普通用户角色绑定；Apple 使用动态 JWT client_secret；WeChat 使用 appid 参数；登录成功/失败、回调与 ticket 换 token、后台 token 无效均写入 `security_audit` |
 | 客户端第三方登录 | `/api/oauth/*` | 完整 | 服务端回调 + 客户端轮询流程，复用 `accountRole: user` 的 Provider；`/api/oauth/start` 生成授权 URL + poll_token，`/api/oauth/{provider}/callback` 回调签发 ticket，`/api/oauth/poll` 轮询拿 ticket，`/api/oauth/exchange` 换 90 天客户端 token；state/poll_token/ticket 一次性短时效，均写 `security_audit` |
 | 仪表盘 | `/admin/dashboard/*` | 已有 | 增加审计概览 |
 | 用户管理 | `/admin/users/*` | 基础 | 新增、修改、删除用户已写 `operation_audit`；不记录密码和 2FA 密钥明文；空删除列表会返回 `NoUserIds` 并记录失败审计 |

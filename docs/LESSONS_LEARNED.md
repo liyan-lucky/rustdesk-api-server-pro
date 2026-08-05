@@ -73,6 +73,9 @@
 - hbbs 默认输出 `id_ed25519.pub` 到 `/root`，Docker 挂载 `-v /宿主机/hbbs:/root` 即可自动检测
 - 后端返回的 source 必须是前端 i18n `sourceType` 中已定义的类型（`env`/`inferred`/`auto`/`empty`），否则前端无法显示
 - 新增 i18n key 时必须同步更新 `app.d.ts` 的 TypeScript 类型定义，否则前端 CI 类型检查失败
+- 新增 i18n key 时必须同步更新全部 9 种语言文件（en-us、zh-cn、ja-jp、ko-kr、fr-fr、de-de、es-es、ru-ru、it-it），否则 TypeScript 类型检查失败
+- errcode Message 必须使用 PascalCase（如 `CaptchaError`），确保可作为 i18n key 使用
+- Apple 私钥 placeholder 不得包含 `-----BEGIN PRIVATE KEY-----` 文本，否则合规检查会误判为真实密钥
 
 ## CI/CD 相关
 

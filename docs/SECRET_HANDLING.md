@@ -8,6 +8,7 @@ Do not commit:
 
 - production `server.yaml`;
 - OAuth `clientSecret` values;
+- Apple `.p8` private keys used for generating `client_secret` JWT;
 - SMTP usernames or passwords;
 - database files such as `server.db`, `*.sqlite`, `*.sqlite3`;
 - private keys, certificates, `.p12`, `.pfx`, `.pem`, `.key` files;
