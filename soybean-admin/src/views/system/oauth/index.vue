@@ -41,44 +41,84 @@ const defaultCallback = computed(() => `${window.location.origin}/admin/auth/oau
 function applyProviderPreset(type: string) {
   const presets: Record<string, any> = {
     github: {
-      type: 'github', name: 'github', displayName: 'GitHub',
-      scopesText: 'read:user user:email', accountRole: 'admin',
-      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+      type: 'github',
+      name: 'github',
+      displayName: 'GitHub',
+      scopesText: 'read:user user:email',
+      accountRole: 'admin',
+      bindByEmail: true,
+      autoCreateAdmin: false,
+      autoCreateUser: false
     },
     qq: {
-      type: 'qq', name: 'qq', displayName: 'QQ',
-      scopesText: 'get_user_info', accountRole: 'user',
-      bindByEmail: false, autoCreateAdmin: false, autoCreateUser: true
+      type: 'qq',
+      name: 'qq',
+      displayName: 'QQ',
+      scopesText: 'get_user_info',
+      accountRole: 'user',
+      bindByEmail: false,
+      autoCreateAdmin: false,
+      autoCreateUser: true
     },
     google: {
-      type: 'google', name: 'google', displayName: 'Google',
-      scopesText: 'openid profile email', accountRole: 'admin',
-      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+      type: 'google',
+      name: 'google',
+      displayName: 'Google',
+      scopesText: 'openid profile email',
+      accountRole: 'admin',
+      bindByEmail: true,
+      autoCreateAdmin: false,
+      autoCreateUser: false
     },
     microsoft: {
-      type: 'microsoft', name: 'microsoft', displayName: 'Microsoft',
-      scopesText: 'openid profile email', accountRole: 'admin',
-      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+      type: 'microsoft',
+      name: 'microsoft',
+      displayName: 'Microsoft',
+      scopesText: 'openid profile email',
+      accountRole: 'admin',
+      bindByEmail: true,
+      autoCreateAdmin: false,
+      autoCreateUser: false
     },
     gitee: {
-      type: 'gitee', name: 'gitee', displayName: 'Gitee',
-      scopesText: 'user_info', accountRole: 'admin',
-      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+      type: 'gitee',
+      name: 'gitee',
+      displayName: 'Gitee',
+      scopesText: 'user_info',
+      accountRole: 'admin',
+      bindByEmail: true,
+      autoCreateAdmin: false,
+      autoCreateUser: false
     },
     gitlab: {
-      type: 'gitlab', name: 'gitlab', displayName: 'GitLab',
-      scopesText: 'read_user', accountRole: 'admin',
-      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+      type: 'gitlab',
+      name: 'gitlab',
+      displayName: 'GitLab',
+      scopesText: 'read_user',
+      accountRole: 'admin',
+      bindByEmail: true,
+      autoCreateAdmin: false,
+      autoCreateUser: false
     },
     wechat: {
-      type: 'wechat', name: 'wechat', displayName: 'WeChat',
-      scopesText: 'snsapi_login', accountRole: 'user',
-      bindByEmail: false, autoCreateAdmin: false, autoCreateUser: true
+      type: 'wechat',
+      name: 'wechat',
+      displayName: 'WeChat',
+      scopesText: 'snsapi_login',
+      accountRole: 'user',
+      bindByEmail: false,
+      autoCreateAdmin: false,
+      autoCreateUser: true
     },
     apple: {
-      type: 'apple', name: 'apple', displayName: 'Apple',
-      scopesText: 'email name', accountRole: 'admin',
-      bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+      type: 'apple',
+      name: 'apple',
+      displayName: 'Apple',
+      scopesText: 'email name',
+      accountRole: 'admin',
+      bindByEmail: true,
+      autoCreateAdmin: false,
+      autoCreateUser: false
     }
   };
   const preset = presets[type] || presets.github;
@@ -404,7 +444,12 @@ onMounted(() => {
           <NInput v-model:value="form.keyId" placeholder="e.g. ABC12DEF34" />
         </NFormItem>
         <NFormItem v-if="form.type === 'apple'" :label="$t('page.oauth.privateKey')">
-          <NInput v-model:value="form.privateKey" type="textarea" :autosize="{ minRows: 3, maxRows: 8 }" placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----" />
+          <NInput
+            v-model:value="form.privateKey"
+            type="textarea"
+            :autosize="{ minRows: 3, maxRows: 8 }"
+            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+          />
         </NFormItem>
         <NFormItem :label="$t('page.oauth.redirectUrl')">
           <NInput v-model:value="form.redirectUrl" />

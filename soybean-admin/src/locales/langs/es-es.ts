@@ -1,4 +1,4 @@
-﻿import enUs from './en-us';
+import enUs from './en-us';
 const local: App.I18n.Schema = {
   ...enUs,
   system: { ...enUs.system, title: 'Rustdesk Api Server' },
@@ -410,7 +410,12 @@ const local: App.I18n.Schema = {
       userRole: 'Usuario',
       useDefault: 'Usar valor predeterminado',
       listPlaceholder: 'Separe varios valores con espacios o comas',
-      copied: 'Copiado'
+      copied: 'Copiado',
+      appleSecretHint:
+        'Apple usa un JWT generado dinámicamente como client_secret. Configure Team ID, Key ID y Private Key abajo.',
+      teamId: 'Team ID',
+      keyId: 'Key ID',
+      privateKey: 'Private Key (.p8)'
     },
     about: {
       ...enUs.page.about,

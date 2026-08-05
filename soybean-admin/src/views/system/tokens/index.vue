@@ -7,6 +7,7 @@ import { request } from '@/service/request';
 
 const appStore = useAppStore();
 const loading = ref(false);
+const clearing = ref(false);
 const data = ref<any[]>([]);
 const total = ref(0);
 const currentPage = ref(1);
@@ -96,6 +97,16 @@ function handlePageSizeChange(size: number) {
   loadData();
 }
 
+async function handleClearAll() {
+  clearing.value = true;
+  const { error } = await request({ url: '/tokens/clear', method: 'post' });
+  clearing.value = false;
+  if (!error) {
+    window.$message?.success($t('common.deleteSuccess'));
+    loadData();
+  }
+}
+
 onMounted(() => {
   loadData();
 });
@@ -104,6 +115,14 @@ onMounted(() => {
 <template>
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <NCard :title="$t('route.system_tokens')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
+      <template #header-extra>
+        <NPopconfirm @positive-click="handleClearAll">
+          {{ $t('common.confirmClear') }}
+          <template #trigger>
+            <NButton type="error" size="small" :loading="clearing">{{ $t('common.clear') }}</NButton>
+          </template>
+        </NPopconfirm>
+      </template>
       <NDataTable
         :columns="columns"
         :data="data"

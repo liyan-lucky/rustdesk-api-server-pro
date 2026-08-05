@@ -233,7 +233,12 @@ onMounted(async () => {
       </NGi>
     </NGrid>
 
-    <NDrawer v-model:show="drawerVisible" :width="appStore.isMobile ? '100%' : 420" placement="right" :trap-focus="false">
+    <NDrawer
+      v-model:show="drawerVisible"
+      :width="appStore.isMobile ? '100%' : 420"
+      placement="right"
+      :trap-focus="false"
+    >
       <NDrawerContent v-if="activeCard" :title="drawerTitle" closable>
         <div class="drawer-body">
           <div class="drawer-value">

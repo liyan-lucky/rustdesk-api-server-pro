@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { NTag } from 'naive-ui';
-import { fetchAuditLogList, fetchAuditLogClear } from '@/service/api/audit';
+import { fetchAuditLogClear, fetchAuditLogList } from '@/service/api/audit';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useTable } from '@/hooks/common/table';

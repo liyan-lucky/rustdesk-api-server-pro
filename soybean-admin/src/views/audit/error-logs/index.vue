@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { NTag } from 'naive-ui';
-import { fetchErrorLogList, fetchErrorLogClear } from '@/service/api/error-log';
+import { fetchErrorLogClear, fetchErrorLogList } from '@/service/api/error-log';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useTable } from '@/hooks/common/table';

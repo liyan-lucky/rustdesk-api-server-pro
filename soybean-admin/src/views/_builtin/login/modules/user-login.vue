@@ -99,8 +99,14 @@ onMounted(() => {
     </NFormItem>
     <NFormItem path="code">
       <NInput v-model:value="model.code" :clearable="true" :placeholder="$t('page.login.common.codePlaceholder')" />
-      <div class="pl-8px flex-shrink-0">
-        <img width="152" height="40" class="cursor-pointer lt-sm:w-100px lt-sm:h-28px" :src="captcha.img" @click="handleCaptcha" />
+      <div class="flex-shrink-0 pl-8px">
+        <img
+          width="152"
+          height="40"
+          class="cursor-pointer lt-sm:h-28px lt-sm:w-100px"
+          :src="captcha.img"
+          @click="handleCaptcha"
+        />
       </div>
     </NFormItem>
     <NSpace vertical :size="16">

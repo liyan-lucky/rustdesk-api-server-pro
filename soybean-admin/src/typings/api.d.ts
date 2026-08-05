@@ -262,8 +262,7 @@ declare namespace Api {
     }>;
     type ErrorLogList = Common.PaginatingQueryRecord<ErrorLog>;
     type ErrorLogSearchParams = CommonType.RecordNullable<
-      Pick<Api.Audit.ErrorLog, 'code' | 'module' | 'created_at'> &
-        Api.Common.CommonSearchParams
+      Pick<Api.Audit.ErrorLog, 'code' | 'module' | 'created_at'> & Api.Common.CommonSearchParams
     >;
   }
 

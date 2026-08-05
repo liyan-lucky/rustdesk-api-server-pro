@@ -26,6 +26,8 @@ const local: App.I18n.Schema = {
     delete: '删除',
     deleteSuccess: '删除成功',
     confirmDelete: '确认删除吗？',
+    clear: '清除全部',
+    confirmClear: '确认清除全部吗？这将使所有活跃令牌失效。',
     edit: '编辑',
     import: '导入 CSV',
     export: '导出 CSV',

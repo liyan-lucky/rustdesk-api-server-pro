@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
@@ -12,7 +12,6 @@ defineOptions({
 
 const authStore = useAuthStore();
 const route = useRoute();
-const router = useRouter();
 const { formRef, validate } = useNaiveForm();
 const oauthProviders = ref<Api.Auth.OAuthProvider[]>([]);
 const activeProvider = ref('');
@@ -130,8 +129,14 @@ onMounted(() => {
     </NFormItem>
     <NFormItem path="code">
       <NInput v-model:value="model.code" :clearable="true" :placeholder="$t('page.login.common.codePlaceholder')" />
-      <div class="pl-8px flex-shrink-0">
-        <img width="152" height="40" class="cursor-pointer lt-sm:w-100px lt-sm:h-28px" :src="captcha.img" @click="handleCaptcha" />
+      <div class="flex-shrink-0 pl-8px">
+        <img
+          width="152"
+          height="40"
+          class="cursor-pointer lt-sm:h-28px lt-sm:w-100px"
+          :src="captcha.img"
+          @click="handleCaptcha"
+        />
       </div>
     </NFormItem>
     <NSpace vertical :size="24">
@@ -150,17 +155,18 @@ onMounted(() => {
         {{ $t('common.confirm') }}
       </NButton>
       <NDivider v-if="oauthProviders.length > 0">{{ $t('page.login.common.thirdPartyLogin') }}</NDivider>
-      <NButton
-        v-for="provider in oauthProviders"
-        :key="provider.name"
-        tertiary
-        block
-        :loading="activeProvider === provider.name"
-        @click="handleOAuthLogin(provider)"
-      >
-        <template #icon><SvgIcon :icon="providerIcon(provider.type)" /></template>
-        {{ $t('page.login.common.continueWith', { provider: provider.displayName }) }}
-      </NButton>
+      <div class="grid grid-cols-1 gap-8px lt-sm:grid-cols-2">
+        <NButton
+          v-for="provider in oauthProviders"
+          :key="provider.name"
+          tertiary
+          :loading="activeProvider === provider.name"
+          @click="handleOAuthLogin(provider)"
+        >
+          <template #icon><SvgIcon :icon="providerIcon(provider.type)" /></template>
+          {{ $t('page.login.common.continueWith', { provider: provider.displayName }) }}
+        </NButton>
+      </div>
     </NSpace>
   </NForm>
 </template>

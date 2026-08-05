@@ -24,6 +24,8 @@ const local: App.I18n.Schema = {
     delete: 'Delete',
     deleteSuccess: 'Delete Success',
     confirmDelete: 'Are you sure you want to delete?',
+    clear: 'Clear All',
+    confirmClear: 'Are you sure you want to clear all? This will invalidate all active tokens.',
     edit: 'Edit',
     import: 'CSV Import',
     export: 'CSV Export',
@@ -370,7 +372,12 @@ const local: App.I18n.Schema = {
       userRole: 'πâªπâ╝πé╢πâ╝',
       useDefault: 'µùóσ«ÜσÇñπéÆΣ╜┐τö¿',
       listPlaceholder: 'Φñçµò░πü«σÇñπü»τ⌐║τÖ╜πü╛πüƒπü»πé½πâ│πâ₧πüºσî║σêçπéèπü╛πüÖ',
-      copied: 'πé│πâöπâ╝πüùπü╛πüùπüƒ'
+      copied: 'πé│πâöπâ╝πüùπü╛πüùπüƒ',
+      appleSecretHint:
+        'Appleπü»σïòτÜäτÜäπü½τöƒµêÉπüòπéîπéïJWTπéÆclient_secretπü¿πüùπüªΣ╜┐τö¿πüùπü╛πüÖπÇéΣ╕ïπü«Team IDπÇüKey IDπÇüPrivate KeyπéÆΦ¿¡σ«ÜπüùπüªπüÅπüáπüòπüäπÇé',
+      teamId: 'Team ID',
+      keyId: 'Key ID',
+      privateKey: 'Private Key (.p8)'
     },
     about: {
       latestCommand: 'latestπü╕µ¢┤µû░',

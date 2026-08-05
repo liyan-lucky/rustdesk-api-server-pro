@@ -53,7 +53,9 @@ export const userPortalRequest = createFlatRequest<App.Service.Response, Request
         message = error.response?.data?.message || message;
       }
       const parsed = parseBackendMessage(message);
-      const displayMsg = parsed.code ? `[${parsed.code}] ${$t(parsed.i18nKey as App.I18n.I18nKey)}` : $t(parsed.i18nKey as App.I18n.I18nKey);
+      const displayMsg = parsed.code
+        ? `[${parsed.code}] ${$t(parsed.i18nKey as App.I18n.I18nKey)}`
+        : $t(parsed.i18nKey as App.I18n.I18nKey);
       showErrorMsg(userPortalRequest.state, displayMsg);
     }
   }

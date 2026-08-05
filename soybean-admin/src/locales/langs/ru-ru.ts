@@ -24,6 +24,8 @@ const local: App.I18n.Schema = {
     delete: 'Delete',
     deleteSuccess: 'Delete Success',
     confirmDelete: 'Are you sure you want to delete?',
+    clear: 'Clear All',
+    confirmClear: 'Are you sure you want to clear all? This will invalidate all active tokens.',
     edit: 'Edit',
     import: 'CSV Import',
     export: 'CSV Export',
@@ -380,7 +382,12 @@ const local: App.I18n.Schema = {
       userRole: '╨ƒ╨╛╨╗╤î╨╖╨╛╨▓╨░╤é╨╡╨╗╤î',
       useDefault: '╨ÿ╤ü╨┐╨╛╨╗╤î╨╖╨╛╨▓╨░╤é╤î ╨╖╨╜╨░╤ç╨╡╨╜╨╕╨╡ ╨┐╨╛ ╤â╨╝╨╛╨╗╤ç╨░╨╜╨╕╤Ä',
       listPlaceholder: '╨á╨░╨╖╨┤╨╡╨╗╤Å╨╣╤é╨╡ ╨╖╨╜╨░╤ç╨╡╨╜╨╕╤Å ╨┐╤Ç╨╛╨▒╨╡╨╗╨░╨╝╨╕ ╨╕╨╗╨╕ ╨╖╨░╨┐╤Å╤é╤ï╨╝╨╕',
-      copied: '╨í╨║╨╛╨┐╨╕╤Ç╨╛╨▓╨░╨╜╨╛'
+      copied: '╨í╨║╨╛╨┐╨╕╤Ç╨╛╨▓╨░╨╜╨╛',
+      appleSecretHint:
+        'Apple ╨╕╤ü╨┐╨╛╨╗╤î╨╖╤â╨╡╤é ╨┤╨╕╨╜╨░╨╝╨╕╤ç╨╡╤ü╨║╨╕ ╤ü╨│╨╡╨╜╨╡╤Ç╨╕╤Ç╨╛╨▓╨░╨╜╨╜╤ï╨╣ JWT ╨▓ ╨║╨░╤ç╨╡╤ü╤é╨▓╨╡ client_secret. ╨Ø╨░╤ü╤é╤Ç╨╛╨╣╤é╨╡ Team ID, Key ID ╨╕ Private Key ╨╜╨╕╨╢╨╡.',
+      teamId: 'Team ID',
+      keyId: 'Key ID',
+      privateKey: 'Private Key (.p8)'
     },
     about: {
       latestCommand: '╨₧╨▒╨╜╨╛╨▓╨╕╤é╤î ╨┤╨╛ latest',

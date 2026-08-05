@@ -18,6 +18,7 @@ type TokenController struct {
 func (c *TokenController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/tokens/list", "HandleList")
 	b.Handle("POST", "/tokens/kill", "HandleKill")
+	b.Handle("POST", "/tokens/clear", "HandleClear")
 }
 
 func (c *TokenController) HandleList() mvc.Result {
@@ -85,6 +86,15 @@ func (c *TokenController) HandleKill() mvc.Result {
 	}
 
 	_, err := c.Db.In("id", params.Ids).Cols("status").Update(&model.AuthToken{Status: 0})
+	if err != nil {
+		return c.dbError(err)
+	}
+
+	return c.Success(nil, "ok")
+}
+
+func (c *TokenController) HandleClear() mvc.Result {
+	_, err := c.Db.Cols("status").Update(&model.AuthToken{Status: 0})
 	if err != nil {
 		return c.dbError(err)
 	}

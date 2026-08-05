@@ -22,7 +22,8 @@ const hasUpdate = computed(() => latestVersion.value && compareVersions(latestVe
 const resolvedUpdateCommand = computed(() =>
   commandTemplate.value.replaceAll('{version}', latestVersion.value || runningVersion.value)
 );
-const cleanupCommand = 'docker image prune -f --filter "label=org.opencontainers.image.source=https://github.com/liyan-lucky/rustdesk-api-server-pro" 2>/dev/null; docker image prune -f 2>/dev/null';
+const cleanupCommand =
+  'docker image prune -f --filter "label=org.opencontainers.image.source=https://github.com/liyan-lucky/rustdesk-api-server-pro" 2>/dev/null; docker image prune -f 2>/dev/null';
 const latestUpdateCommand = computed(() => `${updateScript} && ${cleanupCommand}`);
 const pinnedUpdateCommand = computed(
   () =>

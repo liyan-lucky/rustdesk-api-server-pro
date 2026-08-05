@@ -328,6 +328,8 @@ declare namespace App {
         update: string;
         updateSuccess: string;
         userCenter: string;
+        clear: string;
+        confirmClear: string;
         yesOrNo: {
           yes: string;
           no: string;
@@ -618,6 +620,10 @@ declare namespace App {
           useDefault: string;
           listPlaceholder: string;
           copied: string;
+          appleSecretHint: string;
+          teamId: string;
+          keyId: string;
+          privateKey: string;
         };
         about: {
           runningVersion: string;
@@ -874,6 +880,8 @@ declare namespace App {
         QqUserinfoFailedWithRet: string;
         QqApiFailedWithStatus: string;
         UserinfoFailedWithStatus: string;
+        AppleClientSecretJwtFailed: string;
+        AppleIdTokenClaimMissing: string;
         InvalidAccountId: string;
         UnsupportedOAuthProvider: string;
         InvalidProviderName: string;

@@ -74,7 +74,10 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
 
         window.$dialog?.error({
           title: $t('common.error'),
-          content: (() => { const p = parseBackendMessage(response.data.message); return p.code ? `[${p.code}] ${$t(p.i18nKey as App.I18n.I18nKey)}` : $t(p.i18nKey as App.I18n.I18nKey); })(),
+          content: (() => {
+            const p = parseBackendMessage(response.data.message);
+            return p.code ? `[${p.code}] ${$t(p.i18nKey as App.I18n.I18nKey)}` : $t(p.i18nKey as App.I18n.I18nKey);
+          })(),
           positiveText: $t('common.confirm'),
           maskClosable: false,
           closeOnEsc: false,
@@ -113,7 +116,9 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
       }
 
       const parsed = parseBackendMessage(message);
-      const displayMsg = parsed.code ? `[${parsed.code}] ${$t(parsed.i18nKey as App.I18n.I18nKey)}` : $t(parsed.i18nKey as App.I18n.I18nKey);
+      const displayMsg = parsed.code
+        ? `[${parsed.code}] ${$t(parsed.i18nKey as App.I18n.I18nKey)}`
+        : $t(parsed.i18nKey as App.I18n.I18nKey);
       showErrorMsg(request.state, displayMsg);
     }
   }

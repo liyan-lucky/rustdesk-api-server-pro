@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { NButton, NSpace, NTag } from 'naive-ui';
 import { ref } from 'vue';
-import { fetchMailLogList, fetchMailLogClear } from '@/service/api/mail_logs';
+import { fetchMailLogClear, fetchMailLogList } from '@/service/api/mail_logs';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useTable, useTableOperate } from '@/hooks/common/table';

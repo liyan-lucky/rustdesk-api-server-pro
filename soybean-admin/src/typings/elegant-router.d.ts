@@ -119,7 +119,6 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "login"
     | "about_help"
-    | "about"
     | "about_version"
     | "audit_baselogs"
     | "audit_error-logs"

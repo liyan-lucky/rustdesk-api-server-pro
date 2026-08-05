@@ -24,6 +24,8 @@ const local: App.I18n.Schema = {
     delete: 'Delete',
     deleteSuccess: 'Delete Success',
     confirmDelete: 'Are you sure you want to delete?',
+    clear: 'Clear All',
+    confirmClear: 'Are you sure you want to clear all? This will invalidate all active tokens.',
     edit: 'Edit',
     import: 'CSV Import',
     export: 'CSV Export',
@@ -367,7 +369,12 @@ const local: App.I18n.Schema = {
       userRole: '∞é¼∞Ü⌐∞₧É',
       useDefault: 'Ω╕░δ│╕Ω░Æ ∞é¼∞Ü⌐',
       listPlaceholder: '∞ù¼δƒ¼ Ω░Æ∞¥Ç Ω│╡δ░▒∞¥┤δéÿ ∞ë╝φæ£δí£ Ω╡¼δ╢äφòÿ∞ä╕∞Üö',
-      copied: 'δ│╡∞é¼δÉ¿'
+      copied: 'δ│╡∞é¼δÉ¿',
+      appleSecretHint:
+        'Appleδèö δÅÖ∞áü∞£╝δí£ ∞âØ∞ä▒δÉ£ JWTδÑ╝ client_secret∞£╝δí£ ∞é¼∞Ü⌐φò⌐δïêδïñ. ∞òäδ₧ÿ∞Øÿ Team ID, Key ID, Private KeyδÑ╝ ∞äñ∞áòφòÿ∞ä╕∞Üö.',
+      teamId: 'Team ID',
+      keyId: 'Key ID',
+      privateKey: 'Private Key (.p8)'
     },
     about: {
       latestCommand: 'latestδí£ ∞ùàδì░∞¥┤φè╕',

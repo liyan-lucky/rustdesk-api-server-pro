@@ -22,6 +22,8 @@ const local: App.I18n.Schema = {
     delete: 'Delete',
     deleteSuccess: 'Delete Success',
     confirmDelete: 'Are you sure you want to delete?',
+    clear: 'Clear All',
+    confirmClear: 'Are you sure you want to clear all? This will invalidate all active tokens.',
     edit: 'Edit',
     import: 'Import CSV',
     export: 'Export CSV',
@@ -344,7 +346,8 @@ const local: App.I18n.Schema = {
       clientId: 'Client ID',
       clientSecret: 'Client secret',
       secretPlaceholder: 'Leave blank to keep the configured secret',
-      appleSecretHint: 'Apple uses a dynamically generated JWT as client_secret. Configure Team ID, Key ID and Private Key below.',
+      appleSecretHint:
+        'Apple uses a dynamically generated JWT as client_secret. Configure Team ID, Key ID and Private Key below.',
       teamId: 'Team ID',
       keyId: 'Key ID',
       privateKey: 'Private Key (.p8)',
@@ -520,7 +523,13 @@ const local: App.I18n.Schema = {
       status: 'Active'
     },
     oauth: { provider: 'Provider', subject: 'Subject', email: 'Email', name: 'Name', last_login_at: 'Last Login' },
-    loginLog: { allEvents: 'All Events', event: 'Event', userAgent: 'User Agent', success: 'Success', reason: 'Reason' },
+    loginLog: {
+      allEvents: 'All Events',
+      event: 'Event',
+      userAgent: 'User Agent',
+      success: 'Success',
+      reason: 'Reason'
+    },
     errorLog: {
       code: 'Error Code',
       message: 'Message',
