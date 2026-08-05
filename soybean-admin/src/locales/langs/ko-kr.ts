@@ -1,4 +1,5 @@
-﻿const local: App.I18n.Schema = {
+import enUs from './en-us';
+const local: App.I18n.Schema = {
   system: {
     title: 'Rustdesk Api Server',
     updateTitle: '∞ï£∞èñφà£ δ▓ä∞áä ∞ùàδì░∞¥┤φè╕',
@@ -548,6 +549,7 @@
     }
   },
   api: {
+    ...enUs.api,
     CaptchaError: 'CAPTCHA ∞ÿñδÑÿ',
     UserNotExists: '∞é¼∞Ü⌐∞₧ÉΩ░Ç ∞í┤∞₧¼φòÿ∞ºÇ ∞òè∞è╡δïêδïñ',
     UsernameOrPasswordError: 'Ω│ä∞áò δÿÉδèö δ╣äδ░Çδ▓êφÿ╕Ω░Ç ∞ÿ¼δ░öδÑ┤∞ºÇ ∞òè∞è╡δïêδïñ',

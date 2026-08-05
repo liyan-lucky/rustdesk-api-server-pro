@@ -229,11 +229,11 @@ func oauthCallbackErrorCode(err error) string {
 		}
 	}
 	switch {
-	case strings.Contains(msg, "no bindable oauth account"), strings.Contains(msg, "bound admin user not available"):
+	case strings.Contains(msg, "NoBindableOauthAccount"), strings.Contains(msg, "BoundAdminUserNotAvailable"):
 		return errcode.ERR2208.Message
 	case strings.Contains(msg, "timeout"), strings.Contains(msg, "deadline exceeded"), strings.Contains(msg, "connection refused"):
 		return errcode.ERR2209.Message
-	case strings.Contains(msg, "state invalid"), strings.Contains(msg, "state expired"):
+	case strings.Contains(msg, "StateInvalidOrExpired"), strings.Contains(msg, "StateExpired"):
 		return errcode.ERR2210.Message
 	default:
 		return errcode.ERR2212.Message

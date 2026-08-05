@@ -9,6 +9,7 @@ import (
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"strconv"
+	"strings"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -55,6 +56,17 @@ func (c *basicController) okText(text string) mvc.Result {
 	return mvc.Response{Text: text}
 }
 
+func extractErrCode(message string) string {
+	if strings.HasPrefix(message, "ERR-") {
+		idx := strings.Index(message, ":")
+		if idx > 0 {
+			return message[:idx]
+		}
+		return message
+	}
+	return ""
+}
+
 func (c *basicController) fail(err error) mvc.Result {
 	user := c.GetUser()
 	userId := 0
@@ -63,7 +75,7 @@ func (c *basicController) fail(err error) mvc.Result {
 		userId = user.Id
 		userName = user.Username
 	}
-	go service.RecordErrorLog(c.Db, "", err.Error(), "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	go service.RecordErrorLog(c.Db, extractErrCode(err.Error()), err.Error(), "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
 	return mvc.Response{
 		Object: iris.Map{
 			"error": err.Error(),
@@ -79,7 +91,7 @@ func (c *basicController) failMsg(msg string) mvc.Result {
 		userId = user.Id
 		userName = user.Username
 	}
-	go service.RecordErrorLog(c.Db, "", msg, "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	go service.RecordErrorLog(c.Db, extractErrCode(msg), msg, "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
 	return mvc.Response{
 		Object: iris.Map{
 			"error": msg,

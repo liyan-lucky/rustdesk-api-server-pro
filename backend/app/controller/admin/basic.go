@@ -7,6 +7,7 @@ import (
 	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
+	"strings"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -58,8 +59,19 @@ func (c *basicController) Error(data interface{}, message string) mvc.Result {
 		userId = user.Id
 		userName = user.Username
 	}
-	go service.RecordErrorLog(c.Db, "", message, "admin", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	go service.RecordErrorLog(c.Db, extractErrCode(message), message, "admin", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
 	return c.response(500, data, message)
+}
+
+func extractErrCode(message string) string {
+	if strings.HasPrefix(message, "ERR-") {
+		idx := strings.Index(message, ":")
+		if idx > 0 {
+			return message[:idx]
+		}
+		return message
+	}
+	return ""
 }
 
 func (c *basicController) dbError(err error) mvc.Result {

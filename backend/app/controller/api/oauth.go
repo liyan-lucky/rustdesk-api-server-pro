@@ -202,19 +202,34 @@ func (c *OAuthController) recordClientOAuthAudit(username string, success bool, 
 
 func clientOAuthCallbackErrorCode(err error) string {
 	if err == nil {
-		return "oauth_auth_failed"
+		return errcode.ERR2212.Message
 	}
-	message := strings.ToLower(err.Error())
+	msg := err.Error()
+	if strings.HasPrefix(msg, "ERR-") {
+		code := strings.SplitN(msg, ":", 2)[0]
+		switch code {
+		case errcode.ERR2023.Code, errcode.ERR2022.Code:
+			return errcode.ERR2208.Message
+		case errcode.ERR2004.Code, errcode.ERR2029.Code:
+			return errcode.ERR2210.Message
+		case errcode.ERR2203.Code, errcode.ERR2211.Code:
+			return errcode.ERR2211.Message
+		case errcode.ERR2030.Code, errcode.ERR2031.Code, errcode.ERR2034.Code:
+			return errcode.ERR2209.Message
+		default:
+			return errcode.ERR2212.Message
+		}
+	}
 	switch {
-	case strings.Contains(message, "no bindable oauth account"), strings.Contains(message, "bound admin user not available"):
-		return "oauth_account_not_bound"
-	case strings.Contains(message, "timeout"), strings.Contains(message, "deadline exceeded"), strings.Contains(message, "connection refused"):
-		return "oauth_provider_unreachable"
-	case strings.Contains(message, "state invalid"), strings.Contains(message, "state expired"):
-		return "oauth_state_expired"
-	case strings.Contains(message, "provider not available for client login"):
-		return "oauth_provider_not_for_client"
+	case strings.Contains(msg, "NoBindableOauthAccount"), strings.Contains(msg, "BoundAdminUserNotAvailable"):
+		return errcode.ERR2208.Message
+	case strings.Contains(msg, "timeout"), strings.Contains(msg, "deadline exceeded"), strings.Contains(msg, "connection refused"):
+		return errcode.ERR2209.Message
+	case strings.Contains(msg, "StateInvalidOrExpired"), strings.Contains(msg, "StateExpired"):
+		return errcode.ERR2210.Message
+	case strings.Contains(msg, "ProviderNotAvailableForClientLogin"):
+		return errcode.ERR2211.Message
 	default:
-		return "oauth_auth_failed"
+		return errcode.ERR2212.Message
 	}
 }

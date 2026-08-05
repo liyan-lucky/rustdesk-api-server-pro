@@ -6,6 +6,18 @@ import { getServiceBaseURL } from '@/utils/service';
 import { showErrorMsg } from './shared';
 import type { RequestInstanceState } from './type';
 
+function parseBackendMessage(raw: string): { code: string; message: string; i18nKey: string } {
+  if (raw.startsWith('ERR-')) {
+    const colonIndex = raw.indexOf(':');
+    if (colonIndex !== -1) {
+      const extractedCode = raw.substring(0, colonIndex).trim();
+      const extractedMessage = raw.substring(colonIndex + 1).trim();
+      return { code: extractedCode, message: extractedMessage, i18nKey: `api.${extractedMessage}` };
+    }
+  }
+  return { code: '', message: raw, i18nKey: `api.${raw}` };
+}
+
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
 const { baseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
 
@@ -62,7 +74,7 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
 
         window.$dialog?.error({
           title: $t('common.error'),
-          content: $t(`api.${response.data.message}` as App.I18n.I18nKey),
+          content: (() => { const p = parseBackendMessage(response.data.message); return p.code ? `[${p.code}] ${$t(p.i18nKey as App.I18n.I18nKey)}` : $t(p.i18nKey as App.I18n.I18nKey); })(),
           positiveText: $t('common.confirm'),
           maskClosable: false,
           closeOnEsc: false,
@@ -100,7 +112,9 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
         return;
       }
 
-      showErrorMsg(request.state, $t(`api.${message}` as App.I18n.I18nKey));
+      const parsed = parseBackendMessage(message);
+      const displayMsg = parsed.code ? `[${parsed.code}] ${$t(parsed.i18nKey as App.I18n.I18nKey)}` : $t(parsed.i18nKey as App.I18n.I18nKey);
+      showErrorMsg(request.state, displayMsg);
     }
   }
 );

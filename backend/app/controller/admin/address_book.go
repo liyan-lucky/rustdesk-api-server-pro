@@ -273,7 +273,7 @@ func (c *AddressBookController) HandleAbList() mvc.Result {
 		var owner model.User
 		hasOwner, ownerErr := c.Db.Where("id = ?", ab.UserId).Get(&owner)
 		if ownerErr != nil {
-			return c.Error(nil, ownerErr.Error())
+			return c.Error(nil, errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+ownerErr.Error()).Error())
 		}
 		if !hasOwner {
 			continue
@@ -445,7 +445,7 @@ func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 		var target model.User
 		has, targetErr := c.Db.Where("id = ?", body.UserID).Get(&target)
 		if targetErr != nil {
-			return c.Error(nil, targetErr.Error())
+			return c.Error(nil, errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+targetErr.Error()).Error())
 		}
 		if !has {
 			return c.Error(nil, errcode.New(errcode.ERR5008.Code, errcode.ERR5008.Message).Error())

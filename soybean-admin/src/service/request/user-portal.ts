@@ -4,6 +4,18 @@ import { localStg } from '@/utils/storage';
 import { showErrorMsg } from './shared';
 import type { RequestInstanceState } from './type';
 
+function parseBackendMessage(raw: string): { code: string; message: string; i18nKey: string } {
+  if (raw.startsWith('ERR-')) {
+    const colonIndex = raw.indexOf(':');
+    if (colonIndex !== -1) {
+      const extractedCode = raw.substring(0, colonIndex).trim();
+      const extractedMessage = raw.substring(colonIndex + 1).trim();
+      return { code: extractedCode, message: extractedMessage, i18nKey: `api.${extractedMessage}` };
+    }
+  }
+  return { code: '', message: raw, i18nKey: `api.${raw}` };
+}
+
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
 const userPortalBaseURL = isHttpProxy ? '/proxy-user-portal' : '/user-portal';
 
@@ -40,7 +52,9 @@ export const userPortalRequest = createFlatRequest<App.Service.Response, Request
       if (error.code === BACKEND_ERROR_CODE) {
         message = error.response?.data?.message || message;
       }
-      showErrorMsg(userPortalRequest.state, $t(`api.${message}` as App.I18n.I18nKey));
+      const parsed = parseBackendMessage(message);
+      const displayMsg = parsed.code ? `[${parsed.code}] ${$t(parsed.i18nKey as App.I18n.I18nKey)}` : $t(parsed.i18nKey as App.I18n.I18nKey);
+      showErrorMsg(userPortalRequest.state, displayMsg);
     }
   }
 );
