@@ -151,6 +151,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	validProviderTypes := map[string]bool{
 		"github":    true,
 		"qq":        true,
+		"wechat":    true,
 		"google":    true,
 		"microsoft": true,
 		"gitee":     true,
@@ -219,7 +220,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 	provider.AutoCreateAdmin = form.AutoCreateAdmin
 	provider.AutoCreateUser = form.AutoCreateUser
 	provider.AllowedEmailDomains = cleanOAuthValues(form.AllowedEmailDomains)
-	if provider.Type == "qq" {
+	if provider.Type == "qq" || provider.Type == "wechat" {
 		provider.BindByEmail = false
 		provider.AllowedEmailDomains = nil
 	}

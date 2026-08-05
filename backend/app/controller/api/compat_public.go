@@ -1,9 +1,11 @@
 package api
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 
+	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/core"
 	"rustdesk-api-server-pro/internal/service"
 
@@ -141,37 +143,79 @@ func (c *CompatPublicController) HandleSysinfoVer() mvc.Result {
 }
 
 func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
-	result := c.compatService().OidcAuth()
-	isStub := !result.Enabled
-	auditResult := result.Error
-	if auditResult == "" {
-		auditResult = "ok"
+	body, _ := c.readBodyBytes()
+	op := strings.TrimSpace(gjson.GetBytes(body, "op").String())
+	id := gjson.GetBytes(body, "id").String()
+	uuid := gjson.GetBytes(body, "uuid").String()
+	deviceOs := gjson.GetBytes(body, "deviceInfo.os").String()
+	deviceType := gjson.GetBytes(body, "deviceInfo.type").String()
+	deviceName := gjson.GetBytes(body, "deviceInfo.name").String()
+
+	if op == "" {
+		c.recordCompatAPIAudit(true, 400, "missing op", "", body)
+		return mvc.Response{Object: iris.Map{"error": "missing op"}}
 	}
-	c.recordCompatAPIAudit(isStub, 200, auditResult, "", nil)
-	return mvc.Response{
-		Object: iris.Map{
-			"error":   result.Error,
-			"enabled": result.Enabled,
-			"url":     result.URL,
-		},
+
+	oauthService := service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
+	authURL, pollToken, enabled, err := oauthService.BuildClientAuthURL(op, c.currentBaseURL(), id, uuid, deviceOs, deviceType, deviceName)
+	if err != nil {
+		c.recordCompatAPIAudit(true, 500, err.Error(), "", body)
+		return mvc.Response{Object: iris.Map{"error": err.Error()}}
 	}
+	if !enabled {
+		c.recordCompatAPIAudit(true, 200, "provider disabled", "", body)
+		return mvc.Response{Object: iris.Map{"error": "provider disabled"}}
+	}
+	c.recordCompatAPIAudit(false, 200, "ok", "", body)
+	return mvc.Response{Object: iris.Map{
+		"code": pollToken,
+		"url":  authURL,
+	}}
 }
 
 func (c *CompatPublicController) HandleOidcAuthQuery() mvc.Result {
-	result := c.compatService().OidcAuthQuery()
-	isStub := result.Error != ""
-	auditResult := result.Error
-	if auditResult == "" {
-		auditResult = "ok"
+	code := strings.TrimSpace(c.Ctx.URLParamDefault("code", ""))
+	id := c.Ctx.URLParamDefault("id", "")
+	uuid := c.Ctx.URLParamDefault("uuid", "")
+
+	if code == "" {
+		c.recordCompatAPIAudit(true, 400, "missing code", "", nil)
+		return mvc.Response{Object: iris.Map{"body": `{"error":"missing code"}`}}
 	}
-	c.recordCompatAPIAudit(isStub, 200, auditResult, "", nil)
-	return mvc.Response{
-		Object: iris.Map{
-			"error":   result.Error,
-			"enabled": result.Enabled,
-			"user":    result.User,
+
+	oauthService := service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
+	ticket, ready, err := oauthService.PollClientTicket(code)
+	if err != nil {
+		c.recordCompatAPIAudit(true, 500, err.Error(), "", nil)
+		return mvc.Response{Object: iris.Map{"body": `{"error":"` + err.Error() + `"}`}}
+	}
+	if !ready {
+		c.recordCompatAPIAudit(false, 200, "pending", "", nil)
+		return mvc.Response{Object: iris.Map{"body": `{"error":"No authed oidc is found"}`}}
+	}
+
+	token, user, err := oauthService.ExchangeClientTicket(ticket)
+	if err != nil {
+		c.recordCompatAPIAudit(true, 500, err.Error(), "", nil)
+		return mvc.Response{Object: iris.Map{"body": `{"error":"` + err.Error() + `"}`}}
+	}
+
+	_ = id
+	_ = uuid
+	inner, _ := json.Marshal(iris.Map{
+		"access_token": token,
+		"type":         "access_token",
+		"user": iris.Map{
+			"name":         user.Name,
+			"display_name": user.Name,
+			"email":        user.Email,
+			"note":         user.Note,
+			"status":       user.Status,
+			"is_admin":     false,
 		},
-	}
+	})
+	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
+	return mvc.Response{Object: iris.Map{"body": string(inner)}}
 }
 
 func (c *CompatPublicController) HandleRecord() mvc.Result {
@@ -217,4 +261,19 @@ func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
 			"result": result.Result,
 		},
 	}
+}
+
+func (c *CompatPublicController) currentBaseURL() string {
+	scheme := "http"
+	if c.Ctx.Request().TLS != nil {
+		scheme = "https"
+	}
+	if forwardedProto := strings.TrimSpace(c.Ctx.GetHeader("X-Forwarded-Proto")); forwardedProto == "https" {
+		scheme = "https"
+	}
+	host := strings.TrimSpace(c.Ctx.Host())
+	if host == "" {
+		host = strings.TrimSpace(c.Ctx.Request().Host)
+	}
+	return scheme + "://" + host
 }

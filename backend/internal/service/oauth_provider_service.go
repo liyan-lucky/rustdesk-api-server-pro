@@ -198,18 +198,22 @@ func (s *OAuthProviderService) BuildAdminAuthURL(providerName, requestBaseURL, r
 	}
 
 	query := url.Values{}
-	query.Set("client_id", provider.ClientID)
+	if provider.Type == "wechat" {
+		query.Set("appid", provider.ClientID)
+	} else {
+		query.Set("client_id", provider.ClientID)
+	}
 	query.Set("response_type", "code")
 	scopeSeparator := " "
-	if provider.Type == "qq" {
+	if provider.Type == "qq" || provider.Type == "wechat" {
 		scopeSeparator = ","
 	}
 	query.Set("scope", strings.Join(s.scopes(provider), scopeSeparator))
 	query.Set("redirect_uri", callbackURL)
 	query.Set("state", state)
-	// QQ Connect does not support PKCE. The persisted one-time state still
-	// protects the callback against CSRF and replay attacks.
-	if provider.Type != "qq" {
+	// QQ Connect and WeChat do not support PKCE. The persisted one-time state
+	// still protects the callback against CSRF and replay attacks.
+	if provider.Type != "qq" && provider.Type != "wechat" {
 		challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
 		query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
 		query.Set("code_challenge_method", "S256")
@@ -378,14 +382,28 @@ func (s *OAuthProviderService) exchangeCode(provider config.OAuthProviderConfig,
 	form.Set("grant_type", "authorization_code")
 	form.Set("code", code)
 	form.Set("redirect_uri", callbackURL)
-	form.Set("client_id", provider.ClientID)
-	form.Set("client_secret", provider.ClientSecret)
-	if provider.Type != "qq" {
+	if provider.Type == "wechat" {
+		form.Set("appid", provider.ClientID)
+		form.Set("secret", provider.ClientSecret)
+	} else {
+		form.Set("client_id", provider.ClientID)
+		form.Set("client_secret", provider.ClientSecret)
+	}
+	if provider.Type != "qq" && provider.Type != "wechat" {
 		form.Set("code_verifier", codeVerifier)
 	}
 	if provider.Type == "qq" {
 		form.Set("fmt", "json")
 		form.Set("need_openid", "1")
+		endpoint, parseErr := url.Parse(metadata.TokenEndpoint)
+		if parseErr != nil {
+			return nil, parseErr
+		}
+		endpoint.RawQuery = form.Encode()
+		req, _ := http.NewRequest(http.MethodGet, endpoint.String(), nil)
+		return s.doTokenRequest(req)
+	}
+	if provider.Type == "wechat" {
 		endpoint, parseErr := url.Parse(metadata.TokenEndpoint)
 		if parseErr != nil {
 			return nil, parseErr
@@ -444,6 +462,10 @@ func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConf
 
 	if provider.Type == "qq" && tokenResp.AccessToken != "" {
 		if err = s.fillQQClaims(provider, tokenResp, claims); err != nil {
+			return nil, err
+		}
+	} else if provider.Type == "wechat" && tokenResp.AccessToken != "" {
+		if err = s.fillWechatClaims(provider, tokenResp, claims); err != nil {
 			return nil, err
 		}
 	} else if metadata.UserinfoEndpoint != "" && tokenResp.AccessToken != "" {
@@ -546,6 +568,45 @@ func (s *OAuthProviderService) fillQQClaims(provider config.OAuthProviderConfig,
 		picture = profile.Figure40
 	}
 	claims[defaultIfEmpty(provider.PictureClaim, "figureurl_qq_2")] = picture
+	return nil
+}
+
+func (s *OAuthProviderService) fillWechatClaims(provider config.OAuthProviderConfig, tokenResp *oauthTokenResponse, claims map[string]interface{}) error {
+	openid := strings.TrimSpace(tokenResp.OpenID)
+	if openid == "" {
+		return errcode.New(errcode.ERR2018.Code, errcode.ERR2018.Message)
+	}
+	userinfoEndpoint := strings.TrimSpace(provider.UserinfoEndpoint)
+	if userinfoEndpoint == "" {
+		userinfoEndpoint = "https://api.weixin.qq.com/sns/userinfo"
+	}
+	query := url.Values{
+		"access_token": {tokenResp.AccessToken},
+		"openid":       {openid},
+	}
+	separator := "?"
+	if strings.Contains(userinfoEndpoint, "?") {
+		separator = "&"
+	}
+	var profile struct {
+		OpenID     string `json:"openid"`
+		Nickname   string `json:"nickname"`
+		HeadImgURL string `json:"headimgurl"`
+		ErrCode    int    `json:"errcode"`
+	}
+	if err := s.getQQJSON(userinfoEndpoint+separator+query.Encode(), &profile); err != nil {
+		return err
+	}
+	if profile.ErrCode != 0 {
+		return errcode.Errorf(errcode.ERR2032.Code, errcode.ERR2032.Message, profile.ErrCode)
+	}
+	claims[defaultIfEmpty(provider.SubjectClaim, "openid")] = openid
+	if profile.Nickname != "" {
+		claims[defaultIfEmpty(provider.NameClaim, "nickname")] = profile.Nickname
+	}
+	if profile.HeadImgURL != "" {
+		claims[defaultIfEmpty(provider.PictureClaim, "headimgurl")] = profile.HeadImgURL
+	}
 	return nil
 }
 
@@ -1247,6 +1308,24 @@ func normalizeOAuthProvider(provider config.OAuthProviderConfig) config.OAuthPro
 		provider.SubjectClaim = "openid"
 		provider.NameClaim = "nickname"
 		provider.PictureClaim = "figureurl_qq_2"
+	} else if provider.Type == "wechat" {
+		if provider.AuthorizationEndpoint == "" {
+			provider.AuthorizationEndpoint = "https://open.weixin.qq.com/connect/qrconnect"
+		}
+		if provider.TokenEndpoint == "" {
+			provider.TokenEndpoint = "https://api.weixin.qq.com/sns/oauth2/access_token"
+		}
+		if provider.UserinfoEndpoint == "" {
+			provider.UserinfoEndpoint = "https://api.weixin.qq.com/sns/userinfo"
+		}
+		if len(provider.Scopes) == 0 {
+			provider.Scopes = []string{"snsapi_login"}
+		}
+		provider.BindByEmail = false
+		provider.AllowedEmailDomains = nil
+		provider.SubjectClaim = "openid"
+		provider.NameClaim = "nickname"
+		provider.PictureClaim = "headimgurl"
 	} else {
 		if len(provider.Scopes) == 0 {
 			provider.Scopes = []string{"openid", "profile", "email"}
@@ -1418,16 +1497,20 @@ func (s *OAuthProviderService) BuildClientAuthURL(providerName, requestBaseURL, 
 	}
 
 	query := url.Values{}
-	query.Set("client_id", provider.ClientID)
+	if provider.Type == "wechat" {
+		query.Set("appid", provider.ClientID)
+	} else {
+		query.Set("client_id", provider.ClientID)
+	}
 	query.Set("response_type", "code")
 	scopeSeparator := " "
-	if provider.Type == "qq" {
+	if provider.Type == "qq" || provider.Type == "wechat" {
 		scopeSeparator = ","
 	}
 	query.Set("scope", strings.Join(s.scopes(provider), scopeSeparator))
 	query.Set("redirect_uri", callbackURL)
 	query.Set("state", state)
-	if provider.Type != "qq" {
+	if provider.Type != "qq" && provider.Type != "wechat" {
 		challenge := sha256.Sum256([]byte(stateEntry.CodeVerifier))
 		query.Set("code_challenge", base64.RawURLEncoding.EncodeToString(challenge[:]))
 		query.Set("code_challenge_method", "S256")

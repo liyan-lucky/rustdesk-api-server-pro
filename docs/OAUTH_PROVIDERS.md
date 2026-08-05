@@ -110,3 +110,29 @@ curl "https://desk.example.com/admin/auth/oauth/url?provider=github"
 客户端 OAuth 复用后台 `oauth.providers` 配置，无需额外配置段。要将某个 Provider 同时用于客户端登录，设置 `accountRole: user` 即可。Provider 的 `redirectUrl` 若显式配置，需同时覆盖后台和客户端回调；未配置时后台用 `/admin/auth/oauth/{provider}/callback`，客户端用 `/api/oauth/{provider}/callback`，由服务端各自推导。
 
 > 注意：同一 Provider 若要同时服务后台和客户端，`redirectUrl` 不能写死单一回调路径，应留空让服务端按请求路径推导，或注册两个 Provider 实例（一个 admin 一个 user）分别配置回调。
+
+## RustDesk 客户端兼容协议（/api/oidc/* + /api/login-options）
+
+RustDesk 桌面/移动客户端（Flutter 版）使用与 `/api/oauth/*` 不同的端点名和响应格式。为兼容官方客户端，服务器在 `/api/oidc/*` 和 `/api/login-options` 上提供了适配层，内部复用同一套 `OAuthProviderService` 逻辑。
+
+### 客户端发现流程
+
+1. 客户端调用 `GET /api/login-options`，服务器返回 `["oidc/github", "oidc/google", ...]`（仅 `accountRole=user` 的 Provider，每项以 `oidc/` 前缀）。
+2. 客户端解析前缀，提取 provider 名称，渲染第三方登录按钮。
+
+### 客户端登录流程
+
+| 步骤 | 端点 | 说明 |
+| --- | --- | --- |
+| 1. 启动 | `POST /api/oidc/auth` | 请求体 `{op, id, uuid, deviceInfo, apiDomain}`，返回 `{code, url}`（`code` 即 poll_token，`url` 即授权 URL） |
+| 2. 浏览器授权 | 系统浏览器打开 `url` | 用户在 Provider 页面授权 |
+| 3. 回调 | `GET /api/oauth/{provider}/callback` | Provider 回调服务端（与 `/api/oauth/*` 共用），签发 ticket 关联到 poll_token |
+| 4. 轮询 | `GET /api/oidc/auth-query?code=&id=&uuid=` | 客户端每秒轮询，未就绪返回 `{body:"{\"error\":\"No authed oidc is found\"}"}`，就绪返回 `{body:"{\"access_token\":\"...\",\"type\":\"access_token\",\"user\":{...}}"}` |
+
+### 与 /api/oauth/* 的对应关系
+
+| 客户端协议 | 内部复用 | 说明 |
+| --- | --- | --- |
+| `GET /api/login-options` | `ListClientProviders()` | 加 `oidc/` 前缀返回 |
+| `POST /api/oidc/auth` | `BuildClientAuthURL()` | `op` → providerName，返回 `code` → pollToken |
+| `GET /api/oidc/auth-query` | `PollClientTicket()` + `ExchangeClientTicket()` | `code` → pollToken，一步完成轮询+换 token |

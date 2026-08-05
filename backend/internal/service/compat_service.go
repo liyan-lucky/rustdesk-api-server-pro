@@ -118,8 +118,8 @@ func (s *CompatService) Target() map[string]any {
 func (s *CompatService) LoginOptions() core.CompatLoginOptionsResult {
 	options := []string{}
 	oauthService := NewOAuthProviderService(s.cfg, s.db)
-	for _, provider := range oauthService.ListEnabledProviders() {
-		options = append(options, provider.Name)
+	for _, provider := range oauthService.ListClientProviders() {
+		options = append(options, "oidc/"+provider.Name)
 	}
 	return core.CompatLoginOptionsResult{Options: options}
 }

@@ -66,6 +66,11 @@ function applyProviderPreset(type: string) {
       type: 'gitlab', name: 'gitlab', displayName: 'GitLab',
       scopesText: 'read_user', accountRole: 'admin',
       bindByEmail: true, autoCreateAdmin: false, autoCreateUser: false
+    },
+    wechat: {
+      type: 'wechat', name: 'wechat', displayName: 'WeChat',
+      scopesText: 'snsapi_login', accountRole: 'user',
+      bindByEmail: false, autoCreateAdmin: false, autoCreateUser: true
     }
   };
   const preset = presets[type] || presets.github;
@@ -356,7 +361,8 @@ onMounted(() => {
               { label: 'Microsoft', value: 'microsoft' },
               { label: 'GitLab', value: 'gitlab' },
               { label: 'Gitee (码云)', value: 'gitee' },
-              { label: 'QQ', value: 'qq' }
+              { label: 'QQ', value: 'qq' },
+              { label: 'WeChat (微信)', value: 'wechat' }
             ]"
             :disabled="Boolean(form.originalName)"
             @update:value="applyProviderPreset"
