@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"rustdesk-api-server-pro/app/model"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/util"
 
 	"github.com/kataras/iris/v12"
@@ -156,7 +157,7 @@ func pagedResult(current, pageSize int, total int64, data any) mvc.Result {
 
 func (c *EnterpriseCompatController) HandleDeviceGroupsList() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 100)
@@ -186,7 +187,7 @@ func (c *EnterpriseCompatController) HandleDeviceGroupsList() mvc.Result {
 func (c *EnterpriseCompatController) HandleDeviceGroupsCreate() mvc.Result {
 	admin := c.requireAdmin()
 	if admin == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	m, err := c.readJSONMap()
 	if err != nil {
@@ -194,7 +195,7 @@ func (c *EnterpriseCompatController) HandleDeviceGroupsCreate() mvc.Result {
 	}
 	name := stringFromAny(m["name"])
 	if name == "" {
-		return c.failMsg("name required")
+		return c.fail(errcode.New(errcode.ERR6004.Code, errcode.ERR6004.Message))
 	}
 	g := model.DeviceGroup{Guid: util.GetUUID(), Name: name, OwnerId: admin.Id}
 	if _, err := c.Db.Insert(&g); err != nil {
@@ -217,12 +218,12 @@ func (c *EnterpriseCompatController) loadDeviceGroup(guid string) (*model.Device
 
 func (c *EnterpriseCompatController) HandleDeviceGroupsGet() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	g, err := c.loadDeviceGroup(guid)
 	if err != nil {
-		return c.failMsg("device group not found")
+		return c.fail(errcode.New(errcode.ERR6001.Code, errcode.ERR6001.Message))
 	}
 	cnt, _ := c.Db.Where("group_guid = ?", g.Guid).Count(&model.DeviceGroupDevice{})
 	return mvc.Response{Object: iris.Map{"guid": g.Guid, "name": g.Name, "device_count": cnt}}
@@ -230,7 +231,7 @@ func (c *EnterpriseCompatController) HandleDeviceGroupsGet() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleDeviceGroupsUpdate() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	m, err := c.readJSONMap()
@@ -252,7 +253,7 @@ func (c *EnterpriseCompatController) HandleDeviceGroupsUpdate() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleDeviceGroupsDelete() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	session := c.Db.NewSession()
@@ -276,7 +277,7 @@ func (c *EnterpriseCompatController) HandleDeviceGroupsDelete() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleDeviceGroupsDevicesList() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	current := c.Ctx.URLParamIntDefault("current", 1)
@@ -313,7 +314,7 @@ func (c *EnterpriseCompatController) HandleDeviceGroupsDevicesList() mvc.Result 
 
 func (c *EnterpriseCompatController) HandleDeviceGroupsDevicesAssign() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	m, err := c.readJSONMap()
@@ -350,7 +351,7 @@ func (c *EnterpriseCompatController) HandleDeviceGroupsDevicesAssign() mvc.Resul
 
 func (c *EnterpriseCompatController) HandleUserGroupsList() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 100)
@@ -373,7 +374,7 @@ func (c *EnterpriseCompatController) HandleUserGroupsList() mvc.Result {
 func (c *EnterpriseCompatController) HandleUserGroupsCreate() mvc.Result {
 	admin := c.requireAdmin()
 	if admin == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	m, err := c.readJSONMap()
 	if err != nil {
@@ -381,7 +382,7 @@ func (c *EnterpriseCompatController) HandleUserGroupsCreate() mvc.Result {
 	}
 	name := stringFromAny(m["name"])
 	if name == "" {
-		return c.failMsg("name required")
+		return c.fail(errcode.New(errcode.ERR6004.Code, errcode.ERR6004.Message))
 	}
 	g := model.UserGroup{Guid: util.GetUUID(), Name: name, OwnerId: admin.Id}
 	if _, err := c.Db.Insert(&g); err != nil {
@@ -392,7 +393,7 @@ func (c *EnterpriseCompatController) HandleUserGroupsCreate() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleUserGroupsGet() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	var g model.UserGroup
@@ -401,7 +402,7 @@ func (c *EnterpriseCompatController) HandleUserGroupsGet() mvc.Result {
 		return c.fail(err)
 	}
 	if !has {
-		return c.failMsg("user group not found")
+		return c.fail(errcode.New(errcode.ERR6002.Code, errcode.ERR6002.Message))
 	}
 	cnt, _ := c.Db.Where("group_guid = ?", g.Guid).Count(&model.UserGroupMember{})
 	return mvc.Response{Object: iris.Map{"guid": g.Guid, "name": g.Name, "user_count": cnt}}
@@ -409,7 +410,7 @@ func (c *EnterpriseCompatController) HandleUserGroupsGet() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleUserGroupsUpdate() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	m, err := c.readJSONMap()
@@ -459,7 +460,7 @@ func (c *EnterpriseCompatController) HandleUserGroupsUpdate() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleUserGroupsDelete() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	session := c.Db.NewSession()
@@ -483,7 +484,7 @@ func (c *EnterpriseCompatController) HandleUserGroupsDelete() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleStrategiesList() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 100)
@@ -509,7 +510,7 @@ func (c *EnterpriseCompatController) HandleStrategiesList() mvc.Result {
 func (c *EnterpriseCompatController) HandleStrategiesCreate() mvc.Result {
 	admin := c.requireAdmin()
 	if admin == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	m, err := c.readJSONMap()
 	if err != nil {
@@ -517,7 +518,7 @@ func (c *EnterpriseCompatController) HandleStrategiesCreate() mvc.Result {
 	}
 	name := stringFromAny(m["name"])
 	if name == "" {
-		return c.failMsg("name required")
+		return c.fail(errcode.New(errcode.ERR6004.Code, errcode.ERR6004.Message))
 	}
 	contentBytes, _ := json.Marshal(m["content"])
 	s := model.Strategy{
@@ -535,7 +536,7 @@ func (c *EnterpriseCompatController) HandleStrategiesCreate() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleStrategiesGet() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	var s model.Strategy
@@ -544,7 +545,7 @@ func (c *EnterpriseCompatController) HandleStrategiesGet() mvc.Result {
 		return c.fail(err)
 	}
 	if !has {
-		return c.failMsg("strategy not found")
+		return c.fail(errcode.New(errcode.ERR6003.Code, errcode.ERR6003.Message))
 	}
 	var content any
 	_ = json.Unmarshal([]byte(s.Content), &content)
@@ -558,7 +559,7 @@ func (c *EnterpriseCompatController) HandleStrategiesGet() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleStrategiesUpdate() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	m, err := c.readJSONMap()
@@ -591,7 +592,7 @@ func (c *EnterpriseCompatController) HandleStrategiesUpdate() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleStrategiesDelete() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	session := c.Db.NewSession()
@@ -615,7 +616,7 @@ func (c *EnterpriseCompatController) HandleStrategiesDelete() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleStrategiesStatus() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	var s model.Strategy
@@ -624,7 +625,7 @@ func (c *EnterpriseCompatController) HandleStrategiesStatus() mvc.Result {
 		return c.fail(err)
 	}
 	if !has {
-		return c.failMsg("strategy not found")
+		return c.fail(errcode.New(errcode.ERR6003.Code, errcode.ERR6003.Message))
 	}
 	cnt, _ := c.Db.Where("strategy_guid = ?", guid).Count(&model.StrategyAssignment{})
 	return mvc.Response{Object: iris.Map{
@@ -636,7 +637,7 @@ func (c *EnterpriseCompatController) HandleStrategiesStatus() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleStrategiesAssign() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	m, err := c.readJSONMap()
 	if err != nil {
@@ -647,7 +648,7 @@ func (c *EnterpriseCompatController) HandleStrategiesAssign() mvc.Result {
 		strategyGuid = stringFromAny(m["guid"])
 	}
 	if strategyGuid == "" {
-		return c.failMsg("strategy_guid required")
+		return c.fail(errcode.New(errcode.ERR6005.Code, errcode.ERR6005.Message))
 	}
 	targetType := stringFromAny(m["target_type"])
 	if targetType == "" {
@@ -696,7 +697,7 @@ func (c *EnterpriseCompatController) resolveDevice(guid string) (*model.Device, 
 
 func (c *EnterpriseCompatController) HandleDevicesList() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	current := c.Ctx.URLParamIntDefault("current", 1)
 	pageSize := c.Ctx.URLParamIntDefault("pageSize", 100)
@@ -735,12 +736,12 @@ func (c *EnterpriseCompatController) HandleDevicesList() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleDevicesGet() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	guid := c.Ctx.Params().Get("guid")
 	d, err := c.resolveDevice(guid)
 	if err != nil {
-		return c.failMsg("device not found")
+		return c.fail(errcode.New(errcode.ERR6006.Code, errcode.ERR6006.Message))
 	}
 	return mvc.Response{Object: iris.Map{
 		"guid":      d.RustdeskId,
@@ -757,7 +758,7 @@ func (c *EnterpriseCompatController) HandleDevicesGet() mvc.Result {
 
 func (c *EnterpriseCompatController) setDeviceDisabled(guid string, disabled bool) mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	if _, err := c.Db.Where("rustdesk_id = ? OR uuid = ?", guid, guid).Cols("disabled").Update(&model.Device{Disabled: disabled}); err != nil {
 		return c.fail(err)
@@ -775,7 +776,7 @@ func (c *EnterpriseCompatController) HandleDevicesDisable() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleDevicesAssign() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	deviceGuid := c.Ctx.Params().Get("guid")
 	m, err := c.readJSONMap()
@@ -828,12 +829,12 @@ func (c *EnterpriseCompatController) resolveUserByRef(ref string) (*model.User, 
 
 func (c *EnterpriseCompatController) HandleUsersGetByGuid() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	ref := c.Ctx.Params().Get("guid")
 	u, err := c.resolveUserByRef(ref)
 	if err != nil {
-		return c.failMsg("user not found")
+		return c.fail(errcode.New(errcode.ERR6007.Code, errcode.ERR6007.Message))
 	}
 	return mvc.Response{Object: iris.Map{
 		"guid":         u.Username,
@@ -849,11 +850,11 @@ func (c *EnterpriseCompatController) HandleUsersGetByGuid() mvc.Result {
 
 func (c *EnterpriseCompatController) setUserStatus(ref string, status int) mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	u, err := c.resolveUserByRef(ref)
 	if err != nil {
-		return c.failMsg("user not found")
+		return c.fail(errcode.New(errcode.ERR6007.Code, errcode.ERR6007.Message))
 	}
 	if _, err := c.Db.Where("id = ?", u.Id).Cols("status").Update(&model.User{Status: status}); err != nil {
 		return c.fail(err)
@@ -870,7 +871,7 @@ func (c *EnterpriseCompatController) HandleUsersDisable() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleUsersDisableLoginVerification() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	m, err := c.readJSONMap()
 	if err != nil {
@@ -881,11 +882,11 @@ func (c *EnterpriseCompatController) HandleUsersDisableLoginVerification() mvc.R
 		ref = stringFromAny(m["username"])
 	}
 	if ref == "" {
-		return c.failMsg("user required")
+		return c.fail(errcode.New(errcode.ERR6008.Code, errcode.ERR6008.Message))
 	}
 	u, err := c.resolveUserByRef(ref)
 	if err != nil {
-		return c.failMsg("user not found")
+		return c.fail(errcode.New(errcode.ERR6007.Code, errcode.ERR6007.Message))
 	}
 	if _, err := c.Db.Where("id = ?", u.Id).Cols("login_verify").Update(&model.User{LoginVerify: ""}); err != nil {
 		return c.fail(err)
@@ -895,7 +896,7 @@ func (c *EnterpriseCompatController) HandleUsersDisableLoginVerification() mvc.R
 
 func (c *EnterpriseCompatController) HandleUsersForceLogout() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	m, err := c.readJSONMap()
 	if err != nil {
@@ -910,7 +911,7 @@ func (c *EnterpriseCompatController) HandleUsersForceLogout() mvc.Result {
 	}
 	u, err := c.resolveUserByRef(ref)
 	if err != nil {
-		return c.failMsg("user not found")
+		return c.fail(errcode.New(errcode.ERR6007.Code, errcode.ERR6007.Message))
 	}
 	if _, err := c.Db.Where("user_id = ?", u.Id).Delete(&model.AuthToken{}); err != nil {
 		return c.fail(err)
@@ -920,7 +921,7 @@ func (c *EnterpriseCompatController) HandleUsersForceLogout() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleUsersInvite() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	// Compatibility response shape; email delivery workflow is project-specific.
 	return mvc.Response{Object: iris.Map{
@@ -931,7 +932,7 @@ func (c *EnterpriseCompatController) HandleUsersInvite() mvc.Result {
 
 func (c *EnterpriseCompatController) HandleUsersTfaTotpEnforce() mvc.Result {
 	if c.requireAdmin() == nil {
-		return c.failMsg("Admin required!")
+		return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 	}
 	m, err := c.readJSONMap()
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"strconv"
 	"xorm.io/xorm"
 )
@@ -91,15 +92,15 @@ func (c *MailTemplateController) HandleAdd() mvc.Result {
 
 	if form.Name == "" {
 		c.recordMailTemplateOperationAudit("admin_mail_template_add", "", nil, sanitizeMailTemplateFormForAudit(form), "failure", "MailTemplateNameEmpty")
-		return c.Error(nil, "MailTemplateNameEmpty")
+		return c.Error(nil, errcode.New(errcode.ERR8001.Code, errcode.ERR8001.Message).Error())
 	}
 	if form.Subject == "" {
 		c.recordMailTemplateOperationAudit("admin_mail_template_add", "", nil, sanitizeMailTemplateFormForAudit(form), "failure", "MailTemplateSubjectEmpty")
-		return c.Error(nil, "MailTemplateSubjectEmpty")
+		return c.Error(nil, errcode.New(errcode.ERR8002.Code, errcode.ERR8002.Message).Error())
 	}
 	if form.Contents == "" {
 		c.recordMailTemplateOperationAudit("admin_mail_template_add", "", nil, sanitizeMailTemplateFormForAudit(form), "failure", "MailTemplateContentsEmpty")
-		return c.Error(nil, "MailTemplateContentsEmpty")
+		return c.Error(nil, errcode.New(errcode.ERR8003.Code, errcode.ERR8003.Message).Error())
 	}
 
 	template := &model.MailTemplate{
@@ -129,7 +130,7 @@ func (c *MailTemplateController) HandleEdit() mvc.Result {
 
 	if form.Id <= 0 {
 		c.recordMailTemplateOperationAudit("admin_mail_template_edit", "", nil, sanitizeMailTemplateFormForAudit(form), "failure", "DataError")
-		return c.Error(nil, "DataError")
+		return c.Error(nil, errcode.New(errcode.ERR8004.Code, errcode.ERR8004.Message).Error())
 	}
 
 	var before model.MailTemplate
@@ -140,7 +141,7 @@ func (c *MailTemplateController) HandleEdit() mvc.Result {
 	}
 	if !has {
 		c.recordMailTemplateOperationAudit("admin_mail_template_edit", strconv.Itoa(form.Id), nil, sanitizeMailTemplateFormForAudit(form), "failure", "MailTemplateNotFound")
-		return c.Error(nil, "MailTemplateNotFound")
+		return c.Error(nil, errcode.New(errcode.ERR8005.Code, errcode.ERR8005.Message).Error())
 	}
 
 	template := &model.MailTemplate{

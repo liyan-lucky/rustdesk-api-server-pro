@@ -21,6 +21,7 @@ type OAuthLoginSession struct {
 	DeviceName   string    `xorm:"'device_name' varchar(255)"`
 	PollToken    string    `xorm:"'poll_token' varchar(64) index"`
 	Ticket       string    `xorm:"'ticket' varchar(64)"`
+	Result       string    `xorm:"'result' text"`
 	ExpiresAt    time.Time `xorm:"'expires_at' datetime index"`
 	Status       int       `xorm:"'status' tinyint index"`
 	CreatedAt    time.Time `xorm:"'created_at' datetime created"`

@@ -131,6 +131,10 @@ var (
 	ERR2210 = register("ERR-2210", "oauth_state_expired", "oauth-client", "OAuth 授权状态已过期", "授权超时，请重新发起登录")
 	ERR2211 = register("ERR-2211", "oauth_provider_not_for_client", "oauth-client", "该 Provider 不支持客户端登录", "将 Provider 的账户角色设为 user")
 	ERR2212 = register("ERR-2212", "oauth_auth_failed", "oauth-client", "OAuth 认证失败", "检查 Provider 配置和网络连通性，查看服务端日志获取详细错误")
+	ERR2213 = register("ERR-2213", "missing op", "oauth-client", "OIDC 兼容接口缺少操作类型", "客户端请求必须包含 op 字段")
+	ERR2214 = register("ERR-2214", "missing code", "oauth-client", "OIDC auth-query 缺少轮询码", "客户端必须提供 start 接口返回的 code")
+	ERR2215 = register("ERR-2215", "No authed oidc is found", "oauth-client", "OIDC 授权尚未完成", "等待用户完成浏览器端授权后重试")
+	ERR2216 = register("ERR-2216", "provider disabled", "oauth-client", "OAuth Provider 已禁用", "在管理后台启用该 Provider 并填写 Client ID 和 Client Secret")
 )
 
 // ── OIDC (ERR-3xxx) ─────────────────────────────────────────────────
@@ -242,6 +246,9 @@ var (
 	ERR8003 = register("ERR-8003", "MailTemplateContentsEmpty", "mail", "邮件模板内容不能为空", "填写有效的邮件内容")
 	ERR8004 = register("ERR-8004", "DataError", "mail", "数据错误", "检查提交的数据格式")
 	ERR8005 = register("ERR-8005", "MailTemplateNotFound", "mail", "邮件模板未找到", "确认模板 ID 是否正确")
+	ERR8006 = register("ERR-8006", "mail template not found", "mail", "邮件模板未找到或解析失败", "检查邮件模板配置是否正确")
+	ERR8007 = register("ERR-8007", "smtp connection failed", "mail", "SMTP 服务器连接失败", "检查 SMTP 配置和网络连通性")
+	ERR8008 = register("ERR-8008", "mail send failed", "mail", "邮件发送失败", "检查 SMTP 配置和收件人地址")
 )
 
 // ── Session/Token (ERR-9xxx) ─────────────────────────────────────────

@@ -7,6 +7,7 @@ import (
 
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/internal/service"
 
 	"github.com/kataras/iris/v12"
@@ -58,7 +59,6 @@ func (c *CompatPublicController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "sysinfo_ver", "HandleSysinfoVer")
 	b.Handle("POST", "oidc/auth", "HandleOidcAuth")
-	b.Handle("GET", "oidc/auth", "HandleOidcAuth")
 	b.Handle("GET", "oidc/auth-query", "HandleOidcAuthQuery")
 	b.Handle("POST", "oidc/auth-query", "HandleOidcAuthQuery")
 	b.Handle("POST", "record", "HandleRecord")
@@ -145,6 +145,7 @@ func (c *CompatPublicController) HandleSysinfoVer() mvc.Result {
 func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
 	body, _ := c.readBodyBytes()
 	op := strings.TrimSpace(gjson.GetBytes(body, "op").String())
+	op = strings.TrimPrefix(op, "oidc/")
 	id := gjson.GetBytes(body, "id").String()
 	uuid := gjson.GetBytes(body, "uuid").String()
 	deviceOs := gjson.GetBytes(body, "deviceInfo.os").String()
@@ -153,18 +154,21 @@ func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
 
 	if op == "" {
 		c.recordCompatAPIAudit(true, 400, "missing op", "", body)
-		return mvc.Response{Object: iris.Map{"error": "missing op"}}
+		errJSON, _ := json.Marshal(iris.Map{"error": errcode.New(errcode.ERR2213.Code, errcode.ERR2213.Message).Error()})
+		return mvc.Response{Object: iris.Map{"error": string(errJSON)}}
 	}
 
 	oauthService := service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 	authURL, pollToken, enabled, err := oauthService.BuildClientAuthURL(op, c.currentBaseURL(), id, uuid, deviceOs, deviceType, deviceName)
 	if err != nil {
 		c.recordCompatAPIAudit(true, 500, err.Error(), "", body)
-		return mvc.Response{Object: iris.Map{"error": err.Error()}}
+		errJSON, _ := json.Marshal(iris.Map{"error": err.Error()})
+		return mvc.Response{Object: iris.Map{"error": string(errJSON)}}
 	}
 	if !enabled {
 		c.recordCompatAPIAudit(true, 200, "provider disabled", "", body)
-		return mvc.Response{Object: iris.Map{"error": "provider disabled"}}
+		errJSON, _ := json.Marshal(iris.Map{"error": errcode.New(errcode.ERR2216.Code, errcode.ERR2216.Message).Error()})
+		return mvc.Response{Object: iris.Map{"error": string(errJSON)}}
 	}
 	c.recordCompatAPIAudit(false, 200, "ok", "", body)
 	return mvc.Response{Object: iris.Map{
@@ -175,47 +179,27 @@ func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
 
 func (c *CompatPublicController) HandleOidcAuthQuery() mvc.Result {
 	code := strings.TrimSpace(c.Ctx.URLParamDefault("code", ""))
-	id := c.Ctx.URLParamDefault("id", "")
-	uuid := c.Ctx.URLParamDefault("uuid", "")
 
 	if code == "" {
 		c.recordCompatAPIAudit(true, 400, "missing code", "", nil)
-		return mvc.Response{Object: iris.Map{"body": `{"error":"missing code"}`}}
+		errJSON, _ := json.Marshal(iris.Map{"error": errcode.New(errcode.ERR2214.Code, errcode.ERR2214.Message).Error()})
+		return mvc.Response{Object: iris.Map{"body": string(errJSON)}}
 	}
 
 	oauthService := service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
-	ticket, ready, err := oauthService.PollClientTicket(code)
+	result, err := oauthService.ConsumePollAndExchange(code)
 	if err != nil {
 		c.recordCompatAPIAudit(true, 500, err.Error(), "", nil)
-		return mvc.Response{Object: iris.Map{"body": `{"error":"` + err.Error() + `"}`}}
+		errJSON, _ := json.Marshal(iris.Map{"error": err.Error()})
+		return mvc.Response{Object: iris.Map{"body": string(errJSON)}}
 	}
-	if !ready {
+	if result == "" {
 		c.recordCompatAPIAudit(false, 200, "pending", "", nil)
-		return mvc.Response{Object: iris.Map{"body": `{"error":"No authed oidc is found"}`}}
+		errJSON, _ := json.Marshal(iris.Map{"error": errcode.New(errcode.ERR2215.Code, errcode.ERR2215.Message).Error()})
+		return mvc.Response{Object: iris.Map{"body": string(errJSON)}}
 	}
-
-	token, user, err := oauthService.ExchangeClientTicket(ticket)
-	if err != nil {
-		c.recordCompatAPIAudit(true, 500, err.Error(), "", nil)
-		return mvc.Response{Object: iris.Map{"body": `{"error":"` + err.Error() + `"}`}}
-	}
-
-	_ = id
-	_ = uuid
-	inner, _ := json.Marshal(iris.Map{
-		"access_token": token,
-		"type":         "access_token",
-		"user": iris.Map{
-			"name":         user.Name,
-			"display_name": user.Name,
-			"email":        user.Email,
-			"note":         user.Note,
-			"status":       user.Status,
-			"is_admin":     false,
-		},
-	})
 	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
-	return mvc.Response{Object: iris.Map{"body": string(inner)}}
+	return mvc.Response{Object: iris.Map{"body": result}}
 }
 
 func (c *CompatPublicController) HandleRecord() mvc.Result {

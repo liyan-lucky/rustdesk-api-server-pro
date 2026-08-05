@@ -1,10 +1,10 @@
 package service
 
 import (
-	"fmt"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 	"strings"
 
 	mail "github.com/xhit/go-simple-mail/v2"
@@ -70,7 +70,7 @@ func (service *MailService) Send(userId, tplId int, to, uuid string, vars map[st
 	get, err := db.DbEngine.Where("id = ?", tplId).Get(&template)
 	if err != nil || !get {
 		sendLog.Status = model.MAIL_SEND_ERR
-		sendLog.Logs = fmt.Sprintf("template not found or error: %s", err.Error())
+		sendLog.Logs = errcode.Errorf(errcode.ERR8006.Code, errcode.ERR8006.Message+": "+err.Error()).Error()
 		db.DbEngine.Insert(sendLog)
 		return err
 	}
@@ -89,14 +89,14 @@ func (service *MailService) Send(userId, tplId int, to, uuid string, vars map[st
 	sender, err := service.mailer.Connect()
 	if err != nil {
 		sendLog.Status = model.MAIL_SEND_ERR
-		sendLog.Logs = fmt.Sprintf("can not connect smtp server error: %s", err.Error())
+		sendLog.Logs = errcode.Errorf(errcode.ERR8007.Code, errcode.ERR8007.Message+": "+err.Error()).Error()
 		db.DbEngine.Insert(sendLog)
 		return err
 	}
 	err = message.Send(sender)
 	if err != nil {
 		sendLog.Status = model.MAIL_SEND_ERR
-		sendLog.Logs = fmt.Sprintf("send error: %s", err.Error())
+		sendLog.Logs = errcode.Errorf(errcode.ERR8008.Code, errcode.ERR8008.Message+": "+err.Error()).Error()
 		db.DbEngine.Insert(sendLog)
 		return err
 	}

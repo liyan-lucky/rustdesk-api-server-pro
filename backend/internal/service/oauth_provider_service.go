@@ -19,6 +19,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/kataras/iris/v12"
 	"xorm.io/xorm"
 )
 
@@ -108,6 +109,7 @@ type oauthRuntimeStore struct {
 type oauthPollEntry struct {
 	Ticket    string
 	ExpiresAt time.Time
+	Result    string
 }
 
 var globalOAuthRuntimeStore = &oauthRuntimeStore{
@@ -1706,4 +1708,124 @@ func (s *OAuthProviderService) peekPollEntry(pollToken string) (string, bool) {
 		return "", false
 	}
 	return v.Ticket, true
+}
+
+// ConsumePollAndExchange atomically checks the poll entry and, if a ticket is
+// ready, exchanges it for a client access token. The result is cached in the
+// poll entry so that subsequent calls with the same pollToken return the same
+// result without re-consuming the ticket. This makes the /api/oidc/auth-query
+// endpoint idempotent and safe for client retries.
+func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string, error) {
+	if strings.TrimSpace(pollToken) == "" {
+		return "", errcode.New(errcode.ERR2205.Code, errcode.ERR2205.Message)
+	}
+	keyHash := util.Sha256Hex(pollToken)
+	if s.db != nil {
+		var session model.OAuthLoginSession
+		has, err := s.db.Where("kind = ? and key_hash = ? and status = 1 and expires_at > ?", "poll", keyHash, time.Now()).Get(&session)
+		if err != nil {
+			return "", err
+		}
+		if !has {
+			return "", nil
+		}
+		if session.Result != "" {
+			return session.Result, nil
+		}
+		ticket := strings.TrimSpace(session.Ticket)
+		if ticket == "" {
+			return "", nil
+		}
+		item, ok := s.popTicket(ticket)
+		if !ok {
+			return "", errcode.New(errcode.ERR2008.Code, errcode.ERR2008.Message)
+		}
+		if item.IsAdmin {
+			return "", errcode.New(errcode.ERR2206.Code, errcode.ERR2206.Message)
+		}
+		var user model.User
+		hasUser, userErr := s.db.Where("id = ? and is_admin = 0 and status > 0", item.UserID).Get(&user)
+		if userErr != nil {
+			return "", userErr
+		}
+		if !hasUser {
+			return "", errcode.New(errcode.ERR2009.Code, errcode.ERR2009.Message)
+		}
+		token, tokenErr := s.issueClientOAuthToken(&user, item.RustdeskId, item.Uuid, item.DeviceOs, item.DeviceType, item.DeviceName)
+		if tokenErr != nil {
+			return "", tokenErr
+		}
+		var account model.OAuthAccount
+		_, _ = s.db.Where("user_id = ? and is_admin = 0 and status = 1", user.Id).Get(&account)
+		resultBytes, _ := json.Marshal(iris.Map{
+			"access_token": token,
+			"type":         "access_token",
+			"user": iris.Map{
+				"name":            user.Name,
+				"display_name":    user.Name,
+				"avatar":          account.Picture,
+				"email":           user.Email,
+				"note":            user.Note,
+				"status":          user.Status,
+				"info":            "",
+				"is_admin":        false,
+				"third_auth_type": account.Provider,
+			},
+		})
+		resultStr := string(resultBytes)
+		_, _ = s.db.Where("id = ?", session.Id).Cols("result").Update(&model.OAuthLoginSession{Result: resultStr})
+		return resultStr, nil
+	}
+	v, ok := globalOAuthRuntimeStore.polls[pollToken]
+	if !ok || time.Now().After(v.ExpiresAt) {
+		return "", nil
+	}
+	if v.Result != "" {
+		return v.Result, nil
+	}
+	ticket := strings.TrimSpace(v.Ticket)
+	if ticket == "" {
+		return "", nil
+	}
+	item, ok := s.popTicket(ticket)
+	if !ok {
+		return "", errcode.New(errcode.ERR2008.Code, errcode.ERR2008.Message)
+	}
+	if item.IsAdmin {
+		return "", errcode.New(errcode.ERR2206.Code, errcode.ERR2206.Message)
+	}
+	var user model.User
+	hasUser, userErr := s.db.Where("id = ? and is_admin = 0 and status > 0", item.UserID).Get(&user)
+	if userErr != nil {
+		return "", userErr
+	}
+	if !hasUser {
+		return "", errcode.New(errcode.ERR2009.Code, errcode.ERR2009.Message)
+	}
+	token, tokenErr := s.issueClientOAuthToken(&user, item.RustdeskId, item.Uuid, item.DeviceOs, item.DeviceType, item.DeviceName)
+	if tokenErr != nil {
+		return "", tokenErr
+	}
+	var account model.OAuthAccount
+	_, _ = s.db.Where("user_id = ? and is_admin = 0 and status = 1", user.Id).Get(&account)
+	resultBytes, _ := json.Marshal(iris.Map{
+		"access_token": token,
+		"type":         "access_token",
+		"user": iris.Map{
+			"name":            user.Name,
+			"display_name":    user.Name,
+			"avatar":          account.Picture,
+			"email":           user.Email,
+			"note":            user.Note,
+			"status":          user.Status,
+			"info":            "",
+			"is_admin":        false,
+			"third_auth_type": account.Provider,
+		},
+	})
+	resultStr := string(resultBytes)
+	globalOAuthRuntimeStore.mu.Lock()
+	globalOAuthRuntimeStore.polls[pollToken] = oauthPollEntry{Ticket: v.Ticket, ExpiresAt: v.ExpiresAt, Result: resultStr}
+	globalOAuthRuntimeStore.mu.Unlock()
+	return resultStr, nil
 }

@@ -41,7 +41,7 @@ func (service *UserService) Login(loginForm api.LoginForm) iris.Map {
 	get, err := db.DbEngine.Where("username = ?", loginForm.Username).Get(&user)
 	if err != nil {
 		return iris.Map{
-			"error": err.Error(),
+			"error": errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error(),
 		}
 	}
 
@@ -73,7 +73,7 @@ func (service *UserService) Login(loginForm api.LoginForm) iris.Map {
 		tpl, err := s.GetMailTemplateByType(model.MAIL_TPL_TYPE_LOGIN_VERIFY)
 		if err != nil {
 			return iris.Map{
-				"error": err.Error(),
+				"error": errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error(),
 			}
 		}
 
@@ -91,7 +91,7 @@ func (service *UserService) Login(loginForm api.LoginForm) iris.Map {
 
 		if err != nil {
 			return iris.Map{
-				"error": err.Error(),
+				"error": errcode.Errorf(errcode.ERR8007.Code, errcode.ERR8007.Message+": "+err.Error()).Error(),
 			}
 		}
 
@@ -184,7 +184,7 @@ func (service *UserService) LoginVerifyByEmailCode(loginForm api.LoginForm) iris
 	get, err := db.DbEngine.Where("type = 1 and rustdesk_id = ? and uuid = ? and code = ? and status = 1", loginForm.RustdeskId, loginForm.Secret, loginForm.VerificationCode).Desc("id").Get(&verifyCode)
 	if err != nil {
 		return iris.Map{
-			"error": err.Error(),
+			"error": errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error(),
 		}
 	}
 	if !get {
@@ -213,7 +213,7 @@ func (service *UserService) LoginVerifyByEmailCode(loginForm api.LoginForm) iris
 	_, err = db.DbEngine.Where("id = ?", verifyCode.UserId).Get(&user)
 	if err != nil {
 		return iris.Map{
-			"error": err.Error(),
+			"error": errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error(),
 		}
 	}
 
@@ -240,7 +240,7 @@ func (service *UserService) LoginVerifyBy2FACode(loginForm api.LoginForm) iris.M
 	get, err := db.DbEngine.Where("type = 3 and rustdesk_id = ? and uuid = ? and status = 1", loginForm.RustdeskId, loginForm.Secret).Desc("id").Get(&verifyCode)
 	if err != nil {
 		return iris.Map{
-			"error": err.Error(),
+			"error": errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error(),
 		}
 	}
 	if !get {
@@ -253,7 +253,7 @@ func (service *UserService) LoginVerifyBy2FACode(loginForm api.LoginForm) iris.M
 	get, err = db.DbEngine.Where("id = ?", verifyCode.UserId).Get(&user)
 	if err != nil {
 		return iris.Map{
-			"error": err.Error(),
+			"error": errcode.Errorf(errcode.ERRB010.Code, errcode.ERRB010.Message+": "+err.Error()).Error(),
 		}
 	}
 

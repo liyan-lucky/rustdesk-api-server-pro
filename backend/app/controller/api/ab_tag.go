@@ -154,7 +154,7 @@ func (c *AddressBookTagController) HandleAbTagDelete() mvc.Result {
 	}
 	if len(names) == 0 {
 		c.recordAPIOperationAudit("ab_tag_delete", "address_book_tag", abGuid, nil, map[string]any{"names": names}, "failure", "NoTagNames")
-		return c.failMsg("NoTagNames")
+		return c.fail(errcode.New(errcode.ERR5017.Code, errcode.ERR5017.Message))
 	}
 
 	user := c.GetUser()

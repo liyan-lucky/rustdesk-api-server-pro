@@ -48,7 +48,7 @@ func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 	}
 	name := stringFromAny(body["name"])
 	if name == "" {
-		return c.failMsg("name required")
+		return c.fail(errcode.New(errcode.ERR5002.Code, errcode.ERR5002.Message))
 	}
 	ab := model.AddressBook{UserId: user.Id, Guid: util.GetUUID(), Name: name, Owner: user.Username, Note: stringFromAny(body["note"]), Rule: 0, Shared: true}
 	if _, err := c.Db.Insert(&ab); err != nil {
@@ -174,7 +174,7 @@ func (c *AddressBookController) HandleAbRuleAdd() mvc.Result {
 	}
 	rule := intFromAny(body["rule"])
 	if rule < 1 || rule > 3 {
-		return c.failMsg("rule must be 1, 2 or 3")
+		return c.fail(errcode.New(errcode.ERR5012.Code, errcode.ERR5012.Message))
 	}
 	row := model.AddressBookRule{Guid: util.GetUUID(), AbGuid: abGuid, TargetType: typeName, TargetGuid: target, Rule: rule}
 	if _, err := c.Db.Insert(&row); err != nil {
@@ -192,14 +192,14 @@ func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
 	var row model.AddressBookRule
 	has, err := c.Db.Where("guid = ?", guid).Get(&row)
 	if err != nil || !has {
-		return c.failMsg("rule not found")
+		return c.fail(errcode.New(errcode.ERR5015.Code, errcode.ERR5015.Message))
 	}
 	if _, err = c.ownedAddressBook(row.AbGuid); err != nil {
 		return c.fail(err)
 	}
 	rule := intFromAny(body["rule"])
 	if rule < 1 || rule > 3 {
-		return c.failMsg("rule must be 1, 2 or 3")
+		return c.fail(errcode.New(errcode.ERR5012.Code, errcode.ERR5012.Message))
 	}
 	_, err = c.Db.Where("guid = ?", guid).Cols("rule").Update(&model.AddressBookRule{Rule: rule})
 	if err != nil {
@@ -301,7 +301,7 @@ func (c *AddressBookController) PostAb() mvc.Result {
 	}
 	if user.LicensedDevices > 0 && len(abData.Peers) > user.LicensedDevices {
 		c.recordAPIOperationAudit("ab_legacy_replace", "address_book", "legacy", nil, sanitizeLegacyAddressBookForAudit(abData), "failure", "Number of equipment in excess of licenses")
-		return c.failMsg("Number of equipment in excess of licenses")
+		return c.fail(errcode.New(errcode.ERR5018.Code, errcode.ERR5018.Message))
 	}
 
 	cmd := core.LegacyAddressBookReplaceCommand{

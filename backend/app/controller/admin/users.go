@@ -7,6 +7,7 @@ import (
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/util"
 	"strconv"
 
@@ -105,19 +106,19 @@ func (c *UsersController) HandleAdd() mvc.Result {
 
 	if form.Username == "" {
 		c.recordUserOperationAudit("admin_user_add", "", nil, sanitizeUserFormForAudit(form), "failure", "UsernameEmpty")
-		return c.Error(nil, "UsernameEmpty")
+		return c.Error(nil, errcode.New(errcode.ERR4001.Code, errcode.ERR4001.Message).Error())
 	}
 	if has, err := c.Db.Where("username = ?", form.Username).Get(&model.User{}); err != nil {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", err.Error())
 		return c.dbError(err)
 	} else if has {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "UserExists")
-		return c.Error(nil, "UserExists")
+		return c.Error(nil, errcode.New(errcode.ERR4002.Code, errcode.ERR4002.Message).Error())
 	}
 
 	if form.Password == "" {
 		c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "PasswordEmpty")
-		return c.Error(nil, "PasswordEmpty")
+		return c.Error(nil, errcode.New(errcode.ERR4003.Code, errcode.ERR4003.Message).Error())
 	}
 
 	if form.Name == "" {
@@ -150,7 +151,7 @@ func (c *UsersController) HandleAdd() mvc.Result {
 	if form.LoginVerify == model.LOGIN_TFA_CHECK {
 		if !totp.Validate(form.TwoFactorAuthCode, form.TwoFactorAuthSecret) {
 			c.recordUserOperationAudit("admin_user_add", form.Username, nil, sanitizeUserFormForAudit(form), "failure", "TFA_Validate_Err")
-			return c.Error(nil, "TFA_Validate_Err")
+			return c.Error(nil, errcode.New(errcode.ERR4004.Code, errcode.ERR4004.Message).Error())
 		}
 		user.TwoFactorAuthSecret = form.TwoFactorAuthSecret
 	}
@@ -176,7 +177,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 
 	if form.Id <= 0 {
 		c.recordUserOperationAudit("admin_user_edit", "", nil, sanitizeUserFormForAudit(form), "failure", "DataError")
-		return c.Error(nil, "DataError")
+		return c.Error(nil, errcode.New(errcode.ERR4005.Code, errcode.ERR4005.Message).Error())
 	}
 
 	if form.LicensedDevices < 0 {
@@ -218,7 +219,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	}
 	if !has {
 		c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), nil, sanitizeUserFormForAudit(form), "failure", "UserNotExists")
-		return c.Error(nil, "UserNotExists")
+		return c.Error(nil, errcode.New(errcode.ERR4006.Code, errcode.ERR4006.Message).Error())
 	}
 	beforeAudit := sanitizeUserForAudit(&user)
 
@@ -226,7 +227,7 @@ func (c *UsersController) HandleEdit() mvc.Result {
 	if form.LoginVerify == model.LOGIN_TFA_CHECK && form.TwoFactorAuthSecret != user.TwoFactorAuthSecret {
 		if !totp.Validate(form.TwoFactorAuthCode, form.TwoFactorAuthSecret) {
 			c.recordUserOperationAudit("admin_user_edit", strconv.Itoa(form.Id), beforeAudit, sanitizeUserFormForAudit(form), "failure", "TFA_Validate_Err")
-			return c.Error(nil, "TFA_Validate_Err")
+			return c.Error(nil, errcode.New(errcode.ERR4004.Code, errcode.ERR4004.Message).Error())
 		}
 		newUser.TwoFactorAuthSecret = form.TwoFactorAuthSecret
 	}
@@ -256,7 +257,7 @@ func (c *UsersController) HandleDelete() mvc.Result {
 	ids := util.RemoveElement(params.Ids, 1)
 	if len(ids) == 0 {
 		c.recordUserOperationAudit("admin_user_delete", "", nil, iris.Map{"ids": params.Ids}, "failure", "NoUserIds")
-		return c.Error(nil, "NoUserIds")
+		return c.Error(nil, errcode.New(errcode.ERR4007.Code, errcode.ERR4007.Message).Error())
 	}
 	beforeUsers := make([]model.User, 0)
 	_ = c.Db.In("id", ids).Find(&beforeUsers)

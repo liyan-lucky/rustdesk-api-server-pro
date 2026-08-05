@@ -45,7 +45,7 @@ func (c *CompatAuthController) HandleMe() mvc.Result {
 func (c *CompatAuthController) HandleCurrentDevice() mvc.Result {
 	token := c.GetAuthToken()
 	if token == nil {
-		return c.failMsg("token required")
+		return c.fail(errcode.New(errcode.ERR1008.Code, errcode.ERR1008.Message))
 	}
 
 	var device model.Device
@@ -88,7 +88,7 @@ func (c *CompatAuthController) HandleDevicesCli() mvc.Result {
 		rustdeskID = gjson.GetBytes(body, "rustdesk_id").String()
 	}
 	if rustdeskID == "" {
-		return c.failMsg("id required")
+		return c.fail(errcode.New(errcode.ERR1009.Code, errcode.ERR1009.Message))
 	}
 
 	user := c.GetUser()

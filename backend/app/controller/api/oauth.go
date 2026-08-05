@@ -4,6 +4,7 @@ import (
 	apiform "rustdesk-api-server-pro/app/form/api"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/core"
+	"rustdesk-api-server-pro/internal/errcode"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"strings"
 
@@ -52,10 +53,10 @@ func (c *OAuthController) HandleStart() mvc.Result {
 		return c.fail(err)
 	}
 	if strings.TrimSpace(form.Provider) == "" {
-		return c.failMsg("provider required")
+		return c.fail(errcode.New(errcode.ERR2201.Code, errcode.ERR2201.Message))
 	}
 	if strings.TrimSpace(form.RustdeskId) == "" || strings.TrimSpace(form.Uuid) == "" {
-		return c.failMsg("id and uuid required")
+		return c.fail(errcode.New(errcode.ERR2202.Code, errcode.ERR2202.Message))
 	}
 
 	service := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)

@@ -56,7 +56,7 @@ func (c *UserController) GetUsers() mvc.Result {
 	})
 	if err != nil {
 		if err == v2service.ErrAdminRequired {
-			return c.failMsg("Admin required!")
+			return c.fail(errcode.New(errcode.ERR1007.Code, errcode.ERR1007.Message))
 		}
 		return c.fail(err)
 	}

@@ -40,7 +40,7 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 
 	if !captcha.VerifyCode(loginForm.CaptchaId, loginForm.Code) {
 		c.recordAdminLoginAudit(0, loginForm.Username, false, "CaptchaError")
-		return c.Error(nil, "CaptchaError")
+		return c.Error(nil, errcode.New(errcode.ERR1001.Code, errcode.ERR1001.Message).Error())
 	}
 
 	var user model.User
@@ -52,12 +52,12 @@ func (c *AuthController) PostAuthLogin() mvc.Result {
 
 	if !get {
 		c.recordAdminLoginAudit(0, loginForm.Username, false, "UserNotExists")
-		return c.Error(nil, "UserNotExists")
+		return c.Error(nil, errcode.New(errcode.ERR1002.Code, errcode.ERR1002.Message).Error())
 	}
 
 	if !util.PasswordVerify(loginForm.Password, user.Password) {
 		c.recordAdminLoginAudit(user.Id, loginForm.Username, false, "UsernameOrPasswordError")
-		return c.Error(nil, "UsernameOrPasswordError")
+		return c.Error(nil, errcode.New(errcode.ERR1003.Code, errcode.ERR1003.Message).Error())
 	}
 
 	_, _ = c.Db.Where("user_id = ? and status = 1 and is_admin = ?", user.Id, user.IsAdmin).Cols("status").Update(&model.AuthToken{

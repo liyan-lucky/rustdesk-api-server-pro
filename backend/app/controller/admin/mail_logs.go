@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -89,7 +90,7 @@ func (c *MaiLogsController) HandleInfo() mvc.Result {
 
 	uuid := c.Ctx.URLParamDefault("uuid", "")
 	if uuid == "" {
-		return c.Error(nil, "UUIDEmpty")
+		return c.Error(nil, errcode.New(errcode.ERR9003.Code, errcode.ERR9003.Message).Error())
 	}
 
 	var log model.MailLogs

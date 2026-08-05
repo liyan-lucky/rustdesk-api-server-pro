@@ -90,7 +90,7 @@ func (c *OAuthController) HandleListAccounts() mvc.Result {
 func (c *OAuthController) HandleDeleteAccount() mvc.Result {
 	id := c.Ctx.Params().GetIntDefault("id", 0)
 	if id == 0 {
-		return c.Error(nil, "InvalidAccountId")
+		return c.Error(nil, errcode.New(errcode.ERR2101.Code, errcode.ERR2101.Message).Error())
 	}
 
 	_, err := c.Db.ID(id).Delete(&model.OAuthAccount{})
@@ -159,10 +159,10 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		"oidc":      true,
 	}
 	if !validProviderTypes[form.Type] {
-		return c.Error(nil, "UnsupportedOAuthProvider")
+		return c.Error(nil, errcode.New(errcode.ERR2102.Code, errcode.ERR2102.Message).Error())
 	}
 	if !oauthProviderNamePattern.MatchString(form.Name) {
-		return c.Error(nil, "InvalidProviderName")
+		return c.Error(nil, errcode.New(errcode.ERR2103.Code, errcode.ERR2103.Message).Error())
 	}
 	if form.AccountRole != "user" {
 		form.AccountRole = "admin"
@@ -171,7 +171,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		return c.dbError(err)
 	}
 	if form.Enabled && strings.TrimSpace(form.ClientID) == "" {
-		return c.Error(nil, "ClientIdRequired")
+		return c.Error(nil, errcode.New(errcode.ERR2104.Code, errcode.ERR2104.Message).Error())
 	}
 
 	cfg := config.GetServerConfig()
@@ -188,7 +188,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 			index = i
 		}
 		if strings.EqualFold(provider.Name, form.Name) && !strings.EqualFold(provider.Name, target) {
-			return c.Error(nil, "ProviderNameExists")
+			return c.Error(nil, errcode.New(errcode.ERR2105.Code, errcode.ERR2105.Message).Error())
 		}
 	}
 	secret := strings.TrimSpace(form.ClientSecret)
@@ -199,7 +199,7 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		secret = cfg.OAuth.Providers[index].ClientSecret
 	}
 	if form.Enabled && secret == "" {
-		return c.Error(nil, "ClientSecretRequired")
+		return c.Error(nil, errcode.New(errcode.ERR2106.Code, errcode.ERR2106.Message).Error())
 	}
 	provider := config.OAuthProviderConfig{}
 	if index >= 0 {
@@ -270,16 +270,16 @@ func (c *OAuthController) HandleTestProvider() mvc.Result {
 		}
 	}
 	if provider == nil {
-		return c.Error(nil, "ProviderNotFound")
+		return c.Error(nil, errcode.New(errcode.ERR2107.Code, errcode.ERR2107.Message).Error())
 	}
 	if !provider.Enabled {
-		return c.Error(nil, "ProviderNotEnabled")
+		return c.Error(nil, errcode.New(errcode.ERR2108.Code, errcode.ERR2108.Message).Error())
 	}
 	if strings.TrimSpace(provider.ClientID) == "" {
-		return c.Error(nil, "ClientIdRequired")
+		return c.Error(nil, errcode.New(errcode.ERR2104.Code, errcode.ERR2104.Message).Error())
 	}
 	if strings.TrimSpace(provider.ClientSecret) == "" {
-		return c.Error(nil, "ClientSecretRequired")
+		return c.Error(nil, errcode.New(errcode.ERR2106.Code, errcode.ERR2106.Message).Error())
 	}
 	if err := validateOAuthRedirectURL(provider.RedirectURL); err != nil {
 		return c.dbError(err)
@@ -291,7 +291,7 @@ func (c *OAuthController) HandleTestProvider() mvc.Result {
 		return c.dbError(err)
 	}
 	if !enabled || authURL == "" {
-		return c.Error(nil, "ProviderNotEnabledOrIncomplete")
+		return c.Error(nil, errcode.New(errcode.ERR2109.Code, errcode.ERR2109.Message).Error())
 	}
 	return c.Success(iris.Map{
 		"authorizationUrl": authURL,

@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -80,7 +81,7 @@ func (c *TokenController) HandleKill() mvc.Result {
 		return c.dbError(err)
 	}
 	if len(params.Ids) == 0 {
-		return c.Error(nil, "NoTokenIds")
+		return c.Error(nil, errcode.New(errcode.ERR9002.Code, errcode.ERR9002.Message).Error())
 	}
 
 	_, err := c.Db.In("id", params.Ids).Cols("status").Update(&model.AuthToken{Status: 0})

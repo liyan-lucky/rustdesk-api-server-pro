@@ -69,7 +69,7 @@ func (c *AddressBookPeerController) HandleAbPeerAdd() mvc.Result {
 	}
 	if ab.MaxPeer > 0 && totalPeers >= int64(ab.MaxPeer) {
 		c.recordAPIOperationAudit("ab_peer_add", "address_book_peer", abGuid, nil, sanitizeAddressBookPeerForAudit(form), "failure", "exceed_max_devices")
-		return c.failMsg("exceed_max_devices")
+		return c.fail(errcode.New(errcode.ERR5020.Code, errcode.ERR5020.Message))
 	}
 
 	forceAlwaysRelay := form.ForceAlwaysRelay == "true"
@@ -130,7 +130,7 @@ func (c *AddressBookPeerController) HandleAbPeerUpdate() mvc.Result {
 	}
 	if !has {
 		c.recordAPIOperationAudit("ab_peer_update", "address_book_peer", cmd.RustdeskID, nil, sanitizeAddressBookPeerUpdateBodyForAudit(body), "failure", "peer not found")
-		return c.failMsg("peer not found")
+		return c.fail(errcode.New(errcode.ERR5007.Code, errcode.ERR5007.Message))
 	}
 	c.recordAPIOperationAudit("ab_peer_update", "address_book_peer", cmd.RustdeskID, nil, sanitizeAddressBookPeerUpdateBodyForAudit(body), "success", "")
 	return c.okText("")
@@ -146,7 +146,7 @@ func (c *AddressBookPeerController) HandleAbPeerDelete() mvc.Result {
 	}
 	if len(ids) == 0 {
 		c.recordAPIOperationAudit("ab_peer_delete", "address_book_peer", abGuid, map[string]any{"ids": ids}, nil, "failure", "NoPeerIds")
-		return c.failMsg("NoPeerIds")
+		return c.fail(errcode.New(errcode.ERR5016.Code, errcode.ERR5016.Message))
 	}
 
 	user := c.GetUser()

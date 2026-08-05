@@ -307,14 +307,14 @@ func (c *AddressBookController) HandleAbTagAdd() mvc.Result {
 		return c.dbError(err)
 	}
 	if body.Name == "" {
-		return c.Error(nil, "name required")
+		return c.Error(nil, errcode.New(errcode.ERR5002.Code, errcode.ERR5002.Message).Error())
 	}
 	count, err := c.Db.Where("ab_id = ? and name = ?", ab.Id, body.Name).Count(new(model.AddressBookTag))
 	if err != nil {
 		return c.dbError(err)
 	}
 	if count > 0 {
-		return c.Error(nil, "tag already exists")
+		return c.Error(nil, errcode.New(errcode.ERR5003.Code, errcode.ERR5003.Message).Error())
 	}
 	_, err = c.Db.Insert(&model.AddressBookTag{UserId: ab.UserId, AbId: ab.Id, Name: body.Name, Color: body.Color})
 	if err != nil {
@@ -340,7 +340,7 @@ func (c *AddressBookController) HandleAbTagUpdate() mvc.Result {
 		return c.dbError(err)
 	}
 	if affected == 0 {
-		return c.Error(nil, "tag not found")
+		return c.Error(nil, errcode.New(errcode.ERR5004.Code, errcode.ERR5004.Message).Error())
 	}
 	return c.Success(nil, "ok")
 }
@@ -358,7 +358,7 @@ func (c *AddressBookController) HandleAbTagRename() mvc.Result {
 		return c.dbError(err)
 	}
 	if body.Old == "" || body.New == "" {
-		return c.Error(nil, "old and new required")
+		return c.Error(nil, errcode.New(errcode.ERR5005.Code, errcode.ERR5005.Message).Error())
 	}
 	if err = c.addressBookService().RenameTag(core.AddressBookTagRenameCommand{UserID: ab.UserId, AbID: ab.Id, Old: body.Old, New: body.New}); err != nil {
 		return c.dbError(err)
@@ -388,7 +388,7 @@ func (c *AddressBookController) HandleAbPeerAdd() mvc.Result {
 		return c.dbError(err)
 	}
 	if body.ID == "" {
-		return c.Error(nil, "device id required")
+		return c.Error(nil, errcode.New(errcode.ERR5006.Code, errcode.ERR5006.Message).Error())
 	}
 	if err = c.addressBookService().AddPeer(core.AddressBookPeerCreateCommand{UserID: ab.UserId, AbID: ab.Id, RustdeskID: body.ID, Hash: body.Hash, Username: body.Username, Password: body.Password, Hostname: body.Hostname, Platform: body.Platform, Alias: body.Alias, Tags: body.Tags, Note: body.Note}); err != nil {
 		return c.dbError(err)
@@ -416,7 +416,7 @@ func (c *AddressBookController) HandleAbPeerUpdate() mvc.Result {
 		return c.dbError(err)
 	}
 	if !has {
-		return c.Error(nil, "peer not found")
+		return c.Error(nil, errcode.New(errcode.ERR5007.Code, errcode.ERR5007.Message).Error())
 	}
 	return c.Success(nil, "ok")
 }
@@ -437,7 +437,7 @@ func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 		return c.dbError(err)
 	}
 	if body.Name == "" {
-		return c.Error(nil, "name required")
+		return c.Error(nil, errcode.New(errcode.ERR5002.Code, errcode.ERR5002.Message).Error())
 	}
 	owner := user
 	createdByAdmin := false
@@ -448,7 +448,7 @@ func (c *AddressBookController) HandleAbSharedAdd() mvc.Result {
 			return c.Error(nil, targetErr.Error())
 		}
 		if !has {
-			return c.Error(nil, "user not found")
+			return c.Error(nil, errcode.New(errcode.ERR5008.Code, errcode.ERR5008.Message).Error())
 		}
 		owner = &target
 		createdByAdmin = true
@@ -476,10 +476,10 @@ func (c *AddressBookController) HandleAbSharedUpdate() mvc.Result {
 		return c.dbError(err)
 	}
 	if !book.Shared {
-		return c.Error(nil, "personal address book is read-only")
+		return c.Error(nil, errcode.New(errcode.ERR5009.Code, errcode.ERR5009.Message).Error())
 	}
 	if body.Name == "" {
-		return c.Error(nil, "name required")
+		return c.Error(nil, errcode.New(errcode.ERR5002.Code, errcode.ERR5002.Message).Error())
 	}
 	_, err = c.Db.Where("id = ?", book.Id).Cols("name", "note", "rule", "max_peer").Update(&model.AddressBook{Name: body.Name, Note: body.Note, Rule: body.Rule, MaxPeer: body.MaxPeer})
 	if err != nil {
@@ -499,11 +499,11 @@ func (c *AddressBookController) HandleAbSharedDelete() mvc.Result {
 			return c.dbError(err)
 		}
 		if !book.Shared {
-			return c.Error(nil, "personal address book cannot be deleted")
+			return c.Error(nil, errcode.New(errcode.ERR5010.Code, errcode.ERR5010.Message).Error())
 		}
 		user := c.GetUser()
 		if !canDeleteAddressBook(user, book) {
-			return c.Error(nil, "administrator-created address book cannot be deleted by user")
+			return c.Error(nil, errcode.New(errcode.ERR5011.Code, errcode.ERR5011.Message).Error())
 		}
 		if err = c.deleteAddressBook(book); err != nil {
 			return c.dbError(err)
@@ -549,11 +549,11 @@ func (c *AddressBookController) HandleAbRuleAdd() mvc.Result {
 		return c.dbError(err)
 	}
 	if body.Rule < 1 || body.Rule > 3 {
-		return c.Error(nil, "invalid rule")
+		return c.Error(nil, errcode.New(errcode.ERR5012.Code, errcode.ERR5012.Message).Error())
 	}
 	rule := model.AddressBookRule{Guid: util.GetUUID(), AbGuid: book.Guid, TargetType: body.TargetType, TargetGuid: body.TargetGuid, Rule: body.Rule}
 	if rule.TargetType == "" || rule.TargetGuid == "" {
-		return c.Error(nil, "target type and target guid required")
+		return c.Error(nil, errcode.New(errcode.ERR5013.Code, errcode.ERR5013.Message).Error())
 	}
 	if _, err = c.Db.Insert(&rule); err != nil {
 		return c.dbError(err)
@@ -570,10 +570,10 @@ func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
 		return c.dbError(err)
 	}
 	if body.Rule < 1 || body.Rule > 3 {
-		return c.Error(nil, "invalid rule")
+		return c.Error(nil, errcode.New(errcode.ERR5012.Code, errcode.ERR5012.Message).Error())
 	}
 	if body.Guid == "" || body.TargetType == "" || body.TargetGuid == "" {
-		return c.Error(nil, "guid and target required")
+		return c.Error(nil, errcode.New(errcode.ERR5014.Code, errcode.ERR5014.Message).Error())
 	}
 	update := model.AddressBookRule{TargetType: body.TargetType, TargetGuid: body.TargetGuid, Rule: body.Rule}
 	affected, err := c.Db.Where("guid = ? and ab_guid = ?", body.Guid, book.Guid).Cols("target_type", "target_guid", "rule").Update(&update)
@@ -581,7 +581,7 @@ func (c *AddressBookController) HandleAbRuleUpdate() mvc.Result {
 		return c.dbError(err)
 	}
 	if affected == 0 {
-		return c.Error(nil, "rule not found")
+		return c.Error(nil, errcode.New(errcode.ERR5015.Code, errcode.ERR5015.Message).Error())
 	}
 	return c.Success(nil, "ok")
 }
@@ -744,7 +744,7 @@ func (c *AddressBookController) HandleAbPeerDelete() mvc.Result {
 		return c.dbError(err)
 	}
 	if len(ids) == 0 {
-		return c.Error(nil, "NoPeerIds")
+		return c.Error(nil, errcode.New(errcode.ERR5016.Code, errcode.ERR5016.Message).Error())
 	}
 
 	user := c.GetUser()
@@ -775,7 +775,7 @@ func (c *AddressBookController) HandleAbTagDelete() mvc.Result {
 		return c.dbError(err)
 	}
 	if len(names) == 0 {
-		return c.Error(nil, "NoTagNames")
+		return c.Error(nil, errcode.New(errcode.ERR5017.Code, errcode.ERR5017.Message).Error())
 	}
 
 	user := c.GetUser()
