@@ -167,6 +167,7 @@ const local: App.I18n.Schema = {
     audit_filetransferlogs: '文件传输日志',
     audit_loginlogs: '登录日志',
     'audit_error-logs': '错误日志',
+    'audit_system-logs': '系统日志',
     devices: '设备管理',
     'my-devices': '通讯录',
     'my-devices_peers': '地址簿',
@@ -263,6 +264,7 @@ const local: App.I18n.Schema = {
         copySuccess: '{label} 已复制',
         copyFailed: '{label} 复制失败',
         fetchFailed: '获取服务器配置失败，请稍后重试',
+        saveSuccess: '服务器配置保存成功',
         cacheCleared: '已清除缓存，正在重新加载服务器配置',
         sourceType: {
           ...enUs.page.home.serverConfig.sourceType,
@@ -270,6 +272,7 @@ const local: App.I18n.Schema = {
           'memory-cache': '内存缓存',
           'session-cache': '会话缓存',
           env: '环境变量',
+          config: '配置文件',
           inferred: '自动检测',
           auto: '自动检测',
           empty: '未配置'
@@ -277,6 +280,7 @@ const local: App.I18n.Schema = {
         sourceHint: {
           ...enUs.page.home.serverConfig.sourceHint,
           env: '该值来自容器环境变量配置。',
+          config: '该值来自 server.yaml 配置文件。',
           inferred: '该值根据当前访问地址自动推断生成。',
           empty: '当前未配置且无法自动推断。'
         },
@@ -596,6 +600,22 @@ const local: App.I18n.Schema = {
       client_ip: '客户端IP',
       user_agent: '用户代理',
       created_at: '时间'
+    },
+    containerLog: {
+      timestamp: '时间',
+      level: '级别',
+      source: '来源',
+      message: '消息',
+      method: '方法',
+      path: '路径',
+      status_code: '状态码',
+      duration_ms: '耗时',
+      user_name: '用户',
+      client_ip: '客户端IP',
+      user_agent: '用户代理',
+      request_id: '请求ID',
+      error_msg: '错误信息',
+      created_at: '记录时间'
     }
   },
   api: {

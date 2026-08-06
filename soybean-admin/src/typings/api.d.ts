@@ -91,7 +91,7 @@ declare namespace Api {
       relayServer: string;
       apiServer: string;
       key: string;
-      sources?: Partial<Record<'idServer' | 'relayServer' | 'apiServer' | 'key', 'env' | 'inferred' | 'empty'>>;
+      sources?: Partial<Record<'idServer' | 'relayServer' | 'apiServer' | 'key', 'env' | 'config' | 'inferred' | 'empty'>>;
     }
 
     interface ServerConnectivityItem {

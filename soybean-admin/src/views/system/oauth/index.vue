@@ -45,7 +45,7 @@ function applyProviderPreset(type: string) {
       name: 'github',
       displayName: 'GitHub',
       scopesText: 'read:user user:email',
-      accountRole: 'admin',
+      accountRole: 'user',
       bindByEmail: true,
       autoCreateAdmin: false,
       autoCreateUser: false
@@ -65,7 +65,7 @@ function applyProviderPreset(type: string) {
       name: 'google',
       displayName: 'Google',
       scopesText: 'openid profile email',
-      accountRole: 'admin',
+      accountRole: 'user',
       bindByEmail: true,
       autoCreateAdmin: false,
       autoCreateUser: false
@@ -75,7 +75,7 @@ function applyProviderPreset(type: string) {
       name: 'microsoft',
       displayName: 'Microsoft',
       scopesText: 'openid profile email',
-      accountRole: 'admin',
+      accountRole: 'user',
       bindByEmail: true,
       autoCreateAdmin: false,
       autoCreateUser: false
@@ -85,7 +85,7 @@ function applyProviderPreset(type: string) {
       name: 'gitee',
       displayName: 'Gitee',
       scopesText: 'user_info',
-      accountRole: 'admin',
+      accountRole: 'user',
       bindByEmail: true,
       autoCreateAdmin: false,
       autoCreateUser: false
@@ -95,7 +95,7 @@ function applyProviderPreset(type: string) {
       name: 'gitlab',
       displayName: 'GitLab',
       scopesText: 'read_user',
-      accountRole: 'admin',
+      accountRole: 'user',
       bindByEmail: true,
       autoCreateAdmin: false,
       autoCreateUser: false
@@ -115,7 +115,7 @@ function applyProviderPreset(type: string) {
       name: 'apple',
       displayName: 'Apple',
       scopesText: 'email name',
-      accountRole: 'admin',
+      accountRole: 'user',
       bindByEmail: true,
       autoCreateAdmin: false,
       autoCreateUser: false
@@ -172,7 +172,7 @@ function resetForm(row?: any) {
           privateKey: '',
           redirectUrl: `${window.location.origin}/admin/auth/oauth/github/callback`,
           scopesText: 'read:user user:email',
-          accountRole: 'admin',
+  accountRole: 'user',
           bindByEmail: true,
           autoCreateAdmin: false,
           autoCreateUser: false,

@@ -49,6 +49,7 @@ var dbSyncCmd = &cobra.Command{
 			new(model.OAuthAccount),
 			new(model.OAuthLoginSession),
 			new(model.ErrorLog),
+			new(model.ContainerLog),
 		}
 		err = engine.Sync(models...)
 		if err != nil {

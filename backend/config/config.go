@@ -14,14 +14,22 @@ import (
 var serverConfigWriteMu sync.Mutex
 
 type ServerConfig struct {
-	DebugMode  bool         `yaml:"debugMode"`
-	Db         *DbConfig    `yaml:"db"`
-	SignKey    string       `yaml:"signKey"`
-	HttpConfig *HttpConfig  `yaml:"httpConfig"`
-	SmtpConfig *SmtpConfig  `yaml:"smtpConfig"`
-	JobsConfig *JobsConfig  `yaml:"jobsConfig"`
-	OIDC       *OIDCConfig  `yaml:"oidc"`
-	OAuth      *OAuthConfig `yaml:"oauth"`
+	DebugMode       bool                `yaml:"debugMode"`
+	Db              *DbConfig           `yaml:"db"`
+	SignKey         string              `yaml:"signKey"`
+	HttpConfig      *HttpConfig         `yaml:"httpConfig"`
+	SmtpConfig      *SmtpConfig         `yaml:"smtpConfig"`
+	JobsConfig      *JobsConfig         `yaml:"jobsConfig"`
+	OIDC            *OIDCConfig         `yaml:"oidc"`
+	OAuth           *OAuthConfig        `yaml:"oauth"`
+	RustdeskServer  *RustdeskServerConfig `yaml:"rustdeskServer"`
+}
+
+type RustdeskServerConfig struct {
+	IdServer    string `yaml:"idServer"`
+	RelayServer string `yaml:"relayServer"`
+	ApiServer   string `yaml:"apiServer"`
+	Key         string `yaml:"key"`
 }
 
 type DbConfig struct {

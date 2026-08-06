@@ -180,10 +180,11 @@ const local: App.I18n.Schema = {
     system_mail_template: 'Plantillas de correo',
     system_mail_logs: 'registros de correo',
     system_mail: 'Correo',
-    audit_baselogs: 'registros base',
+    audit_baselogs: 'Registros básicos',
     audit_filetransferlogs: 'registros de transferencia',
     audit_loginlogs: 'registros de inicio de sesión',
     'audit_error-logs': 'Registros de errores',
+    'audit_system-logs': 'Registros del sistema',
     devices: 'Dispositivos',
     'my-devices': 'Contactos',
     'my-devices_peers': 'Mis contactos',
@@ -615,6 +616,22 @@ const local: App.I18n.Schema = {
       client_ip: 'IP del cliente',
       user_agent: 'Agente de usuario',
       created_at: 'Hora'
+    },
+    containerLog: {
+      timestamp: 'Hora',
+      level: 'Nivel',
+      source: 'Origen',
+      message: 'Mensaje',
+      method: 'Método',
+      path: 'Ruta',
+      status_code: 'Estado',
+      duration_ms: 'Duración',
+      user_name: 'Usuario',
+      client_ip: 'IP del cliente',
+      user_agent: 'Agente de usuario',
+      request_id: 'ID de solicitud',
+      error_msg: 'Error',
+      created_at: 'Registrado'
     }
   },
   api: {

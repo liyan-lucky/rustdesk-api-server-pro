@@ -152,6 +152,7 @@ const local: App.I18n.Schema = {
     audit_filetransferlogs: 'File Transfer Logs',
     audit_loginlogs: 'Login Logs',
     'audit_error-logs': 'Error Logs',
+    'audit_system-logs': 'System Logs',
     devices: 'Devices',
     'my-devices': 'Contacts',
     'my-devices_peers': 'My Peers',
@@ -246,18 +247,21 @@ const local: App.I18n.Schema = {
         copySuccess: '{label} copied',
         copyFailed: '{label} copy failed',
         fetchFailed: 'Failed to load server configuration',
+        saveSuccess: 'Server configuration saved successfully',
         cacheCleared: 'Cache cleared, reloading server configuration',
         sourceType: {
           remote: 'Remote',
           'memory-cache': 'Memory Cache',
           'session-cache': 'Session Cache',
           env: 'Env',
+          config: 'Config',
           inferred: 'Inferred',
           auto: 'Auto-detected',
           empty: 'Empty'
         },
         sourceHint: {
           env: 'This value comes from the container environment variable.',
+          config: 'This value comes from the server.yaml config file.',
           inferred: 'This value is auto-inferred or auto-detected from the container.',
           empty: 'No value is configured or inferred yet.'
         },
@@ -540,6 +544,22 @@ const local: App.I18n.Schema = {
       client_ip: 'Client IP',
       user_agent: 'User Agent',
       created_at: 'Time'
+    },
+    containerLog: {
+      timestamp: 'Time',
+      level: 'Level',
+      source: 'Source',
+      message: 'Message',
+      method: 'Method',
+      path: 'Path',
+      status_code: 'Status',
+      duration_ms: 'Duration',
+      user_name: 'User',
+      client_ip: 'Client IP',
+      user_agent: 'User Agent',
+      request_id: 'Request ID',
+      error_msg: 'Error',
+      created_at: 'Recorded At'
     }
   },
   api: {

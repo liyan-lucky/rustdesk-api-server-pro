@@ -129,14 +129,21 @@ func (c *OAuthController) HandleProviderConfigs() mvc.Result {
 		return c.Success(list, "ok")
 	}
 	for _, p := range cfg.OAuth.Providers {
-		list = append(list, iris.Map{
+		item := iris.Map{
 			"type": p.Type, "name": p.Name, "displayName": p.DisplayName, "enabled": p.Enabled,
 			"clientId": p.ClientID, "secretConfigured": strings.TrimSpace(p.ClientSecret) != "",
 			"secretHint":  maskOAuthSecret(p.ClientSecret),
 			"redirectUrl": p.RedirectURL, "scopes": p.Scopes, "accountRole": p.AccountRole,
 			"bindByEmail": p.BindByEmail, "autoCreateAdmin": p.AutoCreateAdmin,
 			"autoCreateUser": p.AutoCreateUser, "allowedEmailDomains": p.AllowedEmailDomains,
-		})
+		}
+		if p.Type == "apple" {
+			item["teamId"] = p.TeamID
+			item["keyId"] = p.KeyID
+			item["privateKeyConfigured"] = strings.TrimSpace(p.PrivateKey) != ""
+			item["privateKeyHint"] = maskOAuthSecret(p.PrivateKey)
+		}
+		list = append(list, item)
 	}
 	return c.Success(list, "ok")
 }
@@ -285,8 +292,11 @@ func (c *OAuthController) HandleTestProvider() mvc.Result {
 	if strings.TrimSpace(provider.ClientID) == "" {
 		return c.Error(nil, errcode.New(errcode.ERR2104.Code, errcode.ERR2104.Message).Error())
 	}
-	if strings.TrimSpace(provider.ClientSecret) == "" {
+	if strings.TrimSpace(provider.ClientSecret) == "" && provider.Type != "apple" {
 		return c.Error(nil, errcode.New(errcode.ERR2106.Code, errcode.ERR2106.Message).Error())
+	}
+	if provider.Type == "apple" && (strings.TrimSpace(provider.TeamID) == "" || strings.TrimSpace(provider.KeyID) == "" || strings.TrimSpace(provider.PrivateKey) == "") {
+		return c.Error(nil, errcode.New(errcode.ERR2111.Code, errcode.ERR2111.Message).Error())
 	}
 	if err := validateOAuthRedirectURL(provider.RedirectURL); err != nil {
 		return c.dbError(err)

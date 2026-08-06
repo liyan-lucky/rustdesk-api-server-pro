@@ -28,6 +28,7 @@ declare module "@elegant-router/types" {
     "audit_error-logs": "/audit/error-logs";
     "audit_filetransferlogs": "/audit/filetransferlogs";
     "audit_loginlogs": "/audit/loginlogs";
+    "audit_system-logs": "/audit/system-logs";
     "devices": "/devices";
     "home": "/home";
     "iframe-page": "/iframe-page/:url";
@@ -119,11 +120,13 @@ declare module "@elegant-router/types" {
     | "iframe-page"
     | "login"
     | "about_help"
+    | "about"
     | "about_version"
     | "audit_baselogs"
     | "audit_error-logs"
     | "audit_filetransferlogs"
     | "audit_loginlogs"
+    | "audit_system-logs"
     | "devices"
     | "home"
     | "my-devices_manage"

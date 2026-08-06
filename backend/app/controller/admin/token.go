@@ -85,7 +85,7 @@ func (c *TokenController) HandleKill() mvc.Result {
 		return c.Error(nil, errcode.New(errcode.ERR9002.Code, errcode.ERR9002.Message).Error())
 	}
 
-	_, err := c.Db.In("id", params.Ids).Cols("status").Update(&model.AuthToken{Status: 0})
+	_, err := c.Db.In("id", params.Ids).Delete(&model.AuthToken{})
 	if err != nil {
 		return c.dbError(err)
 	}
@@ -94,7 +94,17 @@ func (c *TokenController) HandleKill() mvc.Result {
 }
 
 func (c *TokenController) HandleClear() mvc.Result {
-	_, err := c.Db.Cols("status").Update(&model.AuthToken{Status: 0})
+	currentUser := c.GetUser()
+	if currentUser == nil {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
+
+	_, err := c.Db.Where("is_admin = 0").Delete(&model.AuthToken{})
+	if err != nil {
+		return c.dbError(err)
+	}
+
+	_, err = c.Db.Where("is_admin = 1 AND user_id != ?", currentUser.Id).Delete(&model.AuthToken{})
 	if err != nil {
 		return c.dbError(err)
 	}

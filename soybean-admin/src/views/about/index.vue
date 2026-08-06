@@ -43,6 +43,8 @@ interface ErrorCodeEntry {
   module: string;
   description: string;
   solution: string;
+  descriptionEn: string;
+  solutionEn: string;
 }
 
 const modules = computed(() => {
@@ -260,22 +262,24 @@ onMounted(() => {
                 <NCollapseItem
                   v-for="entry in filteredErrorCodes"
                   :key="entry.code"
-                  :title="`${entry.code}  ${entry.message}`"
+                  :title="`${entry.code}  ${$t('api.' + entry.message as App.I18n.I18nKey)}`"
                   :name="entry.code"
                 >
                   <NDescriptions bordered label-placement="left" :column="1" size="small">
                     <NDescriptionsItem :label="$t('page.about.errCode')">
                       <NTag type="warning" size="small">{{ entry.code }}</NTag>
                     </NDescriptionsItem>
-                    <NDescriptionsItem :label="$t('page.about.errMessage')">{{ entry.message }}</NDescriptionsItem>
+                    <NDescriptionsItem :label="$t('page.about.errMessage')">
+                      {{ $t(`api.${entry.message}` as App.I18n.I18nKey) }}
+                    </NDescriptionsItem>
                     <NDescriptionsItem :label="$t('page.about.errModule')">
                       <NTag size="small">{{ entry.module }}</NTag>
                     </NDescriptionsItem>
                     <NDescriptionsItem :label="$t('page.about.errDescription')">
-                      {{ entry.description }}
+                      {{ appStore.locale === 'zh-CN' ? entry.description : (entry.descriptionEn || entry.description) }}
                     </NDescriptionsItem>
                     <NDescriptionsItem :label="$t('page.about.errSolution')">
-                      <NAlert type="success" :bordered="false">{{ entry.solution }}</NAlert>
+                      <NAlert type="success" :bordered="false">{{ appStore.locale === 'zh-CN' ? entry.solution : (entry.solutionEn || entry.solution) }}</NAlert>
                     </NDescriptionsItem>
                   </NDescriptions>
                 </NCollapseItem>

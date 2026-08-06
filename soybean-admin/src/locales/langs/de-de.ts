@@ -177,6 +177,7 @@ const local: App.I18n.Schema = {
     audit_filetransferlogs: 'Dateiuebertragungsprotokolle',
     audit_loginlogs: 'Anmeldeprotokolle',
     'audit_error-logs': 'Fehlerprotokolle',
+    'audit_system-logs': 'Systemprotokolle',
     devices: 'Geraete',
     'my-devices': 'Kontakte',
     'my-devices_peers': 'Meine Kontakte',
@@ -614,6 +615,22 @@ const local: App.I18n.Schema = {
       client_ip: 'Client-IP',
       user_agent: 'Benutzer-Agent',
       created_at: 'Zeit'
+    },
+    containerLog: {
+      timestamp: 'Zeit',
+      level: 'Stufe',
+      source: 'Quelle',
+      message: 'Nachricht',
+      method: 'Methode',
+      path: 'Pfad',
+      status_code: 'Status',
+      duration_ms: 'Dauer',
+      user_name: 'Benutzer',
+      client_ip: 'Client-IP',
+      user_agent: 'Benutzer-Agent',
+      request_id: 'Anfrage-ID',
+      error_msg: 'Fehler',
+      created_at: 'Aufgezeichnet'
     }
   },
   api: {

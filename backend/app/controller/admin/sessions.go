@@ -97,15 +97,13 @@ func (c *SessionsController) HandleKill() mvc.Result {
 		beforeAudit = append(beforeAudit, sanitizeSessionForAudit(&session))
 	}
 
-	_, err = c.Db.In("id", ids).Cols("status").Update(&model.AuthToken{
-		Status: 0,
-	})
+	_, err = c.Db.In("id", ids).Delete(&model.AuthToken{})
 	if err != nil {
-		c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids, "status": 0}, "failure", err.Error())
+		c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "failure", err.Error())
 		return c.dbError(err)
 	}
 
-	c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids, "status": 0}, "success", "")
+	c.recordSessionOperationAudit("admin_session_kill", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "success", "")
 	return c.Success(nil, "SessionKillSuccess")
 }
 

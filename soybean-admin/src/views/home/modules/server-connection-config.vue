@@ -2,7 +2,7 @@
 import QRCode from 'qrcode';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { fetchServerConfig, fetchServerConnectivity } from '@/service/api/home';
+import { fetchServerConfig, fetchServerConnectivity, fetchSaveServerConfig } from '@/service/api/home';
 
 defineOptions({
   name: 'ServerConnectionConfig'
@@ -25,7 +25,7 @@ interface ConfigItem {
 }
 
 type ConfigLoadSource = 'remote' | 'memory-cache' | 'session-cache' | '';
-type ConfigValueSource = 'env' | 'inferred' | 'empty';
+type ConfigValueSource = 'env' | 'config' | 'inferred' | 'empty';
 type ConnectivityStatus = 'idle' | Api.Home.ServerConnectivityItem['status'];
 type ConnectivityCheckSource = 'remote' | 'cache';
 
@@ -79,6 +79,14 @@ const config = ref<Api.Home.ServerConfig>({
   key: ''
 });
 const loading = ref(false);
+const saving = ref(false);
+const editing = ref(false);
+const editConfig = ref<Api.Home.ServerConfig>({
+  idServer: '',
+  relayServer: '',
+  apiServer: '',
+  key: ''
+});
 const checkingConnectivity = ref(false);
 const checkingConnectivityKey = ref<ConfigKey | ''>('');
 const loadError = ref('');
@@ -531,6 +539,37 @@ async function checkConnectivityItem(target: ConfigKey) {
   }
 }
 
+function startEdit() {
+  editConfig.value = { ...config.value };
+  editing.value = true;
+}
+
+function cancelEdit() {
+  editing.value = false;
+}
+
+async function saveConfig() {
+  if (saving.value) return;
+  saving.value = true;
+  try {
+    const { error } = await fetchSaveServerConfig({
+      idServer: editConfig.value.idServer,
+      relayServer: editConfig.value.relayServer,
+      apiServer: editConfig.value.apiServer,
+      key: editConfig.value.key
+    });
+    if (!error) {
+      editing.value = false;
+      clearServerConfigCache();
+      resetConnectivityState();
+      window.$message?.success(t('page.home.serverConfig.saveSuccess'));
+      await loadServerConfig(true);
+    }
+  } finally {
+    saving.value = false;
+  }
+}
+
 async function loadServerConfig(force = false) {
   if (loading.value) return;
 
@@ -600,6 +639,15 @@ watch(
     </template>
     <template #header-extra>
       <NSpace :size="8" wrap class="server-config-actions">
+        <NButton size="small" :loading="saving" v-if="editing" @click="saveConfig">
+          {{ $t('common.confirm') }}
+        </NButton>
+        <NButton size="small" v-if="editing" @click="cancelEdit">
+          {{ $t('common.cancel') }}
+        </NButton>
+        <NButton size="small" v-if="!editing" :disabled="loading" @click="startEdit">
+          {{ $t('common.edit') }}
+        </NButton>
         <NTooltip trigger="hover">
           <template #trigger>
             <NButton size="small" :loading="loading" @click="loadServerConfig(true)">
@@ -680,6 +728,14 @@ watch(
           </NTooltip>
         </div>
         <NInput
+          v-if="editing"
+          v-model:value="editConfig[item.key]"
+          :placeholder="item.placeholder"
+          :loading="loading"
+          class="config-input"
+        />
+        <NInput
+          v-else
           :value="getDisplayValue(item)"
           readonly
           :placeholder="item.placeholder"
@@ -688,7 +744,7 @@ watch(
         />
         <div class="config-actions">
           <NButton
-            v-if="item.key === 'key'"
+            v-if="!editing && item.key === 'key'"
             size="small"
             :disabled="loading || !item.value"
             @click="showKey = !showKey"
@@ -696,6 +752,7 @@ watch(
             {{ $t(showKey ? 'page.home.serverConfig.hide' : 'page.home.serverConfig.show') }}
           </NButton>
           <NButton
+            v-if="!editing"
             size="small"
             :loading="checkingConnectivityKey === item.key"
             :disabled="loading || checkingConnectivity"
@@ -703,7 +760,7 @@ watch(
           >
             {{ $t('page.home.serverConfig.connectivity.checkOne') }}
           </NButton>
-          <NButton size="small" :disabled="loading" @click="copyValue(item.value, item.label)">
+          <NButton v-if="!editing" size="small" :disabled="loading" @click="copyValue(item.value, item.label)">
             {{ $t('page.home.serverConfig.copy') }}
           </NButton>
         </div>

@@ -15,3 +15,11 @@ export function fetchAuditLogClear() {
 export function fetchAuditFileTransferLogClear() {
   return request<any>({ url: '/audit/file-transfer-clear', method: 'delete' });
 }
+
+export function fetchContainerLogList(params: any) {
+  return request<any>({ url: '/container-logs/list', params });
+}
+
+export function fetchContainerLogClear() {
+  return request<any>({ url: '/container-logs/clear', method: 'delete' });
+}

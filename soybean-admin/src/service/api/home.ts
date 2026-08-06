@@ -22,3 +22,7 @@ export function fetchServerConnectivity(target?: 'idServer' | 'relayServer' | 'a
     params: target ? { target } : undefined
   });
 }
+
+export function fetchSaveServerConfig(data: { idServer: string; relayServer: string; apiServer: string; key: string }) {
+  return request<any>({ url: '/dashboard/server/config', method: 'post', data });
+}

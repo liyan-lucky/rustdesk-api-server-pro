@@ -321,7 +321,15 @@ func (s *OAuthProviderService) isProviderEnabled(provider config.OAuthProviderCo
 	if !provider.Enabled {
 		return false
 	}
-	if strings.TrimSpace(provider.ClientID) == "" || strings.TrimSpace(provider.ClientSecret) == "" {
+	if strings.TrimSpace(provider.ClientID) == "" {
+		return false
+	}
+	if provider.Type == "apple" {
+		return strings.TrimSpace(provider.TeamID) != "" &&
+			strings.TrimSpace(provider.KeyID) != "" &&
+			strings.TrimSpace(provider.PrivateKey) != ""
+	}
+	if strings.TrimSpace(provider.ClientSecret) == "" {
 		return false
 	}
 	if provider.Type == "oidc" || provider.Type == "google" {

@@ -24,6 +24,7 @@ func newApp(cfg *config.ServerConfig, dbEngine *xorm.Engine) (*iris.Application,
 	})
 
 	app.Use(iris.Compression)
+	app.Use(middleware.ContainerLogRecorder(app))
 	if cfg.HttpConfig.PrintRequestLog {
 		app.Use(middleware.RequestLogger(cfg.DebugMode))
 	}
@@ -58,6 +59,8 @@ func StartServerWithContext(ctx context.Context) (bool, error) {
 	if err := StartJobs(cfg, dbEngine); err != nil {
 		return false, err
 	}
+
+	middleware.RecordContainerEvent(dbEngine, "INFO", "system", "Server started on port "+cfg.HttpConfig.Port)
 
 	go func() {
 		<-ctx.Done()

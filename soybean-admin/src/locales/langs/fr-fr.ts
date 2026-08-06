@@ -196,10 +196,11 @@ const local: App.I18n.Schema = {
     system_server: 'Configuration du serveur',
     system_tokens: 'Jetons utilisateur',
     system_oauth: 'Connexion tierce',
-    audit_baselogs: 'Journal de base',
+    audit_baselogs: 'Journaux de base',
     audit_filetransferlogs: 'Journaux de transfert de fichiers',
     audit_loginlogs: 'Journaux de connexion',
     'audit_error-logs': "Journaux d'erreurs",
+    'audit_system-logs': 'Journaux système',
     devices: 'Appareils',
     'my-devices': 'Contacts',
     'my-devices_peers': 'Mes pairs',
@@ -683,6 +684,22 @@ const local: App.I18n.Schema = {
       client_ip: 'IP client',
       user_agent: 'Agent utilisateur',
       created_at: 'Heure'
+    },
+    containerLog: {
+      timestamp: 'Heure',
+      level: 'Niveau',
+      source: 'Source',
+      message: 'Message',
+      method: 'Méthode',
+      path: 'Chemin',
+      status_code: 'Statut',
+      duration_ms: 'Durée',
+      user_name: 'Utilisateur',
+      client_ip: 'IP client',
+      user_agent: 'Agent utilisateur',
+      request_id: 'ID requête',
+      error_msg: 'Erreur',
+      created_at: 'Enregistré le'
     }
   },
   api: {

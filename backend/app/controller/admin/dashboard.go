@@ -223,13 +223,23 @@ func (c *DashboardController) GetDashboardServerConfig() mvc.Result {
 	hostOnly := extractHostOnly(hostWithPort)
 	inferredAPIServer := inferAPIServerURL(scheme, hostWithPort, c.getConfiguredHTTPPort())
 
-	idServer, idServerSource := resolveConfigValue(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
-	relayServer, relayServerSource := resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
-	apiServer, apiServerSource := resolveConfigValue(
-		os.Getenv("RUSTDESK_API_SERVER"),
-		inferredAPIServer,
-	)
-	key, keySource := resolveRustdeskKey()
+	var idServer, idServerSource, relayServer, relayServerSource, apiServer, apiServerSource, key, keySource string
+
+	if c.Cfg != nil && c.Cfg.RustdeskServer != nil {
+		rs := c.Cfg.RustdeskServer
+		idServer, idServerSource = resolveConfigValueWithYaml(rs.IdServer, os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
+		relayServer, relayServerSource = resolveConfigValueWithYaml(rs.RelayServer, os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
+		apiServer, apiServerSource = resolveConfigValueWithYaml(rs.ApiServer, os.Getenv("RUSTDESK_API_SERVER"), inferredAPIServer)
+		key, keySource = resolveRustdeskKeyWithYaml(rs.Key)
+	} else {
+		idServer, idServerSource = resolveConfigValue(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
+		relayServer, relayServerSource = resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
+		apiServer, apiServerSource = resolveConfigValue(
+			os.Getenv("RUSTDESK_API_SERVER"),
+			inferredAPIServer,
+		)
+		key, keySource = resolveRustdeskKey()
+	}
 
 	return c.Success(iris.Map{
 		"idServer":    idServer,
@@ -243,6 +253,40 @@ func (c *DashboardController) GetDashboardServerConfig() mvc.Result {
 			"key":         keySource,
 		},
 	}, "ok")
+}
+
+type saveServerConfigRequest struct {
+	IdServer    string `json:"idServer"`
+	RelayServer string `json:"relayServer"`
+	ApiServer   string `json:"apiServer"`
+	Key         string `json:"key"`
+}
+
+func (c *DashboardController) PostDashboardServerConfig() mvc.Result {
+	var req saveServerConfigRequest
+	if err := c.Ctx.ReadJSON(&req); err != nil {
+		return c.Error(nil, errcode.New(errcode.ERRA006.Code, errcode.ERRA006.Message).Error())
+	}
+
+	cfg := c.Cfg
+	if cfg == nil {
+		cfg = config.GetServerConfig()
+		c.Cfg = cfg
+	}
+
+	if cfg.RustdeskServer == nil {
+		cfg.RustdeskServer = &config.RustdeskServerConfig{}
+	}
+	cfg.RustdeskServer.IdServer = strings.TrimSpace(req.IdServer)
+	cfg.RustdeskServer.RelayServer = strings.TrimSpace(req.RelayServer)
+	cfg.RustdeskServer.ApiServer = strings.TrimSpace(req.ApiServer)
+	cfg.RustdeskServer.Key = strings.TrimSpace(req.Key)
+
+	if err := config.SaveServerConfig(cfg); err != nil {
+		return c.Error(nil, errcode.New(errcode.ERRA007.Code, errcode.ERRA007.Message).Error())
+	}
+
+	return c.Success(nil, "ok")
 }
 
 func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
@@ -259,10 +303,21 @@ func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
 	hostOnly := extractHostOnly(hostWithPort)
 	inferredAPIServer := inferAPIServerURL(scheme, hostWithPort, c.getConfiguredHTTPPort())
 
-	idServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
-	relayServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
-	apiServer, _ := resolveConfigValue(os.Getenv("RUSTDESK_API_SERVER"), inferredAPIServer)
-	key, _ := resolveRustdeskKey()
+	var idServer, relayServer, apiServer, key string
+
+	if c.Cfg != nil && c.Cfg.RustdeskServer != nil {
+		rs := c.Cfg.RustdeskServer
+		idServer, _ = resolveConfigValueWithYaml(rs.IdServer, os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
+		relayServer, _ = resolveConfigValueWithYaml(rs.RelayServer, os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
+		apiServer, _ = resolveConfigValueWithYaml(rs.ApiServer, os.Getenv("RUSTDESK_API_SERVER"), inferredAPIServer)
+		key, _ = resolveRustdeskKeyWithYaml(rs.Key)
+	} else {
+		idServer, _ = resolveConfigValue(os.Getenv("RUSTDESK_ID_SERVER"), hostOnly)
+		relayServer, _ = resolveConfigValue(os.Getenv("RUSTDESK_RELAY_SERVER"), hostOnly)
+		apiServer, _ = resolveConfigValue(os.Getenv("RUSTDESK_API_SERVER"), inferredAPIServer)
+		key, _ = resolveRustdeskKey()
+	}
+
 	targetKey := strings.TrimSpace(c.Ctx.URLParamDefault("target", ""))
 
 	if targetKey != "" {
@@ -597,4 +652,20 @@ func probeKeyConfig(value string) iris.Map {
 		return iris.Map{"status": "error", "message": errcode.New(errcode.ERRA005.Code, errcode.ERRA005.Message).Error(), "target": "", "durationMs": 0}
 	}
 	return iris.Map{"status": "ok", "message": "configured", "target": "", "durationMs": 0}
+}
+
+func resolveConfigValueWithYaml(yamlValue, envValue, fallbackValue string) (string, string) {
+	yamlValue = strings.TrimSpace(yamlValue)
+	if yamlValue != "" {
+		return yamlValue, "config"
+	}
+	return resolveConfigValue(envValue, fallbackValue)
+}
+
+func resolveRustdeskKeyWithYaml(yamlKey string) (string, string) {
+	yamlKey = strings.TrimSpace(yamlKey)
+	if yamlKey != "" {
+		return yamlKey, "config"
+	}
+	return resolveRustdeskKey()
 }

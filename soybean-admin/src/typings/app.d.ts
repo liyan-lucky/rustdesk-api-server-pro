@@ -820,6 +820,22 @@ declare namespace App {
           user_agent: string;
           created_at: string;
         };
+        containerLog: {
+          timestamp: string;
+          level: string;
+          source: string;
+          message: string;
+          method: string;
+          path: string;
+          status_code: string;
+          duration_ms: string;
+          user_name: string;
+          client_ip: string;
+          user_agent: string;
+          request_id: string;
+          error_msg: string;
+          created_at: string;
+        };
       };
       api: {
         CaptchaError: string;
