@@ -376,7 +376,7 @@ onMounted(() => {
         :data="providerConfigs"
         :row-key="(row: any) => row.name"
         :scroll-x="1000"
-        :flex-height="!appStore.isMobile"
+        size="small"
       />
     </NCard>
     <NCard :title="$t('page.oauth.bindingsTitle')" :bordered="false" size="small">
