@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/helper"
+	"rustdesk-api-server-pro/internal/errcode"
 	"rustdesk-api-server-pro/util"
 	"time"
 
@@ -21,7 +22,7 @@ func ApiAuth(app *iris.Application) iris.Handler {
 		authToken, get, err := getActiveAuthToken(db, token, false)
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "api_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
-			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
+			context.StopWithJSON(iris.StatusUnauthorized, iris.Map{"code": 401, "data": nil, "message": errcode.ErrUnauthorized.Error()})
 			return
 		}
 
@@ -29,7 +30,7 @@ func ApiAuth(app *iris.Application) iris.Handler {
 		get, err = db.Where("id = ? and status > 0", authToken.UserId).Get(&user)
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "api_token_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
-			context.StopWithText(iris.StatusNotAcceptable, "NotAcceptable")
+			context.StopWithJSON(iris.StatusNotAcceptable, iris.Map{"code": 406, "data": nil, "message": errcode.ErrUnauthorized.Error()})
 			return
 		}
 
@@ -51,7 +52,7 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		}
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "admin_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
-			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
+			context.StopWithJSON(iris.StatusUnauthorized, iris.Map{"code": 401, "data": nil, "message": errcode.ErrUnauthorized.Error()})
 			return
 		}
 
@@ -59,7 +60,7 @@ func AdminAuth(app *iris.Application) iris.Handler {
 		get, err = db.Where("id = ? and status > 0", authToken.UserId).Get(&user)
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "admin_token_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
-			context.StopWithText(iris.StatusNotAcceptable, "NotAcceptable")
+			context.StopWithJSON(iris.StatusNotAcceptable, iris.Map{"code": 406, "data": nil, "message": errcode.ErrUnauthorized.Error()})
 			return
 		}
 
@@ -110,7 +111,7 @@ func UserAuth(app *iris.Application) iris.Handler {
 		}
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "web_user_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
-			context.StopWithText(iris.StatusUnauthorized, "Unauthorized")
+			context.StopWithJSON(iris.StatusUnauthorized, iris.Map{"code": 401, "data": nil, "message": errcode.ErrUnauthorized.Error()})
 			return
 		}
 
@@ -118,7 +119,7 @@ func UserAuth(app *iris.Application) iris.Handler {
 		get, err = db.Where("id = ? and status > 0", authToken.UserId).Get(&user)
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "web_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
-			context.StopWithText(iris.StatusNotAcceptable, "NotAcceptable")
+			context.StopWithJSON(iris.StatusNotAcceptable, iris.Map{"code": 406, "data": nil, "message": errcode.ErrUnauthorized.Error()})
 			return
 		}
 

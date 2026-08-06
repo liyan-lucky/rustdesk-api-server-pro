@@ -51,6 +51,8 @@ export const userPortalRequest = createFlatRequest<App.Service.Response, Request
       let message = error.message;
       if (error.code === BACKEND_ERROR_CODE) {
         message = error.response?.data?.message || message;
+      } else if (error.response?.data?.message) {
+        message = error.response.data.message;
       }
       const parsed = parseBackendMessage(message);
       const displayMsg = parsed.code
