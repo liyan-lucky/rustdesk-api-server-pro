@@ -83,7 +83,7 @@ func TestOIDCAuthService_AutoCreateAdminAndTicketFlow(t *testing.T) {
 		t.Fatalf("redirect should not be empty")
 	}
 
-	token, err := svc.ExchangeAdminTicket(ticket)
+	token, _, err := svc.ExchangeAdminTicket(ticket)
 	if err != nil {
 		t.Fatalf("exchange ticket: %v", err)
 	}

@@ -120,6 +120,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
         if (redirect) {
           await redirectFromLogin();
         }
+      } else {
+        resetStore();
       }
     }
     endLoading();
@@ -136,6 +138,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
         if (redirect) {
           await redirectFromLogin();
         }
+      } else {
+        resetStore();
       }
     }
     endLoading();

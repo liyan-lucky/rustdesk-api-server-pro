@@ -281,21 +281,21 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 	return ticket, stored.RedirectTo, nil
 }
 
-func (s *OAuthProviderService) ExchangeAdminTicket(ticket string) (string, error) {
+func (s *OAuthProviderService) ExchangeAdminTicket(ticket string) (string, bool, error) {
 	if strings.TrimSpace(ticket) == "" {
-		return "", errcode.New(errcode.ERR2007.Code, errcode.ERR2007.Message)
+		return "", false, errcode.New(errcode.ERR2007.Code, errcode.ERR2007.Message)
 	}
 	item, ok := s.popTicket(ticket)
 	if !ok {
-		return "", errcode.New(errcode.ERR2008.Code, errcode.ERR2008.Message)
+		return "", false, errcode.New(errcode.ERR2008.Code, errcode.ERR2008.Message)
 	}
 	var user model.User
 	has, err := s.db.Where("id = ? and is_admin = ? and status > 0", item.UserID, item.IsAdmin).Get(&user)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	if !has {
-		return "", errcode.New(errcode.ERR2009.Code, errcode.ERR2009.Message)
+		return "", false, errcode.New(errcode.ERR2009.Code, errcode.ERR2009.Message)
 	}
 	return s.issueOAuthToken(&user)
 }
@@ -927,7 +927,7 @@ func (s *OAuthProviderService) makeUniqueUsername(base string) (string, error) {
 	return "", errcode.New(errcode.ERR2024.Code, errcode.ERR2024.Message)
 }
 
-func (s *OAuthProviderService) issueOAuthToken(user *model.User) (string, error) {
+func (s *OAuthProviderService) issueOAuthToken(user *model.User) (string, bool, error) {
 	_, _ = s.db.Where("user_id = ? and status = 1 and is_admin = ?", user.Id, user.IsAdmin).Cols("status").Update(&model.AuthToken{
 		Status: 0,
 	})
@@ -942,9 +942,9 @@ func (s *OAuthProviderService) issueOAuthToken(user *model.User) (string, error)
 	}
 	_, err := s.db.Insert(authToken)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
-	return token, nil
+	return token, user.IsAdmin, nil
 }
 
 func (s *OAuthProviderService) resolveCallbackURL(provider config.OAuthProviderConfig, requestBaseURL string) (string, error) {

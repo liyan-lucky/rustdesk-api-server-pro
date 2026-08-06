@@ -55,6 +55,7 @@ type oidcStateEntry struct {
 
 type oidcTicketEntry struct {
 	Token     string
+	IsAdmin   bool
 	ExpiresAt time.Time
 }
 
@@ -178,23 +179,24 @@ func (s *OIDCAuthService) ConsumeAdminCallback(code, state string) (string, stri
 	}
 	s.setTicket(ticket, oidcTicketEntry{
 		Token:     token,
+		IsAdmin:   user.IsAdmin,
 		ExpiresAt: time.Now().Add(s.ticketTTL()),
 	})
 
 	return ticket, stored.RedirectTo, nil
 }
 
-func (s *OIDCAuthService) ExchangeAdminTicket(ticket string) (string, error) {
+func (s *OIDCAuthService) ExchangeAdminTicket(ticket string) (string, bool, error) {
 	if strings.TrimSpace(ticket) == "" {
-		return "", errcode.New(errcode.ERR3006.Code, errcode.ERR3006.Message)
+		return "", false, errcode.New(errcode.ERR3006.Code, errcode.ERR3006.Message)
 	}
 
 	item, ok := s.popTicket(ticket)
 	if !ok {
-		return "", errcode.New(errcode.ERR3007.Code, errcode.ERR3007.Message)
+		return "", false, errcode.New(errcode.ERR3007.Code, errcode.ERR3007.Message)
 	}
 
-	return item.Token, nil
+	return item.Token, item.IsAdmin, nil
 }
 
 func (s *OIDCAuthService) getMetadata() (*oidcMetadata, error) {

@@ -5,7 +5,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { getPaletteColorByNumber, mixColor } from '@sa/color';
 import { $t } from '@/locales';
 import { localStg } from '@/utils/storage';
-import { fetchOAuthTicketToken } from '@/service/api/auth';
 import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
 import { useThemeStore } from '@/store/modules/theme';
@@ -52,19 +51,7 @@ const bgColor = computed(() => {
 
 async function consumeOAuthTicket(ticket: string) {
   await authStore.loginByOAuthTicket(ticket, true);
-
-  if (localStg.get('token')) {
-    return true;
-  }
-
-  const { data, error } = await fetchOAuthTicketToken(ticket);
-  if (!error && data?.token) {
-    localStg.set('token', data.token);
-    window.location.replace('/#/');
-    return true;
-  }
-
-  return false;
+  return Boolean(localStg.get('token'));
 }
 
 onMounted(async () => {
@@ -100,22 +87,24 @@ onMounted(async () => {
       return;
     }
     const consumed = await consumeOAuthTicket(oauthTicket);
-    delete q.oauth_ticket;
-    delete q.oauth_provider;
-    delete q.oauth_error;
     if (!consumed) {
+      delete q.oauth_ticket;
+      delete q.oauth_provider;
+      delete q.oauth_error;
       window.$message?.error($t('api.RequestError'));
+      await router.replace({ path: route.path, query: q, hash: route.hash });
     }
-    await router.replace({ path: route.path, query: q, hash: route.hash });
     return;
   }
 
   const ticket = mergedQuery.oidc_ticket;
   if (typeof ticket === 'string' && ticket) {
     await authStore.loginByOidcTicket(ticket, true);
-    delete q.oidc_ticket;
-    delete q.oidc_error;
-    await router.replace({ path: route.path, query: q, hash: route.hash });
+    if (!localStg.get('token')) {
+      delete q.oidc_ticket;
+      delete q.oidc_error;
+      await router.replace({ path: route.path, query: q, hash: route.hash });
+    }
     return;
   }
 

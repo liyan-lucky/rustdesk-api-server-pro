@@ -134,14 +134,14 @@ func TestOAuthProviderService_GithubTicketFlow(t *testing.T) {
 		t.Fatalf("failed OAuth callback must return to login, got %q", failureRedirect)
 	}
 
-	token, err := svc.ExchangeAdminTicket(ticket)
+	token, _, err := svc.ExchangeAdminTicket(ticket)
 	if err != nil {
 		t.Fatalf("exchange ticket: %v", err)
 	}
 	if token == "" {
 		t.Fatalf("token should not be empty")
 	}
-	if _, replayErr := svc.ExchangeAdminTicket(ticket); replayErr == nil {
+	if _, _, replayErr := svc.ExchangeAdminTicket(ticket); replayErr == nil {
 		t.Fatalf("oauth ticket replay must be rejected")
 	}
 

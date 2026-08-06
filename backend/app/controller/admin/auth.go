@@ -129,14 +129,15 @@ func (c *AuthController) GetAuthOidcUrl() mvc.Result {
 func (c *AuthController) GetAuthOidcToken() mvc.Result {
 	service := v2service.NewOIDCAuthService(c.Cfg, c.Db)
 	ticket := c.Ctx.URLParamDefault("ticket", "")
-	token, err := service.ExchangeAdminTicket(ticket)
+	token, isAdmin, err := service.ExchangeAdminTicket(ticket)
 	if err != nil {
 		c.recordAdminSecurityAudit("admin_oidc_token_exchange", false, err.Error())
 		return c.dbError(err)
 	}
 	c.recordAdminSecurityAudit("admin_oidc_token_exchange", true, "token")
 	return c.Success(iris.Map{
-		"token": token,
+		"token":   token,
+		"isAdmin": isAdmin,
 	}, "ok")
 }
 
@@ -180,14 +181,15 @@ func (c *AuthController) GetAuthOauthUrl() mvc.Result {
 func (c *AuthController) GetAuthOauthToken() mvc.Result {
 	service := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 	ticket := c.Ctx.URLParamDefault("ticket", "")
-	token, err := service.ExchangeAdminTicket(ticket)
+	token, isAdmin, err := service.ExchangeAdminTicket(ticket)
 	if err != nil {
 		c.recordAdminSecurityAudit("admin_oauth_token_exchange", false, err.Error())
 		return c.dbError(err)
 	}
 	c.recordAdminSecurityAudit("admin_oauth_token_exchange", true, "token")
 	return c.Success(iris.Map{
-		"token": token,
+		"token":   token,
+		"isAdmin": isAdmin,
 	}, "ok")
 }
 

@@ -98,10 +98,9 @@ export function useRouterPush(inSetup = true) {
     const redirect = route.value.query?.redirect as string;
 
     if (redirect) {
-      routerPush(redirect);
-    } else {
-      toHome();
+      return routerPush(redirect);
     }
+    return toHome();
   }
 
   return {
