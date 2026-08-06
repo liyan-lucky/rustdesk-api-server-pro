@@ -249,6 +249,7 @@ jobsConfig:
 | `strategy_assignment` | `StrategyAssignment` | 策略分配关系 |
 | `oauth_account` | `OAuthAccount` | 后台 OAuth 账号绑定 |
 | `oauth_login_session` | `OAuthLoginSession` | OAuth 一次性 state、PKCE verifier 与短期登录 ticket；浏览器值仅存 SHA-256 |
+| `error_log` | `ErrorLog` | 后端错误日志，记录 ERR-xxxx 编码、消息、模块、路径和客户端信息 |
 
 建议持久化内容：
 

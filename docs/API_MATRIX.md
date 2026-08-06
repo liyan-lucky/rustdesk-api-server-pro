@@ -57,6 +57,8 @@
 | 审计日志 | `/admin/audit/*` | 已有 | 增加高级筛选、导出、报警审计、兼容探测审计视图 |
 | 邮件模板 | `/admin/mail/templates/*` | 基础 | 新增、修改已写 `operation_audit`；模板正文只记录长度和预览，避免审计日志过大；前端支持表头筛选和 CSV 导入导出 |
 | 邮件日志 | `/admin/mail-logs/*` | 已有 | 增加发送失败分析 |
+| Token 管理 | `/admin/tokens/*` | 完整 | 列表查询、单个踢下线、一键清除全部活跃 token |
+| 错误日志 | `/admin/error-logs/*` | 完整 | 列表查询（按编码/模块/时间筛选）、一键清除 |
 
 ## 4. License / plugin-sign 兼容接口
 

@@ -1,6 +1,6 @@
 # 当前仓库状态
 
-更新时间：2026-08-05
+更新时间：2026-08-06
 
 ## 定位
 
@@ -17,7 +17,7 @@
 - Docker 镜像：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`。
 - RustDesk 兼容版本：1.4.9。
 - 服务端版本：由 VERSION 文件控制，CI 自动递增 PATCH 号并同步兼容清单；API、前端、镜像标签使用同一构建版本。
-- 当前已发布版本：`1.2.9`（版本提交 `d38a1d50`）。
+- 当前已发布版本：`1.2.13`（版本提交 `ebfb7d33`）。
 
 ## 当前能力边界
 
@@ -67,9 +67,9 @@
 - SSH：`ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net`（当前密钥不允许直接以 `root` 登录）。
 - 容器：`rustdesk-api-server-pro`，host 网络，API/后台端口 `16888`。
 - 更新脚本：`/vol1/docker/rustdesk-api-server-pro/update-rustdesk-api.sh`。
-- 运行版本：`1.1.54`，容器状态已验证为 `running`。`1.1.55` 镜像已发布，但设备拉取 `ghcr.io` 多次出现 `EOF` 以及代理返回 HTTP 给 HTTPS 客户端，旧容器未被替换。
-- GitHub OAuth 配置已启用且 Secret 已保存，但测试设备访问 `github.com:443` 多次超时；`api.github.com:443` 返回 200。该网络问题会阻断 `/login/oauth/access_token`，不是 Secret 保存失败。
-- 当前有效管理员没有填写邮箱，且 GitHub 配置为按邮箱绑定、禁止自动创建管理员。网络恢复后，需要给目标管理员填写与 GitHub 已验证邮箱一致的邮箱，或由维护者明确决定是否开启自动创建管理员。
+- 运行版本：`1.2.13`，容器状态已验证为 `running`。设备通过 `update-rustdesk-api.sh` 脚本自动拉取最新镜像并重启。
+- GitHub/Gitee/Microsoft OAuth 配置已启用且 Secret 已保存。测试设备访问 `github.com:443` 偶尔超时；`api.github.com:443` 返回 200。该网络问题会阻断 token 交换。
+- 当前有效管理员没有填写邮箱，且 GitHub 配置为按邮箱绑定、禁止自动创建管理员。网络恢复后需补充邮箱或决定是否开启自动创建。
 
 ## 维护要求
 
@@ -86,3 +86,6 @@
 11. 地址簿写入必须同时验证管理端 `/admin/ab/*` 和客户端 `/api/ab/*` 的真实增删改查；标签重命名、删除必须同步更新 peer 标签引用，并验证旧版 `/api/ab/get` 兼容读取结果。
 12. 错误消息必须带 `ERR-xxxx` 编码前缀，与帮助页错误码索引匹配；新增 errcode 时同步更新 `errcode.go`、`app.d.ts` 类型定义和全部语言文件。
 13. Apple 私钥 placeholder 不得包含 `-----BEGIN PRIVATE KEY-----` 文本，避免触发合规检查密钥检测。
+14. 新增数据模型必须注册到 `cmd/sync.go` 的 models 列表，否则 `sync` 命令不会自动建表。
+15. 鉴权中间件返回 401/406 时必须使用 `StopWithJSON` 返回带 ERR-xxxx 编码的 JSON，不能返回纯文本；前端 `onError` 必须处理 HTTP 错误中的后端 JSON 消息。
+16. 登录对话框宽度 320px，表单 medium，OAuth 按钮 small + 2 列网格；移动端 `w-[calc(100vw-48px)]`。

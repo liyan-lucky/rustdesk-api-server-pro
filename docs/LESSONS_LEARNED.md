@@ -76,6 +76,8 @@
 - 新增 i18n key 时必须同步更新全部 9 种语言文件（en-us、zh-cn、ja-jp、ko-kr、fr-fr、de-de、es-es、ru-ru、it-it），否则 TypeScript 类型检查失败
 - errcode Message 必须使用 PascalCase（如 `CaptchaError`），确保可作为 i18n key 使用
 - Apple 私钥 placeholder 不得包含 `-----BEGIN PRIVATE KEY-----` 文本，否则合规检查会误判为真实密钥
+- 新增数据模型必须注册到 `cmd/sync.go` 的 models 列表，否则 `sync` 命令不会自动建表，运行时报 `no such table` 错误
+- 鉴权中间件返回 401/406 时必须使用 `StopWithJSON` 返回 JSON 格式（含 ERR-xxxx 编码），不能使用 `StopWithText` 返回纯文本；前端 `onError` 必须处理 HTTP 错误中的后端 JSON 消息
 
 ## CI/CD 相关
 

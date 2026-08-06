@@ -230,6 +230,28 @@ rustdesk-api-server-pro.exe sync
 - 轮询一直 `ready:false`：回调未完成或失败，检查浏览器是否成功跳转到 Provider 授权页。
 - `/api/oidc/auth` 与 `/api/oidc/auth-query` 已实现完整客户端兼容协议，复用 `/api/oauth/*` 的服务端回调+轮询逻辑。
 
+## 8.1 错误日志页面报 ERR-B010: DatabaseError: no such table: error_log
+
+### 原因
+
+`ErrorLog` 模型未注册到 `cmd/sync.go` 的自动建表列表，导致 `sync` 命令不会创建 `error_log` 表。
+
+### 处理
+
+1. 确认服务端版本已包含 `ErrorLog` 注册到 `sync.go`（1.2.13+ 已修复）。
+2. 在容器内执行 `rustdesk-api-server-pro sync`。
+3. 重启容器。
+
+## 8.2 Token 管理页面操作返回 401 且无 ERR 编码
+
+### 原因
+
+旧版鉴权中间件使用 `StopWithText` 返回纯文本 `Unauthorized`，前端无法解析为 JSON 格式的错误消息。
+
+### 处理
+
+确认服务端版本已包含中间件 JSON 化修复（1.2.13+ 已修复）。401 响应现在返回 `{"code":401,"message":"ERR-1010: Unauthorized"}` 格式。
+
 ## 9. 插件签名（plugin-sign）不可用或签名结果不符合预期
 
 ### 现象

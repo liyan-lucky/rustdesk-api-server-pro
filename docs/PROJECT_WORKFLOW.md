@@ -37,6 +37,7 @@
 3. 修复兼容问题必须增加回归测试，至少覆盖正常请求、缺省字段和权限边界。
 4. 数据模型变化必须确认 `sync` 可升级 SQLite/MySQL，并同步更新部署和排障文档。
 5. API 行为变化必须同步更新 `API_MATRIX.md`、`CURRENT_STATUS.md` 及相关 README/专项文档。
+6. 新增数据模型必须注册到 `cmd/sync.go` 的 models 列表，确保 `sync` 命令能自动建表。
 6. 禁止提交数据库、日志、录屏、密钥、token、OAuth secret、生产配置或其他运行数据。
 
 ## 5. 提交与发布
