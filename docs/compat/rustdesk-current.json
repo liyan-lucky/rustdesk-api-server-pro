@@ -8,10 +8,10 @@
   },
   "server": {
     "api_project": "rustdesk-api-server-pro",
-    "compat_server_version": "1.2.12",
+    "compat_server_version": "1.2.13",
     "status": "compatibility-layer"
   },
-  "sysinfo_version": "rustdesk-api-server-pro-compat-client-1.4.9-server-1.2.12-latest",
+  "sysinfo_version": "rustdesk-api-server-pro-compat-client-1.4.9-server-1.2.13-latest",
   "smoke_test": {
     "public": "bash scripts/compat/smoke-api.sh http://127.0.0.1:12345",
     "authenticated": "TOKEN=YOUR_TOKEN bash scripts/compat/smoke-api.sh http://127.0.0.1:12345"
