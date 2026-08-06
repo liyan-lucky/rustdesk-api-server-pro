@@ -85,7 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
+  <NForm ref="formRef" :model="model" :rules="rules" size="medium" :show-label="false">
     <NFormItem path="username">
       <NInput v-model:value="model.username" :placeholder="$t('page.login.common.userNamePlaceholder')" />
     </NFormItem>
@@ -101,16 +101,16 @@ onMounted(() => {
       <NInput v-model:value="model.code" :clearable="true" :placeholder="$t('page.login.common.codePlaceholder')" />
       <div class="flex-shrink-0 pl-8px">
         <img
-          width="152"
+          width="120"
           height="40"
-          class="cursor-pointer lt-sm:h-28px lt-sm:w-100px"
+          class="cursor-pointer lt-sm:h-28px lt-sm:w-80px"
           :src="captcha.img"
           @click="handleCaptcha"
         />
       </div>
     </NFormItem>
-    <NSpace vertical :size="16">
-      <NButton attr-type="submit" type="primary" size="large" round block @click="handleSubmit">
+    <NSpace vertical :size="12">
+      <NButton attr-type="submit" type="primary" size="medium" round block @click="handleSubmit">
         {{ $t('common.confirm') }}
       </NButton>
       <NButton text type="primary" @click="switchToAdmin">

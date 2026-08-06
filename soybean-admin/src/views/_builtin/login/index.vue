@@ -129,10 +129,10 @@ onMounted(async () => {
   <div class="relative size-full flex-center overflow-hidden" :style="{ backgroundColor: bgColor }">
     <WaveBg :theme-color="bgThemeColor" />
     <NCard :bordered="false" class="relative z-4 w-auto rd-12px lt-sm:max-h-screen lt-sm:overflow-y-auto">
-      <div class="w-400px lt-sm:max-w-360px lt-sm:w-[calc(100vw-32px)] lt-sm:px-4px">
+      <div class="w-320px lt-sm:w-[calc(100vw-48px)] lt-sm:px-4px">
         <header class="flex-y-center justify-between">
-          <SystemLogo class="text-64px text-primary lt-sm:text-48px" />
-          <h3 class="text-28px text-primary font-500 lt-sm:text-22px">{{ $t('system.title') }}</h3>
+          <SystemLogo class="text-48px text-primary lt-sm:text-36px" />
+          <h3 class="text-22px text-primary font-500 lt-sm:text-18px">{{ $t('system.title') }}</h3>
           <div class="i-flex-col">
             <ThemeSchemaSwitch
               :theme-schema="themeStore.themeScheme"
@@ -148,9 +148,9 @@ onMounted(async () => {
             />
           </div>
         </header>
-        <main class="pt-24px">
-          <h3 class="text-18px text-primary font-medium">{{ $t(activeModule.label) }}</h3>
-          <div class="pt-24px">
+        <main class="pt-16px">
+          <h3 class="text-16px text-primary font-medium">{{ $t(activeModule.label) }}</h3>
+          <div class="pt-16px">
             <Transition :name="themeStore.page.animateMode" mode="out-in" appear>
               <component :is="activeModule.component" />
             </Transition>

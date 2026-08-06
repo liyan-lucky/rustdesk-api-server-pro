@@ -115,7 +115,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
+  <NForm ref="formRef" :model="model" :rules="rules" size="medium" :show-label="false">
     <NFormItem path="username">
       <NInput v-model:value="model.username" :placeholder="$t('page.login.common.userNamePlaceholder')" />
     </NFormItem>
@@ -131,22 +131,22 @@ onMounted(() => {
       <NInput v-model:value="model.code" :clearable="true" :placeholder="$t('page.login.common.codePlaceholder')" />
       <div class="flex-shrink-0 pl-8px">
         <img
-          width="152"
+          width="120"
           height="40"
-          class="cursor-pointer lt-sm:h-28px lt-sm:w-100px"
+          class="cursor-pointer lt-sm:h-28px lt-sm:w-80px"
           :src="captcha.img"
           @click="handleCaptcha"
         />
       </div>
     </NFormItem>
-    <NSpace vertical :size="24">
+    <NSpace vertical :size="16">
       <div class="flex-y-center justify-between">
         <NCheckbox>{{ $t('page.login.pwdLogin.rememberMe') }}</NCheckbox>
       </div>
       <NButton
         attr-type="submit"
         type="primary"
-        size="large"
+        size="medium"
         round
         block
         :loading="authStore.loginLoading"
@@ -154,12 +154,13 @@ onMounted(() => {
       >
         {{ $t('common.confirm') }}
       </NButton>
-      <NDivider v-if="oauthProviders.length > 0">{{ $t('page.login.common.thirdPartyLogin') }}</NDivider>
-      <div class="grid grid-cols-1 gap-8px lt-sm:grid-cols-2">
+      <NDivider v-if="oauthProviders.length > 0" class="!mt-0 !mb-0">{{ $t('page.login.common.thirdPartyLogin') }}</NDivider>
+      <div class="grid grid-cols-2 gap-8px">
         <NButton
           v-for="provider in oauthProviders"
           :key="provider.name"
           tertiary
+          size="small"
           :loading="activeProvider === provider.name"
           @click="handleOAuthLogin(provider)"
         >
