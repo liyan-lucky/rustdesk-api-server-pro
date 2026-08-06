@@ -42,7 +42,7 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'about',
     path: '/about',
-    component: 'layout.base',
+    component: 'layout.base$view.about',
     meta: {
       title: 'about',
       i18nKey: 'route.about',
