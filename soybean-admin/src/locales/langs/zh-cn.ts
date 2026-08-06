@@ -267,7 +267,6 @@ const local: App.I18n.Schema = {
         saveSuccess: '服务器配置保存成功',
         cacheCleared: '已清除缓存，正在重新加载服务器配置',
         sourceType: {
-          ...enUs.page.home.serverConfig.sourceType,
           remote: '远端接口',
           'memory-cache': '内存缓存',
           'session-cache': '会话缓存',
@@ -278,7 +277,6 @@ const local: App.I18n.Schema = {
           empty: '未配置'
         },
         sourceHint: {
-          ...enUs.page.home.serverConfig.sourceHint,
           env: '该值来自容器环境变量配置。',
           config: '该值来自 server.yaml 配置文件。',
           inferred: '该值根据当前访问地址自动推断生成。',

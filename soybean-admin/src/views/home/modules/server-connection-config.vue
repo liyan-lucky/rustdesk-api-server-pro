@@ -21,7 +21,7 @@ interface ConfigItem {
   label: string;
   value: string;
   placeholder?: string;
-  source: 'env' | 'inferred' | 'empty';
+  source: 'env' | 'config' | 'inferred' | 'empty';
 }
 
 type ConfigLoadSource = 'remote' | 'memory-cache' | 'session-cache' | '';
