@@ -262,12 +262,14 @@ const local: App.I18n.Schema = {
           'memory-cache': 'Memory Cache',
           'session-cache': 'Session Cache',
           env: 'Env',
+          config: 'Config',
           inferred: 'Inferred',
           empty: 'Empty',
           auto: 'Φç¬σïòµñ£σç║'
         },
         sourceHint: {
           env: 'This value comes from the container environment variable.',
+          config: 'This value comes from the server.yaml config file.',
           inferred: 'This value is auto-inferred from the current access address.',
           empty: 'No value is configured or inferred yet.'
         },

@@ -487,6 +487,7 @@ declare namespace App {
             copySuccess: string;
             copyFailed: string;
             fetchFailed: string;
+            saveSuccess: string;
             cacheCleared: string;
             sourceType: {
               remote: string;
