@@ -13,13 +13,15 @@ const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
-const levelColors: Record<string, NaiveUI.NTagType> = {
+type NTagType = 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error';
+
+const levelColors: Record<string, NTagType> = {
   INFO: 'success',
   WARN: 'warning',
   ERROR: 'error'
 };
 
-const sourceColors: Record<string, NaiveUI.NTagType> = {
+const sourceColors: Record<string, NTagType> = {
   system: 'info',
   admin: 'warning',
   client: 'default',
@@ -99,7 +101,7 @@ const columns = [
     width: 70,
     render: (row: any) => {
       const code = row.status_code || 0;
-      let type: NaiveUI.NTagType = 'default';
+      let type: NTagType = 'default';
       if (code >= 500) type = 'error';
       else if (code >= 400) type = 'warning';
       else if (code >= 200 && code < 300) type = 'success';
@@ -113,7 +115,7 @@ const columns = [
     width: 80,
     render: (row: any) => {
       const ms = row.duration_ms || 0;
-      let type: NaiveUI.NTagType = 'default';
+      let type: NTagType = 'default';
       if (ms > 1000) type = 'error';
       else if (ms > 500) type = 'warning';
       return <NTag bordered={false} type={type} size="small">{ms}ms</NTag>;

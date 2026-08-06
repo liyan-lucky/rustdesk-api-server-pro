@@ -493,12 +493,14 @@ declare namespace App {
               'memory-cache': string;
               'session-cache': string;
               env: string;
+              config: string;
               inferred: string;
               auto: string;
               empty: string;
             };
             sourceHint: {
               env: string;
+              config: string;
               inferred: string;
               empty: string;
             };
