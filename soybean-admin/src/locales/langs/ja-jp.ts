@@ -256,6 +256,7 @@ const local: App.I18n.Schema = {
         copySuccess: '{label} copied',
         copyFailed: '{label} copy failed',
         fetchFailed: 'Failed to load server configuration',
+        saveSuccess: 'Server configuration saved successfully',
         cacheCleared: 'Cache cleared, reloading server configuration',
         sourceType: {
           remote: 'Remote',

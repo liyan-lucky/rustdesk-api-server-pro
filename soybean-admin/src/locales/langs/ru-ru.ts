@@ -256,6 +256,7 @@ const local: App.I18n.Schema = {
         copySuccess: '{label} ╤ü╨║╨╛╨┐╨╕╤Ç╨╛╨▓╨░╨╜╨╛',
         copyFailed: '╨¥╨╡ ╤â╨┤╨░╨╗╨╛╤ü╤î ╤ü╨║╨╛╨┐╨╕╤Ç╨╛╨▓╨░╤é╤î {label}',
         fetchFailed: '╨¥╨╡ ╤â╨┤╨░╨╗╨╛╤ü╤î ╨╖╨░╨│╤Ç╤â╨╖╨╕╤é╤î ╨║╨╛╨╜╤ä╨╕╨│╤â╤Ç╨░╤å╨╕╤Ä ╤ü╨╡╤Ç╨▓╨╡╤Ç╨░',
+        saveSuccess: '╨Ü╨╛╨╜╤ä╨╕╨│╤â╤Ç╨░╤å╨╕╤Å ╤ü╨╡╤Ç╨▓╨╡╤Ç╨░ ╤â╤ü╨┐╨╡╤ê╨╜╨╛ ╤ü╨╛╤à╤Ç╨░╨╜╨╡╨╜╨░',
         cacheCleared:
           '╨Ü╤ì╤ê ╨╛╤ç╨╕╤ë╨╡╨╜, ╨┐╨╛╨▓╤é╨╛╤Ç╨╜╨░╤Å ╨╖╨░╨│╤Ç╤â╨╖╨║╨░ ╨║╨╛╨╜╤ä╨╕╨│╤â╤Ç╨░╤å╨╕╨╕ ╤ü╨╡╤Ç╨▓╨╡╤Ç╨░',
         cacheTtlHint: 'TTL cache: config {configSeconds}s, connectivity {connectivitySeconds}s',

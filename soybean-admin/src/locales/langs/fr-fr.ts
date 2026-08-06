@@ -307,6 +307,7 @@ const local: App.I18n.Schema = {
         copySuccess: '{label} copié',
         copyFailed: 'Échec de la copie de {label}',
         fetchFailed: 'Échec du chargement de la configuration du serveur',
+        saveSuccess: 'Configuration du serveur enregistrée avec succès',
         cacheCleared: 'Cache vidé, rechargement de la configuration du serveur',
         sourceType: {
           ...enUs.page.home.serverConfig.sourceType,
