@@ -232,7 +232,7 @@ func (c *AuthController) renderOAuthCallbackPage(success bool, errorCode, pollTo
 		if schemeURL != "" {
 			body = "<p class=\"ok\">已成功登录！</p>"
 			body += "<a href=\"" + schemeURL + "\" class=\"launch-btn\" id=\"launch-btn\">返回 RustDesk 客户端</a>"
-			body += "<p class=\"tip\">请点击上方按钮返回客户端，或手动切回客户端继续</p>"
+			body += "<p class=\"tip\">请点击上方按钮返回客户端<br>如按钮无效，请手动切回客户端</p>"
 		} else {
 			body = "<p class=\"ok\">已成功登录，请回到客户端继续。</p>"
 		}
@@ -245,11 +245,7 @@ func (c *AuthController) renderOAuthCallbackPage(success bool, errorCode, pollTo
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>` + title + `</title>`
-	if schemeURL != "" {
-		html += "\n<meta http-equiv=\"refresh\" content=\"0;url=" + schemeURL + "\">"
-	}
-	html += `
+<title>` + title + `</title>
 <style>
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f5f5f5}
 .card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:40px 48px;max-width:420px;text-align:center}
@@ -257,18 +253,20 @@ h1{font-size:20px;margin:0 0 16px}
 .ok{color:#16a34a;font-size:16px;margin-bottom:8px}
 .err{color:#dc2626;font-size:16px}
 .code{color:#6b7280;font-size:13px;margin-top:8px}
-.launch-btn{display:inline-block;margin-top:16px;padding:12px 32px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:16px;font-weight:500;transition:background .2s}
-.launch-btn:hover{background:#1d4ed8}
-.tip{color:#9ca3af;font-size:13px;margin-top:16px}
+.launch-btn{display:inline-block;margin-top:16px;padding:14px 36px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:18px;font-weight:600;transition:background .2s;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.launch-btn:hover{background:#1d4ed8;transform:translateY(-1px)}
+.tip{color:#9ca3af;font-size:13px;margin-top:16px;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="card">
 <h1>` + title + `</h1>
 ` + body + `
-</div>
-</body>
-</html>`
+</div>`
+	if schemeURL != "" {
+		html += "\n<script>setTimeout(function(){var btn=document.getElementById('launch-btn');if(btn)btn.click();},500);</script>"
+	}
+	html += "\n</body>\n</html>"
 	c.Ctx.ContentType("text/html; charset=utf-8")
 	_, _ = c.Ctx.WriteString(html)
 	return mvc.Response{}
