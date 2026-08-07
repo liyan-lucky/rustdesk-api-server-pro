@@ -46,19 +46,25 @@ func SetRoute(app *iris.Application) {
 	adminWithAuthParty.Use(middleware.AdminAuth(app))
 	{
 		adminWithAuthMvc := mvc.New(adminWithAuthParty)
-		adminWithAuthMvc.Handle(new(admin.DashboardController))
 		adminWithAuthMvc.Handle(new(admin.UsersController))
 		adminWithAuthMvc.Handle(new(admin.SessionsController))
-		adminWithAuthMvc.Handle(new(admin.AuditController))
-		adminWithAuthMvc.Handle(new(admin.MailTemplateController))
-		adminWithAuthMvc.Handle(new(admin.MaiLogsController))
 		adminWithAuthMvc.Handle(new(admin.DevicesController))
 		adminWithAuthMvc.Handle(new(admin.AddressBookController))
-		adminWithAuthMvc.Handle(new(admin.TokenController))
-		adminWithAuthMvc.Handle(new(admin.OAuthController))
-		adminWithAuthMvc.Handle(new(admin.SecurityAuditController))
-		adminWithAuthMvc.Handle(new(admin.ErrorLogController))
-		adminWithAuthMvc.Handle(new(admin.ContainerLogController))
+	}
+
+	adminOrUserAuthParty := app.Party("/admin")
+	adminOrUserAuthParty.Use(middleware.AdminOrUserAuth(app))
+	{
+		adminOrUserAuthMvc := mvc.New(adminOrUserAuthParty)
+		adminOrUserAuthMvc.Handle(new(admin.DashboardController))
+		adminOrUserAuthMvc.Handle(new(admin.AuditController))
+		adminOrUserAuthMvc.Handle(new(admin.MailTemplateController))
+		adminOrUserAuthMvc.Handle(new(admin.MaiLogsController))
+		adminOrUserAuthMvc.Handle(new(admin.TokenController))
+		adminOrUserAuthMvc.Handle(new(admin.OAuthController))
+		adminOrUserAuthMvc.Handle(new(admin.SecurityAuditController))
+		adminOrUserAuthMvc.Handle(new(admin.ErrorLogController))
+		adminOrUserAuthMvc.Handle(new(admin.ContainerLogController))
 	}
 
 	adminUserAuthParty := app.Party("/admin")

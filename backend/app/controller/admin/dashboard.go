@@ -263,6 +263,10 @@ type saveServerConfigRequest struct {
 }
 
 func (c *DashboardController) PostDashboardServerConfig() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	var req saveServerConfigRequest
 	if err := c.Ctx.ReadJSON(&req); err != nil {
 		return c.Error(nil, errcode.New(errcode.ERRA006.Code, errcode.ERRA006.Message).Error())

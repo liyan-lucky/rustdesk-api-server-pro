@@ -1784,14 +1784,75 @@ func (s *OAuthProviderService) issueClientOAuthToken(user *model.User, rustdeskI
 }
 
 func (s *OAuthProviderService) resolveClientCallbackURL(provider config.OAuthProviderConfig, requestBaseURL string) (string, error) {
-	if explicit := strings.TrimSpace(provider.RedirectURL); explicit != "" {
-		return explicit, nil
+	return s.resolveCallbackURL(provider, requestBaseURL)
+}
+
+func (s *OAuthProviderService) ConsumeUnifiedCallback(providerName, code, state string) (pollToken, ticket, redirectTo string, err error) {
+	provider, ok := s.getProvider(providerName)
+	if !ok {
+		return "", "", "", errcode.New(errcode.ERR2001.Code, errcode.ERR2001.Message)
 	}
-	base := strings.TrimRight(strings.TrimSpace(requestBaseURL), "/")
-	if base == "" {
-		return "", errcode.New(errcode.ERR2025.Code, errcode.ERR2025.Message)
+	if !s.isProviderEnabled(provider) {
+		return "", "", "", errcode.New(errcode.ERR2002.Code, errcode.ERR2002.Message)
 	}
-	return fmt.Sprintf("%s/api/oauth/%s/callback", base, provider.Name), nil
+	if strings.TrimSpace(code) == "" || strings.TrimSpace(state) == "" {
+		return "", "", "", errcode.New(errcode.ERR2003.Code, errcode.ERR2003.Message)
+	}
+
+	stored, ok := s.popState(state)
+	if !ok || stored.ProviderName != provider.Name {
+		return "", "", "", errcode.New(errcode.ERR2004.Code, errcode.ERR2004.Message)
+	}
+
+	tokenResp, err := s.exchangeCode(provider, code, stored.CallbackURL, stored.CodeVerifier)
+	if err != nil {
+		return stored.PollToken, "", stored.RedirectTo, err
+	}
+
+	claims, err := s.fetchUserClaims(provider, tokenResp)
+	if err != nil {
+		return stored.PollToken, "", stored.RedirectTo, err
+	}
+
+	user, err := s.resolveOAuthUser(provider, claims)
+	if err != nil {
+		return stored.PollToken, "", stored.RedirectTo, err
+	}
+
+	newTicket := randomOAuthToken(24)
+	if newTicket == "" {
+		return stored.PollToken, "", stored.RedirectTo, errcode.New(errcode.ERR2006.Code, errcode.ERR2006.Message)
+	}
+
+	ticketTTL := s.ticketTTL(provider)
+
+	if stored.PollToken != "" {
+		if err = s.setTicket(newTicket, oauthTicketEntry{
+			UserID:     user.Id,
+			IsAdmin:    false,
+			ExpiresAt:  time.Now().Add(ticketTTL),
+			RustdeskId: stored.RustdeskId,
+			Uuid:       stored.Uuid,
+			DeviceOs:   stored.DeviceOs,
+			DeviceType: stored.DeviceType,
+			DeviceName: stored.DeviceName,
+		}); err != nil {
+			return stored.PollToken, "", stored.RedirectTo, err
+		}
+		if err = s.setPollEntry(stored.PollToken, newTicket, time.Now().Add(ticketTTL)); err != nil {
+			return stored.PollToken, "", stored.RedirectTo, err
+		}
+		return stored.PollToken, "", "", nil
+	}
+
+	if err = s.setTicket(newTicket, oauthTicketEntry{
+		UserID:    user.Id,
+		IsAdmin:   user.IsAdmin,
+		ExpiresAt: time.Now().Add(ticketTTL),
+	}); err != nil {
+		return "", "", stored.RedirectTo, err
+	}
+	return "", newTicket, stored.RedirectTo, nil
 }
 
 func (s *OAuthProviderService) setPollEntry(pollToken, ticket string, expiresAt time.Time) error {

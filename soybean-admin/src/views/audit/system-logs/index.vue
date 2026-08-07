@@ -1,11 +1,14 @@
 <script setup lang="tsx">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { NButton, NPopconfirm, NSpace, NTag } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
+import { useAuthStore } from '@/store/modules/auth';
 import { fetchContainerLogList, fetchContainerLogClear } from '@/service/api/audit';
 
 const appStore = useAppStore();
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 const loading = ref(false);
 const clearing = ref(false);
 const data = ref<any[]>([]);
@@ -244,7 +247,7 @@ onMounted(() => {
     <NCard :title="$t('route.audit_system-logs')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
       <template #header-extra>
         <NSpace size="small" justify="end">
-          <NPopconfirm @positive-click="handleClearAll">
+          <NPopconfirm v-if="isAdmin" @positive-click="handleClearAll">
             {{ $t('common.confirmClear') }}
             <template #trigger>
               <NButton type="error" size="small" :loading="clearing">{{ $t('common.clear') }}</NButton>

@@ -83,6 +83,10 @@ func (c *MailTemplateController) HandleList() mvc.Result {
 }
 
 func (c *MailTemplateController) HandleAdd() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	var form admin.MailTemplateForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {
@@ -121,6 +125,10 @@ func (c *MailTemplateController) HandleAdd() mvc.Result {
 }
 
 func (c *MailTemplateController) HandleEdit() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	var form admin.MailTemplateForm
 	err := c.Ctx.ReadJSON(&form)
 	if err != nil {

@@ -3,10 +3,14 @@ import QRCode from 'qrcode';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { fetchServerConfig, fetchServerConnectivity, fetchSaveServerConfig } from '@/service/api/home';
+import { useAuthStore } from '@/store/modules/auth';
 
 defineOptions({
   name: 'ServerConnectionConfig'
 });
+
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 
 type ConfigKey = 'idServer' | 'relayServer' | 'apiServer' | 'key';
 
@@ -645,7 +649,7 @@ watch(
         <NButton size="small" v-if="editing" @click="cancelEdit">
           {{ $t('common.cancel') }}
         </NButton>
-        <NButton size="small" v-if="!editing" :disabled="loading" @click="startEdit">
+        <NButton size="small" v-if="!editing && isAdmin" :disabled="loading" @click="startEdit">
           {{ $t('common.edit') }}
         </NButton>
         <NTooltip trigger="hover">

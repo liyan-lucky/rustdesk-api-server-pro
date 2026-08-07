@@ -141,6 +141,42 @@ func UserAuth(app *iris.Application) iris.Handler {
 	}
 }
 
+func AdminOrUserAuth(app *iris.Application) iris.Handler {
+	return func(context iris.Context) {
+		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
+		token := extractToken(context)
+
+		authToken, get, err := getActiveAuthToken(db, token, true)
+		if !get || err != nil {
+			authToken, get, err = getActiveAuthToken(db, token, false)
+		}
+		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "admin_or_user_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
+			context.StopWithJSON(iris.StatusUnauthorized, iris.Map{"code": 401, "data": nil, "message": errcode.ErrUnauthorized.Error()})
+			return
+		}
+
+		var user model.User
+		get, err = db.Where("id = ? and status > 0", authToken.UserId).Get(&user)
+		if !get || err != nil {
+			recordAuthSecurityAudit(db, context, "admin_or_user_invalid", authToken.UserId, "", false, authFailureReason(err, "NotAcceptable"))
+			context.StopWithJSON(iris.StatusNotAcceptable, iris.Map{"code": 406, "data": nil, "message": errcode.ErrUnauthorized.Error()})
+			return
+		}
+
+		s := carbon.Now().DiffInSeconds(carbon.Parse(authToken.Expired.Format(config.TimeFormat)))
+		if s > 0 && s <= 60*5 {
+			authToken.Expired = carbon.Parse(authToken.Expired.Format(config.TimeFormat)).AddHours(2).ToStdTime()
+			_, _ = db.Where("id = ?", authToken.Id).Cols("expired").Update(&authToken)
+		}
+
+		context.Values().Set(config.AdminUserKey, &user)
+		context.Values().Set(config.AdminAuthTokenString, token)
+		context.Values().Set(config.AdminAuthToken, &authToken)
+		context.Next()
+	}
+}
+
 func recordAuthSecurityAudit(db *xorm.Engine, context iris.Context, event string, userID int, username string, success bool, reason string) {
 	if db == nil || context == nil {
 		return

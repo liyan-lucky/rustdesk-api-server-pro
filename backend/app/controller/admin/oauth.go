@@ -91,6 +91,10 @@ func (c *OAuthController) HandleListAccounts() mvc.Result {
 }
 
 func (c *OAuthController) HandleDeleteAccount() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	id := c.Ctx.Params().GetIntDefault("id", 0)
 	if id == 0 {
 		return c.Error(nil, errcode.New(errcode.ERR2101.Code, errcode.ERR2101.Message).Error())
@@ -149,6 +153,10 @@ func (c *OAuthController) HandleProviderConfigs() mvc.Result {
 }
 
 func (c *OAuthController) HandleSaveProvider() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	var form oauthProviderForm
 	if err := c.Ctx.ReadJSON(&form); err != nil {
 		return c.dbError(err)
@@ -255,6 +263,10 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 }
 
 func (c *OAuthController) HandleDeleteProvider() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	name := strings.ToLower(strings.TrimSpace(c.Ctx.Params().Get("name")))
 	cfg := config.GetServerConfig()
 	if cfg.OAuth == nil {
@@ -274,6 +286,10 @@ func (c *OAuthController) HandleDeleteProvider() mvc.Result {
 }
 
 func (c *OAuthController) HandleTestProvider() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	name := strings.TrimSpace(c.Ctx.Params().Get("name"))
 	cfg := config.GetServerConfig()
 	var provider *config.OAuthProviderConfig

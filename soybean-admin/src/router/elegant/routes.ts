@@ -94,7 +94,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'audit_baselogs',
           i18nKey: 'route.audit_baselogs',
           icon: 'hugeicons:files-01',
-          roles: ['R_SUPER']
+          roles: ['R_SUPER', 'R_USER']
         }
       },
       {
@@ -105,7 +105,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'audit_error-logs',
           i18nKey: 'route.audit_error-logs',
           icon: 'mdi:alert-circle-outline',
-          roles: ['R_SUPER']
+          roles: ['R_SUPER', 'R_USER']
         }
       },
       {
@@ -116,7 +116,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'audit_filetransferlogs',
           i18nKey: 'route.audit_filetransferlogs',
           icon: 'solar:square-transfer-horizontal-linear',
-          roles: ['R_SUPER']
+          roles: ['R_SUPER', 'R_USER']
         }
       },
       {
@@ -127,7 +127,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'audit_loginlogs',
           i18nKey: 'route.audit_loginlogs',
           icon: 'ic:baseline-login',
-          roles: ['R_SUPER']
+          roles: ['R_SUPER', 'R_USER']
         }
       },
       {
@@ -138,7 +138,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'audit_system-logs',
           i18nKey: 'route.audit_system-logs',
           icon: 'mdi:server',
-          roles: ['R_SUPER']
+          roles: ['R_SUPER', 'R_USER']
         }
       }
     ]
@@ -254,7 +254,7 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'system_mail',
           i18nKey: 'route.system_mail',
-          roles: ['R_SUPER']
+          roles: ['R_SUPER', 'R_USER']
         },
         children: [
           {
@@ -265,7 +265,7 @@ export const generatedRoutes: GeneratedRoute[] = [
               title: 'system_mail_logs',
               i18nKey: 'route.system_mail_logs',
               icon: 'icon-park-outline:upload-logs',
-              roles: ['R_SUPER']
+              roles: ['R_SUPER', 'R_USER']
             }
           },
           {
@@ -276,7 +276,7 @@ export const generatedRoutes: GeneratedRoute[] = [
               title: 'system_mail_template',
               i18nKey: 'route.system_mail_template',
               icon: 'fluent:mail-template-16-regular',
-              roles: ['R_SUPER']
+              roles: ['R_SUPER', 'R_USER']
             }
           }
         ]
@@ -300,7 +300,7 @@ export const generatedRoutes: GeneratedRoute[] = [
           title: 'system_server',
           i18nKey: 'route.system_server',
           icon: 'mdi:server-network',
-          roles: ['R_SUPER']
+          roles: ['R_SUPER', 'R_USER']
         }
       },
       {

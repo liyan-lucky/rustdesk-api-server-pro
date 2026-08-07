@@ -106,6 +106,10 @@ func (c *MaiLogsController) HandleInfo() mvc.Result {
 }
 
 func (c *MaiLogsController) HandleClear() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	_, err := c.Db.Exec("DELETE FROM mail_logs")
 	if err != nil {
 		return c.dbError(err)

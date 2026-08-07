@@ -199,16 +199,61 @@ func (c *AuthController) HandleOauthCallback() mvc.Result {
 	code := c.Ctx.URLParamDefault("code", "")
 	state := c.Ctx.URLParamDefault("state", "")
 
-	ticket, redirectTo, err := service.ConsumeAdminCallback(provider, code, state)
+	pollToken, ticket, redirectTo, err := service.ConsumeUnifiedCallback(provider, code, state)
 	if err != nil {
+		if pollToken != "" {
+			c.recordAdminSecurityAudit("client_oauth_callback", false, provider+": "+err.Error())
+			return c.renderOAuthCallbackPage(false, oauthCallbackErrorCode(err))
+		}
 		c.recordAdminSecurityAudit("admin_oauth_callback", false, provider+": "+err.Error())
 		c.Ctx.Redirect(withQuery(redirectTo, "oauth_error", oauthCallbackErrorCode(err)), iris.StatusFound)
 		return mvc.Response{}
 	}
 
+	if pollToken != "" {
+		c.recordAdminSecurityAudit("client_oauth_callback", true, provider+": poll_token")
+		return c.renderOAuthCallbackPage(true, "")
+	}
+
 	c.recordAdminSecurityAudit("admin_oauth_callback", true, provider+": ticket")
 	target := withQuery(withQuery(redirectTo, "oauth_provider", provider), "oauth_ticket", ticket)
 	c.Ctx.Redirect(target, iris.StatusFound)
+	return mvc.Response{}
+}
+
+func (c *AuthController) renderOAuthCallbackPage(success bool, errorCode string) mvc.Result {
+	var title, body string
+	if success {
+		title = "第三方登录成功"
+		body = "<p class=\"ok\">已成功登录，请回到客户端继续。</p>"
+	} else {
+		title = "第三方登录失败"
+		body = "<p class=\"err\">登录失败，请回到客户端重试。</p><p class=\"code\">错误码：" + errorCode + "</p>"
+	}
+	html := `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>` + title + `</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f5f5f5}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:40px 48px;max-width:420px;text-align:center}
+h1{font-size:20px;margin:0 0 16px}
+.ok{color:#16a34a;font-size:16px}
+.err{color:#dc2626;font-size:16px}
+.code{color:#6b7280;font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>` + title + `</h1>
+` + body + `
+</div>
+</body>
+</html>`
+	c.Ctx.ContentType("text/html; charset=utf-8")
+	_, _ = c.Ctx.WriteString(html)
 	return mvc.Response{}
 }
 

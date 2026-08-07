@@ -75,6 +75,10 @@ func (c *TokenController) HandleList() mvc.Result {
 }
 
 func (c *TokenController) HandleKill() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	var params struct {
 		Ids []int `json:"ids"`
 	}
@@ -108,7 +112,7 @@ func (c *TokenController) HandleKill() mvc.Result {
 
 func (c *TokenController) HandleClear() mvc.Result {
 	currentUser := c.GetUser()
-	if currentUser == nil {
+	if currentUser == nil || !currentUser.IsAdmin {
 		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
 	}
 

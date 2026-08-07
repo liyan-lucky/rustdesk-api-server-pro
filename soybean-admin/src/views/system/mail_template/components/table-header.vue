@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { $t } from '@/locales';
+import { useAuthStore } from '@/store/modules/auth';
 
 defineOptions({
   name: 'TableHeader'
 });
+
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 
 interface Props {
   itemAlign?: NaiveUI.Align;
@@ -40,7 +45,7 @@ function refresh() {
     <slot name="default">
       <NButton size="small" @click="emit('import')">{{ $t('common.import') }}</NButton>
       <NButton size="small" @click="emit('export')">{{ $t('common.export') }}</NButton>
-      <NButton size="small" ghost type="primary" @click="add">
+      <NButton v-if="isAdmin" size="small" ghost type="primary" @click="add">
         <template #icon>
           <icon-ic-round-plus class="text-icon" />
         </template>

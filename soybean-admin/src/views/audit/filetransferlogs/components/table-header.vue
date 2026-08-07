@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { $t } from '@/locales';
+import { useAuthStore } from '@/store/modules/auth';
 
 defineOptions({
   name: 'TableHeader'
 });
+
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 
 interface Props {
   itemAlign?: NaiveUI.Align;
@@ -35,7 +40,7 @@ function handleClear() {
 <template>
   <NSpace :align="itemAlign" wrap justify="end" class="lt-sm:w-200px">
     <slot name="prefix"></slot>
-    <NButton size="small" type="error" @click="handleClear">
+    <NButton v-if="isAdmin" size="small" type="error" @click="handleClear">
       <template #icon>
         <icon-ic-round-delete class="text-icon" />
       </template>

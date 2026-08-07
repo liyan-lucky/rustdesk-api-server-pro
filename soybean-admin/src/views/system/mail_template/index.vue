@@ -1,16 +1,19 @@
 <script setup lang="tsx">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { NButton, NDatePicker, NInput, NSelect, NSpace, NTag } from 'naive-ui';
 import { addMailTemplate, fetchMailTemplateList } from '@/service/api/system';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
+import { useAuthStore } from '@/store/modules/auth';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import { MailTemplateOptions } from '@/constants/business';
+import { MailTemplateOption } from '@/constants/business';
 import { downloadCsv, parseCsv } from '@/utils/csv';
 import MailTemplateEdit from './components/edit.vue';
 import MailTemplateSearch from './components/search.vue';
 import TableHeader from './components/table-header.vue';
 const appStore = useAppStore();
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.userInfo.roles.includes('R_SUPER'));
 const importInput = ref<HTMLInputElement>();
 const headerFilters = reactive<{
   id: string;
@@ -145,6 +148,7 @@ const {
         title: $t('common.action'),
         align: 'center',
         render: row => {
+          if (!isAdmin.value) return null;
           return (
             <NSpace justify={'center'}>
               <NButton size={'small'} type={'success'} onClick={() => handleEditTable(row)}>

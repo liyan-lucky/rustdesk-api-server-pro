@@ -4,6 +4,7 @@ import (
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
+	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -73,6 +74,10 @@ func (c *SecurityAuditController) HandleList() mvc.Result {
 }
 
 func (c *SecurityAuditController) HandleClear() mvc.Result {
+	user := c.GetUser()
+	if user == nil || !user.IsAdmin {
+		return c.Error(nil, errcode.New(errcode.ERR1010.Code, errcode.ERR1010.Message).Error())
+	}
 	_, err := c.Db.Exec("DELETE FROM security_audit")
 	if err != nil {
 		return c.dbError(err)
