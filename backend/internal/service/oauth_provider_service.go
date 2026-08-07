@@ -818,7 +818,17 @@ func (s *OAuthProviderService) resolveOAuthUser(provider config.OAuthProviderCon
 			return nil, err
 		}
 		if !ok {
-			return nil, errcode.New(errcode.ERR2022.Code, errcode.ERR2022.Message)
+			user, err := s.matchOrCreateOAuthUser(provider, claims, isAdmin)
+			if err != nil {
+				return nil, err
+			}
+			account.UserId = user.Id
+			account.Email = claims.Email
+			account.Name = claims.Name
+			account.Picture = claims.Picture
+			account.LastLoginAt = time.Now()
+			_, _ = s.db.Where("id = ?", account.Id).Cols("user_id", "email", "name", "picture", "last_login_at").Update(&account)
+			return user, nil
 		}
 		account.Email = claims.Email
 		account.Name = claims.Name

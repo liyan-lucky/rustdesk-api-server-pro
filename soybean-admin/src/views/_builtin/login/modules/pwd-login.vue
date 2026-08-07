@@ -60,7 +60,7 @@ const rules = computed<Record<keyof Api.Form.LoginForm, App.Global.FormRule[]>>(
 async function handleSubmit() {
   await validate();
   const err = await authStore.login(model);
-  if (err?.response?.data.message === 'CaptchaError') {
+  if (err?.response?.data?.message?.includes('CaptchaError')) {
     handleCaptcha();
   }
 }

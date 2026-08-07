@@ -283,6 +283,12 @@ func (c *UsersController) HandleDelete() mvc.Result {
 		return c.dbError(err)
 	}
 
+	_, err = c.Db.In("user_id", ids).Delete(&model.OAuthAccount{})
+	if err != nil {
+		c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "failure", err.Error())
+		return c.dbError(err)
+	}
+
 	_, err = c.Db.In("user_id", ids).Delete(&model.AddressBook{})
 	if err != nil {
 		c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "failure", err.Error())

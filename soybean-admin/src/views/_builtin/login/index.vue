@@ -92,8 +92,8 @@ onMounted(async () => {
     delete q.oauth_error;
     if (!consumed) {
       window.$message?.error($t('api.RequestError'));
+      await router.replace({ path: route.path, query: q, hash: route.hash });
     }
-    await router.replace({ path: route.path, query: q, hash: route.hash });
     return;
   }
 
