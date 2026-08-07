@@ -262,11 +262,9 @@ h1{font-size:20px;margin:0 0 16px}
 <div class="card">
 <h1>` + title + `</h1>
 ` + body + `
-</div>`
-	if schemeURL != "" {
-		html += "\n<script>setTimeout(function(){var btn=document.getElementById('launch-btn');if(btn)btn.click();},500);</script>"
-	}
-	html += "\n</body>\n</html>"
+</div>
+</body>
+</html>`
 	c.Ctx.ContentType("text/html; charset=utf-8")
 	_, _ = c.Ctx.WriteString(html)
 	return mvc.Response{}
