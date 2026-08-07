@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"rustdesk-api-server-pro/app/model"
+	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/errcode"
 
 	"github.com/kataras/iris/v12"
@@ -17,6 +19,12 @@ func (c *IndexController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *IndexController) HandleUserInfo() mvc.Result {
 	user := c.GetUser()
+	if user == nil {
+		v := c.Ctx.Values().Get(config.WebUserKey)
+		if v != nil {
+			user = v.(*model.User)
+		}
+	}
 	if user == nil {
 		return c.Error(nil, errcode.ErrUnauthorized.Error())
 	}

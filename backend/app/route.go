@@ -46,7 +46,6 @@ func SetRoute(app *iris.Application) {
 	adminWithAuthParty.Use(middleware.AdminAuth(app))
 	{
 		adminWithAuthMvc := mvc.New(adminWithAuthParty)
-		adminWithAuthMvc.Handle(new(admin.IndexController))
 		adminWithAuthMvc.Handle(new(admin.DashboardController))
 		adminWithAuthMvc.Handle(new(admin.UsersController))
 		adminWithAuthMvc.Handle(new(admin.SessionsController))
@@ -60,6 +59,13 @@ func SetRoute(app *iris.Application) {
 		adminWithAuthMvc.Handle(new(admin.SecurityAuditController))
 		adminWithAuthMvc.Handle(new(admin.ErrorLogController))
 		adminWithAuthMvc.Handle(new(admin.ContainerLogController))
+	}
+
+	adminUserAuthParty := app.Party("/admin")
+	adminUserAuthParty.Use(middleware.UserAuth(app))
+	{
+		adminUserAuthMvc := mvc.New(adminUserAuthParty)
+		adminUserAuthMvc.Handle(new(admin.IndexController))
 	}
 
 	userPortalWithAuthParty := app.Party("/user-portal")
