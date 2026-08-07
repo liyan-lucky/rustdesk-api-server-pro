@@ -156,7 +156,11 @@ func (c *OAuthController) oauthCallbackPage(success bool, errorCode, pollToken s
 	var title, body string
 	if success {
 		title = "第三方登录成功"
-		body = "<p class=\"ok\">已成功登录，请回到客户端继续。</p>"
+		body = "<p class=\"ok\">已成功登录，正在返回客户端...</p>"
+		if pollToken != "" {
+			body += "<a href=\"rustdesk://oauth/callback?poll_token=" + pollToken + "\" id=\"launch-app\" class=\"launch-btn\">点击返回 RustDesk 客户端</a>"
+			body += "<p class=\"tip\">如未自动打开客户端，请点击上方链接</p>"
+		}
 	} else {
 		title = "第三方登录失败"
 		body = "<p class=\"err\">登录失败，请回到客户端重试。</p><p class=\"code\">错误码：" + errorCode + "</p>"
@@ -174,16 +178,19 @@ h1{font-size:20px;margin:0 0 16px}
 .ok{color:#16a34a;font-size:16px}
 .err{color:#dc2626;font-size:16px}
 .code{color:#6b7280;font-size:13px;margin-top:8px}
-.poll{color:#9ca3af;font-size:12px;margin-top:16px;word-break:break-all}
+.launch-btn{display:inline-block;margin-top:16px;padding:10px 24px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:14px}
+.tip{color:#9ca3af;font-size:12px;margin-top:12px}
 </style>
 </head>
 <body>
 <div class="card">
 <h1>` + title + `</h1>
 ` + body + `
-</div>
-</body>
-</html>`
+</div>`
+	if success && pollToken != "" {
+		html += "\n<script>window.location.href='rustdesk://oauth/callback?poll_token=" + pollToken + "';</script>"
+	}
+	html += "\n</body>\n</html>"
 	c.Ctx.ContentType("text/html; charset=utf-8")
 	_, _ = c.Ctx.WriteString(html)
 	return mvc.Response{}
