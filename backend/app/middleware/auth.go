@@ -17,7 +17,7 @@ import (
 func ApiAuth(app *iris.Application) iris.Handler {
 	return func(context iris.Context) {
 		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
-		token := jwt.FromHeader(context)
+		token := extractToken(context)
 
 		authToken, get, err := getActiveAuthToken(db, token, false)
 		if !get || err != nil {
@@ -41,10 +41,18 @@ func ApiAuth(app *iris.Application) iris.Handler {
 	}
 }
 
+func extractToken(context iris.Context) string {
+	token := jwt.FromHeader(context)
+	if token == "" {
+		token = context.GetHeader("Authorization")
+	}
+	return token
+}
+
 func AdminAuth(app *iris.Application) iris.Handler {
 	return func(context iris.Context) {
 		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
-		token := jwt.FromHeader(context)
+		token := extractToken(context)
 
 		authToken, get, err := getActiveAuthToken(db, token, true)
 		if !get || err != nil {
@@ -100,7 +108,7 @@ func getActiveAuthToken(db *xorm.Engine, token string, isAdmin bool) (model.Auth
 func UserAuth(app *iris.Application) iris.Handler {
 	return func(context iris.Context) {
 		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
-		token := jwt.FromHeader(context)
+		token := extractToken(context)
 
 		authToken, get, err := getActiveAuthToken(db, token, false)
 		if !get || err != nil {
