@@ -107,7 +107,7 @@ func TestOAuthProviderService_ClientGitHubFlow(t *testing.T) {
 	if u.Query().Get("code_challenge_method") != "S256" || u.Query().Get("code_challenge") == "" {
 		t.Fatalf("client github authorization must use PKCE S256")
 	}
-	if u.Query().Get("redirect_uri") != "http://localhost:12345/api/oauth/github/callback" {
+	if u.Query().Get("redirect_uri") != "http://localhost:12345/admin/auth/oauth/github/callback" {
 		t.Fatalf("unexpected client callback url: %s", u.Query().Get("redirect_uri"))
 	}
 

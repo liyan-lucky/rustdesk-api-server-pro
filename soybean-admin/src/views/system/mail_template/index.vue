@@ -6,7 +6,7 @@ import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useAuthStore } from '@/store/modules/auth';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import { MailTemplateOption } from '@/constants/business';
+import { MailTemplateOptions } from '@/constants/business';
 import { downloadCsv, parseCsv } from '@/utils/csv';
 import MailTemplateEdit from './components/edit.vue';
 import MailTemplateSearch from './components/search.vue';
