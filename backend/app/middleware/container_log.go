@@ -89,6 +89,12 @@ func ContainerLogRecorder(app *iris.Application) iris.Handler {
 		uname := userName
 
 		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// silently recover to prevent process crash
+					_ = r
+				}
+			}()
 			_, _ = db.InsertOne(&model.ContainerLog{
 				Timestamp:  start,
 				Level:      level,

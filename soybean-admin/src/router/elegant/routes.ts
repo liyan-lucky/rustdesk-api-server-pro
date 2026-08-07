@@ -126,7 +126,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'audit_loginlogs',
           i18nKey: 'route.audit_loginlogs',
-          icon: 'ic:baseline-login'
+          icon: 'ic:baseline-login',
+          roles: ['R_SUPER']
         }
       },
       {
@@ -298,7 +299,8 @@ export const generatedRoutes: GeneratedRoute[] = [
         meta: {
           title: 'system_server',
           i18nKey: 'route.system_server',
-          icon: 'mdi:server-network'
+          icon: 'mdi:server-network',
+          roles: ['R_SUPER']
         }
       },
       {

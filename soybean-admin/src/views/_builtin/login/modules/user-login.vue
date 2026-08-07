@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { fetchCaptcha, fetchUserLogin } from '@/service/api/auth';
 import { localStg } from '@/utils/storage';
+import { useAuthStore } from '@/store/modules/auth';
+import { useRouteStore } from '@/store/modules/route';
 
 defineOptions({
   name: 'UserLogin'
 });
 
+const router = useRouter();
+const authStore = useAuthStore();
+const routeStore = useRouteStore();
 const { formRef, validate } = useNaiveForm();
+const loading = ref(false);
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -54,17 +61,28 @@ const rules = computed<Record<keyof Api.Form.LoginForm, App.Global.FormRule[]>>(
 
 async function handleSubmit() {
   await validate();
-  const { data, error } = await fetchUserLogin(model);
-  if (!error && data?.token) {
-    localStg.set('token', data.token);
-    localStg.set('userType', 'user');
-    if (data.isAdmin) {
-      window.location.href = '/#/home';
-    } else {
-      window.location.href = '/#/my-devices/peers';
+  loading.value = true;
+  try {
+    const { data, error } = await fetchUserLogin(model);
+    if (!error && data?.token) {
+      localStg.set('token', data.token);
+      localStg.set('userType', 'user');
+      if (data.isAdmin !== undefined) {
+        localStg.set('isAdmin', data.isAdmin);
+      }
+      authStore.token = data.token;
+      await authStore.initUserInfo();
+      await routeStore.initAuthRoute();
+      if (data.isAdmin) {
+        await router.push({ name: 'home' });
+      } else {
+        await router.push({ name: 'my-devices_peers' });
+      }
+    } else if (error?.response?.data?.message === 'CaptchaError') {
+      handleCaptcha();
     }
-  } else if (error?.response?.data?.message === 'CaptchaError') {
-    handleCaptcha();
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -76,7 +94,7 @@ async function handleCaptcha() {
 }
 
 function switchToAdmin() {
-  window.location.href = '/#/login/pwd-login';
+  router.push({ name: 'login', params: { module: 'pwd-login' } });
 }
 
 onMounted(() => {
@@ -110,7 +128,7 @@ onMounted(() => {
       </div>
     </NFormItem>
     <NSpace vertical :size="12">
-      <NButton attr-type="submit" type="primary" size="medium" round block @click="handleSubmit">
+      <NButton attr-type="submit" type="primary" size="medium" round block :loading="loading" @click="handleSubmit">
         {{ $t('common.confirm') }}
       </NButton>
       <NButton text type="primary" @click="switchToAdmin">

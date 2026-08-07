@@ -41,11 +41,10 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
   /** Reset auth store */
   async function resetStore() {
-    const authStore = useAuthStore();
-
     clearAuthStorage();
 
-    authStore.$reset();
+    token.value = '';
+    Object.assign(userInfo, { userId: '', userName: '', roles: [], buttons: [] });
 
     if (!route.meta.constant) {
       await toLogin();
@@ -84,6 +83,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
             duration: 4500
           });
         }
+      } else {
+        resetStore();
       }
     } else {
       resetStore();
@@ -107,6 +108,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       return true;
     }
 
+    clearAuthStorage();
     return false;
   }
 
@@ -166,7 +168,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
       const pass = await getUserInfo();
 
       if (!pass) {
-        resetStore();
+        await resetStore();
       }
     }
   }

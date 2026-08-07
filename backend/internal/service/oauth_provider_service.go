@@ -103,7 +103,7 @@ type oauthMetadataEntry struct {
 }
 
 type oauthRuntimeStore struct {
-	mu       sync.Mutex
+	mu       sync.RWMutex
 	states   map[string]oauthStateEntry
 	tickets  map[string]oauthTicketEntry
 	polls    map[string]oauthPollEntry
@@ -846,7 +846,17 @@ func (s *OAuthProviderService) resolveOAuthUser(provider config.OAuthProviderCon
 	}
 	_, err = s.db.Insert(newAccount)
 	if err != nil {
-		return nil, err
+		var existing model.OAuthAccount
+		hasExisting, queryErr := s.db.Where("provider = ? and subject = ? and is_admin = ? and status = 1", provider.Name, claims.Subject, isAdmin).Get(&existing)
+		if queryErr != nil || !hasExisting {
+			return nil, err
+		}
+		var existingUser model.User
+		userOk, userErr := s.db.Where("id = ? and is_admin = ? and status > 0", existing.UserId, isAdmin).Get(&existingUser)
+		if userErr != nil || !userOk {
+			return nil, err
+		}
+		return &existingUser, nil
 	}
 
 	return user, nil
@@ -1129,15 +1139,18 @@ func (s *OAuthProviderService) popTicket(key string) (oauthTicketEntry, bool) {
 
 func (s *OAuthProviderService) getCachedMetadata(issuer string) (oauthMetadata, bool) {
 	now := time.Now()
-	globalOAuthRuntimeStore.mu.Lock()
-	defer globalOAuthRuntimeStore.mu.Unlock()
+	globalOAuthRuntimeStore.mu.RLock()
 	v, ok := globalOAuthRuntimeStore.metadata[issuer]
 	if !ok || now.After(v.ExpiresAt) {
+		globalOAuthRuntimeStore.mu.RUnlock()
 		if ok {
+			globalOAuthRuntimeStore.mu.Lock()
 			delete(globalOAuthRuntimeStore.metadata, issuer)
+			globalOAuthRuntimeStore.mu.Unlock()
 		}
 		return oauthMetadata{}, false
 	}
+	globalOAuthRuntimeStore.mu.RUnlock()
 	return v.Value, true
 }
 
@@ -1798,8 +1811,8 @@ func (s *OAuthProviderService) peekPollEntry(pollToken string) (string, bool) {
 		return session.Ticket, true
 	}
 	now := time.Now()
-	globalOAuthRuntimeStore.mu.Lock()
-	defer globalOAuthRuntimeStore.mu.Unlock()
+	globalOAuthRuntimeStore.mu.RLock()
+	defer globalOAuthRuntimeStore.mu.RUnlock()
 	v, ok := globalOAuthRuntimeStore.polls[pollToken]
 	if !ok {
 		return "", false
@@ -1876,8 +1889,8 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 		_, _ = s.db.Where("id = ?", session.Id).Cols("result").Update(&model.OAuthLoginSession{Result: resultStr})
 		return resultStr, nil
 	}
-	v, ok := globalOAuthRuntimeStore.polls[pollToken]
-	if !ok || time.Now().After(v.ExpiresAt) {
+	v, ok := s.peekPollEntryRaw(pollToken)
+	if !ok {
 		return "", nil
 	}
 	if v.Result != "" {
@@ -1928,4 +1941,15 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 	globalOAuthRuntimeStore.polls[pollToken] = oauthPollEntry{Ticket: v.Ticket, ExpiresAt: v.ExpiresAt, Result: resultStr}
 	globalOAuthRuntimeStore.mu.Unlock()
 	return resultStr, nil
+}
+
+func (s *OAuthProviderService) peekPollEntryRaw(pollToken string) (oauthPollEntry, bool) {
+	now := time.Now()
+	globalOAuthRuntimeStore.mu.RLock()
+	defer globalOAuthRuntimeStore.mu.RUnlock()
+	v, ok := globalOAuthRuntimeStore.polls[pollToken]
+	if !ok || now.After(v.ExpiresAt) {
+		return oauthPollEntry{}, false
+	}
+	return v, true
 }

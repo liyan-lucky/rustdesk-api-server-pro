@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import Clipboard from 'clipboard';
 import { $t } from '@/locales';
 import { useThemeStore } from '@/store/modules/theme';
@@ -11,16 +11,22 @@ defineOptions({
 const themeStore = useThemeStore();
 
 const domRef = ref<HTMLElement | null>(null);
+let clipboardInstance: Clipboard | null = null;
 
 function initClipboard() {
   if (!domRef.value) return;
 
-  const clipboard = new Clipboard(domRef.value);
+  clipboardInstance = new Clipboard(domRef.value);
 
-  clipboard.on('success', () => {
+  clipboardInstance.on('success', () => {
     window.$message?.success($t('theme.configOperation.copySuccessMsg'));
   });
 }
+
+onUnmounted(() => {
+  clipboardInstance?.destroy();
+  clipboardInstance = null;
+});
 
 function getClipboardText() {
   const reg = /"\w+":/g;

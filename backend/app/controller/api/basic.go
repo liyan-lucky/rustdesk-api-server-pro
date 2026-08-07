@@ -2,6 +2,7 @@ package api
 
 import (
 	"io"
+	"log"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/app/service"
 	"rustdesk-api-server-pro/config"
@@ -57,14 +58,19 @@ func (c *basicController) okText(text string) mvc.Result {
 }
 
 func extractErrCode(message string) string {
-	if strings.HasPrefix(message, "ERR-") {
-		idx := strings.Index(message, ":")
-		if idx > 0 {
-			return message[:idx]
-		}
+	message = strings.TrimSpace(message)
+	if message == "" || !strings.HasPrefix(message, "ERR-") {
+		return ""
+	}
+	idx := strings.Index(message, ":")
+	if idx <= 0 {
 		return message
 	}
-	return ""
+	code := message[:idx]
+	if len(code) < 5 {
+		return ""
+	}
+	return code
 }
 
 func (c *basicController) fail(err error) mvc.Result {
@@ -75,7 +81,14 @@ func (c *basicController) fail(err error) mvc.Result {
 		userId = user.Id
 		userName = user.Username
 	}
-	go service.RecordErrorLog(c.Db, extractErrCode(err.Error()), err.Error(), "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("panic in RecordErrorLog (api/fail): %v", r)
+			}
+		}()
+		service.RecordErrorLog(c.Db, extractErrCode(err.Error()), err.Error(), "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	}()
 	return mvc.Response{
 		Object: iris.Map{
 			"error": err.Error(),
@@ -91,7 +104,14 @@ func (c *basicController) failMsg(msg string) mvc.Result {
 		userId = user.Id
 		userName = user.Username
 	}
-	go service.RecordErrorLog(c.Db, extractErrCode(msg), msg, "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("panic in RecordErrorLog (api/failMsg): %v", r)
+			}
+		}()
+		service.RecordErrorLog(c.Db, extractErrCode(msg), msg, "api", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	}()
 	return mvc.Response{
 		Object: iris.Map{
 			"error": msg,

@@ -41,8 +41,9 @@ export function createRouteGuard(router: Router) {
 
     const routeSwitches: CommonType.StrategicPattern[] = [
       // if it is login route when logged in, then switch to the root page
+      // unless it has OAuth/OIDC ticket params that need to be consumed
       {
-        condition: isLogin && to.name === loginRoute,
+        condition: isLogin && to.name === loginRoute && !to.query.oauth_ticket && !to.query.oidc_ticket,
         callback: () => {
           next({ name: rootRoute });
         }

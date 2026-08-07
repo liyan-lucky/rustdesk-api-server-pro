@@ -254,7 +254,17 @@ func (c *UsersController) HandleDelete() mvc.Result {
 		c.recordUserOperationAudit("admin_user_delete", "", nil, iris.Map{"ids": params.Ids}, "failure", err.Error())
 		return c.dbError(err)
 	}
-	ids := util.RemoveElement(params.Ids, 1)
+
+	currentUser := c.GetUser()
+	if currentUser != nil {
+		for i, id := range params.Ids {
+			if id == currentUser.Id {
+				params.Ids = append(params.Ids[:i], params.Ids[i+1:]...)
+				break
+			}
+		}
+	}
+	ids := params.Ids
 	if len(ids) == 0 {
 		c.recordUserOperationAudit("admin_user_delete", "", nil, iris.Map{"ids": params.Ids}, "failure", "NoUserIds")
 		return c.Error(nil, errcode.New(errcode.ERR4007.Code, errcode.ERR4007.Message).Error())
@@ -265,6 +275,18 @@ func (c *UsersController) HandleDelete() mvc.Result {
 	for _, u := range beforeUsers {
 		user := u
 		beforeAudit = append(beforeAudit, sanitizeUserForAudit(&user))
+	}
+
+	_, err = c.Db.In("user_id", ids).Delete(&model.AuthToken{})
+	if err != nil {
+		c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "failure", err.Error())
+		return c.dbError(err)
+	}
+
+	_, err = c.Db.In("user_id", ids).Delete(&model.AddressBook{})
+	if err != nil {
+		c.recordUserOperationAudit("admin_user_delete", auditIDsResource(ids), beforeAudit, iris.Map{"ids": ids}, "failure", err.Error())
+		return c.dbError(err)
 	}
 
 	_, err = c.Db.In("id", ids).Delete(&model.User{})

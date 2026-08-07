@@ -180,7 +180,7 @@ watch(visible, () => {
           <NInput v-model:value="model.username" :placeholder="$t('page.user.list.inputUsername')" />
         </NFormItem>
         <NFormItem :label="$t('dataMap.user.password')" path="password">
-          <NInput v-model:value="model.password" :placeholder="$t('page.user.list.inputPassword')" />
+          <NInput v-model:value="model.password" type="password" show-password-on="click" :placeholder="$t('page.user.list.inputPassword')" />
         </NFormItem>
         <NFormItem :label="$t('dataMap.user.name')" path="name">
           <NInput v-model:value="model.name" :placeholder="$t('page.user.list.inputNickname')" />

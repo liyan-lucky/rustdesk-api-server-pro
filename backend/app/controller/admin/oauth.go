@@ -198,7 +198,9 @@ func (c *OAuthController) HandleSaveProvider() mvc.Result {
 		if strings.EqualFold(provider.Name, target) {
 			index = i
 		}
-		if strings.EqualFold(provider.Name, form.Name) && !strings.EqualFold(provider.Name, target) {
+	}
+	for i, provider := range cfg.OAuth.Providers {
+		if strings.EqualFold(provider.Name, form.Name) && i != index {
 			return c.Error(nil, errcode.New(errcode.ERR2105.Code, errcode.ERR2105.Message).Error())
 		}
 	}

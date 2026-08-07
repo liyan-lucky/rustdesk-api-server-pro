@@ -82,10 +82,13 @@ async function loadOAuthProviders() {
 }
 
 async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {
+  if (activeProvider.value) return;
   activeProvider.value = provider.name;
   try {
     const redirect =
-      typeof route.query.redirect === 'string' && route.query.redirect !== '/' ? route.query.redirect : '/#/login';
+      typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') && !route.query.redirect.startsWith('//') && route.query.redirect !== '/'
+        ? route.query.redirect
+        : '/#/login';
     const { data, error } = await fetchOAuthLoginUrl(provider.name, redirect);
     if (!error && data?.enabled && data.url) {
       window.location.href = data.url;

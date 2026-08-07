@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"log"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/app/service"
 	"rustdesk-api-server-pro/config"
@@ -59,19 +60,31 @@ func (c *basicController) Error(data interface{}, message string) mvc.Result {
 		userId = user.Id
 		userName = user.Username
 	}
-	go service.RecordErrorLog(c.Db, extractErrCode(message), message, "admin", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("panic in RecordErrorLog (admin/Error): %v", r)
+			}
+		}()
+		service.RecordErrorLog(c.Db, extractErrCode(message), message, "admin", c.Ctx.Path(), c.Ctx.Method(), userId, userName, c.Ctx.RemoteAddr(), c.Ctx.GetHeader("User-Agent"))
+	}()
 	return c.response(500, data, message)
 }
 
 func extractErrCode(message string) string {
-	if strings.HasPrefix(message, "ERR-") {
-		idx := strings.Index(message, ":")
-		if idx > 0 {
-			return message[:idx]
-		}
+	message = strings.TrimSpace(message)
+	if message == "" || !strings.HasPrefix(message, "ERR-") {
+		return ""
+	}
+	idx := strings.Index(message, ":")
+	if idx <= 0 {
 		return message
 	}
-	return ""
+	code := message[:idx]
+	if len(code) < 5 {
+		return ""
+	}
+	return code
 }
 
 func (c *basicController) dbError(err error) mvc.Result {

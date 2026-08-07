@@ -170,13 +170,12 @@ func GetServerConfig() *ServerConfig {
 	cfg := GetDefaultServerConfig()
 	bytes, err := os.ReadFile(yamlFile)
 	if err != nil {
-		WriteServerConfig(cfg)
 		return cfg
 	}
 
 	err = yaml.Unmarshal(bytes, cfg)
 	if err != nil {
-		return cfg
+		return GetDefaultServerConfig()
 	}
 
 	if envPort := os.Getenv("PORT"); envPort != "" {

@@ -149,7 +149,10 @@ function goToDetailPage() {
   drawerVisible.value = false;
 }
 
+let detailRequestId = 0;
+
 async function loadCardDetails(key: CardData['key']) {
+  const requestId = ++detailRequestId;
   detailLoading.value = true;
   detailError.value = '';
   detailItems.value = [];
@@ -157,6 +160,7 @@ async function loadCardDetails(key: CardData['key']) {
   try {
     if (key === 'userCount') {
       const { data, error } = await fetchUserList({ current: 1, size: 6 });
+      if (requestId !== detailRequestId) return;
       if (error || !data) throw new Error('user list fetch failed');
       detailItems.value = (data.records || []).map(item => ({
         title: item.username || '-',
@@ -165,6 +169,7 @@ async function loadCardDetails(key: CardData['key']) {
       }));
     } else if (key === 'visitCount') {
       const { data, error } = await fetchAuditLogList({ current: 1, size: 6 });
+      if (requestId !== detailRequestId) return;
       if (error || !data) throw new Error('audit list fetch failed');
       detailItems.value = (data.records || []).map(item => ({
         title: item.username || '-',
@@ -173,6 +178,7 @@ async function loadCardDetails(key: CardData['key']) {
       }));
     } else {
       const { data, error } = await fetchDevicesList({ current: 1, size: 6 });
+      if (requestId !== detailRequestId) return;
       if (error || !data) throw new Error('device list fetch failed');
       detailItems.value = (data.records || []).map(item => ({
         title: item.hostname || '-',
@@ -181,13 +187,17 @@ async function loadCardDetails(key: CardData['key']) {
       }));
     }
 
+    if (requestId !== detailRequestId) return;
     if (detailItems.value.length === 0) {
       detailError.value = $t('common.noData');
     }
   } catch {
+    if (requestId !== detailRequestId) return;
     detailError.value = $t('common.error');
   } finally {
-    detailLoading.value = false;
+    if (requestId === detailRequestId) {
+      detailLoading.value = false;
+    }
   }
 }
 

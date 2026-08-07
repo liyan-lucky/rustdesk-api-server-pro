@@ -85,6 +85,19 @@ func (c *TokenController) HandleKill() mvc.Result {
 		return c.Error(nil, errcode.New(errcode.ERR9002.Code, errcode.ERR9002.Message).Error())
 	}
 
+	currentToken := c.GetAuthToken()
+	if currentToken != nil {
+		for i, id := range params.Ids {
+			if id == currentToken.Id {
+				params.Ids = append(params.Ids[:i], params.Ids[i+1:]...)
+				break
+			}
+		}
+	}
+	if len(params.Ids) == 0 {
+		return c.Error(nil, errcode.New(errcode.ERR9002.Code, errcode.ERR9002.Message).Error())
+	}
+
 	_, err := c.Db.In("id", params.Ids).Delete(&model.AuthToken{})
 	if err != nil {
 		return c.dbError(err)

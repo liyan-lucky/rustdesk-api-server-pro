@@ -115,10 +115,10 @@ func (c *AuditController) HandleFileTransferList() mvc.Result {
 			q.Where("peer_id = ?", peer_id)
 		}
 		if uuid != "" {
-			q.Where("audit.uuid = ?", uuid)
+			q.Where("file_transfer.uuid = ?", uuid)
 		}
 		if created_at_0 != "" && created_at_1 != "" {
-			q.Where("audit.created_at BETWEEN ? AND ?", created_at_0, created_at_1)
+			q.Where("file_transfer.created_at BETWEEN ? AND ?", created_at_0, created_at_1)
 		}
 		q.Desc("id")
 		return q

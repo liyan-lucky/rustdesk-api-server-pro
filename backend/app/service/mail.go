@@ -1,11 +1,13 @@
 package service
 
 import (
+	"fmt"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
 	"rustdesk-api-server-pro/internal/errcode"
 	"strings"
+	"sync"
 
 	mail "github.com/xhit/go-simple-mail/v2"
 )
@@ -15,43 +17,46 @@ type MailService struct {
 	config *config.ServerConfig
 }
 
-var mailService *MailService
+var (
+	mailServiceOnce sync.Once
+	mailService     *MailService
+)
 
 func NewMailService() *MailService {
+	mailServiceOnce.Do(func() {
+		cfg := config.GetServerConfig()
 
-	// 单例模式
-	if mailService != nil {
-		return mailService
-	}
+		mailer := mail.NewSMTPClient()
 
-	config := config.GetServerConfig()
+		mailer.Host = cfg.SmtpConfig.Host
+		mailer.Port = cfg.SmtpConfig.Port
+		mailer.Username = cfg.SmtpConfig.Username
+		mailer.Password = cfg.SmtpConfig.Password
+		switch cfg.SmtpConfig.Encryption {
+		case "ssl/tls":
+			mailer.Encryption = mail.EncryptionSSLTLS
+		case "starttls":
+			mailer.Encryption = mail.EncryptionSTARTTLS
+		default:
+			mailer.Encryption = mail.EncryptionNone
+		}
 
-	mailer := mail.NewSMTPClient()
-
-	mailer.Host = config.SmtpConfig.Host
-	mailer.Port = config.SmtpConfig.Port
-	mailer.Username = config.SmtpConfig.Username
-	mailer.Password = config.SmtpConfig.Password
-	switch config.SmtpConfig.Encryption {
-	case "ssl/tls":
-		mailer.Encryption = mail.EncryptionSSLTLS
-	case "starttls":
-		mailer.Encryption = mail.EncryptionSTARTTLS
-	default:
-		mailer.Encryption = mail.EncryptionNone
-	}
-
-	return &MailService{
-		mailer: mailer,
-		config: config,
-	}
+		mailService = &MailService{
+			mailer: mailer,
+			config: cfg,
+		}
+	})
+	return mailService
 }
 
 func (service *MailService) GetMailTemplateByType(t int) (*model.MailTemplate, error) {
 	var tpl model.MailTemplate
-	_, err := db.DbEngine.Where("type = ?", t).Desc("id").Get(&tpl)
+	has, err := db.DbEngine.Where("type = ?", t).Desc("id").Get(&tpl)
 	if err != nil {
 		return nil, err
+	}
+	if !has {
+		return nil, fmt.Errorf("mail template not found for type %d", t)
 	}
 	return &tpl, nil
 }
@@ -70,9 +75,16 @@ func (service *MailService) Send(userId, tplId int, to, uuid string, vars map[st
 	get, err := db.DbEngine.Where("id = ?", tplId).Get(&template)
 	if err != nil || !get {
 		sendLog.Status = model.MAIL_SEND_ERR
-		sendLog.Logs = errcode.Errorf(errcode.ERR8006.Code, errcode.ERR8006.Message+": "+err.Error()).Error()
+		errMsg := "mail template not found"
+		if err != nil {
+			errMsg = err.Error()
+		}
+		sendLog.Logs = errcode.Errorf(errcode.ERR8006.Code, errcode.ERR8006.Message+": "+errMsg).Error()
 		db.DbEngine.Insert(sendLog)
-		return err
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("%s", errMsg)
 	}
 
 	body := template.Contents

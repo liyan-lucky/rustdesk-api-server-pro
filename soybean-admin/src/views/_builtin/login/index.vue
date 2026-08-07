@@ -87,24 +87,22 @@ onMounted(async () => {
       return;
     }
     const consumed = await consumeOAuthTicket(oauthTicket);
+    delete q.oauth_ticket;
+    delete q.oauth_provider;
+    delete q.oauth_error;
     if (!consumed) {
-      delete q.oauth_ticket;
-      delete q.oauth_provider;
-      delete q.oauth_error;
       window.$message?.error($t('api.RequestError'));
-      await router.replace({ path: route.path, query: q, hash: route.hash });
     }
+    await router.replace({ path: route.path, query: q, hash: route.hash });
     return;
   }
 
   const ticket = mergedQuery.oidc_ticket;
   if (typeof ticket === 'string' && ticket) {
     await authStore.loginByOidcTicket(ticket, true);
-    if (!localStg.get('token')) {
-      delete q.oidc_ticket;
-      delete q.oidc_error;
-      await router.replace({ path: route.path, query: q, hash: route.hash });
-    }
+    delete q.oidc_ticket;
+    delete q.oidc_error;
+    await router.replace({ path: route.path, query: q, hash: route.hash });
     return;
   }
 

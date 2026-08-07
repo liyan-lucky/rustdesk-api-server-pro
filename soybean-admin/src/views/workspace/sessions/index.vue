@@ -53,13 +53,16 @@ const columns = [
   }
 ];
 async function load() {
-  loading.value = true;
-  const { data: r } = await fetchMySessions({ current: page.value, size: size.value });
-  if (r) {
-    data.value = r.records;
-    total.value = r.total;
+  try {
+    loading.value = true;
+    const { data: r } = await fetchMySessions({ current: page.value, size: size.value });
+    if (r) {
+      data.value = r.records;
+      total.value = r.total;
+    }
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
 }
 onMounted(load);
 </script>

@@ -6,7 +6,6 @@ import (
 	"rustdesk-api-server-pro/db"
 	"rustdesk-api-server-pro/internal/core"
 	"rustdesk-api-server-pro/internal/errcode"
-	"rustdesk-api-server-pro/util"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -83,7 +82,7 @@ func (c *SessionsController) HandleKill() mvc.Result {
 		c.recordSessionOperationAudit("admin_session_kill", "", nil, iris.Map{"ids": params.Ids}, "failure", err.Error())
 		return c.dbError(err)
 	}
-	ids := util.RemoveElement(params.Ids, 1)
+	ids := params.Ids
 	if len(ids) == 0 {
 		c.recordSessionOperationAudit("admin_session_kill", "", nil, iris.Map{"ids": params.Ids}, "failure", "NoSessionIds")
 		return c.Error(nil, errcode.New(errcode.ERR9001.Code, errcode.ERR9001.Message).Error())
@@ -142,9 +141,20 @@ func sanitizeSessionForAudit(session *model.AuthToken) iris.Map {
 }
 
 func (c *SessionsController) HandleClear() mvc.Result {
-	_, err := c.Db.Where("is_admin = 0").Delete(&model.AuthToken{})
+	beforeSessions := make([]model.AuthToken, 0)
+	_ = c.Db.Where("is_admin = 0 and status = 1").Find(&beforeSessions)
+	beforeAudit := make([]iris.Map, 0)
+	for _, s := range beforeSessions {
+		session := s
+		beforeAudit = append(beforeAudit, sanitizeSessionForAudit(&session))
+	}
+
+	_, err := c.Db.Where("is_admin = 0 and status = 1").Delete(&model.AuthToken{})
 	if err != nil {
+		c.recordSessionOperationAudit("admin_session_clear", "", beforeAudit, nil, "failure", err.Error())
 		return c.dbError(err)
 	}
+
+	c.recordSessionOperationAudit("admin_session_clear", "", beforeAudit, nil, "success", "")
 	return c.Success(nil, "ok")
 }

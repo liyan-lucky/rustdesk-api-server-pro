@@ -347,18 +347,38 @@ func (c *DashboardController) GetDashboardServerConnectivity() mvc.Result {
 
 	go func() {
 		defer wg.Done()
+		defer func() {
+			if r := recover(); r != nil {
+				result.idServer = iris.Map{"status": "error", "message": fmt.Sprintf("probe panic: %v", r)}
+			}
+		}()
 		result.idServer = probeTCPServer(idServer, "21116")
 	}()
 	go func() {
 		defer wg.Done()
+		defer func() {
+			if r := recover(); r != nil {
+				result.relayServer = iris.Map{"status": "error", "message": fmt.Sprintf("probe panic: %v", r)}
+			}
+		}()
 		result.relayServer = probeTCPServer(relayServer, "21117")
 	}()
 	go func() {
 		defer wg.Done()
+		defer func() {
+			if r := recover(); r != nil {
+				result.apiServer = iris.Map{"status": "error", "message": fmt.Sprintf("probe panic: %v", r)}
+			}
+		}()
 		result.apiServer = probeHTTPServer(apiServer)
 	}()
 	go func() {
 		defer wg.Done()
+		defer func() {
+			if r := recover(); r != nil {
+				result.key = iris.Map{"status": "error", "message": fmt.Sprintf("probe panic: %v", r)}
+			}
+		}()
 		result.key = probeKeyConfig(key)
 	}()
 	wg.Wait()

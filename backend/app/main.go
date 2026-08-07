@@ -63,6 +63,11 @@ func StartServerWithContext(ctx context.Context) (bool, error) {
 	middleware.RecordContainerEvent(dbEngine, "INFO", "system", "Server started on port "+cfg.HttpConfig.Port)
 
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				_ = r
+			}
+		}()
 		<-ctx.Done()
 		_ = app.Shutdown(ctx)
 	}()

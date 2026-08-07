@@ -6,10 +6,13 @@ import { $t } from '@/locales';
 const loading = ref(false);
 const stats = ref({ devices: 0, sessions: 0, address_books: 0, security_events: 0, licensed_devices: 0 });
 onMounted(async () => {
-  loading.value = true;
-  const { data } = await fetchUserOverview();
-  if (data) stats.value = data;
-  loading.value = false;
+  try {
+    loading.value = true;
+    const { data } = await fetchUserOverview();
+    if (data) stats.value = data;
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 

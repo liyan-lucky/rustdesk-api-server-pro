@@ -65,7 +65,7 @@ type oidcMetadataEntry struct {
 }
 
 type oidcRuntimeStore struct {
-	mu       sync.Mutex
+	mu       sync.RWMutex
 	states   map[string]oidcStateEntry
 	tickets  map[string]oidcTicketEntry
 	metadata map[string]oidcMetadataEntry
@@ -462,7 +462,17 @@ func (s *OIDCAuthService) resolveAdminUser(claims *OIDCUserClaims) (*model.User,
 	}
 	_, err = s.db.Insert(newAccount)
 	if err != nil {
-		return nil, err
+		var existing model.OAuthAccount
+		hasExisting, queryErr := s.db.Where("provider = ? and subject = ? and is_admin = 1 and status = 1", provider, claims.Subject).Get(&existing)
+		if queryErr != nil || !hasExisting {
+			return nil, err
+		}
+		var existingUser model.User
+		userOk, userErr := s.db.Where("id = ? and is_admin = 1 and status > 0", existing.UserId).Get(&existingUser)
+		if userErr != nil || !userOk {
+			return nil, err
+		}
+		return &existingUser, nil
 	}
 
 	return user, nil
@@ -691,15 +701,18 @@ func (s *OIDCAuthService) popTicket(key string) (oidcTicketEntry, bool) {
 
 func (s *OIDCAuthService) getCachedMetadata(issuer string) (oidcMetadata, bool) {
 	now := time.Now()
-	globalOIDCRuntimeStore.mu.Lock()
-	defer globalOIDCRuntimeStore.mu.Unlock()
+	globalOIDCRuntimeStore.mu.RLock()
 	v, ok := globalOIDCRuntimeStore.metadata[issuer]
 	if !ok || now.After(v.ExpiresAt) {
+		globalOIDCRuntimeStore.mu.RUnlock()
 		if ok {
+			globalOIDCRuntimeStore.mu.Lock()
 			delete(globalOIDCRuntimeStore.metadata, issuer)
+			globalOIDCRuntimeStore.mu.Unlock()
 		}
 		return oidcMetadata{}, false
 	}
+	globalOIDCRuntimeStore.mu.RUnlock()
 	return v.Value, true
 }
 

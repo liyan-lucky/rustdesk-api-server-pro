@@ -97,7 +97,7 @@ export function useRouterPush(inSetup = true) {
   async function redirectFromLogin() {
     const redirect = route.value.query?.redirect as string;
 
-    if (redirect) {
+    if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
       return routerPush(redirect);
     }
     return toHome();

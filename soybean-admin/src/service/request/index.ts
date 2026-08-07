@@ -46,8 +46,13 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
       const authStore = useAuthStore();
       const responseCode = String(response.data.code);
 
+      let isLoggingOut = false;
       function handleLogout() {
-        authStore.resetStore();
+        if (isLoggingOut) return;
+        isLoggingOut = true;
+        authStore.resetStore().finally(() => {
+          isLoggingOut = false;
+        });
       }
 
       function logoutAndCleanup() {

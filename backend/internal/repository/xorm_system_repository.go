@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/internal/core"
+	"time"
 
 	"xorm.io/xorm"
 )
@@ -36,8 +37,8 @@ func (r *XormSystemRepository) UpsertHeartbeat(cmd core.HeartbeatCommand) (core.
 	}
 
 	if _, err := r.DB.Where("rustdesk_id = ?", cmd.RustdeskID).
-		Cols("is_online", "conns").
-		Update(&model.Device{IsOnline: true, Conns: cmd.ConnCount}); err != nil {
+		Cols("is_online", "conns", "updated_at").
+		Update(&model.Device{IsOnline: true, Conns: cmd.ConnCount, UpdatedAt: time.Now()}); err != nil {
 		return core.HeartbeatResult{}, err
 	}
 

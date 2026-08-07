@@ -44,12 +44,9 @@ func ApiAuth(app *iris.Application) iris.Handler {
 func AdminAuth(app *iris.Application) iris.Handler {
 	return func(context iris.Context) {
 		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
-		token := context.GetHeader("Authorization")
+		token := jwt.FromHeader(context)
 
 		authToken, get, err := getActiveAuthToken(db, token, true)
-		if !get || err != nil {
-			authToken, get, err = getActiveAuthToken(db, token, false)
-		}
 		if !get || err != nil {
 			recordAuthSecurityAudit(db, context, "admin_token_invalid", 0, "", false, authFailureReason(err, "Unauthorized"))
 			context.StopWithJSON(iris.StatusUnauthorized, iris.Map{"code": 401, "data": nil, "message": errcode.ErrUnauthorized.Error()})
@@ -103,7 +100,7 @@ func getActiveAuthToken(db *xorm.Engine, token string, isAdmin bool) (model.Auth
 func UserAuth(app *iris.Application) iris.Handler {
 	return func(context iris.Context) {
 		db := helper.GetAppDependency(app, "*xorm.Engine").(*xorm.Engine)
-		token := context.GetHeader("Authorization")
+		token := jwt.FromHeader(context)
 
 		authToken, get, err := getActiveAuthToken(db, token, false)
 		if !get || err != nil {

@@ -98,12 +98,15 @@ function handlePageSizeChange(size: number) {
 }
 
 async function handleClearAll() {
-  clearing.value = true;
-  const { error } = await request({ url: '/tokens/clear', method: 'post' });
-  clearing.value = false;
-  if (!error) {
-    window.$message?.success($t('common.deleteSuccess'));
-    loadData();
+  try {
+    clearing.value = true;
+    const { error } = await request({ url: '/tokens/clear', method: 'post' });
+    if (!error) {
+      window.$message?.success($t('common.deleteSuccess'));
+      loadData();
+    }
+  } finally {
+    clearing.value = false;
   }
 }
 

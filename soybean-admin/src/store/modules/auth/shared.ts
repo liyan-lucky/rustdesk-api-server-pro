@@ -9,4 +9,7 @@ export function getToken() {
 export function clearAuthStorage() {
   localStg.remove('token');
   localStg.remove('refreshToken');
+  localStg.remove('isAdmin');
+  localStg.remove('userType');
+  localStg.remove('globalTabs');
 }

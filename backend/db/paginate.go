@@ -40,7 +40,10 @@ func (p *Pagination) Paginate(query QueryFunc, bean, data interface{}) error {
 
 	// 计算所有相关的页码信息
 	p.TotalCount = totalCount
-	p.TotalPage = int(totalCount)/p.PageSize + 1
+	p.TotalPage = (int(totalCount) + p.PageSize - 1) / p.PageSize
+	if p.TotalPage < 1 {
+		p.TotalPage = 1
+	}
 	p.PrevPage = p.PageNo - 1
 	if p.PrevPage < 1 {
 		p.PrevPage = 1
@@ -96,6 +99,15 @@ func (p *Pagination) LastPage() int {
 
 // NewPagination 新建分页对象的函数，初始化当前页码和每页显示数量
 func NewPagination(pageNo, pageSize int) *Pagination {
+	if pageNo < 1 {
+		pageNo = 1
+	}
+	if pageSize < 1 {
+		pageSize = 10
+	}
+	if pageSize > 100 {
+		pageSize = 100
+	}
 	return &Pagination{
 		PageNo:   pageNo,
 		PageSize: pageSize,

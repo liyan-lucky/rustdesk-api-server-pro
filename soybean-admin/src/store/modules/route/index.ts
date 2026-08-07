@@ -218,6 +218,7 @@ export const useRouteStore = defineStore(SetupStoreId.Route, () => {
 
   /** Init auth route */
   async function initAuthRoute() {
+    if (isInitAuthRoute.value) return;
     if (authRouteMode.value === 'static') {
       initStaticAuthRoute();
     } else {
