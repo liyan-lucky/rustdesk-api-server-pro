@@ -83,7 +83,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'audit',
       icon: 'ph:warning-bold',
       i18nKey: 'route.audit',
-      order: 4
+      order: 4,
+      roles: ['R_SUPER']
     },
     children: [
       {
@@ -245,7 +246,8 @@ export const generatedRoutes: GeneratedRoute[] = [
       title: 'system',
       i18nKey: 'route.system',
       icon: 'hugeicons:system-update-01',
-      order: 5
+      order: 5,
+      roles: ['R_SUPER']
     },
     children: [
       {

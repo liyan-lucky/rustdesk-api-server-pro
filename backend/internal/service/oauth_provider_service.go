@@ -1784,9 +1784,6 @@ func (s *OAuthProviderService) issueClientOAuthToken(user *model.User, rustdeskI
 }
 
 func (s *OAuthProviderService) resolveClientCallbackURL(provider config.OAuthProviderConfig, requestBaseURL string) (string, error) {
-	if explicit := strings.TrimSpace(provider.RedirectURL); explicit != "" {
-		return explicit, nil
-	}
 	base := strings.TrimRight(strings.TrimSpace(requestBaseURL), "/")
 	if base == "" {
 		return "", errcode.New(errcode.ERR2025.Code, errcode.ERR2025.Message)
