@@ -154,12 +154,18 @@ func (c *OAuthController) currentBaseURL() string {
 
 func (c *OAuthController) oauthCallbackPage(success bool, errorCode, pollToken string) mvc.Result {
 	var title, body string
+	var schemeURL string
+	if success && pollToken != "" {
+		schemeURL = "rustdesk://oauth/callback?poll_token=" + pollToken
+	}
 	if success {
 		title = "第三方登录成功"
-		body = "<p class=\"ok\">已成功登录，正在返回客户端...</p>"
-		if pollToken != "" {
-			body += "<a href=\"rustdesk://oauth/callback?poll_token=" + pollToken + "\" id=\"launch-app\" class=\"launch-btn\">点击返回 RustDesk 客户端</a>"
-			body += "<p class=\"tip\">如未自动打开客户端，请点击上方链接</p>"
+		if schemeURL != "" {
+			body = "<p class=\"ok\">已成功登录！</p>"
+			body += "<a href=\"" + schemeURL + "\" class=\"launch-btn\" id=\"launch-btn\">返回 RustDesk 客户端</a>"
+			body += "<p class=\"tip\">请点击上方按钮返回客户端，或手动切回客户端继续</p>"
+		} else {
+			body = "<p class=\"ok\">已成功登录，请回到客户端继续。</p>"
 		}
 	} else {
 		title = "第三方登录失败"
@@ -170,27 +176,30 @@ func (c *OAuthController) oauthCallbackPage(success bool, errorCode, pollToken s
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>` + title + `</title>
+<title>` + title + `</title>`
+	if schemeURL != "" {
+		html += "\n<meta http-equiv=\"refresh\" content=\"0;url=" + schemeURL + "\">"
+	}
+	html += `
 <style>
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f5f5f5}
 .card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:40px 48px;max-width:420px;text-align:center}
 h1{font-size:20px;margin:0 0 16px}
-.ok{color:#16a34a;font-size:16px}
+.ok{color:#16a34a;font-size:16px;margin-bottom:8px}
 .err{color:#dc2626;font-size:16px}
 .code{color:#6b7280;font-size:13px;margin-top:8px}
-.launch-btn{display:inline-block;margin-top:16px;padding:10px 24px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:14px}
-.tip{color:#9ca3af;font-size:12px;margin-top:12px}
+.launch-btn{display:inline-block;margin-top:16px;padding:12px 32px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-size:16px;font-weight:500;transition:background .2s}
+.launch-btn:hover{background:#1d4ed8}
+.tip{color:#9ca3af;font-size:13px;margin-top:16px}
 </style>
 </head>
 <body>
 <div class="card">
 <h1>` + title + `</h1>
 ` + body + `
-</div>`
-	if success && pollToken != "" {
-		html += "\n<script>window.location.href='rustdesk://oauth/callback?poll_token=" + pollToken + "';</script>"
-	}
-	html += "\n</body>\n</html>"
+</div>
+</body>
+</html>`
 	c.Ctx.ContentType("text/html; charset=utf-8")
 	_, _ = c.Ctx.WriteString(html)
 	return mvc.Response{}
