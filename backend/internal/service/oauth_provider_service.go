@@ -1595,7 +1595,7 @@ func (s *OAuthProviderService) StartWebauthLogin(requestBaseURL, rustdeskId, uui
 		return "", "", err
 	}
 
-	loginURL := requestBaseURL + "/#/login?client_poll_token=" + url.QueryEscape(pollToken)
+	loginURL := requestBaseURL + "/#/client-webauth?poll_token=" + url.QueryEscape(pollToken)
 	return loginURL, pollToken, nil
 }
 

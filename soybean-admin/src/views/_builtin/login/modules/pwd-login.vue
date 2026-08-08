@@ -16,7 +16,10 @@ const { formRef, validate } = useNaiveForm();
 const oauthProviders = ref<Api.Auth.OAuthProvider[]>([]);
 const activeProvider = ref('');
 const clientWebauthCompleted = ref(false);
-const clientPollToken = computed(() => (typeof route.query.client_poll_token === 'string' ? route.query.client_poll_token : ''));
+const clientPollToken = computed(() => {
+  if (route.name !== 'client-webauth') return '';
+  return typeof route.query.poll_token === 'string' ? route.query.poll_token : '';
+});
 
 const model: Api.Form.LoginForm = reactive({
   username: '',

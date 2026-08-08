@@ -27,5 +27,17 @@ const builtinRoutes: CustomRoute[] = [ROOT_ROUTE, NOT_FOUND_ROUTE];
 
 /** create builtin vue routes */
 export function createBuiltinVueRoutes() {
-  return transformElegantRoutesToVueRoutes(builtinRoutes, layouts, views);
+  return [
+    ...transformElegantRoutesToVueRoutes(builtinRoutes, layouts, views),
+    {
+      name: 'client-webauth',
+      path: '/client-webauth',
+      component: () => import('@/components/business/client-webauth-page.vue'),
+      meta: {
+        title: 'client-webauth',
+        constant: true,
+        hideInMenu: true
+      }
+    }
+  ];
 }

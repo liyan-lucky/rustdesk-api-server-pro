@@ -28,7 +28,7 @@ func TestOAuthProviderService_WebauthAdminReturnsOfficialClientResult(t *testing
 	if err != nil {
 		t.Fatalf("start webauth login: %v", err)
 	}
-	if loginURL != "http://localhost:12345/#/login?client_poll_token="+url.QueryEscape(pollToken) {
+	if loginURL != "http://localhost:12345/#/client-webauth?poll_token="+url.QueryEscape(pollToken) {
 		t.Fatalf("webauth must reuse frontend login page: %s", loginURL)
 	}
 	if err = svc.ConfirmWebauthLogin(pollToken, admin.Id); err != nil {
