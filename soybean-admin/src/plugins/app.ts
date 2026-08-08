@@ -3,6 +3,32 @@ import { NButton } from 'naive-ui';
 import { appendVersion, getVersionTag } from '@/utils/version';
 import { $t } from '../locales';
 
+const DISMISS_KEY = 'rustdesk-api-version-dismissed';
+
+function getDismissedVersion(): string {
+  try {
+    return localStorage.getItem(DISMISS_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
+function setDismissedVersion(value: string) {
+  try {
+    localStorage.setItem(DISMISS_KEY, value);
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function clearDismissedVersion() {
+  try {
+    localStorage.removeItem(DISMISS_KEY);
+  } catch {
+    // ignore storage errors
+  }
+}
+
 export function setupAppVersionNotification() {
   let isShow = false;
 
@@ -11,8 +37,12 @@ export function setupAppVersionNotification() {
     const [buildTime, serverVersion] = await Promise.all([getHtmlBuildTime(), getServerVersion()]);
     const currentVersion = getVersionTag().replace(/^v/, '');
     if (buildTime === BUILD_TIME && (!serverVersion || serverVersion === currentVersion)) return;
-    isShow = true;
+
     const target = serverVersion || 'new build';
+    const dismissKey = `${currentVersion}|${target}|${buildTime}`;
+    if (getDismissedVersion() === dismissKey) return;
+
+    isShow = true;
     const n = window.$notification?.create({
       title: `${$t('system.updateTitle')} (${currentVersion} → ${target})`,
       content: `${appendVersion($t('system.updateContent'))} Server: ${target}`,
@@ -22,6 +52,7 @@ export function setupAppVersionNotification() {
             NButton,
             {
               onClick() {
+                setDismissedVersion(dismissKey);
                 n?.destroy();
               }
             },
@@ -32,6 +63,7 @@ export function setupAppVersionNotification() {
             {
               type: 'primary',
               onClick() {
+                clearDismissedVersion();
                 location.reload();
               }
             },
@@ -40,6 +72,7 @@ export function setupAppVersionNotification() {
         ]);
       },
       onClose() {
+        setDismissedVersion(dismissKey);
         isShow = false;
       }
     });
