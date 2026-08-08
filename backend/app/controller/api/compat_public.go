@@ -195,10 +195,14 @@ func (c *CompatPublicController) HandleOidcAuthQuery() mvc.Result {
 	}
 	if result == "" {
 		c.recordCompatAPIAudit(false, 200, "pending", "", nil)
-		errJSON, _ := json.Marshal(iris.Map{"error": errcode.New(errcode.ERR2215.Code, errcode.ERR2215.Message).Error()})
-		return mvc.Response{Object: iris.Map{"body": string(errJSON)}}
+		pendingJSON, _ := json.Marshal(iris.Map{"error": "No authed oidc is found"})
+		return mvc.Response{Object: iris.Map{"body": string(pendingJSON)}}
 	}
-	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
+	resultSummary := result
+	if len(resultSummary) > 200 {
+		resultSummary = resultSummary[:200]
+	}
+	c.recordCompatAPIAudit(false, 200, "ok", resultSummary, nil)
 	return mvc.Response{Object: iris.Map{"body": result}}
 }
 

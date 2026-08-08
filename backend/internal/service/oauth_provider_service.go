@@ -11,6 +11,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -1914,6 +1915,7 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 			return "", nil
 		}
 		if session.Result != "" {
+			log.Printf("[OIDC-DEBUG] returning cached result: %s", session.Result)
 			return session.Result, nil
 		}
 		ticket := strings.TrimSpace(session.Ticket)
@@ -1945,13 +1947,18 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 			"access_token": token,
 			"type":         "access_token",
 			"user": iris.Map{
-				"name":            user.Name,
+			"name":            user.Name,
 				"display_name":    user.Name,
 				"avatar":          account.Picture,
 				"email":           user.Email,
 				"note":            user.Note,
 				"status":          user.Status,
-				"info":            "",
+				"info": iris.Map{
+					"email_verification":       false,
+					"email_alarm_notification": false,
+					"login_device_whitelist":   []interface{}{},
+					"other":                    iris.Map{},
+				},
 				"is_admin":        false,
 				"third_auth_type": account.Provider,
 			},
@@ -2002,7 +2009,12 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 			"email":           user.Email,
 			"note":            user.Note,
 			"status":          user.Status,
-			"info":            "",
+			"info": iris.Map{
+				"email_verification":       false,
+				"email_alarm_notification": false,
+				"login_device_whitelist":   []interface{}{},
+				"other":                    iris.Map{},
+			},
 			"is_admin":        false,
 			"third_auth_type": account.Provider,
 		},

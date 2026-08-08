@@ -10,6 +10,12 @@ RustDesk API Server Pro 是一个面向 RustDesk 客户端的第三方 API 服�
 
 ## 最近更新
 
+- **v1.2.29** (2026-08-07)
+  - 普通用户查看权限增强：普通用户可查看日志审计和系统设置信息（只读），但不能执行操作
+  - 客户端OAuth统一回调：客户端和admin共用回调端点，通过 `rustdesk://` URL scheme 唤起客户端
+  - 新增 `AdminOrUserAuth` 中间件，支持管理员或普通用户访问
+  - 15个操作类API添加 isAdmin 检查，防止普通用户执行管理操作
+  - 前端路由和按钮添加权限控制
 - 兼容 RustDesk 客户端 1.4.9 主流程 API
 - 补齐地址簿兼容别名：`/api/ab/get`、`/api/ab/shared-profiles`、`/api/ab/shared/profiles`、`/api/ab/shared_profiles`
 - 修复共享地址簿跨用户读取和写入归属：共享读取可访问 owner 数据，写入需 owner 或 `rule >= 2`

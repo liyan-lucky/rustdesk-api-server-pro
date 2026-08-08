@@ -233,8 +233,10 @@ func (c *AuthController) renderOAuthCallbackPage(success bool, errorCode, pollTo
 			body = "<p class=\"ok\">已成功登录！</p>"
 			body += "<a href=\"" + schemeURL + "\" class=\"launch-btn\" id=\"launch-btn\">返回 RustDesk 客户端</a>"
 			body += "<p class=\"tip\">请点击上方按钮返回客户端<br>如按钮无效，请手动切回客户端</p>"
+			body += "<!-- DEBUG: schemeURL=" + schemeURL + " pollToken=" + pollToken + " -->"
 		} else {
 			body = "<p class=\"ok\">已成功登录，请回到客户端继续。</p>"
+			body += "<!-- DEBUG: pollToken is empty -->"
 		}
 	} else {
 		title = "第三方登录失败"

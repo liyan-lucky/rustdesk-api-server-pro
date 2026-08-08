@@ -17,8 +17,8 @@
 9. 新增数据模型必须注册到 cmd/sync.go 的 models 列表，否则 sync 命令不会自动建表。
 10. 鉴权中间件返回 401/406 时必须使用 StopWithJSON 返回带 ERR-xxxx 编码的 JSON，不能返回纯文本。
 
-当前快照（2026-08-06，使用前实时复核）：
-- VERSION：1.2.13
+当前快照（2026-08-08，使用前实时复核）：
+- VERSION：1.2.29
 - GHCR：ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest
 - 测试设备：ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net
 - root 账户当前不接受已有 SSH 密钥，使用 LiYan；该账户属于 docker/Administrators 组。
@@ -52,6 +52,8 @@
 - fr/de/es i18n 翻译补充至 85%+ 阈值
 - ErrorLog 模型注册到 sync 命令自动建表
 - 鉴权中间件 JSON 化 401/406 响应
+- AdminOrUserAuth 中间件：普通用户可查看审计/系统设置（只读），操作类 API 通过 isAdmin 检查限制
+- 客户端 OAuth 统一回调：客户端和 admin 共用回调端点，通过 PollToken 区分，客户端回调返回 HTML 页面包含 rustdesk:// URL scheme
 
 开始新对话后的执行顺序：
 1. git status、分支、远端分支、VERSION、最近提交和 Actions/GHCR 实时核验。

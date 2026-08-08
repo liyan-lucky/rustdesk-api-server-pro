@@ -1,6 +1,6 @@
-# 经验教训与*目偏好
+# 经验教训与技术笔记
 
-本文档记录项目维护过程中形成的经验、偏好和避免重复踩坑的约定。
+本文档记录项目维护过程中形成的经验、偏好、技术实现细节和避免重复踩坑的约定。
 
 ## 线上展示文案
 
@@ -23,6 +23,138 @@
 - RustDesk 官方客户端版本更新后，需要同步检查后端 `CompatSysinfoVersion`，并用最新客户端做登录、地址簿、设备列表、审计和扫码导入冒烟验证。
 - RustDesk 官方客户端版本更新后，不能只改兼容版本字符串；需要从官方源码梳理新增 API 路径。1.4.7 新增的 `/api/devices/deploy` 在当前项目中应返回 `NOT_ENABLED`，除非后续真正实现 hbbs 显式部署白名单，不能伪造 `OK`。
 - 版本字符串只表示已适配和验证的兼容目标，不等于完整实现官方 Pro 所有能力。
+
+## OAuth 统一回调实现
+
+### 问题背景
+OAuth provider 只能注册一个回调URL，但 admin 和客户端需要不同的处理：
+- Admin: 回调后重定向到管理后台，携带 ticket
+- 客户端: 回调后返回HTML页面，包含 `rustdesk://` URL scheme
+
+### 解决方案
+客户端和 admin 共用同一个回调URL (`/admin/auth/oauth/{provider}/callback`)，通过 state 中的 `PollToken` 区分：
+
+1. **客户端发起登录**: 调用 `BuildClientAuthURL` 生成授权URL，state 中包含 `PollToken`，返回授权URL和 pollToken 给客户端
+2. **Admin 发起登录**: 调用 `BuildAdminAuthURL` 生成授权URL，state 中不包含 `PollToken`，返回授权URL给前端
+3. **统一回调处理**: `ConsumeUnifiedCallback` 处理回调，检查 state 中的 `PollToken`。如果有则返回HTML页面包含 `rustdesk://oauth/callback?poll_token=xxx`；如果没有则返回 ticket 和重定向URL
+
+### 浏览器安全提示
+当用户点击 `rustdesk://...` 链接时，浏览器会显示安全提示（"此网站想打开 RustDesk"）。这是浏览器的正常行为，提示框显示的是当前页面域名，而不是目标URL scheme。
+
+### 调试信息
+在 `renderOAuthCallbackPage` 中添加了HTML注释：`<!-- DEBUG: schemeURL=rustdesk://oauth/callback?poll_token=xxx pollToken=xxx -->`，可以通过查看网页源代码确认 pollToken 是否正确。
+
+## AdminOrUserAuth 中间件
+
+### 问题背景
+需要让普通用户可以查看日志审计和系统设置信息，但不能执行操作。
+
+### 解决方案
+新建 `AdminOrUserAuth` 中间件，允许管理员和普通用户访问，但操作类API需要检查 `isAdmin`。
+
+### 前端权限控制
+- 路由 roles 配置：`['R_SUPER', 'R_USER']`
+- 按钮显示控制：`v-if="isAdmin"`
+- 按钮禁用控制：`:disabled="!isAdmin"`
+
+## 错误码规范
+
+### ERR1xxx: 通用错误
+- ERR1001: 验证码错误
+- ERR1002: 用户不存在
+- ERR1003: 用户名或密码错误
+- ERR1004: Token无效或已过期
+- ERR1005: 权限不足
+
+### ERR2xxx: OAuth/OIDC 相关错误
+- ERR2001: Provider不存在
+- ERR2002: Provider未启用
+- ERR2003: 缺少必要参数
+- ERR2004: State无效或已过期
+- ERR2005: 生成State失败
+- ERR2006: 生成Ticket失败
+- ERR2007: Ticket无效
+- ERR2008: Ticket已过期
+- ERR2009: 用户不可用
+
+### ERR22xx: 客户端 OAuth 相关错误
+- ERR2203: Provider不支持客户端登录
+- ERR2204: PollToken无效
+- ERR2205: PollToken已过期
+- ERR2206: Ticket不是客户端类型
+- ERR2207: 生成PollToken失败
+- ERR2208: 账户不可绑定
+- ERR2209: Provider不可达
+- ERR2210: State已过期
+- ERR2212: 未知错误
+
+## 部署流程
+
+### 编译（交叉编译 Linux 版本）
+```bash
+cd backend
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o rustdesk-api-server-pro
+```
+
+### 上传到容器并重启
+```bash
+# 上传到 NAS /tmp/
+scp -P 2828 backend/rustdesk-api-server-pro LiYan@liyan-fnosnas.dynv6.net:/tmp/
+
+# 复制到容器并设置权限
+ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net 'docker cp /tmp/rustdesk-api-server-pro rustdesk-api-server-pro:/app/rustdesk-api-server-pro'
+ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net 'docker exec rustdesk-api-server-pro chmod 755 /app/rustdesk-api-server-pro'
+
+# 重启容器
+ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net 'docker restart rustdesk-api-server-pro'
+```
+
+### 查看日志
+```bash
+ssh -p 2828 LiYan@liyan-fnosnas.dynv6.net 'docker logs rustdesk-api-server-pro --tail 100'
+```
+
+### 部署关键教训
+- 容器运行的是镜像内 `/app/rustdesk-api-server-pro` 二进制，不是数据目录 `/app/data/` 中的文件。
+- 必须交叉编译 Linux 版本（`GOOS=linux GOARCH=amd64 CGO_ENABLED=0`），不能用 Windows PE 格式。
+- 上传后必须 `chmod 755` 确保可执行权限。
+
+## 性能优化建议
+
+### 数据库
+- 添加索引：`token_hash`, `user_id`, `rustdesk_id`
+- 定期清理过期数据：`auth_token`, `oauth_login_session`
+- 考虑使用连接池
+
+### 缓存
+- OAuth metadata 缓存（已实现）
+- 用户信息缓存
+- 配置缓存
+
+### 前端
+- 路由懒加载
+- 组件按需加载
+- 静态资源CDN
+
+## 安全建议
+
+### Token安全
+- 使用强随机数生成 token
+- Token 哈希存储
+- 定期清理过期 token
+- 防止重放攻击
+
+### OAuth安全
+- State 一次性使用
+- PKCE 防止授权码拦截
+- 回调URL验证
+- 防止CSRF攻击
+
+### 数据安全
+- 敏感信息加密
+- SQL注入防护
+- XSS防护
+- CSRF防护
 
 ## GHCR 镜像发布
 
