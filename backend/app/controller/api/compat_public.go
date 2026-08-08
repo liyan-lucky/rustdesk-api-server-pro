@@ -158,6 +158,27 @@ func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
 		return mvc.Response{Object: iris.Map{"error": string(errJSON)}}
 	}
 
+	if op == "webauth" {
+		cfg := config.GetServerConfig()
+		if cfg.WebAuthn == nil || !cfg.WebAuthn.Enabled {
+			c.recordCompatAPIAudit(true, 200, "webauth disabled", "", body)
+			errJSON, _ := json.Marshal(iris.Map{"error": errcode.New(errcode.ERR2216.Code, errcode.ERR2216.Message).Error()})
+			return mvc.Response{Object: iris.Map{"error": string(errJSON)}}
+		}
+		oauthService := service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
+		loginURL, pollToken, err := oauthService.StartWebauthLogin(c.currentBaseURL(), id, uuid, deviceOs, deviceType, deviceName)
+		if err != nil {
+			c.recordCompatAPIAudit(true, 500, err.Error(), "", body)
+			errJSON, _ := json.Marshal(iris.Map{"error": err.Error()})
+			return mvc.Response{Object: iris.Map{"error": string(errJSON)}}
+		}
+		c.recordCompatAPIAudit(false, 200, "ok", "", body)
+		return mvc.Response{Object: iris.Map{
+			"code": pollToken,
+			"url":  loginURL,
+		}}
+	}
+
 	oauthService := service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 	authURL, pollToken, enabled, err := oauthService.BuildClientAuthURL(op, c.currentBaseURL(), id, uuid, deviceOs, deviceType, deviceName)
 	if err != nil {
