@@ -1915,7 +1915,9 @@ func (s *OAuthProviderService) ConsumeUnifiedCallback(providerName, code, state 
 
 func (s *OAuthProviderService) setPollEntry(pollToken, ticket string, expiresAt time.Time) error {
 	if s.db != nil {
-		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "poll", KeyHash: util.Sha256Hex(pollToken), Ticket: ticket, ExpiresAt: expiresAt, Status: 1})
+		keyHash := util.Sha256Hex(pollToken)
+		_, _ = s.db.Where("key_hash = ?", keyHash).Delete(&model.OAuthLoginSession{})
+		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "poll", KeyHash: keyHash, Ticket: ticket, ExpiresAt: expiresAt, Status: 1})
 		return err
 	}
 	now := time.Now()
