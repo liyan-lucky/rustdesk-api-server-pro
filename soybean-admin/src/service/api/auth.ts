@@ -79,7 +79,7 @@ export function fetchUserLogin(model: Api.Form.LoginForm) {
 }
 
 export function fetchWebauthnEnabled() {
-  return request<{ enabled: boolean }>({ url: '/auth/webauthn/enabled' });
+  return request<{ enabled: boolean; tlsPort?: string }>({ url: '/auth/webauthn/enabled' });
 }
 
 export function fetchWebauthnLoginBegin(username: string) {

@@ -51,6 +51,9 @@ type HttpConfig struct {
 	PrintRequestLog bool   `yaml:"printRequestLog"`
 	Port            string `yaml:"port"`
 	StaticDir       string `yaml:"staticdir"`
+	TLSPort         string `yaml:"tlsPort"`
+	TLSCertFile     string `yaml:"tlsCertFile"`
+	TLSKeyFile      string `yaml:"tlsKeyFile"`
 }
 
 type SmtpConfig struct {

@@ -4,20 +4,27 @@ import { useRoute } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
+import { useRouteStore } from '@/store/modules/route';
 import { fetchCaptcha, fetchOAuthLoginUrl, fetchOAuthProviders, fetchWebauthnEnabled } from '@/service/api/auth';
 import { isWebAuthnSupported } from '@/utils/webauthn';
+import { localStg } from '@/utils/storage';
+import { appendVersion, getVersionTag } from '@/utils/version';
+import { useRouterPush } from '@/hooks/common/router';
 
 defineOptions({
   name: 'PwdLogin'
 });
 
 const authStore = useAuthStore();
+const routeStore = useRouteStore();
 const route = useRoute();
+const { toLogin, redirectFromLogin } = useRouterPush(false);
 const { formRef, validate } = useNaiveForm();
 const oauthProviders = ref<Api.Auth.OAuthProvider[]>([]);
 const activeProvider = ref('');
 const passkeyEnabled = ref(false);
 const passkeyLoading = ref(false);
+const passkeyTlsPort = ref('');
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -92,6 +99,7 @@ async function loadPasskeyEnabled() {
   try {
     const { data } = await fetchWebauthnEnabled();
     passkeyEnabled.value = data?.enabled === true;
+    passkeyTlsPort.value = data?.tlsPort || '';
   } catch {
     passkeyEnabled.value = false;
   }
@@ -103,12 +111,42 @@ async function handlePasskeyLogin() {
     window.$message?.warning($t('page.login.passkey.usernameRequired'));
     return;
   }
-  passkeyLoading.value = true;
-  try {
-    await authStore.loginByPasskey(model.username);
-  } finally {
-    passkeyLoading.value = false;
+  if (!passkeyTlsPort.value) {
+    window.$message?.error($t('page.login.passkey.notSupported'));
+    return;
   }
+
+  passkeyLoading.value = true;
+
+  const host = window.location.hostname;
+  const tlsPort = passkeyTlsPort.value.replace(/^:/, '');
+  const authUrl = `https://${host}:${tlsPort}/admin/auth/webauthn/auth-page?username=${encodeURIComponent(model.username)}`;
+
+  const messageHandler = async (event: MessageEvent) => {
+    if (event.data?.type !== 'webauthn-login') return;
+    window.removeEventListener('message', messageHandler);
+
+    const { token, isAdmin } = event.data;
+    if (token) {
+      localStg.set('token', token);
+      if (isAdmin !== undefined) {
+        localStg.set('isAdmin', isAdmin);
+      }
+      await authStore.initUserInfo();
+      await routeStore.initAuthRoute();
+      await redirectFromLogin();
+      if (routeStore.isInitAuthRoute) {
+        window.$notification?.success({
+          title: `${$t('page.login.common.loginSuccess')} (${getVersionTag()})`,
+          content: appendVersion($t('page.login.common.welcomeBack', { userName: authStore.userInfo.userName })),
+          duration: 4500
+        });
+      }
+    }
+    passkeyLoading.value = false;
+  };
+  window.addEventListener('message', messageHandler);
+  window.open(authUrl, '_blank', 'width=500,height=600');
 }
 
 async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {

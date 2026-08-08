@@ -3,17 +3,11 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
-import {
-  fetchCaptcha,
-  fetchUserLogin,
-  fetchWebauthnEnabled,
-  fetchWebauthnLoginBegin,
-  fetchWebauthnLoginFinish
-} from '@/service/api/auth';
+import { fetchCaptcha, fetchUserLogin, fetchWebauthnEnabled } from '@/service/api/auth';
 import { localStg } from '@/utils/storage';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouteStore } from '@/store/modules/route';
-import { isWebAuthnSupported, prepareAssertionOptions, serializeAssertion } from '@/utils/webauthn';
+import { isWebAuthnSupported } from '@/utils/webauthn';
 
 defineOptions({
   name: 'UserLogin'
@@ -26,6 +20,7 @@ const { formRef, validate } = useNaiveForm();
 const loading = ref(false);
 const passkeyEnabled = ref(false);
 const passkeyLoading = ref(false);
+const passkeyTlsPort = ref('');
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -114,6 +109,7 @@ async function loadPasskeyEnabled() {
   try {
     const { data } = await fetchWebauthnEnabled();
     passkeyEnabled.value = data?.enabled === true;
+    passkeyTlsPort.value = data?.tlsPort || '';
   } catch {
     passkeyEnabled.value = false;
   }
@@ -125,39 +121,41 @@ async function handlePasskeyLogin() {
     window.$message?.warning($t('page.login.passkey.usernameRequired'));
     return;
   }
-  passkeyLoading.value = true;
-  try {
-    const { data: beginData, error: beginError } = await fetchWebauthnLoginBegin(model.username);
-    if (beginError || !beginData?.publicKey) {
-      window.$message?.error($t('page.login.passkey.beginFailed'));
-      return;
-    }
-    const publicKey = prepareAssertionOptions(beginData.publicKey);
-    const credential = (await navigator.credentials.get({ publicKey })) as PublicKeyCredential | null;
-    if (!credential) return;
+  if (!passkeyTlsPort.value) {
+    window.$message?.error($t('page.login.passkey.notSupported'));
+    return;
+  }
 
-    const serialized = serializeAssertion(credential);
-    const { data: loginToken, error: finishError } = await fetchWebauthnLoginFinish(serialized);
-    if (!finishError && loginToken?.token) {
-      localStg.set('token', loginToken.token);
+  passkeyLoading.value = true;
+
+  const host = window.location.hostname;
+  const tlsPort = passkeyTlsPort.value.replace(/^:/, '');
+  const authUrl = `https://${host}:${tlsPort}/admin/auth/webauthn/auth-page?username=${encodeURIComponent(model.username)}`;
+
+  const messageHandler = async (event: MessageEvent) => {
+    if (event.data?.type !== 'webauthn-login') return;
+    window.removeEventListener('message', messageHandler);
+
+    const { token, isAdmin } = event.data;
+    if (token) {
+      localStg.set('token', token);
       localStg.set('userType', 'user');
-      if (loginToken.isAdmin !== undefined) {
-        localStg.set('isAdmin', loginToken.isAdmin);
+      if (isAdmin !== undefined) {
+        localStg.set('isAdmin', isAdmin);
       }
-      authStore.token = loginToken.token;
+      authStore.token = token;
       await authStore.initUserInfo();
       await routeStore.initAuthRoute();
-      if (loginToken.isAdmin) {
+      if (isAdmin) {
         await router.push({ name: 'home' });
       } else {
         await router.push({ name: 'my-devices_peers' });
       }
     }
-  } catch {
-    window.$message?.error($t('page.login.passkey.cancelled'));
-  } finally {
     passkeyLoading.value = false;
-  }
+  };
+  window.addEventListener('message', messageHandler);
+  window.open(authUrl, '_blank', 'width=500,height=600');
 }
 
 onMounted(() => {

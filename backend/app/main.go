@@ -2,11 +2,20 @@ package app
 
 import (
 	"context"
+	"crypto/tls"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
 
 	"rustdesk-api-server-pro/app/middleware"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
 	"rustdesk-api-server-pro/internal/errcode"
+	"rustdesk-api-server-pro/util"
 
 	"github.com/kataras/iris/v12"
 	"xorm.io/xorm"
@@ -62,6 +71,10 @@ func StartServerWithContext(ctx context.Context) (bool, error) {
 
 	middleware.RecordContainerEvent(dbEngine, "INFO", "system", "Server started on port "+cfg.HttpConfig.Port)
 
+	if cfg.HttpConfig.TLSPort != "" {
+		go startTLSServer(app, cfg)
+	}
+
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
@@ -81,4 +94,60 @@ func StartServerWithContext(ctx context.Context) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// startTLSServer 在 goroutine 中启动 HTTPS 反向代理服务器，用于 WebAuthn 等需要安全上下文的功能
+func startTLSServer(app *iris.Application, cfg *config.ServerConfig) {
+	certFile := cfg.HttpConfig.TLSCertFile
+	keyFile := cfg.HttpConfig.TLSKeyFile
+
+	if certFile == "" || keyFile == "" {
+		certFile = filepath.Join(filepath.Dir(cfg.Db.Dsn), "tls-cert.pem")
+		keyFile = filepath.Join(filepath.Dir(cfg.Db.Dsn), "tls-key.pem")
+	}
+
+	if _, err := os.Stat(certFile); os.IsNotExist(err) {
+		host := "localhost"
+		if h, _, e := splitHostPort(cfg.HttpConfig.Port); e == nil && h != "" {
+			host = h
+		}
+		app.Logger().Infof("生成自签名证书: host=%s", host)
+		if _, _, err := util.GenerateSelfSignedCert(certFile, keyFile, host); err != nil {
+			app.Logger().Errorf("生成自签名证书失败: %v", err)
+			return
+		}
+	}
+
+	httpPort := strings.TrimPrefix(cfg.HttpConfig.Port, ":")
+	if httpPort == "" {
+		httpPort = "8080"
+	}
+	target := &url.URL{Scheme: "http", Host: "127.0.0.1:" + httpPort}
+	proxy := httputil.NewSingleHostReverseProxy(target)
+	originalDirector := proxy.Director
+	proxy.Director = func(req *http.Request) {
+		originalDirector(req)
+		req.Header.Set("X-Forwarded-Proto", "https")
+	}
+
+	tlsServer := &http.Server{
+		Addr:    cfg.HttpConfig.TLSPort,
+		Handler: proxy,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		},
+		ReadHeaderTimeout: 10 * time.Second,
+	}
+
+	app.Logger().Infof("HTTPS 反向代理监听: %s -> http://127.0.0.1:%s", cfg.HttpConfig.TLSPort, httpPort)
+	if err := tlsServer.ListenAndServeTLS(certFile, keyFile); err != nil && err != http.ErrServerClosed {
+		app.Logger().Errorf("HTTPS 服务器启动失败: %v", err)
+	}
+}
+
+func splitHostPort(addr string) (string, string, error) {
+	if i := strings.LastIndex(addr, ":"); i >= 0 {
+		return addr[:i], addr[i+1:], nil
+	}
+	return "", "", nil
 }

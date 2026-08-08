@@ -31,6 +31,7 @@ func (c *AuthController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("POST", "/auth/webauthn/login/begin", "PostWebauthnLoginBegin")
 	b.Handle("POST", "/auth/webauthn/login/finish", "PostWebauthnLoginFinish")
 	b.Handle("GET", "/auth/webauthn/enabled", "GetWebauthnEnabled")
+	b.Handle("GET", "/auth/webauthn/auth-page", "GetWebauthnAuthPage")
 }
 
 func (c *AuthController) PostAuthLogin() mvc.Result {
@@ -391,7 +392,7 @@ func (c *AuthController) GetWebauthnEnabled() mvc.Result {
 			enabled = service.IsEnabled()
 		}
 	}
-	return c.Success(iris.Map{"enabled": enabled}, "ok")
+	return c.Success(iris.Map{"enabled": enabled, "tlsPort": c.Cfg.HttpConfig.TLSPort}, "ok")
 }
 
 func (c *AuthController) PostWebauthnLoginBegin() mvc.Result {
@@ -478,4 +479,161 @@ func (c *AuthController) PostWebauthnLoginFinish() mvc.Result {
 		"token":   token,
 		"isAdmin": user.IsAdmin,
 	}, "ok")
+}
+
+// GetWebauthnAuthPage 返回 Passkey 认证 HTML 页面（需通过 HTTPS 访问）
+func (c *AuthController) GetWebauthnAuthPage() mvc.Result {
+	username := c.Ctx.URLParam("username")
+	redirect := c.Ctx.URLParam("redirect")
+
+	html := `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passkey 认证</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f5f5f5; }
+.card { background: #fff; border-radius: 12px; padding: 40px; max-width: 400px; width: 90%; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; }
+.icon { font-size: 48px; margin-bottom: 16px; }
+h2 { color: #333; margin-bottom: 8px; }
+p { color: #666; margin-bottom: 24px; line-height: 1.5; }
+#status { color: #1890ff; font-size: 14px; margin-top: 16px; min-height: 20px; }
+.error { color: #ff4d4f !important; }
+.success { color: #52c41a !important; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🔑</div>
+  <h2>Passkey 认证</h2>
+  <p id="desc">请在浏览器弹窗中完成 Passkey 认证</p>
+  <div id="status">正在准备...</div>
+</div>
+<script>
+const username = "` + username + `";
+const redirect = "` + redirect + `";
+
+function setStatus(msg, cls) {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.className = cls || "";
+}
+
+function bufferToBase64url(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let str = "";
+  for (let i = 0; i < bytes.length; i++) str += String.fromCharCode(bytes[i]);
+  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function base64urlToBuffer(b64url) {
+  const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/");
+  const pad = b64.length % 4 === 0 ? "" : "=".repeat(4 - b64.length % 4);
+  const binary = atob(b64 + pad);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function prepareAssertionOptions(options) {
+  const prepared = {
+    challenge: base64urlToBuffer(options.challenge),
+    rpId: options.rpId,
+    timeout: options.timeout,
+    userVerification: options.userVerification
+  };
+  if (options.allowCredentials) {
+    prepared.allowCredentials = options.allowCredentials.map(c => ({
+      id: base64urlToBuffer(c.id),
+      type: c.type,
+      transports: c.transports
+    }));
+  }
+  return prepared;
+}
+
+function serializeAssertion(cred) {
+  return {
+    id: cred.id,
+    rawId: bufferToBase64url(cred.rawId),
+    type: cred.type,
+    response: {
+      authenticatorData: bufferToBase64url(cred.response.authenticatorData),
+      clientDataJSON: bufferToBase64url(cred.response.clientDataJSON),
+      signature: bufferToBase64url(cred.response.signature),
+      userHandle: cred.response.userHandle ? bufferToBase64url(cred.response.userHandle) : null
+    }
+  };
+}
+
+async function doLogin() {
+  try {
+    if (!window.PublicKeyCredential) {
+      setStatus("此浏览器不支持 Passkey", "error");
+      return;
+    }
+
+    setStatus("正在请求认证选项...");
+    const beginResp = await fetch("/admin/auth/webauthn/login/begin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: username })
+    });
+    const beginData = await beginResp.json();
+    if (beginData.code !== 200 || !beginData.data?.publicKey) {
+      setStatus(beginData.message || "请求认证选项失败", "error");
+      return;
+    }
+
+    setStatus("请完成 Passkey 认证...");
+    const publicKey = prepareAssertionOptions(beginData.data.publicKey);
+    const credential = await navigator.credentials.get({ publicKey });
+    if (!credential) {
+      setStatus("认证已取消", "error");
+      return;
+    }
+
+    setStatus("正在验证...");
+    const serialized = serializeAssertion(credential);
+    const finishResp = await fetch("/admin/auth/webauthn/login/finish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(serialized)
+    });
+    const finishData = await finishResp.json();
+    if (finishData.code !== 200 || !finishData.data?.token) {
+      setStatus(finishData.message || "认证失败", "error");
+      return;
+    }
+
+    setStatus("认证成功！", "success");
+
+    if (window.opener) {
+      window.opener.postMessage({
+        type: "webauthn-login",
+        token: finishData.data.token,
+        isAdmin: finishData.data.isAdmin
+      }, "*");
+      setTimeout(() => window.close(), 500);
+    } else if (redirect) {
+      const sep = redirect.includes("?") ? "&" : "?";
+      window.location.href = redirect + sep + "token=" + encodeURIComponent(finishData.data.token) + "&isAdmin=" + finishData.data.isAdmin;
+    } else {
+      document.getElementById("desc").textContent = "认证成功，可以关闭此窗口";
+    }
+  } catch (e) {
+    setStatus("认证过程出错: " + (e.message || e), "error");
+  }
+}
+
+doLogin();
+</script>
+</body>
+</html>`
+
+	c.Ctx.ContentType("text/html; charset=utf-8")
+	c.Ctx.WriteString(html)
+	return nil
 }
