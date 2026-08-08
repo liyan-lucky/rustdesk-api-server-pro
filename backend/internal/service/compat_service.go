@@ -121,6 +121,9 @@ func (s *CompatService) LoginOptions() core.CompatLoginOptionsResult {
 	for _, provider := range oauthService.ListClientProviders() {
 		options = append(options, "oidc/"+provider.Name)
 	}
+	if s.cfg != nil && s.cfg.WebAuthn != nil && s.cfg.WebAuthn.Enabled {
+		options = append(options, "oidc/webauth")
+	}
 	return core.CompatLoginOptionsResult{Options: options}
 }
 

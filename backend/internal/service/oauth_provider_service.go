@@ -1571,6 +1571,63 @@ func (s *OAuthProviderService) ListClientProviders() []OAuthProviderMeta {
 	return metas
 }
 
+// StartWebauthLogin 为客户端发起 WebAuthn 网页登录流程。
+// 返回登录页面 URL 和 pollToken，客户端打开浏览器到该 URL 完成登录后轮询 pollToken 获取 ticket。
+func (s *OAuthProviderService) StartWebauthLogin(requestBaseURL, rustdeskId, uuid, deviceOs, deviceType, deviceName string) (string, string, error) {
+	pollToken := randomOAuthToken(24)
+	if pollToken == "" {
+		return "", "", errcode.New(errcode.ERR2207.Code, errcode.ERR2207.Message)
+	}
+
+	stateTTL := 10 * time.Minute
+	err := s.setState(pollToken, oauthStateEntry{
+		ProviderName: "webauth",
+		RustdeskId:   rustdeskId,
+		Uuid:         uuid,
+		DeviceOs:     deviceOs,
+		DeviceType:   deviceType,
+		DeviceName:   deviceName,
+		PollToken:    pollToken,
+		ExpiresAt:    time.Now().Add(stateTTL),
+	})
+	if err != nil {
+		return "", "", err
+	}
+
+	loginURL := requestBaseURL + "/api/oauth/webauth/login-page?poll_token=" + pollToken
+	return loginURL, pollToken, nil
+}
+
+// ConfirmWebauthLogin 确认 WebAuthn 网页登录，创建 ticket 并存入 poll entry 供客户端轮询。
+func (s *OAuthProviderService) ConfirmWebauthLogin(pollToken string, userID int) error {
+	stored, ok := s.popState(pollToken)
+	if !ok {
+		return errcode.New(errcode.ERR2204.Code, errcode.ERR2204.Message)
+	}
+
+	ticketTTL := 5 * time.Minute
+	ticket := randomOAuthToken(32)
+	if ticket == "" {
+		return errcode.New(errcode.ERR2207.Code, errcode.ERR2207.Message)
+	}
+
+	err := s.setTicket(ticket, oauthTicketEntry{
+		UserID:      userID,
+		IsAdmin:     false,
+		RustdeskId:  stored.RustdeskId,
+		Uuid:        stored.Uuid,
+		DeviceOs:    stored.DeviceOs,
+		DeviceType:  stored.DeviceType,
+		DeviceName:  stored.DeviceName,
+		ExpiresAt:   time.Now().Add(ticketTTL),
+	})
+	if err != nil {
+		return err
+	}
+
+	return s.setPollEntry(pollToken, ticket, time.Now().Add(ticketTTL))
+}
+
 // BuildClientAuthURL builds the OAuth authorization URL for a desktop/mobile client.
 // It returns the authorization URL, a one-time poll token the client uses to poll
 // for the login ticket, whether the provider is enabled, and any error.
