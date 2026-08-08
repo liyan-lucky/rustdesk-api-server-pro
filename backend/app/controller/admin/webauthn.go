@@ -1,6 +1,9 @@
 package admin
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/internal/errcode"
@@ -74,7 +77,12 @@ func (c *WebauthnController) PostRegisterFinish() mvc.Result {
 		return c.Error(nil, err.Error())
 	}
 
-	parsed, err := v2service.ParseCredentialCreationBody(c.Ctx.Request().Body)
+	bodyBytes, err := io.ReadAll(c.Ctx.Request().Body)
+	if err != nil {
+		return c.Error(nil, errcode.New(errcode.ERR3105.Code, errcode.ERR3105.Message).Error())
+	}
+
+	parsed, err := v2service.ParseCredentialCreationBody(bytes.NewReader(bodyBytes))
 	if err != nil {
 		return c.Error(nil, errcode.New(errcode.ERR3105.Code, errcode.ERR3105.Message).Error())
 	}
@@ -82,7 +90,7 @@ func (c *WebauthnController) PostRegisterFinish() mvc.Result {
 	var form struct {
 		Name string `json:"name"`
 	}
-	_ = c.Ctx.ReadJSON(&form)
+	_ = json.Unmarshal(bodyBytes, &form)
 	credentialName := strings.TrimSpace(form.Name)
 	if credentialName == "" {
 		credentialName = "Passkey"

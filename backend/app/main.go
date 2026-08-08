@@ -107,12 +107,12 @@ func startTLSServer(app *iris.Application, cfg *config.ServerConfig) {
 	}
 
 	if _, err := os.Stat(certFile); os.IsNotExist(err) {
-		host := "localhost"
-		if h, _, e := splitHostPort(cfg.HttpConfig.Port); e == nil && h != "" {
-			host = h
+		hosts := cfg.HttpConfig.TLSHosts
+		if len(hosts) == 0 {
+			hosts = []string{"localhost", "127.0.0.1"}
 		}
-		app.Logger().Infof("生成自签名证书: host=%s", host)
-		if _, _, err := util.GenerateSelfSignedCert(certFile, keyFile, host); err != nil {
+		app.Logger().Infof("生成自签名证书: hosts=%v", hosts)
+		if _, _, err := util.GenerateSelfSignedCert(certFile, keyFile, hosts); err != nil {
 			app.Logger().Errorf("生成自签名证书失败: %v", err)
 			return
 		}
@@ -143,11 +143,4 @@ func startTLSServer(app *iris.Application, cfg *config.ServerConfig) {
 	if err := tlsServer.ListenAndServeTLS(certFile, keyFile); err != nil && err != http.ErrServerClosed {
 		app.Logger().Errorf("HTTPS 服务器启动失败: %v", err)
 	}
-}
-
-func splitHostPort(addr string) (string, string, error) {
-	if i := strings.LastIndex(addr, ":"); i >= 0 {
-		return addr[:i], addr[i+1:], nil
-	}
-	return "", "", nil
 }

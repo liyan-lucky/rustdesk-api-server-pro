@@ -7,7 +7,6 @@ import { fetchCaptcha, fetchUserLogin, fetchWebauthnEnabled } from '@/service/ap
 import { localStg } from '@/utils/storage';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouteStore } from '@/store/modules/route';
-import { isWebAuthnSupported } from '@/utils/webauthn';
 
 defineOptions({
   name: 'UserLogin'
@@ -102,10 +101,6 @@ function switchToAdmin() {
 }
 
 async function loadPasskeyEnabled() {
-  if (!isWebAuthnSupported()) {
-    passkeyEnabled.value = false;
-    return;
-  }
   try {
     const { data } = await fetchWebauthnEnabled();
     passkeyEnabled.value = data?.enabled === true;

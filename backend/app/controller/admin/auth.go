@@ -32,6 +32,7 @@ func (c *AuthController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("POST", "/auth/webauthn/login/finish", "PostWebauthnLoginFinish")
 	b.Handle("GET", "/auth/webauthn/enabled", "GetWebauthnEnabled")
 	b.Handle("GET", "/auth/webauthn/auth-page", "GetWebauthnAuthPage")
+	b.Handle("GET", "/auth/webauthn/register-page", "GetWebauthnRegisterPage")
 }
 
 func (c *AuthController) PostAuthLogin() mvc.Result {
@@ -629,6 +630,187 @@ async function doLogin() {
 }
 
 doLogin();
+</script>
+</body>
+</html>`
+
+	c.Ctx.ContentType("text/html; charset=utf-8")
+	c.Ctx.WriteString(html)
+	return nil
+}
+
+// GetWebauthnRegisterPage 返回 Passkey 注册 HTML 页面（需通过 HTTPS 访问）
+// 通过 postMessage 从 opener 获取认证 token，完成注册后通知 opener
+func (c *AuthController) GetWebauthnRegisterPage() mvc.Result {
+	html := `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passkey 注册</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f5f5f5; }
+.card { background: #fff; border-radius: 12px; padding: 40px; max-width: 400px; width: 90%; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; }
+.icon { font-size: 48px; margin-bottom: 16px; }
+h2 { color: #333; margin-bottom: 8px; }
+p { color: #666; margin-bottom: 24px; line-height: 1.5; }
+#status { color: #1890ff; font-size: 14px; margin-top: 16px; min-height: 20px; }
+.error { color: #ff4d4f !important; }
+.success { color: #52c41a !important; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🔑</div>
+  <h2>Passkey 注册</h2>
+  <p id="desc">请在浏览器弹窗中完成 Passkey 注册</p>
+  <div id="status">等待认证信息...</div>
+</div>
+<script>
+let authToken = "";
+let credName = "";
+
+function setStatus(msg, cls) {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.className = cls || "";
+}
+
+function bufferToBase64url(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let str = "";
+  for (let i = 0; i < bytes.length; i++) str += String.fromCharCode(bytes[i]);
+  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function base64urlToBuffer(b64url) {
+  const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/");
+  const pad = b64.length % 4 === 0 ? "" : "=".repeat(4 - b64.length % 4);
+  const binary = atob(b64 + pad);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function prepareCreationOptions(options) {
+  const prepared = {
+    challenge: base64urlToBuffer(options.challenge),
+    rp: { name: options.rp.name, id: options.rp.id },
+    user: {
+      id: base64urlToBuffer(options.user.id),
+      name: options.user.name,
+      displayName: options.user.displayName
+    },
+    pubKeyCredParams: options.pubKeyCredParams,
+    timeout: options.timeout,
+    excludeCredentials: (options.excludeCredentials || []).map(c => ({
+      id: base64urlToBuffer(c.id),
+      type: c.type,
+      transports: c.transports
+    })),
+    authenticatorSelection: options.authenticatorSelection,
+    attestation: options.attestation || "none"
+  };
+  return prepared;
+}
+
+function serializeCreation(cred) {
+  return {
+    id: cred.id,
+    rawId: bufferToBase64url(cred.rawId),
+    type: cred.type,
+    response: {
+      attestationObject: bufferToBase64url(cred.response.attestationObject),
+      clientDataJSON: bufferToBase64url(cred.response.clientDataJSON)
+    },
+    getClientExtensionResults: {}
+  };
+}
+
+window.addEventListener("message", async function(event) {
+  if (event.data?.type === "webauthn-register-data") {
+    authToken = event.data.token || "";
+    credName = event.data.name || "";
+    window.removeEventListener("message", arguments.callee);
+    await doRegister();
+  }
+});
+
+if (window.opener) {
+  window.opener.postMessage({ type: "webauthn-register-ready" }, "*");
+} else {
+  setStatus("请在管理后台中打开此页面", "error");
+}
+
+async function doRegister() {
+  try {
+    if (!window.PublicKeyCredential) {
+      setStatus("此浏览器不支持 Passkey", "error");
+      notifyOpener(false, "此浏览器不支持 Passkey");
+      return;
+    }
+    if (!authToken) {
+      setStatus("未收到认证信息", "error");
+      notifyOpener(false, "未收到认证信息");
+      return;
+    }
+
+    setStatus("正在请求注册选项...");
+    const beginResp = await fetch("/admin/webauthn/register/begin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + authToken }
+    });
+    const beginData = await beginResp.json();
+    if (beginData.code !== 200 || !beginData.data?.publicKey) {
+      setStatus(beginData.message || "请求注册选项失败", "error");
+      notifyOpener(false, beginData.message || "请求注册选项失败");
+      return;
+    }
+
+    setStatus("请完成 Passkey 注册...");
+    const publicKey = prepareCreationOptions(beginData.data.publicKey);
+    const credential = await navigator.credentials.create({ publicKey });
+    if (!credential) {
+      setStatus("注册已取消", "error");
+      notifyOpener(false, "注册已取消");
+      return;
+    }
+
+    setStatus("正在保存...");
+    const serialized = serializeCreation(credential);
+    const name = credName || new Date().toLocaleString();
+    const finishResp = await fetch("/admin/webauthn/register/finish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + authToken },
+      body: JSON.stringify({ ...serialized, name: name })
+    });
+    const finishData = await finishResp.json();
+    if (finishData.code !== 200) {
+      setStatus(finishData.message || "注册失败", "error");
+      notifyOpener(false, finishData.message || "注册失败");
+      return;
+    }
+
+    setStatus("注册成功！", "success");
+    notifyOpener(true, "");
+    setTimeout(() => window.close(), 1000);
+  } catch (e) {
+    const msg = "注册过程出错: " + (e.message || e);
+    setStatus(msg, "error");
+    notifyOpener(false, msg);
+  }
+}
+
+function notifyOpener(success, message) {
+  if (window.opener) {
+    window.opener.postMessage({
+      type: "webauthn-register-result",
+      success: success,
+      message: message
+    }, "*");
+  }
+}
 </script>
 </body>
 </html>`

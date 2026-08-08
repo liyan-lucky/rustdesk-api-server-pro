@@ -40,7 +40,7 @@
 - 版本自动递增系统：VERSION 文件为单一事实来源，CI 每次构建自动递增 PATCH 版本号。
 - 首页更新日志区域显示服务端版本与构建时间。
 - 第三方登录统一使用 `oauth.providers`，管理员优先在"第三方登录"页面配置。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关；QQ 已完成网站应用 OAuth2、OpenID 身份与用户资料协议适配，等待真实回调验收。Google、Microsoft、Gitee、GitLab、WeChat、Apple 已完成协议适配和前端配置界面；Apple 使用动态 JWT client_secret（ES256），WeChat 使用 appid 参数和逗号分隔 scope。Client Secret 接口只返回 `********` 加末 8 位的识别提示，不返回明文；未修改提示直接保存会保留原密钥。
-- WebAuthn / Passkey 登录已实现：服务器自签名认证，不依赖第三方 OAuth。后端自动推导 RP ID 和 Origins，前端在登录页显示 Passkey 按钮，用户可在个人资料页注册和管理 Passkey 凭据。
+- WebAuthn / Passkey 登录已实现：服务器自签名认证，不依赖第三方 OAuth。后端自动推导 RP ID 和 Origins，前端在登录页显示 Passkey 按钮，用户可在个人资料页注册和管理 Passkey 凭据。HTTP 页面通过 `window.open()` 拉起 HTTPS 认证页面完成 WebAuthn 操作（登录/注册），通过 `postMessage` 传回结果。HTTPS 反向代理监听独立端口（`tlsPort`），自签名证书支持 `tlsHosts` 配置多个域名/IP。`GetServerConfig()` 已改为单例缓存，确保 WebAuthn auto-config 跨请求持久化。
 - OAuth/OIDC 成功目标和失败目标均已统一为前端 hash 路由；失败回调固定返回登录页，不再先进入受保护页面后闪退。错误码区分账户不可绑定、Provider 网络不可达、state 过期和其他失败。
 - OAuth 统一回调：客户端和 admin 共用回调端点 `/admin/auth/oauth/{provider}/callback`，通过 state 中的 `PollToken` 区分；客户端回调返回 HTML 页面包含 `rustdesk://oauth/callback?poll_token=xxx` 链接。
 - 错误码索引体系：`errcode.go` 注册 105+ 个错误码，Message 统一为 PascalCase 作为 i18n key；前端 `parseBackendMessage()` 从 `ERR-xxxx: Message` 提取编码和翻译；帮助页面提供错误码搜索和筛选；错误日志表 `ErrorLog` 全局记录后端错误。

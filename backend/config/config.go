@@ -11,7 +11,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var serverConfigWriteMu sync.Mutex
+var (
+	serverConfigWriteMu sync.Mutex
+	serverConfigCache   *ServerConfig
+	serverConfigOnce    sync.Once
+)
 
 type ServerConfig struct {
 	DebugMode       bool                `yaml:"debugMode"`
@@ -48,12 +52,13 @@ type DbConfig struct {
 }
 
 type HttpConfig struct {
-	PrintRequestLog bool   `yaml:"printRequestLog"`
-	Port            string `yaml:"port"`
-	StaticDir       string `yaml:"staticdir"`
-	TLSPort         string `yaml:"tlsPort"`
-	TLSCertFile     string `yaml:"tlsCertFile"`
-	TLSKeyFile      string `yaml:"tlsKeyFile"`
+	PrintRequestLog bool     `yaml:"printRequestLog"`
+	Port            string   `yaml:"port"`
+	StaticDir       string   `yaml:"staticdir"`
+	TLSPort         string   `yaml:"tlsPort"`
+	TLSCertFile     string   `yaml:"tlsCertFile"`
+	TLSKeyFile      string   `yaml:"tlsKeyFile"`
+	TLSHosts        []string `yaml:"tlsHosts"`
 }
 
 type SmtpConfig struct {
@@ -182,6 +187,13 @@ func GetDefaultServerConfig() *ServerConfig {
 }
 
 func GetServerConfig() *ServerConfig {
+	serverConfigOnce.Do(func() {
+		serverConfigCache = loadServerConfig()
+	})
+	return serverConfigCache
+}
+
+func loadServerConfig() *ServerConfig {
 	cfg := GetDefaultServerConfig()
 	bytes, err := os.ReadFile(yamlFile)
 	if err != nil {

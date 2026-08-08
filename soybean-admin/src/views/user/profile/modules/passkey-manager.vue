@@ -3,14 +3,8 @@ import { onMounted, ref } from 'vue';
 import { NButton, NSpace } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
-import {
-  fetchWebauthnCredentials,
-  fetchDeleteWebauthnCredential,
-  fetchRenameWebauthnCredential,
-  fetchWebauthnRegisterBegin,
-  fetchWebauthnRegisterFinish
-} from '@/service/api/auth';
-import { isWebAuthnSupported, prepareCreationOptions, serializeCreation } from '@/utils/webauthn';
+import { fetchWebauthnCredentials, fetchDeleteWebauthnCredential, fetchRenameWebauthnCredential, fetchWebauthnEnabled } from '@/service/api/auth';
+import { localStg } from '@/utils/storage';
 
 const appStore = useAppStore();
 const credentials = ref<Api.Auth.WebauthnCredential[]>([]);
@@ -21,6 +15,7 @@ const renameId = ref(0);
 const renameName = ref('');
 const registerModalVisible = ref(false);
 const registerName = ref('');
+const passkeyTlsPort = ref('');
 
 const columns = [
   { key: 'name', title: $t('page.login.passkey.credentialName') },
@@ -59,40 +54,59 @@ async function loadCredentials() {
   }
 }
 
+async function loadPasskeyConfig() {
+  try {
+    const { data } = await fetchWebauthnEnabled();
+    passkeyTlsPort.value = data?.tlsPort || '';
+  } catch {
+    passkeyTlsPort.value = '';
+  }
+}
+
 async function handleRegister() {
   if (registerLoading.value) return;
-  if (!isWebAuthnSupported()) {
+  if (!passkeyTlsPort.value) {
     window.$message?.error($t('page.login.passkey.notSupported'));
     return;
   }
-  registerLoading.value = true;
-  try {
-    const { data: beginData, error: beginError } = await fetchWebauthnRegisterBegin();
-    if (beginError || !beginData?.publicKey) {
-      window.$message?.error($t('page.login.passkey.registerFailed'));
-      return;
-    }
 
-    const publicKey = prepareCreationOptions(beginData.publicKey);
-    const credential = (await navigator.credentials.create({ publicKey })) as PublicKeyCredential | null;
-    if (!credential) return;
-
-    const serialized = serializeCreation(credential);
-    const name = registerName.value || new Date().toLocaleString();
-    const { error: finishError } = await fetchWebauthnRegisterFinish(serialized, name);
-    if (!finishError) {
-      window.$message?.success($t('page.login.passkey.registerSuccess'));
-      registerModalVisible.value = false;
-      registerName.value = '';
-      await loadCredentials();
-    } else {
-      window.$message?.error($t('page.login.passkey.registerFailed'));
-    }
-  } catch {
-    window.$message?.error($t('page.login.passkey.registerFailed'));
-  } finally {
-    registerLoading.value = false;
+  const token = localStg.get('token');
+  if (!token) {
+    window.$message?.error($t('page.login.passkey.notSupported'));
+    return;
   }
+
+  registerLoading.value = true;
+
+  const host = window.location.hostname;
+  const tlsPort = passkeyTlsPort.value.replace(/^:/, '');
+  const registerUrl = `https://${host}:${tlsPort}/admin/auth/webauthn/register-page`;
+
+  const messageHandler = async (event: MessageEvent) => {
+    if (event.data?.type === 'webauthn-register-ready') {
+      event.source?.postMessage(
+        {
+          type: 'webauthn-register-data',
+          token,
+          name: registerName.value
+        },
+        { targetOrigin: '*' }
+      );
+    } else if (event.data?.type === 'webauthn-register-result') {
+      window.removeEventListener('message', messageHandler);
+      if (event.data.success) {
+        window.$message?.success($t('page.login.passkey.registerSuccess'));
+        registerModalVisible.value = false;
+        registerName.value = '';
+        await loadCredentials();
+      } else {
+        window.$message?.error(event.data.message || $t('page.login.passkey.registerFailed'));
+      }
+      registerLoading.value = false;
+    }
+  };
+  window.addEventListener('message', messageHandler);
+  window.open(registerUrl, '_blank', 'width=500,height=600');
 }
 
 async function handleDelete(id: number) {
@@ -134,6 +148,7 @@ function openRegister() {
 
 onMounted(() => {
   loadCredentials();
+  loadPasskeyConfig();
 });
 </script>
 

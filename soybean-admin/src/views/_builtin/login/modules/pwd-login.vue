@@ -6,7 +6,6 @@ import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouteStore } from '@/store/modules/route';
 import { fetchCaptcha, fetchOAuthLoginUrl, fetchOAuthProviders, fetchWebauthnEnabled } from '@/service/api/auth';
-import { isWebAuthnSupported } from '@/utils/webauthn';
 import { localStg } from '@/utils/storage';
 import { appendVersion, getVersionTag } from '@/utils/version';
 import { useRouterPush } from '@/hooks/common/router';
@@ -92,10 +91,6 @@ async function loadOAuthProviders() {
 }
 
 async function loadPasskeyEnabled() {
-  if (!isWebAuthnSupported()) {
-    passkeyEnabled.value = false;
-    return;
-  }
   try {
     const { data } = await fetchWebauthnEnabled();
     passkeyEnabled.value = data?.enabled === true;
