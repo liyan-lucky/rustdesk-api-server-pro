@@ -28,6 +28,9 @@ func (c *AuthController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/auth/oauth/url", "GetAuthOauthUrl")
 	b.Handle("GET", "/auth/oauth/token", "GetAuthOauthToken")
 	b.Handle("GET", "/auth/oauth/{provider:string}/callback", "HandleOauthCallback")
+	b.Handle("POST", "/auth/webauthn/login/begin", "PostWebauthnLoginBegin")
+	b.Handle("POST", "/auth/webauthn/login/finish", "PostWebauthnLoginFinish")
+	b.Handle("GET", "/auth/webauthn/enabled", "GetWebauthnEnabled")
 }
 
 func (c *AuthController) PostAuthLogin() mvc.Result {
@@ -365,4 +368,114 @@ func withQuery(target, key, value string) string {
 	q.Set(key, value)
 	u.RawQuery = q.Encode()
 	return u.String()
+}
+
+func (c *AuthController) GetWebauthnEnabled() mvc.Result {
+	service := v2service.NewWebauthnService(config.GetServerConfig(), c.Db)
+	enabled := service.IsEnabled()
+	if !enabled {
+		rpID := strings.TrimSpace(c.Ctx.Host())
+		if i := strings.IndexByte(rpID, ':'); i > 0 {
+			rpID = rpID[:i]
+		}
+		if rpID != "" {
+			scheme := "https"
+			if c.Ctx.Request().TLS == nil {
+				scheme = "http"
+			}
+			if forwardedProto := strings.TrimSpace(c.Ctx.GetHeader("X-Forwarded-Proto")); forwardedProto == "https" {
+				scheme = "https"
+			}
+			origin := scheme + "://" + c.Ctx.Host()
+			_ = service.UpdateConfig(rpID, []string{origin})
+			enabled = service.IsEnabled()
+		}
+	}
+	return c.Success(iris.Map{"enabled": enabled}, "ok")
+}
+
+func (c *AuthController) PostWebauthnLoginBegin() mvc.Result {
+	service := v2service.NewWebauthnService(config.GetServerConfig(), c.Db)
+	if !service.IsEnabled() {
+		rpID := strings.TrimSpace(c.Ctx.Host())
+		if i := strings.IndexByte(rpID, ':'); i > 0 {
+			rpID = rpID[:i]
+		}
+		if rpID != "" {
+			scheme := "https"
+			if c.Ctx.Request().TLS == nil {
+				scheme = "http"
+			}
+			if forwardedProto := strings.TrimSpace(c.Ctx.GetHeader("X-Forwarded-Proto")); forwardedProto == "https" {
+				scheme = "https"
+			}
+			origin := scheme + "://" + c.Ctx.Host()
+			_ = service.UpdateConfig(rpID, []string{origin})
+		}
+	}
+	if err := service.EnsureEnabled(); err != nil {
+		return c.Error(nil, err.Error())
+	}
+
+	var form struct {
+		Username string `json:"username"`
+	}
+	if err := c.Ctx.ReadJSON(&form); err != nil {
+		return c.Error(nil, errcode.New(errcode.ERR4001.Code, errcode.ERR4001.Message).Error())
+	}
+	form.Username = strings.TrimSpace(form.Username)
+	if form.Username == "" {
+		return c.Error(nil, errcode.New(errcode.ERR4001.Code, errcode.ERR4001.Message).Error())
+	}
+
+	options, _, err := service.BeginLogin(form.Username)
+	if err != nil {
+		return c.Error(nil, err.Error())
+	}
+	return c.Success(options, "ok")
+}
+
+func (c *AuthController) PostWebauthnLoginFinish() mvc.Result {
+	service := v2service.NewWebauthnService(config.GetServerConfig(), c.Db)
+	if err := service.EnsureEnabled(); err != nil {
+		return c.Error(nil, err.Error())
+	}
+
+	parsed, err := v2service.ParseCredentialRequestBody(c.Ctx.Request().Body)
+	if err != nil {
+		return c.Error(nil, errcode.New(errcode.ERR3106.Code, errcode.ERR3106.Message).Error())
+	}
+
+	user, err := service.FinishLoginParsed(parsed)
+	if err != nil {
+		c.recordAdminSecurityAudit("webauthn_login", false, err.Error())
+		return c.Error(nil, err.Error())
+	}
+
+	_, _ = c.Db.Where("user_id = ? and status = 1 and is_admin = ?", user.Id, user.IsAdmin).Cols("status").Update(&model.AuthToken{Status: 0})
+
+	signStr := strconv.Itoa(user.Id) + user.Username + time.Now().String()
+	token := util.HmacSha256(signStr, c.Cfg.SignKey)
+	expired := 2 * time.Hour
+
+	authToken := &model.AuthToken{
+		UserId:    user.Id,
+		TokenHash: util.Sha256Hex(token),
+		Expired:   time.Now().Add(expired),
+		IsAdmin:   user.IsAdmin,
+		Status:    1,
+	}
+	if _, err = c.Db.Insert(authToken); err != nil {
+		return c.dbError(err)
+	}
+
+	if user.IsAdmin {
+		c.recordAdminLoginAudit(user.Id, user.Username, true, "webauthn")
+	} else {
+		c.recordUserLoginAudit(user.Id, user.Username, true, "webauthn")
+	}
+	return c.Success(iris.Map{
+		"token":   token,
+		"isAdmin": user.IsAdmin,
+	}, "ok")
 }

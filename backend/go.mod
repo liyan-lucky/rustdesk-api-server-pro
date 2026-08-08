@@ -6,6 +6,8 @@ require (
 	github.com/beevik/guid v1.0.0
 	github.com/go-co-op/gocron/v2 v2.11.0
 	github.com/go-sql-driver/mysql v1.7.1
+	github.com/go-webauthn/webauthn v0.17.4
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-module/carbon/v2 v2.3.1
 	github.com/kataras/iris/v12 v12.2.8
 	github.com/mojocn/base64Captcha v1.3.6
@@ -22,15 +24,21 @@ require (
 
 require (
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
+	github.com/fxamacker/cbor/v2 v2.9.2 // indirect
 	github.com/go-test/deep v1.1.1 // indirect
+	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+	github.com/go-webauthn/x v0.2.6 // indirect
 	github.com/gobuffalo/envy v1.7.0 // indirect
 	github.com/gobuffalo/packd v0.3.0 // indirect
 	github.com/gobuffalo/packr v1.30.1 // indirect
-	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
+	github.com/google/go-tpm v0.9.8 // indirect
 	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
+	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/tinylib/msgp v1.6.4 // indirect
+	github.com/x448/float16 v0.8.4 // indirect
 )
 
 require (

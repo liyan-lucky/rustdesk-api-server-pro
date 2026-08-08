@@ -194,6 +194,24 @@ const local: App.I18n.Schema = {
         oauthAuthFailed:
           'πé╡πâ╝πâëπâæπâ╝πâåπéúπâ¡πé░πéñπâ│πü½σñ▒µòùπüùπü╛πüùπüƒπÇéΦ¿¡σ«Üπü¿πé╗πé¡πâÑπâ¬πâåπéúπâ¡πé░πéÆτó║Φ¬ìπüùπüªπüÅπüáπüòπüäπÇé'
       },
+      passkey: {
+        ...enUs.page.login.passkey,
+        loginWithPasskey: 'Passkey πâ¡πé░πéñπâ│',
+        notSupported: 'πüôπü«πâûπâ⌐πéªπé╢πü» Passkey πéÆπé╡πâ¥πâ╝πâêπüùπüªπüäπü╛πü¢πéô',
+        beginFailed: 'Passkey πâ¡πé░πéñπâ│πü«Θûïσºïπü½σñ▒µòùπüùπü╛πüùπüƒ',
+        cancelled: 'Passkey πâ¡πé░πéñπâ│πüîπé¡πâúπâ│πé╗πâ½πüòπéîπü╛πüùπüƒ',
+        usernameRequired: 'πâªπâ╝πé╢πâ╝σÉìπéÆσàÑσè¢πüùπüªπüÅπüáπüòπüä',
+        title: 'Passkey τ«íτÉå',
+        register: 'Passkey πéÆτÖ╗Θî▓',
+        registerSuccess: 'Passkey πü«τÖ╗Θî▓πü½µêÉσèƒπüùπü╛πüùπüƒ',
+        registerFailed: 'Passkey πü«τÖ╗Θî▓πü½σñ▒µòùπüùπü╛πüùπüƒ',
+        deleteConfirm: 'πüôπü« Passkey πéÆσëèΘÖñπüùπü╛πüÖπüï∩╝ƒ',
+        deleteSuccess: 'Passkey πéÆσëèΘÖñπüùπü╛πüùπüƒ',
+        rename: 'σÉìσëìσñëµø┤',
+        renameSuccess: 'σÉìσëìσñëµø┤πü½µêÉσèƒπüùπü╛πüùπüƒ',
+        renameFailed: 'σÉìσëìσñëµø┤πü½σñ▒µòùπüùπü╛πüùπüƒ',
+        noCredentials: 'Passkey πüîτÖ╗Θî▓πüòπéîπüªπüäπü╛πü¢πéô'
+      },
       pwdLogin: {
         title: 'πâæπé╣πâ»πâ╝πâëπâ¡πé░πéñπâ│',
         rememberMe: 'πâ¡πé░πéñπâ│τè╢µàïπéÆΣ┐¥µîü',

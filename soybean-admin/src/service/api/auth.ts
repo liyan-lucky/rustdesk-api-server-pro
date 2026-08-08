@@ -77,3 +77,50 @@ export function fetchUserLogin(model: Api.Form.LoginForm) {
     }
   });
 }
+
+export function fetchWebauthnEnabled() {
+  return request<{ enabled: boolean }>({ url: '/auth/webauthn/enabled' });
+}
+
+export function fetchWebauthnLoginBegin(username: string) {
+  return request<Record<string, any>>({
+    url: '/auth/webauthn/login/begin',
+    method: 'post',
+    data: { username }
+  });
+}
+
+export function fetchWebauthnLoginFinish(credential: Record<string, any>) {
+  return request<Api.Auth.LoginToken>({
+    url: '/auth/webauthn/login/finish',
+    method: 'post',
+    data: credential
+  });
+}
+
+export function fetchWebauthnRegisterBegin() {
+  return request<Record<string, any>>({
+    url: '/webauthn/register/begin',
+    method: 'post'
+  });
+}
+
+export function fetchWebauthnRegisterFinish(credential: Record<string, any>, name: string) {
+  return request<{ id: number; name: string }>({
+    url: '/webauthn/register/finish',
+    method: 'post',
+    data: { ...credential, name }
+  });
+}
+
+export function fetchWebauthnCredentials() {
+  return request<Api.Auth.WebauthnCredential[]>({ url: '/webauthn/credentials' });
+}
+
+export function fetchDeleteWebauthnCredential(id: number) {
+  return request({ url: `/webauthn/credentials/${id}`, method: 'delete' });
+}
+
+export function fetchRenameWebauthnCredential(id: number, name: string) {
+  return request({ url: `/webauthn/credentials/${id}`, method: 'put', data: { name } });
+}

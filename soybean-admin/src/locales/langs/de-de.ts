@@ -224,6 +224,24 @@ const local: App.I18n.Schema = {
         oauthStateExpired: 'Die Anmeldung ist abgelaufen oder wurde bereits verwendet. Starten Sie sie erneut.',
         oauthAuthFailed: 'Drittanbieter-Anmeldung fehlgeschlagen. Prüfen Sie Konfiguration und Sicherheitsprotokoll.'
       },
+      passkey: {
+        ...enUs.page.login.passkey,
+        loginWithPasskey: 'Mit Passkey anmelden',
+        notSupported: 'Dieser Browser unterstützt kein Passkey',
+        beginFailed: 'Passkey-Anmeldung konnte nicht gestartet werden',
+        cancelled: 'Passkey-Anmeldung abgebrochen',
+        usernameRequired: 'Bitte geben Sie zuerst Ihren Benutzernamen ein',
+        title: 'Passkey-Verwaltung',
+        register: 'Passkey registrieren',
+        registerSuccess: 'Passkey erfolgreich registriert',
+        registerFailed: 'Passkey-Registrierung fehlgeschlagen',
+        deleteConfirm: 'Möchten Sie dieses Passkey wirklich löschen?',
+        deleteSuccess: 'Passkey erfolgreich gelöscht',
+        rename: 'Umbenennen',
+        renameSuccess: 'Umbenennung erfolgreich',
+        renameFailed: 'Umbenennung fehlgeschlagen',
+        noCredentials: 'Kein Passkey registriert'
+      },
       pwdLogin: {
         ...enUs.page.login.pwdLogin,
         title: 'Passwort-Anmeldung',

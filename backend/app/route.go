@@ -62,6 +62,7 @@ func SetRoute(app *iris.Application) {
 		adminOrUserAuthMvc.Handle(new(admin.MaiLogsController))
 		adminOrUserAuthMvc.Handle(new(admin.TokenController))
 		adminOrUserAuthMvc.Handle(new(admin.OAuthController))
+		adminOrUserAuthMvc.Handle(new(admin.WebauthnController))
 		adminOrUserAuthMvc.Handle(new(admin.SecurityAuditController))
 		adminOrUserAuthMvc.Handle(new(admin.ErrorLogController))
 		adminOrUserAuthMvc.Handle(new(admin.ContainerLogController))

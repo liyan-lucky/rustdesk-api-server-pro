@@ -3,10 +3,17 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
-import { fetchCaptcha, fetchUserLogin } from '@/service/api/auth';
+import {
+  fetchCaptcha,
+  fetchUserLogin,
+  fetchWebauthnEnabled,
+  fetchWebauthnLoginBegin,
+  fetchWebauthnLoginFinish
+} from '@/service/api/auth';
 import { localStg } from '@/utils/storage';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouteStore } from '@/store/modules/route';
+import { isWebAuthnSupported, prepareAssertionOptions, serializeAssertion } from '@/utils/webauthn';
 
 defineOptions({
   name: 'UserLogin'
@@ -17,6 +24,8 @@ const authStore = useAuthStore();
 const routeStore = useRouteStore();
 const { formRef, validate } = useNaiveForm();
 const loading = ref(false);
+const passkeyEnabled = ref(false);
+const passkeyLoading = ref(false);
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -97,8 +106,63 @@ function switchToAdmin() {
   router.push({ name: 'login', params: { module: 'pwd-login' } });
 }
 
+async function loadPasskeyEnabled() {
+  if (!isWebAuthnSupported()) {
+    passkeyEnabled.value = false;
+    return;
+  }
+  try {
+    const { data } = await fetchWebauthnEnabled();
+    passkeyEnabled.value = data?.enabled === true;
+  } catch {
+    passkeyEnabled.value = false;
+  }
+}
+
+async function handlePasskeyLogin() {
+  if (passkeyLoading.value) return;
+  if (!model.username) {
+    window.$message?.warning($t('page.login.passkey.usernameRequired'));
+    return;
+  }
+  passkeyLoading.value = true;
+  try {
+    const { data: beginData, error: beginError } = await fetchWebauthnLoginBegin(model.username);
+    if (beginError || !beginData?.publicKey) {
+      window.$message?.error($t('page.login.passkey.beginFailed'));
+      return;
+    }
+    const publicKey = prepareAssertionOptions(beginData.publicKey);
+    const credential = (await navigator.credentials.get({ publicKey })) as PublicKeyCredential | null;
+    if (!credential) return;
+
+    const serialized = serializeAssertion(credential);
+    const { data: loginToken, error: finishError } = await fetchWebauthnLoginFinish(serialized);
+    if (!finishError && loginToken?.token) {
+      localStg.set('token', loginToken.token);
+      localStg.set('userType', 'user');
+      if (loginToken.isAdmin !== undefined) {
+        localStg.set('isAdmin', loginToken.isAdmin);
+      }
+      authStore.token = loginToken.token;
+      await authStore.initUserInfo();
+      await routeStore.initAuthRoute();
+      if (loginToken.isAdmin) {
+        await router.push({ name: 'home' });
+      } else {
+        await router.push({ name: 'my-devices_peers' });
+      }
+    }
+  } catch {
+    window.$message?.error($t('page.login.passkey.cancelled'));
+  } finally {
+    passkeyLoading.value = false;
+  }
+}
+
 onMounted(() => {
   handleCaptcha();
+  loadPasskeyEnabled();
 });
 </script>
 
@@ -130,6 +194,17 @@ onMounted(() => {
     <NSpace vertical :size="12">
       <NButton attr-type="submit" type="primary" size="medium" round block :loading="loading" @click="handleSubmit">
         {{ $t('common.confirm') }}
+      </NButton>
+      <NButton
+        v-if="passkeyEnabled"
+        size="medium"
+        round
+        block
+        :loading="passkeyLoading"
+        @click="handlePasskeyLogin"
+      >
+        <template #icon><SvgIcon icon="mdi:key-chain" /></template>
+        {{ $t('page.login.passkey.loginWithPasskey') }}
       </NButton>
       <NButton text type="primary" @click="switchToAdmin">
         {{ $t('page.login.userLogin.switchToAdmin') }}

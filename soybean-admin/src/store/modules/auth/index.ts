@@ -5,9 +5,15 @@ import { useLoading } from '@sa/hooks';
 import { SetupStoreId } from '@/enum';
 import { useRouterPush } from '@/hooks/common/router';
 import { fetchGetUserInfo, fetchLogin } from '@/service/api';
-import { fetchOAuthTicketToken, fetchOidcTicketToken } from '@/service/api/auth';
+import {
+  fetchOAuthTicketToken,
+  fetchOidcTicketToken,
+  fetchWebauthnLoginBegin,
+  fetchWebauthnLoginFinish
+} from '@/service/api/auth';
 import { localStg } from '@/utils/storage';
 import { appendVersion, getVersionTag } from '@/utils/version';
+import { isWebAuthnSupported, prepareAssertionOptions, serializeAssertion } from '@/utils/webauthn';
 import { $t } from '@/locales';
 import { useRouteStore } from '../route';
 import { useTabStore } from '../tab';
@@ -148,6 +154,67 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     return error;
   }
 
+  /**
+   * 通过 Passkey (WebAuthn) 登录
+   *
+   * @param username 用户名（用于查找已绑定的 Passkey 凭据）
+   * @param [redirect=true] 登录后是否跳转
+   */
+  async function loginByPasskey(username: string, redirect = true) {
+    if (!isWebAuthnSupported()) {
+      window.$message?.error($t('page.login.passkey.notSupported'));
+      return true;
+    }
+
+    startLoading();
+
+    try {
+      const { data: beginData, error: beginError } = await fetchWebauthnLoginBegin(username);
+      if (beginError || !beginData?.publicKey) {
+        window.$message?.error($t('page.login.passkey.beginFailed'));
+        endLoading();
+        return beginError || true;
+      }
+
+      const publicKey = prepareAssertionOptions(beginData.publicKey);
+      const credential = (await navigator.credentials.get({ publicKey })) as PublicKeyCredential | null;
+      if (!credential) {
+        endLoading();
+        return true;
+      }
+
+      const serialized = serializeAssertion(credential);
+      const { data: loginToken, error: finishError } = await fetchWebauthnLoginFinish(serialized);
+      if (!finishError && loginToken?.token) {
+        const pass = await applyTokenAndBootstrap(loginToken);
+        if (pass) {
+          await routeStore.initAuthRoute();
+          if (redirect) {
+            await redirectFromLogin();
+          }
+          if (routeStore.isInitAuthRoute) {
+            window.$notification?.success({
+              title: `${$t('page.login.common.loginSuccess')} (${getVersionTag()})`,
+              content: appendVersion($t('page.login.common.welcomeBack', { userName: userInfo.userName })),
+              duration: 4500
+            });
+          }
+        } else {
+          resetStore();
+        }
+      } else {
+        resetStore();
+      }
+
+      endLoading();
+      return finishError;
+    } catch (e) {
+      window.$message?.error($t('page.login.passkey.cancelled'));
+      endLoading();
+      return true;
+    }
+  }
+
   async function getUserInfo() {
     const { data: info, error } = await fetchGetUserInfo();
 
@@ -181,6 +248,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     loginLoading,
     resetStore,
     login,
+    loginByPasskey,
     loginByOidcTicket,
     loginByOAuthTicket,
     initUserInfo

@@ -48,9 +48,11 @@ var dbSyncCmd = &cobra.Command{
 			new(model.StrategyAssignment),
 			new(model.OAuthAccount),
 			new(model.OAuthLoginSession),
-			new(model.ErrorLog),
-			new(model.ContainerLog),
-		}
+		new(model.ErrorLog),
+		new(model.ContainerLog),
+		new(model.WebauthnCredential),
+		new(model.WebauthnSession),
+	}
 		err = engine.Sync(models...)
 		if err != nil {
 			fmt.Println("Db init error:", err)

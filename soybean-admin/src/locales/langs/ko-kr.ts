@@ -193,6 +193,24 @@ const local: App.I18n.Schema = {
           'δí£Ω╖╕∞¥╕ ∞Üö∞▓¡∞¥┤ δºîδúîδÉÿ∞ùêΩ▒░δéÿ ∞¥┤δ»╕ ∞é¼∞Ü⌐δÉÿ∞ùê∞è╡δïêδïñ. δïñ∞ï£ ∞ï£∞₧æφòÿ∞ä╕∞Üö.',
         oauthAuthFailed: 'φâÇ∞é¼ δí£Ω╖╕∞¥╕∞ùÉ ∞ïñφî¿φûê∞è╡δïêδïñ. ∞äñ∞áòΩ│╝ δ│┤∞òê Ω░É∞é¼ δí£Ω╖╕δÑ╝ φÖò∞¥╕φòÿ∞ä╕∞Üö.'
       },
+      passkey: {
+        ...enUs.page.login.passkey,
+        loginWithPasskey: 'Passkey δí£Ω╖╕∞¥╕',
+        notSupported: '∞¥┤ δ╕îδ¥╝∞Ü░∞áÇδèö PasskeyδÑ╝ ∞ºÇ∞øøφòÿ∞ºÇ ∞òè∞è╡δïêδïñ',
+        beginFailed: 'Passkey δí£Ω╖╕∞¥╕ ∞ï£∞₧æ∞ùÉ ∞ïñφî¿φûê∞è╡δïêδïñ',
+        cancelled: 'Passkey δí£Ω╖╕∞¥╕∞¥┤ ∞╖¿∞åîδÉÿ∞ùê∞è╡δïêδïñ',
+        usernameRequired: '∞é¼∞Ü⌐∞₧É ∞¥┤δªä∞¥ä ∞₧àδáÑφòÿ∞ä╕∞Üö',
+        title: 'Passkey Ω┤Çδª¼',
+        register: 'Passkey δô▒δíØ',
+        registerSuccess: 'Passkey δô▒δíØ ∞ä▒Ω│╡',
+        registerFailed: 'Passkey δô▒δíØ ∞ïñφî¿',
+        deleteConfirm: '∞¥┤ PasskeyδÑ╝ ∞é¡∞á£φòÿ∞ï£Ω▓á∞è╡δïêΩ╣î?',
+        deleteSuccess: 'PasskeyΩ░Ç ∞é¡∞á£δÉÿ∞ùê∞è╡δïêδïñ',
+        rename: '∞¥┤δªä δ│ÇΩ▓╜',
+        renameSuccess: '∞¥┤δªä δ│ÇΩ▓╜ ∞ä▒Ω│╡',
+        renameFailed: '∞¥┤δªä δ│ÇΩ▓╜ ∞ïñφî¿',
+        noCredentials: 'δô▒δíØδÉ£ PasskeyΩ░Ç ∞ùå∞è╡δïêδïñ'
+      },
       pwdLogin: {
         title: 'δ╣äδ░Çδ▓êφÿ╕ δí£Ω╖╕∞¥╕',
         rememberMe: 'δí£Ω╖╕∞¥╕ ∞âüφâ£ ∞£á∞ºÇ',

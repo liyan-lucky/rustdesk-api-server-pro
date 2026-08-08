@@ -424,6 +424,28 @@ declare namespace App {
             oauthStateExpired: string;
             oauthAuthFailed: string;
           };
+          passkey: {
+            loginWithPasskey: string;
+            notSupported: string;
+            beginFailed: string;
+            cancelled: string;
+            usernameRequired: string;
+            title: string;
+            register: string;
+            registerSuccess: string;
+            registerFailed: string;
+            deleteConfirm: string;
+            deleteSuccess: string;
+            rename: string;
+            renameSuccess: string;
+            renameFailed: string;
+            noCredentials: string;
+            credentialName: string;
+            createdAt: string;
+            lastUsedAt: string;
+            enterName: string;
+            namePlaceholder: string;
+          };
           pwdLogin: {
             title: string;
             rememberMe: string;

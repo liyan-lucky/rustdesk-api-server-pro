@@ -175,6 +175,19 @@ var (
 )
 
 var (
+	ERR3101 = register("ERR-3101", "WebAuthnDisabled", "webauthn", "WebAuthn 登录已禁用", "在 server.yaml 中设置 webauthn.enabled: true", "WebAuthn login is disabled", "Set webauthn.enabled: true in server.yaml")
+	ERR3102 = register("ERR-3102", "WebAuthnRpIdMissing", "webauthn", "WebAuthn RP ID 缺失", "在 server.yaml 中配置 webauthn.rpId 为服务域名", "WebAuthn RP ID is missing", "Configure webauthn.rpId to the service domain in server.yaml")
+	ERR3103 = register("ERR-3103", "WebAuthnSessionExpired", "webauthn", "WebAuthn 会话已过期", "请重新发起注册或登录流程", "WebAuthn session has expired", "Please re-initiate the registration or login flow")
+	ERR3104 = register("ERR-3104", "WebAuthnSessionInvalid", "webauthn", "WebAuthn 会话无效", "会话一次性使用，请重新发起流程", "WebAuthn session is invalid", "Sessions are one-time use, please re-initiate the flow")
+	ERR3105 = register("ERR-3105", "WebAuthnRegistrationFailed", "webauthn", "WebAuthn 注册失败", "检查浏览器是否支持 WebAuthn，确认域名和 HTTPS 配置正确", "WebAuthn registration failed", "Check if the browser supports WebAuthn, confirm domain and HTTPS configuration")
+	ERR3106 = register("ERR-3106", "WebAuthnLoginFailed", "webauthn", "WebAuthn 登录失败", "检查凭据是否有效，确认已绑定 Passkey", "WebAuthn login failed", "Check if the credential is valid, confirm a Passkey is bound")
+	ERR3107 = register("ERR-3107", "WebAuthnUserNotFound", "webauthn", "WebAuthn 登录用户不存在", "确认用户名正确且已绑定 Passkey", "WebAuthn login user not found", "Confirm the username is correct and a Passkey is bound")
+	ERR3108 = register("ERR-3108", "WebAuthnNoCredentials", "webauthn", "该用户未绑定任何 Passkey", "先通过密码登录后在设置中绑定 Passkey", "No Passkey bound to this user", "Log in with password first and bind a Passkey in settings")
+	ERR3109 = register("ERR-3109", "WebAuthnCredentialExists", "webauthn", "该 Passkey 已绑定", "无需重复绑定", "This Passkey is already bound", "No need to bind again")
+	ERR3110 = register("ERR-3110", "WebAuthnCredentialNotFound", "webauthn", "Passkey 凭据未找到", "确认凭据 ID 是否正确", "Passkey credential not found", "Confirm the credential ID is correct")
+)
+
+var (
 	ERR4001 = register("ERR-4001", "UsernameEmpty", "user", "用户名不能为空", "填写有效的用户名", "Username cannot be empty", "Fill in a valid username")
 	ERR4002 = register("ERR-4002", "UserExists", "user", "用户名已存在", "使用不同的用户名", "Username already exists", "Use a different username")
 	ERR4003 = register("ERR-4003", "PasswordEmpty", "user", "密码不能为空", "填写有效的密码", "Password cannot be empty", "Fill in a valid password")

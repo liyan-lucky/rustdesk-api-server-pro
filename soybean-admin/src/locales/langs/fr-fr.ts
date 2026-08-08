@@ -241,6 +241,24 @@ const local: App.I18n.Schema = {
         oauthStateExpired: 'La demande de connexion a expiré ou a déjà été utilisée. Relancez la connexion.',
         oauthAuthFailed: 'La connexion tierce a échoué. Vérifiez la configuration du fournisseur et le journal d’audit.'
       },
+      passkey: {
+        ...enUs.page.login.passkey,
+        loginWithPasskey: 'Connexion par Passkey',
+        notSupported: 'Ce navigateur ne prend pas en charge Passkey',
+        beginFailed: 'Échec du démarrage de la connexion Passkey',
+        cancelled: 'Connexion Passkey annulée',
+        usernameRequired: 'Veuillez d’abord saisir votre nom d’utilisateur',
+        title: 'Gestion des Passkey',
+        register: 'Enregistrer un Passkey',
+        registerSuccess: 'Passkey enregistré avec succès',
+        registerFailed: 'Échec de l’enregistrement du Passkey',
+        deleteConfirm: 'Voulez-vous vraiment supprimer ce Passkey ?',
+        deleteSuccess: 'Passkey supprimé avec succès',
+        rename: 'Renommer',
+        renameSuccess: 'Renommé avec succès',
+        renameFailed: 'Échec du renommage',
+        noCredentials: 'Aucun Passkey enregistré'
+      },
       pwdLogin: {
         ...enUs.page.login.pwdLogin,
         title: 'Connexion par mot de passe',

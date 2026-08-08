@@ -40,6 +40,7 @@
 - 版本自动递增系统：VERSION 文件为单一事实来源，CI 每次构建自动递增 PATCH 版本号。
 - 首页更新日志区域显示服务端版本与构建时间。
 - 第三方登录统一使用 `oauth.providers`，管理员优先在"第三方登录"页面配置。GitHub 已完成 authorization code、PKCE S256、持久化一次性 state/ticket、已验证私有邮箱、管理员/普通用户角色绑定及自动创建开关；QQ 已完成网站应用 OAuth2、OpenID 身份与用户资料协议适配，等待真实回调验收。Google、Microsoft、Gitee、GitLab、WeChat、Apple 已完成协议适配和前端配置界面；Apple 使用动态 JWT client_secret（ES256），WeChat 使用 appid 参数和逗号分隔 scope。Client Secret 接口只返回 `********` 加末 8 位的识别提示，不返回明文；未修改提示直接保存会保留原密钥。
+- WebAuthn / Passkey 登录已实现：服务器自签名认证，不依赖第三方 OAuth。后端自动推导 RP ID 和 Origins，前端在登录页显示 Passkey 按钮，用户可在个人资料页注册和管理 Passkey 凭据。
 - OAuth/OIDC 成功目标和失败目标均已统一为前端 hash 路由；失败回调固定返回登录页，不再先进入受保护页面后闪退。错误码区分账户不可绑定、Provider 网络不可达、state 过期和其他失败。
 - OAuth 统一回调：客户端和 admin 共用回调端点 `/admin/auth/oauth/{provider}/callback`，通过 state 中的 `PollToken` 区分；客户端回调返回 HTML 页面包含 `rustdesk://oauth/callback?poll_token=xxx` 链接。
 - 错误码索引体系：`errcode.go` 注册 105+ 个错误码，Message 统一为 PascalCase 作为 i18n key；前端 `parseBackendMessage()` 从 `ERR-xxxx: Message` 提取编码和翻译；帮助页面提供错误码搜索和筛选；错误日志表 `ErrorLog` 全局记录后端错误。
@@ -49,25 +50,31 @@
 
 ## 最近完成的工作
 
-### v1.2.29 (2026-08-07)
+### v1.2.29 (2026-08-08)
 
-#### 1. 普通用户查看权限增强 ✅
+#### 3. WebAuthn / Passkey 登录 ✅
 
-- 新建 `AdminOrUserAuth` 中间件（`backend/app/middleware/auth.go`）
-- 修改路由：audit/system 控制器移到 AdminOrUserAuth（`backend/app/route.go`）
-- 15 个操作类 API 添加 isAdmin 检查：audit、dashboard、mail_template、mail_logs、token、oauth、security_audit、error_log、container_log
-- 前端路由 roles 修改：audit/system 子路由改为 `['R_SUPER', 'R_USER']`（oauth/tokens 除外）
-- 前端操作按钮添加 isAdmin 控制：所有清除/编辑/添加按钮
-- 测试状态：已部署到设备，功能正常
+- 后端：添加 `go-webauthn/webauthn v0.17.4` 依赖，新建 `WebauthnCredential` 和 `WebauthnSession` 数据模型，注册到 `cmd/sync.go`
+- 后端：新建 `WebauthnService`（`backend/internal/service/webauthn_service.go`），实现注册/登录/列表/删除/重命名完整流程
+- 后端：添加公开路由 `GET /auth/webauthn/enabled`、`POST /auth/webauthn/login/begin`、`POST /auth/webauthn/login/finish`
+- 后端：添加鉴权路由 `POST /webauthn/register/begin`、`POST /webauthn/register/finish`、`GET /webauthn/credentials`、`DELETE /webauthn/credentials/{id}`、`PUT /webauthn/credentials/{id}`
+- 后端：WebAuthn 配置自动推导 RP ID 和 Origins（从请求 Host 和 X-Forwarded-Proto），无需手动配置
+- 后端：添加错误码 ERR3101-ERR3110
+- 前端：新建 `webauthn.ts` 工具函数（base64url 编解码、WebAuthn 选项转换、凭据序列化）
+- 前端：在 `pwd-login.vue` 和 `user-login.vue` 添加 Passkey 登录按钮，自动检测浏览器支持和服务器启用状态
+- 前端：在 `auth store` 添加 `loginByPasskey` 方法
+- 前端：新建 `passkey-manager.vue` 组件，嵌入 `user/profile` 和 `workspace/profile` 页面，支持注册/列表/删除/重命名
+- 前端：添加 9 种语言的 i18n 词条和 `app.d.ts` 类型定义
+- 测试状态：已部署到设备，`/admin/auth/webauthn/enabled` 返回 `enabled: true`，登录流程端点验证通过
 
-#### 2. 客户端 OAuth 统一回调 ✅
+#### 2. 修复版本提示不停弹出 ✅
 
-- `resolveClientCallbackURL` 使用 admin 回调 URL
-- `ConsumeUnifiedCallback` 新增统一回调处理函数
-- `HandleOauthCallback` 根据 pollToken 返回 HTML 页面或 302 重定向
-- OAuth 回调页面显示按钮链接到 `rustdesk://oauth/callback?poll_token=xxx`
-- 添加 HTML 注释调试信息：显示 schemeURL 和 pollToken
-- 测试状态：已部署到设备，等待用户测试确认
+- `soybean-admin/src/plugins/app.ts` 增加 localStorage 持久化忽略状态
+- 点"稍后"或 X 关闭写入忽略记录，点"立即更新"清除记录并刷新
+
+#### 1. 修复 CI workflow 失败 ✅
+
+- `docs/compat/rustdesk-current.json` 移除 git merge 冲突标记，恢复合法 JSON
 
 ### v1.2.28 (2026-08-06)
 
@@ -109,6 +116,7 @@
 ## 待办事项
 
 ### 高优先级
+- [ ] 在浏览器中完整测试 WebAuthn 注册和登录流程
 - [ ] 确认客户端 OAuth 回调功能正常工作
 - [ ] 测试普通用户查看权限是否正确限制操作
 
@@ -133,6 +141,7 @@
 
 | 版本 | 日期 | 主要变更 | 状态 |
 |------|------|----------|------|
+| v1.2.29 | 2026-08-08 | WebAuthn/Passkey 登录 + 修复版本提示 + 修复 CI | 已部署 |
 | v1.2.29 | 2026-08-07 | 普通用户查看权限 + 客户端 OAuth 统一回调 | 已部署 |
 | v1.2.28 | 2026-08-06 | OAuth 统一回调基础实现 | 已部署 |
 | v1.2.27 | 2026-08-05 | AdminOrUserAuth 中间件 | 已部署 |
@@ -142,7 +151,9 @@
 ### 后端核心文件
 - `backend/app/middleware/auth.go` — 鉴权中间件（AdminAuth、UserAuth、AdminOrUserAuth）
 - `backend/app/route.go` — 路由配置
-- `backend/app/controller/admin/auth.go` — OAuth 回调处理
+- `backend/app/controller/admin/auth.go` — OAuth 回调处理 + WebAuthn 登录端点
+- `backend/app/controller/admin/webauthn.go` — WebAuthn 注册管理控制器
+- `backend/internal/service/webauthn_service.go` — WebAuthn 服务
 - `backend/app/controller/api/compat_public.go` — 客户端兼容 API
 - `backend/internal/service/oauth_provider_service.go` — OAuth 服务
 - `backend/internal/errcode/errcode.go` — 错误码定义
@@ -151,6 +162,8 @@
 - `soybean-admin/src/router/elegant/routes.ts` — 路由配置
 - `soybean-admin/src/views/audit/*/` — 审计页面
 - `soybean-admin/src/views/system/*/` — 系统设置页面
+- `soybean-admin/src/utils/webauthn.ts` — WebAuthn 浏览器端工具函数
+- `soybean-admin/src/views/user/profile/modules/passkey-manager.vue` — Passkey 管理组件
 
 ### 配置文件
 - `backend/server.yaml` — 服务配置

@@ -73,6 +73,18 @@ declare namespace Api {
       roles: string[];
       buttons: string[];
     }
+
+    interface WebauthnCredential {
+      id: number;
+      name: string;
+      credentialId: string;
+      createdAt: string;
+      lastUsedAt?: string;
+      aaguid?: string;
+      transports?: string[];
+      backupEligible?: boolean;
+      backupState?: boolean;
+    }
   }
 
   namespace Home {

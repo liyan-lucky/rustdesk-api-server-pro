@@ -206,6 +206,28 @@ const local: App.I18n.Schema = {
         oauthStateExpired: '登录请求已过期或已使用，请重新发起登录。',
         oauthAuthFailed: '第三方登录失败，请检查提供方配置和安全审计日志。'
       },
+      passkey: {
+        loginWithPasskey: 'Passkey 登录',
+        notSupported: '当前浏览器不支持 Passkey',
+        beginFailed: '启动 Passkey 登录失败',
+        cancelled: 'Passkey 登录已取消',
+        usernameRequired: '请先输入用户名',
+        title: 'Passkey 管理',
+        register: '注册 Passkey',
+        registerSuccess: 'Passkey 注册成功',
+        registerFailed: 'Passkey 注册失败',
+        deleteConfirm: '确定删除此 Passkey 吗？',
+        deleteSuccess: 'Passkey 删除成功',
+        rename: '重命名',
+        renameSuccess: '重命名成功',
+        renameFailed: '重命名失败',
+        noCredentials: '未绑定 Passkey',
+        credentialName: '名称',
+        createdAt: '创建时间',
+        lastUsedAt: '最后使用时间',
+        enterName: '为此 Passkey 输入名称',
+        namePlaceholder: '例如：我的笔记本'
+      },
       pwdLogin: { ...enUs.page.login.pwdLogin, title: '密码登录', rememberMe: '记住我', switchToUser: '普通用户登录' },
       userLogin: { title: '普通用户登录', switchToAdmin: '管理员登录' }
     },

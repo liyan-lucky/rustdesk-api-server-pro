@@ -4,7 +4,8 @@ import { useRoute } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
-import { fetchCaptcha, fetchOAuthLoginUrl, fetchOAuthProviders } from '@/service/api/auth';
+import { fetchCaptcha, fetchOAuthLoginUrl, fetchOAuthProviders, fetchWebauthnEnabled } from '@/service/api/auth';
+import { isWebAuthnSupported } from '@/utils/webauthn';
 
 defineOptions({
   name: 'PwdLogin'
@@ -15,6 +16,8 @@ const route = useRoute();
 const { formRef, validate } = useNaiveForm();
 const oauthProviders = ref<Api.Auth.OAuthProvider[]>([]);
 const activeProvider = ref('');
+const passkeyEnabled = ref(false);
+const passkeyLoading = ref(false);
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -81,6 +84,33 @@ async function loadOAuthProviders() {
   }
 }
 
+async function loadPasskeyEnabled() {
+  if (!isWebAuthnSupported()) {
+    passkeyEnabled.value = false;
+    return;
+  }
+  try {
+    const { data } = await fetchWebauthnEnabled();
+    passkeyEnabled.value = data?.enabled === true;
+  } catch {
+    passkeyEnabled.value = false;
+  }
+}
+
+async function handlePasskeyLogin() {
+  if (passkeyLoading.value) return;
+  if (!model.username) {
+    window.$message?.warning($t('page.login.passkey.usernameRequired'));
+    return;
+  }
+  passkeyLoading.value = true;
+  try {
+    await authStore.loginByPasskey(model.username);
+  } finally {
+    passkeyLoading.value = false;
+  }
+}
+
 async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {
   if (activeProvider.value) return;
   activeProvider.value = provider.name;
@@ -114,6 +144,7 @@ function providerIcon(type: string) {
 onMounted(() => {
   handleCaptcha();
   loadOAuthProviders();
+  loadPasskeyEnabled();
 });
 </script>
 
@@ -156,6 +187,17 @@ onMounted(() => {
         @click="handleSubmit"
       >
         {{ $t('common.confirm') }}
+      </NButton>
+      <NButton
+        v-if="passkeyEnabled"
+        size="medium"
+        round
+        block
+        :loading="passkeyLoading"
+        @click="handlePasskeyLogin"
+      >
+        <template #icon><SvgIcon icon="mdi:key-chain" /></template>
+        {{ $t('page.login.passkey.loginWithPasskey') }}
       </NButton>
       <NDivider v-if="oauthProviders.length > 0" class="!mt-0 !mb-0">{{ $t('page.login.common.thirdPartyLogin') }}</NDivider>
       <div class="grid grid-cols-2 gap-8px">

@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/modules/auth';
 import { useAppStore } from '@/store/modules/app';
 import { fetchUserPortalInfo } from '@/service/api/user-portal';
 import { $t } from '@/locales';
+import PasskeyManager from './modules/passkey-manager.vue';
 
 const authStore = useAuthStore();
 const appStore = useAppStore();
@@ -35,4 +36,5 @@ onMounted(async () => {
       </NDescriptionsItem>
     </NDescriptions>
   </NCard>
+  <PasskeyManager />
 </template>

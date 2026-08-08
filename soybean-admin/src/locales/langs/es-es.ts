@@ -230,6 +230,24 @@ const local: App.I18n.Schema = {
         oauthStateExpired: 'La solicitud de inicio de sesión caducó o ya se usó. Iníciela de nuevo.',
         oauthAuthFailed: 'Falló el inicio de sesión externo. Revise la configuración y el registro de seguridad.'
       },
+      passkey: {
+        ...enUs.page.login.passkey,
+        loginWithPasskey: 'Iniciar sesión con Passkey',
+        notSupported: 'Este navegador no soporta Passkey',
+        beginFailed: 'Error al iniciar el inicio de sesión Passkey',
+        cancelled: 'Inicio de sesión Passkey cancelado',
+        usernameRequired: 'Por favor, introduzca primero su nombre de usuario',
+        title: 'Gestión de Passkey',
+        register: 'Registrar Passkey',
+        registerSuccess: 'Passkey registrado con éxito',
+        registerFailed: 'Error al registrar Passkey',
+        deleteConfirm: '¿Seguro que desea eliminar este Passkey?',
+        deleteSuccess: 'Passkey eliminado con éxito',
+        rename: 'Renombrar',
+        renameSuccess: 'Renombrado con éxito',
+        renameFailed: 'Error al renombrar',
+        noCredentials: 'No hay Passkey registrado'
+      },
       pwdLogin: {
         ...enUs.page.login.pwdLogin,
         title: 'Inicio con contraseña',

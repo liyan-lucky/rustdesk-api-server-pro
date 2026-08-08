@@ -22,7 +22,15 @@ type ServerConfig struct {
 	JobsConfig      *JobsConfig         `yaml:"jobsConfig"`
 	OIDC            *OIDCConfig         `yaml:"oidc"`
 	OAuth           *OAuthConfig        `yaml:"oauth"`
+	WebAuthn        *WebAuthnConfig     `yaml:"webauthn"`
 	RustdeskServer  *RustdeskServerConfig `yaml:"rustdeskServer"`
+}
+
+type WebAuthnConfig struct {
+	Enabled  bool     `yaml:"enabled"`
+	RPID     string   `yaml:"rpId"`
+	RPName   string   `yaml:"rpName"`
+	RPOrigins []string `yaml:"rpOrigins"`
 }
 
 type RustdeskServerConfig struct {
@@ -162,6 +170,10 @@ func GetDefaultServerConfig() *ServerConfig {
 		},
 		OAuth: &OAuthConfig{
 			Providers: []OAuthProviderConfig{},
+		},
+		WebAuthn: &WebAuthnConfig{
+			Enabled: true,
+			RPName:  "RustDesk API Server Pro",
 		},
 	}
 }

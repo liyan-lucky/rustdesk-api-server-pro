@@ -190,6 +190,28 @@ const local: App.I18n.Schema = {
         oauthStateExpired: 'The login request expired or was already used. Start the login again.',
         oauthAuthFailed: 'Third-party login failed. Check the provider configuration and audit log.'
       },
+      passkey: {
+        loginWithPasskey: 'Login with Passkey',
+        notSupported: 'This browser does not support Passkey',
+        beginFailed: 'Failed to start Passkey login',
+        cancelled: 'Passkey login was cancelled',
+        usernameRequired: 'Please enter your username first',
+        title: 'Passkey Management',
+        register: 'Register Passkey',
+        registerSuccess: 'Passkey registered successfully',
+        registerFailed: 'Failed to register Passkey',
+        deleteConfirm: 'Are you sure you want to delete this Passkey?',
+        deleteSuccess: 'Passkey deleted successfully',
+        rename: 'Rename',
+        renameSuccess: 'Renamed successfully',
+        renameFailed: 'Failed to rename',
+        noCredentials: 'No Passkey bound',
+        credentialName: 'Name',
+        createdAt: 'Created At',
+        lastUsedAt: 'Last Used At',
+        enterName: 'Enter a name for this Passkey',
+        namePlaceholder: 'e.g. My Laptop'
+      },
       pwdLogin: { title: 'Password Login', rememberMe: 'Remember me', switchToUser: 'User Login' },
       userLogin: { title: 'User Login', switchToAdmin: 'Admin Login' }
     },

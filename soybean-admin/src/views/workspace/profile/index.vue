@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/modules/auth';
 import { useAppStore } from '@/store/modules/app';
 import { fetchUserPortalInfo } from '@/service/api/user-portal';
 import { $t } from '@/locales';
+import PasskeyManager from '../../user/profile/modules/passkey-manager.vue';
 const auth = useAuthStore();
 const appStore = useAppStore();
 const isAdmin = computed(() => auth.userInfo.roles.includes('R_SUPER'));
@@ -33,4 +34,5 @@ onMounted(async () => {
       </NDescriptionsItem>
     </NDescriptions>
   </NCard>
+  <PasskeyManager />
 </template>

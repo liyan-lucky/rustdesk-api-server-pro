@@ -239,6 +239,24 @@ const local: App.I18n.Schema = {
         oauthStateExpired: 'La richiesta di accesso è scaduta o è già stata utilizzata. Avvia nuovamente l’accesso.',
         oauthAuthFailed: 'Accesso terze parti fallito. Verifica la configurazione del provider e il log di audit.'
       },
+      passkey: {
+        ...enUs.page.login.passkey,
+        loginWithPasskey: 'Accedi con Passkey',
+        notSupported: 'Questo browser non supporta Passkey',
+        beginFailed: 'Avvio dell’accesso Passkey fallito',
+        cancelled: 'Accesso Passkey annullato',
+        usernameRequired: 'Inserisci prima il nome utente',
+        title: 'Gestione Passkey',
+        register: 'Registra Passkey',
+        registerSuccess: 'Passkey registrato con successo',
+        registerFailed: 'Registrazione Passkey fallita',
+        deleteConfirm: 'Vuoi davvero eliminare questo Passkey?',
+        deleteSuccess: 'Passkey eliminato con successo',
+        rename: 'Rinomina',
+        renameSuccess: 'Rinominato con successo',
+        renameFailed: 'Rinomina fallita',
+        noCredentials: 'Nessun Passkey registrato'
+      },
       pwdLogin: {
         ...enUs.page.login.pwdLogin,
         title: 'Accesso con password',
