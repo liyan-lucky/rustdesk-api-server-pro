@@ -103,17 +103,17 @@ func (c *CompatPublicController) HandleCompatTarget() mvc.Result {
 func (c *CompatPublicController) HandleFeatures() mvc.Result {
 	c.recordCompatAPIAudit(false, 200, "ok", "", nil)
 	return mvc.Response{Object: iris.Map{
-		"address_book":           true,
-		"audit":                  true,
+		"address_book":            true,
+		"audit":                   true,
 		"file_transfer_audit":     true,
-		"alarm_audit":            true,
-		"device_group":           true,
-		"user_group":             true,
-		"strategy":               true,
-		"record":                 true,
+		"alarm_audit":             true,
+		"device_group":            true,
+		"user_group":              true,
+		"strategy":                true,
+		"record":                  true,
 		"plugin_sign_passthrough": true,
-		"compat_api_audit":       true,
-		"compat_target":          c.compatService().Target(),
+		"compat_api_audit":        true,
+		"compat_target":           c.compatService().Target(),
 	}}
 }
 
@@ -122,7 +122,7 @@ func (c *CompatPublicController) HandleClientConfig() mvc.Result {
 	return mvc.Response{Object: iris.Map{
 		"server": iris.Map{
 			"name":    "rustdesk-api-server-pro",
-		"version":       service.CompatSysinfoVersion(),
+			"version": service.CompatSysinfoVersion(),
 		},
 		"compat_target": c.compatService().Target(),
 		"features": iris.Map{
@@ -159,12 +159,6 @@ func (c *CompatPublicController) HandleOidcAuth() mvc.Result {
 	}
 
 	if op == "webauth" {
-		cfg := config.GetServerConfig()
-		if cfg.WebAuthn == nil || !cfg.WebAuthn.Enabled {
-			c.recordCompatAPIAudit(true, 200, "webauth disabled", "", body)
-			errJSON, _ := json.Marshal(iris.Map{"error": errcode.New(errcode.ERR2216.Code, errcode.ERR2216.Message).Error()})
-			return mvc.Response{Object: iris.Map{"error": string(errJSON)}}
-		}
 		oauthService := service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 		loginURL, pollToken, err := oauthService.StartWebauthLogin(c.currentBaseURL(), id, uuid, deviceOs, deviceType, deviceName)
 		if err != nil {
@@ -257,8 +251,8 @@ func (c *CompatPublicController) HandleDevicesDeploy() mvc.Result {
 	body, _ := c.readBodyBytes()
 	result := c.compatService().HandleDeviceDeploy(core.CompatDeviceDeployCommand{
 		RustdeskID: gjson.GetBytes(body, "id").String(),
-		UUID:      gjson.GetBytes(body, "uuid").String(),
-		PublicKey: gjson.GetBytes(body, "pk").String(),
+		UUID:       gjson.GetBytes(body, "uuid").String(),
+		PublicKey:  gjson.GetBytes(body, "pk").String(),
 	})
 	statusCode := 200
 	if result.Result == "INVALID_INPUT" {

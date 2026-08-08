@@ -24,9 +24,12 @@ func TestOAuthProviderService_WebauthAdminReturnsOfficialClientResult(t *testing
 	}
 
 	svc := NewOAuthProviderService(&config.ServerConfig{SignKey: "test-sign-key"}, engine)
-	_, pollToken, err := svc.StartWebauthLogin("http://localhost:12345", "rustdesk-admin-id", "admin-uuid", "Windows", "desktop", "AdminPC")
+	loginURL, pollToken, err := svc.StartWebauthLogin("http://localhost:12345", "rustdesk-admin-id", "admin-uuid", "Windows", "desktop", "AdminPC")
 	if err != nil {
 		t.Fatalf("start webauth login: %v", err)
+	}
+	if loginURL != "http://localhost:12345/#/login?client_poll_token="+url.QueryEscape(pollToken) {
+		t.Fatalf("webauth must reuse frontend login page: %s", loginURL)
 	}
 	if err = svc.ConfirmWebauthLogin(pollToken, admin.Id); err != nil {
 		t.Fatalf("confirm webauth login: %v", err)
@@ -40,7 +43,11 @@ func TestOAuthProviderService_WebauthAdminReturnsOfficialClientResult(t *testing
 		AccessToken string `json:"access_token"`
 		Type        string `json:"type"`
 		User        struct {
-			IsAdmin bool `json:"is_admin"`
+			Name          string         `json:"name"`
+			Status        int            `json:"status"`
+			Info          map[string]any `json:"info"`
+			IsAdmin       bool           `json:"is_admin"`
+			ThirdAuthType string         `json:"third_auth_type"`
 		} `json:"user"`
 	}
 	if err = json.Unmarshal([]byte(result), &body); err != nil {
@@ -51,6 +58,9 @@ func TestOAuthProviderService_WebauthAdminReturnsOfficialClientResult(t *testing
 	}
 	if body.User.IsAdmin {
 		t.Fatalf("client auth body must not grant admin privileges")
+	}
+	if body.User.Name == "" || body.User.Status != 1 || body.User.Info == nil || body.User.ThirdAuthType != "webauth" {
+		t.Fatalf("client auth body does not match official RustDesk schema: %s", result)
 	}
 
 	cachedResult, err := svc.ConsumePollAndExchange(pollToken)

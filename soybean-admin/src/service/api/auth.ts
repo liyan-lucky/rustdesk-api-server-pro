@@ -23,6 +23,20 @@ export function fetchCaptcha() {
   return request<Api.Auth.Captcha>({ url: '/auth/captcha' });
 }
 
+export function fetchConfirmClientWebauth(pollToken: string, model: Api.Form.LoginForm) {
+  return request<{ ok: boolean }>({
+    url: '/auth/client-webauth/confirm',
+    method: 'post',
+    data: {
+      poll_token: pollToken,
+      username: model.username,
+      password: model.password,
+      code: model.code,
+      captchaId: model.captchaId
+    }
+  });
+}
+
 export function fetchOidcLoginUrl(redirect?: string) {
   return request<Api.Auth.OidcLoginUrl>({
     url: '/auth/oidc/url',

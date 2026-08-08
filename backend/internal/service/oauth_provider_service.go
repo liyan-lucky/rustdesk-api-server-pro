@@ -87,6 +87,7 @@ type oauthSignedStatePayload struct {
 }
 
 type oauthTicketEntry struct {
+	Provider   string
 	UserID     int
 	IsAdmin    bool
 	ExpiresAt  time.Time
@@ -271,6 +272,7 @@ func (s *OAuthProviderService) ConsumeAdminCallback(providerName, code, state st
 	}
 
 	if err = s.setTicket(ticket, oauthTicketEntry{
+		Provider:  provider.Name,
 		UserID:    user.Id,
 		IsAdmin:   user.IsAdmin,
 		ExpiresAt: time.Now().Add(s.ticketTTL(provider)),
@@ -1105,7 +1107,7 @@ func (s *OAuthProviderService) popState(key string) (oauthStateEntry, bool) {
 
 func (s *OAuthProviderService) setTicket(key string, value oauthTicketEntry) error {
 	if s.db != nil {
-		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "ticket", KeyHash: util.Sha256Hex(key), UserId: value.UserID, IsAdmin: value.IsAdmin, RustdeskId: value.RustdeskId, Uuid: value.Uuid, DeviceOs: value.DeviceOs, DeviceType: value.DeviceType, DeviceName: value.DeviceName, ExpiresAt: value.ExpiresAt, Status: 1})
+		_, err := s.db.Insert(&model.OAuthLoginSession{Kind: "ticket", KeyHash: util.Sha256Hex(key), Provider: value.Provider, UserId: value.UserID, IsAdmin: value.IsAdmin, RustdeskId: value.RustdeskId, Uuid: value.Uuid, DeviceOs: value.DeviceOs, DeviceType: value.DeviceType, DeviceName: value.DeviceName, ExpiresAt: value.ExpiresAt, Status: 1})
 		return err
 	}
 	now := time.Now()
@@ -1131,7 +1133,7 @@ func (s *OAuthProviderService) popTicket(key string) (oauthTicketEntry, bool) {
 		if err != nil || updated != 1 {
 			return oauthTicketEntry{}, false
 		}
-		return oauthTicketEntry{UserID: session.UserId, IsAdmin: session.IsAdmin, RustdeskId: session.RustdeskId, Uuid: session.Uuid, DeviceOs: session.DeviceOs, DeviceType: session.DeviceType, DeviceName: session.DeviceName, ExpiresAt: session.ExpiresAt}, true
+		return oauthTicketEntry{Provider: session.Provider, UserID: session.UserId, IsAdmin: session.IsAdmin, RustdeskId: session.RustdeskId, Uuid: session.Uuid, DeviceOs: session.DeviceOs, DeviceType: session.DeviceType, DeviceName: session.DeviceName, ExpiresAt: session.ExpiresAt}, true
 	}
 	now := time.Now()
 	globalOAuthRuntimeStore.mu.Lock()
@@ -1593,7 +1595,7 @@ func (s *OAuthProviderService) StartWebauthLogin(requestBaseURL, rustdeskId, uui
 		return "", "", err
 	}
 
-	loginURL := requestBaseURL + "/api/oauth/webauth/login-page?poll_token=" + pollToken
+	loginURL := requestBaseURL + "/#/login?client_poll_token=" + url.QueryEscape(pollToken)
 	return loginURL, pollToken, nil
 }
 
@@ -1611,6 +1613,7 @@ func (s *OAuthProviderService) ConfirmWebauthLogin(pollToken string, userID int)
 	}
 
 	err := s.setTicket(ticket, oauthTicketEntry{
+		Provider:   "webauth",
 		UserID:     userID,
 		IsAdmin:    false,
 		RustdeskId: stored.RustdeskId,
@@ -1752,6 +1755,7 @@ func (s *OAuthProviderService) ConsumeClientCallback(providerName, code, state s
 
 	ticketTTL := s.ticketTTL(provider)
 	if err = s.setTicket(ticket, oauthTicketEntry{
+		Provider:   provider.Name,
 		UserID:     user.Id,
 		IsAdmin:    false,
 		ExpiresAt:  time.Now().Add(ticketTTL),
@@ -1887,6 +1891,7 @@ func (s *OAuthProviderService) ConsumeUnifiedCallback(providerName, code, state 
 
 	if stored.PollToken != "" {
 		if err = s.setTicket(newTicket, oauthTicketEntry{
+			Provider:   provider.Name,
 			UserID:     user.Id,
 			IsAdmin:    false,
 			ExpiresAt:  time.Now().Add(ticketTTL),
@@ -1905,6 +1910,7 @@ func (s *OAuthProviderService) ConsumeUnifiedCallback(providerName, code, state 
 	}
 
 	if err = s.setTicket(newTicket, oauthTicketEntry{
+		Provider:  provider.Name,
 		UserID:    user.Id,
 		IsAdmin:   user.IsAdmin,
 		ExpiresAt: time.Now().Add(ticketTTL),
@@ -2001,7 +2007,9 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 			return "", tokenErr
 		}
 		var account model.OAuthAccount
-		_, _ = s.db.Where("user_id = ? and is_admin = 0 and status = 1", user.Id).Get(&account)
+		if item.Provider != "webauth" {
+			_, _ = s.db.Where("user_id = ? and provider = ? and is_admin = 0 and status = 1", user.Id, item.Provider).Get(&account)
+		}
 		resultBytes, _ := json.Marshal(iris.Map{
 			"access_token": token,
 			"type":         "access_token",
@@ -2019,7 +2027,7 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 					"other":                    iris.Map{},
 				},
 				"is_admin":        false,
-				"third_auth_type": account.Provider,
+				"third_auth_type": item.Provider,
 			},
 		})
 		resultStr := string(resultBytes)
@@ -2057,7 +2065,9 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 		return "", tokenErr
 	}
 	var account model.OAuthAccount
-	_, _ = s.db.Where("user_id = ? and is_admin = 0 and status = 1", user.Id).Get(&account)
+	if item.Provider != "webauth" {
+		_, _ = s.db.Where("user_id = ? and provider = ? and is_admin = 0 and status = 1", user.Id, item.Provider).Get(&account)
+	}
 	resultBytes, _ := json.Marshal(iris.Map{
 		"access_token": token,
 		"type":         "access_token",
@@ -2075,7 +2085,7 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 				"other":                    iris.Map{},
 			},
 			"is_admin":        false,
-			"third_auth_type": account.Provider,
+			"third_auth_type": item.Provider,
 		},
 	})
 	resultStr := string(resultBytes)

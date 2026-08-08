@@ -42,8 +42,6 @@ func (c *OAuthController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/oauth/{provider:string}/callback", "HandleCallback")
 	b.Handle("POST", "/oauth/poll", "HandlePoll")
 	b.Handle("POST", "/oauth/exchange", "HandleExchange")
-	b.Handle("GET", "/oauth/webauth/login-page", "HandleWebauthLoginPage")
-	b.Handle("POST", "/oauth/webauth/confirm", "HandleWebauthConfirm")
 }
 
 func (c *OAuthController) HandleProviders() mvc.Result {
@@ -64,10 +62,6 @@ func (c *OAuthController) HandleStart() mvc.Result {
 	}
 
 	if form.Provider == "webauth" {
-		cfg := config.GetServerConfig()
-		if cfg.WebAuthn == nil || !cfg.WebAuthn.Enabled {
-			return mvc.Response{Object: iris.Map{"enabled": false}}
-		}
 		service := v2service.NewOAuthProviderService(config.GetServerConfig(), c.Db)
 		loginURL, pollToken, err := service.StartWebauthLogin(c.currentBaseURL(), form.RustdeskId, form.Uuid, form.DeviceInfo.OS, form.DeviceInfo.Type, form.DeviceInfo.Name)
 		if err != nil {

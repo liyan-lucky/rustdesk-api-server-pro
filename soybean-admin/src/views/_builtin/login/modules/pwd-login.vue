@@ -4,26 +4,19 @@ import { useRoute } from 'vue-router';
 import { $t } from '@/locales';
 import { useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
-import { useRouteStore } from '@/store/modules/route';
-import { fetchCaptcha, fetchOAuthLoginUrl, fetchOAuthProviders, fetchWebauthnEnabled } from '@/service/api/auth';
-import { localStg } from '@/utils/storage';
-import { appendVersion, getVersionTag } from '@/utils/version';
-import { useRouterPush } from '@/hooks/common/router';
+import { fetchCaptcha, fetchConfirmClientWebauth, fetchOAuthLoginUrl, fetchOAuthProviders } from '@/service/api/auth';
 
 defineOptions({
   name: 'PwdLogin'
 });
 
 const authStore = useAuthStore();
-const routeStore = useRouteStore();
 const route = useRoute();
-const { toLogin, redirectFromLogin } = useRouterPush(false);
 const { formRef, validate } = useNaiveForm();
 const oauthProviders = ref<Api.Auth.OAuthProvider[]>([]);
 const activeProvider = ref('');
-const passkeyEnabled = ref(false);
-const passkeyLoading = ref(false);
-const passkeyTlsPort = ref('');
+const clientWebauthCompleted = ref(false);
+const clientPollToken = computed(() => (typeof route.query.client_poll_token === 'string' ? route.query.client_poll_token : ''));
 
 const model: Api.Form.LoginForm = reactive({
   username: '',
@@ -68,6 +61,15 @@ const rules = computed<Record<keyof Api.Form.LoginForm, App.Global.FormRule[]>>(
 
 async function handleSubmit() {
   await validate();
+  if (clientPollToken.value) {
+    const { data, error } = await fetchConfirmClientWebauth(clientPollToken.value, model);
+    if (!error && data?.ok) {
+      clientWebauthCompleted.value = true;
+      return;
+    }
+    if (error?.response?.data?.message?.includes('CaptchaError')) handleCaptcha();
+    return;
+  }
   const err = await authStore.login(model);
   if (err?.response?.data?.message?.includes('CaptchaError')) {
     handleCaptcha();
@@ -88,60 +90,6 @@ async function loadOAuthProviders() {
   } catch {
     oauthProviders.value = [];
   }
-}
-
-async function loadPasskeyEnabled() {
-  try {
-    const { data } = await fetchWebauthnEnabled();
-    passkeyEnabled.value = data?.enabled === true;
-    passkeyTlsPort.value = data?.tlsPort || '';
-  } catch {
-    passkeyEnabled.value = false;
-  }
-}
-
-async function handlePasskeyLogin() {
-  if (passkeyLoading.value) return;
-  if (!model.username) {
-    window.$message?.warning($t('page.login.passkey.usernameRequired'));
-    return;
-  }
-  if (!passkeyTlsPort.value) {
-    window.$message?.error($t('page.login.passkey.notSupported'));
-    return;
-  }
-
-  passkeyLoading.value = true;
-
-  const host = window.location.hostname;
-  const tlsPort = passkeyTlsPort.value.replace(/^:/, '');
-  const authUrl = `https://${host}:${tlsPort}/admin/auth/webauthn/auth-page?username=${encodeURIComponent(model.username)}`;
-
-  const messageHandler = async (event: MessageEvent) => {
-    if (event.data?.type !== 'webauthn-login') return;
-    window.removeEventListener('message', messageHandler);
-
-    const { token, isAdmin } = event.data;
-    if (token) {
-      localStg.set('token', token);
-      if (isAdmin !== undefined) {
-        localStg.set('isAdmin', isAdmin);
-      }
-      await authStore.initUserInfo();
-      await routeStore.initAuthRoute();
-      await redirectFromLogin();
-      if (routeStore.isInitAuthRoute) {
-        window.$notification?.success({
-          title: `${$t('page.login.common.loginSuccess')} (${getVersionTag()})`,
-          content: appendVersion($t('page.login.common.welcomeBack', { userName: authStore.userInfo.userName })),
-          duration: 4500
-        });
-      }
-    }
-    passkeyLoading.value = false;
-  };
-  window.addEventListener('message', messageHandler);
-  window.open(authUrl, '_blank', 'width=500,height=600');
 }
 
 async function handleOAuthLogin(provider: Api.Auth.OAuthProvider) {
@@ -176,13 +124,18 @@ function providerIcon(type: string) {
 
 onMounted(() => {
   handleCaptcha();
-  loadOAuthProviders();
-  loadPasskeyEnabled();
+  if (!clientPollToken.value) loadOAuthProviders();
 });
 </script>
 
 <template>
-  <NForm ref="formRef" :model="model" :rules="rules" size="medium" :show-label="false">
+  <NResult
+    v-if="clientWebauthCompleted"
+    status="success"
+    :title="$t('page.login.common.loginSuccess')"
+    description="认证信息已发送到 RustDesk 客户端，请返回客户端继续使用。"
+  />
+  <NForm v-else ref="formRef" :model="model" :rules="rules" size="medium" :show-label="false">
     <NFormItem path="username">
       <NInput v-model:value="model.username" :placeholder="$t('page.login.common.userNamePlaceholder')" />
     </NFormItem>
@@ -220,17 +173,6 @@ onMounted(() => {
         @click="handleSubmit"
       >
         {{ $t('common.confirm') }}
-      </NButton>
-      <NButton
-        v-if="passkeyEnabled"
-        size="medium"
-        round
-        block
-        :loading="passkeyLoading"
-        @click="handlePasskeyLogin"
-      >
-        <template #icon><SvgIcon icon="mdi:key-chain" /></template>
-        {{ $t('page.login.passkey.loginWithPasskey') }}
       </NButton>
       <NDivider v-if="oauthProviders.length > 0" class="!mt-0 !mb-0">{{ $t('page.login.common.thirdPartyLogin') }}</NDivider>
       <div class="grid grid-cols-2 gap-8px">

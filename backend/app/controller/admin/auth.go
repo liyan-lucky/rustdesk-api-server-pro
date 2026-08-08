@@ -28,11 +28,51 @@ func (c *AuthController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/auth/oauth/url", "GetAuthOauthUrl")
 	b.Handle("GET", "/auth/oauth/token", "GetAuthOauthToken")
 	b.Handle("GET", "/auth/oauth/{provider:string}/callback", "HandleOauthCallback")
+	b.Handle("POST", "/auth/client-webauth/confirm", "PostClientWebauthConfirm")
 	b.Handle("POST", "/auth/webauthn/login/begin", "PostWebauthnLoginBegin")
 	b.Handle("POST", "/auth/webauthn/login/finish", "PostWebauthnLoginFinish")
 	b.Handle("GET", "/auth/webauthn/enabled", "GetWebauthnEnabled")
 	b.Handle("GET", "/auth/webauthn/auth-page", "GetWebauthnAuthPage")
 	b.Handle("GET", "/auth/webauthn/register-page", "GetWebauthnRegisterPage")
+}
+
+type clientWebauthConfirmForm struct {
+	admin.LoginForm
+	PollToken string `json:"poll_token"`
+}
+
+// PostClientWebauthConfirm 使用现有后台登录页确认 RustDesk 客户端 WebAuth 登录。
+func (c *AuthController) PostClientWebauthConfirm() mvc.Result {
+	var form clientWebauthConfirmForm
+	if err := c.Ctx.ReadJSON(&form); err != nil {
+		return c.dbError(err)
+	}
+	if strings.TrimSpace(form.PollToken) == "" {
+		return c.Error(nil, errcode.New(errcode.ERR2205.Code, errcode.ERR2205.Message).Error())
+	}
+	if !captcha.VerifyCode(form.CaptchaId, form.Code) {
+		c.recordAdminLoginAudit(0, form.Username, false, "client_webauth: CaptchaError")
+		return c.Error(nil, errcode.New(errcode.ERR1001.Code, errcode.ERR1001.Message).Error())
+	}
+
+	var user model.User
+	has, err := c.Db.Where("username = ? and status > 0", form.Username).Get(&user)
+	if err != nil {
+		return c.dbError(err)
+	}
+	if !has {
+		return c.Error(nil, errcode.New(errcode.ERR1002.Code, errcode.ERR1002.Message).Error())
+	}
+	if !util.PasswordVerify(form.Password, user.Password) {
+		return c.Error(nil, errcode.New(errcode.ERR1003.Code, errcode.ERR1003.Message).Error())
+	}
+
+	service := v2service.NewOAuthProviderService(c.Cfg, c.Db)
+	if err = service.ConfirmWebauthLogin(form.PollToken, user.Id); err != nil {
+		return c.Error(nil, err.Error())
+	}
+	c.recordAdminLoginAudit(user.Id, form.Username, true, "client_webauth: success")
+	return c.Success(iris.Map{"ok": true}, "ok")
 }
 
 func (c *AuthController) PostAuthLogin() mvc.Result {
