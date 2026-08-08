@@ -1,12 +1,72 @@
 package service
 
 import (
+	"encoding/json"
 	"net/url"
 	"rustdesk-api-server-pro/app/model"
 	"rustdesk-api-server-pro/config"
 	"rustdesk-api-server-pro/db"
 	"testing"
 )
+
+func TestOAuthProviderService_WebauthAdminReturnsOfficialClientResult(t *testing.T) {
+	engine, err := db.NewEngine(&config.DbConfig{Driver: "sqlite", Dsn: ":memory:", TimeZone: "Asia/Shanghai", ShowSql: false})
+	if err != nil {
+		t.Fatalf("new engine: %v", err)
+	}
+	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount), new(model.OAuthLoginSession)); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+
+	admin := &model.User{Username: "admin", Name: "管理员", IsAdmin: true, Status: 1}
+	if _, err = engine.Insert(admin); err != nil {
+		t.Fatalf("insert admin: %v", err)
+	}
+
+	svc := NewOAuthProviderService(&config.ServerConfig{SignKey: "test-sign-key"}, engine)
+	_, pollToken, err := svc.StartWebauthLogin("http://localhost:12345", "rustdesk-admin-id", "admin-uuid", "Windows", "desktop", "AdminPC")
+	if err != nil {
+		t.Fatalf("start webauth login: %v", err)
+	}
+	if err = svc.ConfirmWebauthLogin(pollToken, admin.Id); err != nil {
+		t.Fatalf("confirm webauth login: %v", err)
+	}
+
+	result, err := svc.ConsumePollAndExchange(pollToken)
+	if err != nil {
+		t.Fatalf("consume official auth query: %v", err)
+	}
+	var body struct {
+		AccessToken string `json:"access_token"`
+		Type        string `json:"type"`
+		User        struct {
+			IsAdmin bool `json:"is_admin"`
+		} `json:"user"`
+	}
+	if err = json.Unmarshal([]byte(result), &body); err != nil {
+		t.Fatalf("decode official auth body: %v", err)
+	}
+	if body.AccessToken == "" || body.Type != "access_token" {
+		t.Fatalf("unexpected official auth body: %s", result)
+	}
+	if body.User.IsAdmin {
+		t.Fatalf("client auth body must not grant admin privileges")
+	}
+
+	cachedResult, err := svc.ConsumePollAndExchange(pollToken)
+	if err != nil {
+		t.Fatalf("repeat official auth query: %v", err)
+	}
+	if cachedResult != result {
+		t.Fatalf("auth query must be idempotent")
+	}
+
+	var token model.AuthToken
+	has, err := engine.Where("user_id = ? and rustdesk_id = ? and uuid = ? and is_admin = 0", admin.Id, "rustdesk-admin-id", "admin-uuid").Get(&token)
+	if err != nil || !has {
+		t.Fatalf("client-scoped admin token not found: has=%v err=%v", has, err)
+	}
+}
 
 func TestOAuthProviderService_ListClientProviders(t *testing.T) {
 	cfg := &config.ServerConfig{

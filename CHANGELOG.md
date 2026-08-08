@@ -1,5 +1,13 @@
 # 变更日志
 
+## 未发布
+
+### 修复
+
+- 修复 RustDesk 官方客户端通过 WebAuth 登录时，管理员账号在首次 `/api/oidc/auth-query` 被错误拒绝并导致后续持续返回 `ERR-2008` 的问题。
+- 管理员可作为客户端登录用户，但签发的客户端令牌始终保持 `is_admin=false`；成功查询结果可幂等读取。
+- 客户端登录文档改以官方 `/api/login-options`、`/api/oidc/auth`、`/api/oidc/auth-query` 协议为准。
+
 ## v1.2.29 (2026-08-07)
 
 ### 新功能

@@ -11,7 +11,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -88,9 +87,9 @@ type oauthSignedStatePayload struct {
 }
 
 type oauthTicketEntry struct {
-	UserID    int
-	IsAdmin   bool
-	ExpiresAt time.Time
+	UserID     int
+	IsAdmin    bool
+	ExpiresAt  time.Time
 	RustdeskId string
 	Uuid       string
 	DeviceOs   string
@@ -1546,8 +1545,8 @@ func defaultIfEmpty(value, fallback string) string {
 	return value
 }
 
-// ListClientProviders returns enabled OAuth providers available for client login.
-// Only providers with accountRole=user are exposed to desktop/mobile clients.
+// ListClientProviders 返回客户端登录可用的已启用 OAuth Provider。
+// 仅向桌面和移动客户端暴露 accountRole=user 的 Provider。
 func (s *OAuthProviderService) ListClientProviders() []OAuthProviderMeta {
 	metas := make([]OAuthProviderMeta, 0)
 	if s == nil || s.cfg == nil {
@@ -1612,14 +1611,14 @@ func (s *OAuthProviderService) ConfirmWebauthLogin(pollToken string, userID int)
 	}
 
 	err := s.setTicket(ticket, oauthTicketEntry{
-		UserID:      userID,
-		IsAdmin:     false,
-		RustdeskId:  stored.RustdeskId,
-		Uuid:        stored.Uuid,
-		DeviceOs:    stored.DeviceOs,
-		DeviceType:  stored.DeviceType,
-		DeviceName:  stored.DeviceName,
-		ExpiresAt:   time.Now().Add(ticketTTL),
+		UserID:     userID,
+		IsAdmin:    false,
+		RustdeskId: stored.RustdeskId,
+		Uuid:       stored.Uuid,
+		DeviceOs:   stored.DeviceOs,
+		DeviceType: stored.DeviceType,
+		DeviceName: stored.DeviceName,
+		ExpiresAt:  time.Now().Add(ticketTTL),
 	})
 	if err != nil {
 		return err
@@ -1642,7 +1641,6 @@ func (s *OAuthProviderService) BuildClientAuthURL(providerName, requestBaseURL, 
 	if provider.AccountRole != "user" {
 		return "", "", false, nil
 	}
-
 	metadata, err := s.getMetadata(provider)
 	if err != nil {
 		return "", "", true, err
@@ -1803,7 +1801,10 @@ func (s *OAuthProviderService) ExchangeClientTicket(ticket string) (string, *mod
 		return "", nil, errcode.New(errcode.ERR2206.Code, errcode.ERR2206.Message)
 	}
 	var user model.User
-	has, err := s.db.Where("id = ? and is_admin = 0 and status > 0", item.UserID).Get(&user)
+	// 客户端登录令牌始终以 is_admin=false 签发，但官方客户端也允许管理员
+	// 作为普通登录用户使用。这里不能按 user.is_admin 过滤，否则管理员完成
+	// WebAuth 后会在首次 auth-query 时丢失一次性 ticket。
+	has, err := s.db.Where("id = ? and status > 0", item.UserID).Get(&user)
 	if err != nil {
 		return "", nil, err
 	}
@@ -1974,7 +1975,6 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 			return "", nil
 		}
 		if session.Result != "" {
-			log.Printf("[OIDC-DEBUG] returning cached result: %s", session.Result)
 			return session.Result, nil
 		}
 		ticket := strings.TrimSpace(session.Ticket)
@@ -1989,7 +1989,7 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 			return "", errcode.New(errcode.ERR2206.Code, errcode.ERR2206.Message)
 		}
 		var user model.User
-		hasUser, userErr := s.db.Where("id = ? and is_admin = 0 and status > 0", item.UserID).Get(&user)
+		hasUser, userErr := s.db.Where("id = ? and status > 0", item.UserID).Get(&user)
 		if userErr != nil {
 			return "", userErr
 		}
@@ -2006,12 +2006,12 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 			"access_token": token,
 			"type":         "access_token",
 			"user": iris.Map{
-			"name":            user.Name,
-				"display_name":    user.Name,
-				"avatar":          account.Picture,
-				"email":           user.Email,
-				"note":            user.Note,
-				"status":          user.Status,
+				"name":         user.Name,
+				"display_name": user.Name,
+				"avatar":       account.Picture,
+				"email":        user.Email,
+				"note":         user.Note,
+				"status":       user.Status,
 				"info": iris.Map{
 					"email_verification":       false,
 					"email_alarm_notification": false,
@@ -2045,7 +2045,7 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 		return "", errcode.New(errcode.ERR2206.Code, errcode.ERR2206.Message)
 	}
 	var user model.User
-	hasUser, userErr := s.db.Where("id = ? and is_admin = 0 and status > 0", item.UserID).Get(&user)
+	hasUser, userErr := s.db.Where("id = ? and status > 0", item.UserID).Get(&user)
 	if userErr != nil {
 		return "", userErr
 	}
@@ -2062,12 +2062,12 @@ func (s *OAuthProviderService) ConsumePollAndExchange(pollToken string) (string,
 		"access_token": token,
 		"type":         "access_token",
 		"user": iris.Map{
-			"name":            user.Name,
-			"display_name":    user.Name,
-			"avatar":          account.Picture,
-			"email":           user.Email,
-			"note":            user.Note,
-			"status":          user.Status,
+			"name":         user.Name,
+			"display_name": user.Name,
+			"avatar":       account.Picture,
+			"email":        user.Email,
+			"note":         user.Note,
+			"status":       user.Status,
 			"info": iris.Map{
 				"email_verification":       false,
 				"email_alarm_notification": false,

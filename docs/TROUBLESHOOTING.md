@@ -219,15 +219,16 @@ rustdesk-api-server-pro.exe sync
 
 ### 说明
 
-客户端第三方登录已通过 `/api/oauth/*` 接口族实现，采用**服务端回调 + 客户端轮询**流程，复用后台 `oauth.providers` 中 `accountRole: user` 的 Provider。完整流程见 `docs/OAUTH_PROVIDERS.md`“客户端第三方登录”章节。
+客户端第三方登录以官方 `/api/login-options`、`/api/oidc/auth`、`/api/oidc/auth-query` 协议为准，采用**服务端回调 + 客户端轮询**流程；`/api/oauth/*` 为扩展兼容接口。完整流程见 `docs/OAUTH_PROVIDERS.md`“RustDesk 客户端兼容协议”章节。
 
 ### 排查
 
-- 客户端调用 `GET /api/oauth/providers` 无返回：检查后台是否配置了 `accountRole: user` 且 `enabled: true` 的 Provider。
-- `POST /api/oauth/start` 返回 `enabled:false`：Provider 未启用或 `accountRole` 不是 `user`。
+- 客户端调用 `GET /api/login-options` 无返回：检查后台是否存在 `enabled: true` 且配置完整的 Provider。
+- `POST /api/oidc/auth` 返回 Provider 不可用：检查 Provider 是否启用及 Client ID、Secret、授权端点配置。
 - 回调页显示 `oauth_state_expired`：state 超时（默认 180 秒），用户授权过慢，调大 `stateTtlSeconds`。
 - 回调页显示 `oauth_account_not_bound`：未配置 `bindByEmail` 或 `autoCreateUser`，且无已绑定账号。
-- 轮询一直 `ready:false`：回调未完成或失败，检查浏览器是否成功跳转到 Provider 授权页。
+- `auth-query` 一直返回 `No authed oidc is found`：回调未完成或失败，检查浏览器是否成功跳转到统一回调。
+- `auth-query` 返回 `ERR-2008`：检查服务端是否包含管理员客户端登录与幂等结果缓存修复；旧版本会在首次查询消费 ticket 后持续失败。
 - `/api/oidc/auth` 与 `/api/oidc/auth-query` 已实现完整客户端兼容协议，复用 `/api/oauth/*` 的服务端回调+轮询逻辑。
 
 ## 8.1 错误日志页面报 ERR-B010: DatabaseError: no such table: error_log
