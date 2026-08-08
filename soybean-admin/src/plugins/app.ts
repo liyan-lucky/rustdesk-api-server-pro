@@ -34,18 +34,17 @@ export function setupAppVersionNotification() {
 
   const checkVersion = async () => {
     if (isShow || import.meta.env.DEV) return;
-    const [buildTime, serverVersion] = await Promise.all([getHtmlBuildTime(), getServerVersion()]);
+    const serverVersion = await getServerVersion();
     const currentVersion = getVersionTag().replace(/^v/, '');
-    if (buildTime === BUILD_TIME && (!serverVersion || serverVersion === currentVersion)) return;
+    if (!serverVersion || !isVersionHigher(serverVersion, currentVersion)) return;
 
-    const target = serverVersion || 'new build';
-    const dismissKey = `${currentVersion}|${target}|${buildTime}`;
+    const dismissKey = `${currentVersion}|${serverVersion}`;
     if (getDismissedVersion() === dismissKey) return;
 
     isShow = true;
     const n = window.$notification?.create({
-      title: `${$t('system.updateTitle')} (${currentVersion} → ${target})`,
-      content: `${appendVersion($t('system.updateContent'))} Server: ${target}`,
+      title: `${$t('system.updateTitle')} (${currentVersion} → ${serverVersion})`,
+      content: `${appendVersion($t('system.updateContent'))} Server: ${serverVersion}`,
       action() {
         return h('div', { style: { display: 'flex', justifyContent: 'end', gap: '12px', width: '325px' } }, [
           h(
@@ -85,6 +84,18 @@ export function setupAppVersionNotification() {
   window.setInterval(() => void checkVersion(), 5 * 60 * 1000);
 }
 
+function isVersionHigher(a: string, b: string): boolean {
+  const pa = a.split('.').map(Number);
+  const pb = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const va = pa[i] || 0;
+    const vb = pb[i] || 0;
+    if (va > vb) return true;
+    if (va < vb) return false;
+  }
+  return false;
+}
+
 async function getServerVersion() {
   try {
     const baseURL = import.meta.env.VITE_BASE_URL;
@@ -95,18 +106,4 @@ async function getServerVersion() {
   } catch {
     return '';
   }
-}
-
-async function getHtmlBuildTime() {
-  const baseURL = import.meta.env.VITE_BASE_URL;
-
-  const res = await fetch(`${baseURL}index.html`);
-
-  const html = await res.text();
-
-  const match = html.match(/<meta name="buildTime" content="(.*)">/);
-
-  const buildTime = match?.[1] || '';
-
-  return buildTime;
 }
