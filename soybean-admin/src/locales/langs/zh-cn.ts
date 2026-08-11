@@ -80,6 +80,7 @@ const local: App.I18n.Schema = {
     },
     recommendColor: '应用推荐配色算法',
     recommendColorDesc: '推荐配色算法参考',
+    glassEffect: '毛玻璃透明效果',
     themeColor: {
       ...enUs.theme.themeColor,
       title: '主题颜色',

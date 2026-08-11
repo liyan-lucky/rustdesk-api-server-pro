@@ -36,6 +36,9 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   /** colourWeakness mode */
   const colourWeaknessMode = computed(() => settings.value.colourWeakness);
 
+  /** glass effect mode */
+  const glassEffectMode = computed(() => settings.value.glassEffect);
+
   /** Theme colors */
   const themeColors = computed(() => {
     const { themeColor, otherColor, isInfoFollowPrimary } = settings.value;
@@ -89,6 +92,15 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
    */
   function setColourWeakness(isColourWeakness: boolean) {
     settings.value.colourWeakness = isColourWeakness;
+  }
+
+  /**
+   * Set glass effect value
+   *
+   * @param isGlassEffect
+   */
+  function setGlassEffect(isGlassEffect: boolean) {
+    settings.value.glassEffect = isGlassEffect;
   }
 
   /** Toggle theme scheme */
@@ -186,6 +198,20 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
       { immediate: true }
     );
 
+    // watch glass effect mode, toggle css class on html element
+    watch(
+      glassEffectMode,
+      val => {
+        const htmlClass = 'glass-effect';
+        if (val) {
+          document.documentElement.classList.add(htmlClass);
+        } else {
+          document.documentElement.classList.remove(htmlClass);
+        }
+      },
+      { immediate: true }
+    );
+
     // themeColors change, update css vars and storage theme color
     watch(
       themeColors,
@@ -210,6 +236,7 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     settingsJson,
     setGrayscale,
     setColourWeakness,
+    setGlassEffect,
     resetStore,
     setThemeScheme,
     toggleThemeScheme,

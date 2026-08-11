@@ -65,4 +65,45 @@ const watermarkProps = computed<WatermarkProps>(() => {
   background-color: rgb(var(--base-color) / 72%) !important;
   backdrop-filter: blur(5px);
 }
+
+/* 玻璃透明效果 - 开启时所有容器获得毛玻璃透明背景 */
+html.glass-effect .bg-container {
+  background-color: rgb(var(--container-bg-color) / 88%) !important;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+html.glass-effect .bg-layout {
+  background-color: rgb(var(--layout-bg-color) / 80%) !important;
+  backdrop-filter: blur(10px);
+}
+
+html.glass-effect .n-card {
+  background-color: rgb(var(--container-bg-color) / 88%) !important;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+html.glass-effect .n-card.n-card--bordered {
+  border-color: rgb(var(--primary-color) / 15%);
+}
+
+html.glass-effect .n-drawer-content {
+  background-color: rgb(var(--container-bg-color) / 92%) !important;
+  backdrop-filter: blur(16px);
+}
+
+html.glass-effect .n-modal .n-card {
+  background-color: rgb(var(--container-bg-color) / 92%) !important;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 55px rgb(0 0 0 / 28%);
+}
+
+html.glass-effect .n-tabs .n-tabs-nav {
+  background-color: transparent !important;
+}
+
+html.glass-effect .n-table .n-table-wrapper {
+  background-color: transparent !important;
+}
 </style>

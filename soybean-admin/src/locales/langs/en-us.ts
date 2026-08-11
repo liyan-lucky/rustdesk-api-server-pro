@@ -73,6 +73,7 @@ const local: App.I18n.Schema = {
     },
     recommendColor: 'Apply Recommended Color Algorithm',
     recommendColorDesc: 'The recommended color algorithm refers to',
+    glassEffect: 'Glass Transparency Effect',
     themeColor: {
       title: 'Theme Color',
       primary: 'Primary',

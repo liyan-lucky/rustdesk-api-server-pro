@@ -84,6 +84,7 @@ const local: App.I18n.Schema = {
     },
     recommendColor: 'Aplicar algoritmo de color recomendado',
     recommendColorDesc: 'El algoritmo de color recomendado se refiere a',
+    glassEffect: 'Efecto de transparencia de cristal',
     themeColor: {
       ...enUs.theme.themeColor,
       title: 'Color del tema',
