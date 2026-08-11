@@ -11,7 +11,7 @@ require (
 	github.com/golang-module/carbon/v2 v2.3.1
 	github.com/kataras/iris/v12 v12.2.8
 	github.com/mojocn/base64Captcha v1.3.6
-	github.com/pquerna/otp v1.4.0
+	github.com/pquerna/otp v1.5.0
 	github.com/schollz/progressbar/v3 v3.14.1
 	github.com/shirou/gopsutil/v3 v3.23.11
 	github.com/spf13/cobra v1.8.0
