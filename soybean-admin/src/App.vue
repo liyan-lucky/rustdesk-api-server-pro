@@ -101,7 +101,13 @@ html.glass-effect .n-card .n-card__footer {
   background-color: transparent !important;
 }
 
-/* 抽屉 */
+/* 抽屉 - 覆盖 .n-drawer 和 .n-drawer-content 的 --n-color */
+html.glass-effect .n-drawer {
+  --n-color: var(--glass-bg-strong) !important;
+  background-color: var(--glass-bg-strong) !important;
+  backdrop-filter: blur(var(--glass-blur));
+}
+
 html.glass-effect .n-drawer-content {
   --n-color: var(--glass-bg-strong) !important;
   background-color: var(--glass-bg-strong) !important;

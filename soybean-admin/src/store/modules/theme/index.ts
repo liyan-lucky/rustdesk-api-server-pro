@@ -229,12 +229,14 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
         const htmlClass = 'glass-effect';
         const root = document.documentElement;
         // 读取主题色 CSS 变量，生成完整的 rgba 颜色直接注入
-        // 这样避免 rgb(var(--x) / var(--y)) 嵌套 var 的兼容性问题
+        // 透明度语义：数值越高越透明，alpha = (100 - opacity) / 100
+        // alphaStrong 用于弹窗/抽屉等需要更不透明的容器（比主背景不透明度高 8%）
+        // alphaWeak 用于布局背景等可以更透明的容器（比主背景透明度高 12%）
         const containerBg = getComputedStyle(root).getPropertyValue('--container-bg-color').trim();
         const layoutBg = getComputedStyle(root).getPropertyValue('--layout-bg-color').trim();
-        const alpha = opacity / 100;
-        const alphaStrong = Math.min(1, (opacity + 4) / 100);
-        const alphaWeak = Math.max(0, (opacity - 13) / 100);
+        const alpha = Math.max(0, Math.min(1, (100 - opacity) / 100));
+        const alphaStrong = Math.max(0, Math.min(1, (100 - opacity + 8) / 100));
+        const alphaWeak = Math.max(0, Math.min(1, (100 - opacity - 12) / 100));
         if (containerBg) {
           root.style.setProperty('--glass-bg', `rgb(${containerBg} / ${alpha})`);
           root.style.setProperty('--glass-bg-strong', `rgb(${containerBg} / ${alphaStrong})`);
@@ -265,9 +267,9 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
           const containerBg = getComputedStyle(root).getPropertyValue('--container-bg-color').trim();
           const layoutBg = getComputedStyle(root).getPropertyValue('--layout-bg-color').trim();
           const opacity = settings.value.glassOpacity;
-          const alpha = opacity / 100;
-          const alphaStrong = Math.min(1, (opacity + 4) / 100);
-          const alphaWeak = Math.max(0, (opacity - 13) / 100);
+          const alpha = Math.max(0, Math.min(1, (100 - opacity) / 100));
+          const alphaStrong = Math.max(0, Math.min(1, (100 - opacity + 8) / 100));
+          const alphaWeak = Math.max(0, Math.min(1, (100 - opacity - 12) / 100));
           if (containerBg) {
             root.style.setProperty('--glass-bg', `rgb(${containerBg} / ${alpha})`);
             root.style.setProperty('--glass-bg-strong', `rgb(${containerBg} / ${alphaStrong})`);
