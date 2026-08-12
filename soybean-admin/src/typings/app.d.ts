@@ -14,6 +14,10 @@ declare namespace App {
       colourWeakness: boolean;
       /** glass effect mode (transparent backdrop blur for all containers) */
       glassEffect: boolean;
+      /** glass effect blur strength in px (0-30) */
+      glassBlur: number;
+      /** glass effect background opacity in percent (0-100) */
+      glassOpacity: number;
       /** Whether to recommend color */
       recommendColor: boolean;
       /** Theme color */
@@ -350,6 +354,8 @@ declare namespace App {
         grayscale: string;
         colourWeakness: string;
         glassEffect: string;
+        glassBlur: string;
+        glassOpacity: string;
         layoutMode: { title: string; reverseHorizontalMix: string } & Record<UnionKey.ThemeLayoutMode, string>;
         recommendColor: string;
         recommendColorDesc: string;

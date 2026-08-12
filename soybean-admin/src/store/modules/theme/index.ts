@@ -39,6 +39,12 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   /** glass effect mode */
   const glassEffectMode = computed(() => settings.value.glassEffect);
 
+  /** glass effect blur strength */
+  const glassBlur = computed(() => settings.value.glassBlur);
+
+  /** glass effect opacity */
+  const glassOpacity = computed(() => settings.value.glassOpacity);
+
   /** Theme colors */
   const themeColors = computed(() => {
     const { themeColor, otherColor, isInfoFollowPrimary } = settings.value;
@@ -101,6 +107,24 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
    */
   function setGlassEffect(isGlassEffect: boolean) {
     settings.value.glassEffect = isGlassEffect;
+  }
+
+  /**
+   * Set glass blur strength
+   *
+   * @param blur blur strength in px (0-30)
+   */
+  function setGlassBlur(blur: number) {
+    settings.value.glassBlur = blur;
+  }
+
+  /**
+   * Set glass opacity
+   *
+   * @param opacity opacity in percent (0-100)
+   */
+  function setGlassOpacity(opacity: number) {
+    settings.value.glassOpacity = opacity;
   }
 
   /** Toggle theme scheme */
@@ -198,15 +222,21 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
       { immediate: true }
     );
 
-    // watch glass effect mode, toggle css class on html element
+    // watch glass effect mode, toggle css class on html element and inject css vars
     watch(
-      glassEffectMode,
-      val => {
+      [glassEffectMode, glassBlur, glassOpacity],
+      ([enabled, blur, opacity]) => {
         const htmlClass = 'glass-effect';
-        if (val) {
-          document.documentElement.classList.add(htmlClass);
+        // inject css variables for glass effect parameters
+        const root = document.documentElement;
+        root.style.setProperty('--glass-blur', `${blur}px`);
+        root.style.setProperty('--glass-opacity', `${opacity}%`);
+        root.style.setProperty('--glass-opacity-strong', `${Math.min(100, opacity + 4)}%`);
+        root.style.setProperty('--glass-opacity-weak', `${Math.max(0, opacity - 13)}%`);
+        if (enabled) {
+          root.classList.add(htmlClass);
         } else {
-          document.documentElement.classList.remove(htmlClass);
+          root.classList.remove(htmlClass);
         }
       },
       { immediate: true }
@@ -237,6 +267,8 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     setGrayscale,
     setColourWeakness,
     setGlassEffect,
+    setGlassBlur,
+    setGlassOpacity,
     resetStore,
     setThemeScheme,
     toggleThemeScheme,

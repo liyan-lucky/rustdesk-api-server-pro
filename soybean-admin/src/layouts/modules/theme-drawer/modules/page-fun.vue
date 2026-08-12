@@ -25,6 +25,26 @@ const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wra
     <SettingItem key="0" :label="$t('theme.glassEffect')">
       <NSwitch v-model:value="themeStore.glassEffect" />
     </SettingItem>
+    <SettingItem v-if="themeStore.glassEffect" key="0-1" :label="$t('theme.glassBlur')">
+      <NSlider
+        v-model:value="themeStore.glassBlur"
+        :min="0"
+        :max="30"
+        :step="1"
+        :tooltip="true"
+        class="w-120px"
+      />
+    </SettingItem>
+    <SettingItem v-if="themeStore.glassEffect" key="0-2" :label="$t('theme.glassOpacity')">
+      <NSlider
+        v-model:value="themeStore.glassOpacity"
+        :min="0"
+        :max="100"
+        :step="1"
+        :tooltip="true"
+        class="w-120px"
+      />
+    </SettingItem>
     <SettingItem key="1" :label="$t('theme.scrollMode.title')">
       <NSelect
         v-model:value="themeStore.layout.scrollMode"

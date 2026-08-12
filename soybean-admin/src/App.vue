@@ -66,26 +66,26 @@ const watermarkProps = computed<WatermarkProps>(() => {
   backdrop-filter: blur(5px);
 }
 
-/* 玻璃透明效果 - 开启时所有容器获得毛玻璃透明背景 */
+/* 玻璃透明效果 - 通过 --glass-blur 和 --glass-opacity 动态控制 */
 /* 覆盖布局容器 */
 html.glass-effect .bg-container {
-  background-color: rgb(var(--container-bg-color) / 88%) !important;
-  backdrop-filter: blur(14px);
+  background-color: rgb(var(--container-bg-color) / var(--glass-opacity)) !important;
+  backdrop-filter: blur(var(--glass-blur));
   box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
 }
 
 html.glass-effect .bg-layout {
-  background-color: rgb(var(--layout-bg-color) / 80%) !important;
-  backdrop-filter: blur(10px);
+  background-color: rgb(var(--layout-bg-color) / var(--glass-opacity-weak)) !important;
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 /* 覆盖 Naive UI 组件 CSS 变量，使所有卡片/弹窗/抽屉背景透明 */
 html.glass-effect .n-card {
-  --n-color: rgb(var(--container-bg-color) / 88%) !important;
-  --n-color-modal: rgb(var(--container-bg-color) / 92%) !important;
-  --n-color-popover: rgb(var(--container-bg-color) / 90%) !important;
+  --n-color: rgb(var(--container-bg-color) / var(--glass-opacity)) !important;
+  --n-color-modal: rgb(var(--container-bg-color) / var(--glass-opacity-strong)) !important;
+  --n-color-popover: rgb(var(--container-bg-color) / var(--glass-opacity-strong)) !important;
   --n-color-embedded: transparent !important;
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(var(--glass-blur));
   box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
 }
 
@@ -101,15 +101,15 @@ html.glass-effect .n-card .n-card__footer {
 
 /* 抽屉 */
 html.glass-effect .n-drawer-content {
-  --n-color: rgb(var(--container-bg-color) / 92%) !important;
-  background-color: rgb(var(--container-bg-color) / 92%) !important;
-  backdrop-filter: blur(16px);
+  --n-color: rgb(var(--container-bg-color) / var(--glass-opacity-strong)) !important;
+  background-color: rgb(var(--container-bg-color) / var(--glass-opacity-strong)) !important;
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 /* 弹窗 */
 html.glass-effect .n-modal .n-card {
-  --n-color: rgb(var(--container-bg-color) / 92%) !important;
-  backdrop-filter: blur(16px);
+  --n-color: rgb(var(--container-bg-color) / var(--glass-opacity-strong)) !important;
+  backdrop-filter: blur(var(--glass-blur));
   box-shadow: 0 20px 55px rgb(0 0 0 / 28%);
 }
 
@@ -128,21 +128,21 @@ html.glass-effect .n-list,
 html.glass-effect .n-menu,
 html.glass-effect .n-layout-sider,
 html.glass-effect .n-layout-header {
-  background-color: rgb(var(--container-bg-color) / 88%) !important;
-  backdrop-filter: blur(14px);
+  background-color: rgb(var(--container-bg-color) / var(--glass-opacity)) !important;
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 /* 弹出层透明 */
 html.glass-effect .n-popover,
 html.glass-effect .n-popselect-menu {
-  --n-color: rgb(var(--container-bg-color) / 90%) !important;
-  background-color: rgb(var(--container-bg-color) / 90%) !important;
-  backdrop-filter: blur(14px);
+  --n-color: rgb(var(--container-bg-color) / var(--glass-opacity-strong)) !important;
+  background-color: rgb(var(--container-bg-color) / var(--glass-opacity-strong)) !important;
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 /* 输入框、选择器等表单容器保持轻微透明 */
 html.glass-effect .n-input,
 html.glass-effect .n-base-selection {
-  --n-color: rgb(var(--container-bg-color) / 75%) !important;
+  --n-color: rgb(var(--container-bg-color) / var(--glass-opacity-weak)) !important;
 }
 </style>

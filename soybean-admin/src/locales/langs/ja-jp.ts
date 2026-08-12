@@ -76,6 +76,8 @@ const local: App.I18n.Schema = {
     recommendColor: 'Apply Recommended Color Algorithm',
     recommendColorDesc: 'The recommended color algorithm refers to',
     glassEffect: 'ガラス透明効果',
+    glassBlur: 'すりガラス強度',
+    glassOpacity: '不透明度',
     themeColor: {
       title: 'Theme Color',
       primary: 'Primary',
