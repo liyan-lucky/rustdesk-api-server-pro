@@ -1,4 +1,4 @@
-import { computed, effectScope, onScopeDispose, ref, toRefs, watch } from 'vue';
+import { computed, effectScope, nextTick, onScopeDispose, ref, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useEventListener, usePreferredColorScheme } from '@vueuse/core';
@@ -227,12 +227,23 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
       [glassEffectMode, glassBlur, glassOpacity],
       ([enabled, blur, opacity]) => {
         const htmlClass = 'glass-effect';
-        // inject css variables for glass effect parameters
         const root = document.documentElement;
+        // 读取主题色 CSS 变量，生成完整的 rgba 颜色直接注入
+        // 这样避免 rgb(var(--x) / var(--y)) 嵌套 var 的兼容性问题
+        const containerBg = getComputedStyle(root).getPropertyValue('--container-bg-color').trim();
+        const layoutBg = getComputedStyle(root).getPropertyValue('--layout-bg-color').trim();
+        const alpha = opacity / 100;
+        const alphaStrong = Math.min(1, (opacity + 4) / 100);
+        const alphaWeak = Math.max(0, (opacity - 13) / 100);
+        if (containerBg) {
+          root.style.setProperty('--glass-bg', `rgb(${containerBg} / ${alpha})`);
+          root.style.setProperty('--glass-bg-strong', `rgb(${containerBg} / ${alphaStrong})`);
+          root.style.setProperty('--glass-bg-weak', `rgb(${containerBg} / ${alphaWeak})`);
+        }
+        if (layoutBg) {
+          root.style.setProperty('--glass-layout-bg', `rgb(${layoutBg} / ${alphaWeak})`);
+        }
         root.style.setProperty('--glass-blur', `${blur}px`);
-        root.style.setProperty('--glass-opacity', `${opacity}%`);
-        root.style.setProperty('--glass-opacity-strong', `${Math.min(100, opacity + 4)}%`);
-        root.style.setProperty('--glass-opacity-weak', `${Math.max(0, opacity - 13)}%`);
         if (enabled) {
           root.classList.add(htmlClass);
         } else {
@@ -248,6 +259,24 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
       val => {
         setupThemeVarsToGlobal();
         localStg.set('themeColor', val.primary);
+        // 主题色变化后需要重新计算 glass 变量（因为依赖 container-bg-color）
+        nextTick(() => {
+          const root = document.documentElement;
+          const containerBg = getComputedStyle(root).getPropertyValue('--container-bg-color').trim();
+          const layoutBg = getComputedStyle(root).getPropertyValue('--layout-bg-color').trim();
+          const opacity = settings.value.glassOpacity;
+          const alpha = opacity / 100;
+          const alphaStrong = Math.min(1, (opacity + 4) / 100);
+          const alphaWeak = Math.max(0, (opacity - 13) / 100);
+          if (containerBg) {
+            root.style.setProperty('--glass-bg', `rgb(${containerBg} / ${alpha})`);
+            root.style.setProperty('--glass-bg-strong', `rgb(${containerBg} / ${alphaStrong})`);
+            root.style.setProperty('--glass-bg-weak', `rgb(${containerBg} / ${alphaWeak})`);
+          }
+          if (layoutBg) {
+            root.style.setProperty('--glass-layout-bg', `rgb(${layoutBg} / ${alphaWeak})`);
+          }
+        });
       },
       { immediate: true }
     );
