@@ -5,8 +5,9 @@
 ## 最近一次变更
 
 - **日期**：2026-08-14
-- **版本**：1.3.1（VERSION 文件为唯一事实来源）
+- **版本**：1.3.7（线上已部署）
 - **变更内容**：修复普通用户通过收藏访问 `/#/403` 后点击"返回首页"死循环的问题
+- **部署状态**：已成功部署到线上，容器正常运行，端口 16888
 
 ## 本次修复详情
 
@@ -96,9 +97,15 @@ Copy-Item soybean-admin\dist\* backend\dist -Recurse -Force
 
 - **远程设备**：NAS / Linux Docker 主机
 - **容器名**：`rustdesk-api-server-pro`
-- **默认端口**：12345
-- **网络模式**：host
+- **默认端口**：16888（环境变量 PORT=16888）
+- **网络模式**：bridge
+- **重启策略**：unless-stopped
 - **外部访问**：`http://liyan-fnosnas.dynv6.net:16888/`
+- **SSH 连接**：`ssh FnOSnas`（端口 2828，用户 LiYan）
+- **镜像**：`ghcr.io/liyan-lucky/rustdesk-api-server-pro:latest`
+- **数据目录**：`/vol1/docker/rustdesk-api-server-pro`
+- **hbbs 目录**：`/vol1/docker/rustdesk/hbbs`
+- **配置文件**：`/vol1/docker/rustdesk-api-server-pro/server.yaml`
 
 ## 关键文档索引
 
