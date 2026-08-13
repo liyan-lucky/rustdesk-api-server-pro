@@ -4,7 +4,6 @@ import { $t } from '@/locales';
 import { useRouterPush } from '@/hooks/common/router';
 import { useAuthStore } from '@/store/modules/auth';
 import { useRouteStore } from '@/store/modules/route';
-import { localStg } from '@/utils/storage';
 
 defineOptions({ name: 'ExceptionBase' });
 
@@ -43,8 +42,11 @@ const icon = computed(() => iconMap[props.type]);
  * 更新（普通用户更新为 /user/profile），避免跳转到 /home 后因无权限再次回到 403 形成死循环。
  */
 async function handleBackHome() {
-  const isLogin = Boolean(localStg.get('token'));
-  if (isLogin && !routeStore.isInitAuthRoute) {
+  if (!authStore.isLogin) {
+    routerPushByKey('login', { params: { module: 'pwd-login' } });
+    return;
+  }
+  if (!routeStore.isInitAuthRoute) {
     await authStore.initUserInfo();
     if (authStore.isLogin) {
       await routeStore.initAuthRoute();

@@ -86,6 +86,9 @@ const local: App.I18n.Schema = {
     },
     recommendColor: 'Empfohlenen Farbalgorithmus anwenden',
     recommendColorDesc: 'Der empfohlene Farbalgorithmus bezieht sich auf',
+    glassEffect: 'Glas-Transparenzeffekt',
+    glassBlur: 'Mattierungsintensität',
+    glassOpacity: 'Deckkraft',
     themeColor: {
       ...enUs.theme.themeColor,
       title: 'Theme-Farbe',

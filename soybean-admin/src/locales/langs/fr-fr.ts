@@ -90,6 +90,9 @@ const local: App.I18n.Schema = {
     },
     recommendColor: 'Appliquer l’algorithme de couleur recommandé',
     recommendColorDesc: 'L’algorithme de couleur recommandé fait référence à',
+    glassEffect: 'Effet de transparence verre',
+    glassBlur: 'Intensité givré',
+    glassOpacity: 'Opacité',
     themeColor: {
       ...enUs.theme.themeColor,
       title: 'Couleur du thème',

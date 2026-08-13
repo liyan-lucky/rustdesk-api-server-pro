@@ -88,6 +88,9 @@ const local: App.I18n.Schema = {
     },
     recommendColor: 'Applica algoritmo colore consigliato',
     recommendColorDesc: 'L’algoritmo colore consigliato fa riferimento a',
+    glassEffect: 'Effetto trasparenza vetro',
+    glassBlur: 'Intensità satinata',
+    glassOpacity: 'Opacità',
     themeColor: {
       ...enUs.theme.themeColor,
       title: 'Colore tema',

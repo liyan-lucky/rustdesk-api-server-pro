@@ -1,4 +1,4 @@
-import { computed, effectScope, onScopeDispose, ref, toRefs, watch } from 'vue';
+import { computed, effectScope, nextTick, onScopeDispose, ref, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useEventListener, usePreferredColorScheme } from '@vueuse/core';
@@ -35,6 +35,15 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   /** colourWeakness mode */
   const colourWeaknessMode = computed(() => settings.value.colourWeakness);
+
+  /** glass effect mode */
+  const glassEffectMode = computed(() => settings.value.glassEffect);
+
+  /** glass effect blur strength */
+  const glassBlur = computed(() => settings.value.glassBlur);
+
+  /** glass effect opacity */
+  const glassOpacity = computed(() => settings.value.glassOpacity);
 
   /** Theme colors */
   const themeColors = computed(() => {
@@ -89,6 +98,33 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
    */
   function setColourWeakness(isColourWeakness: boolean) {
     settings.value.colourWeakness = isColourWeakness;
+  }
+
+  /**
+   * Set glass effect value
+   *
+   * @param isGlassEffect
+   */
+  function setGlassEffect(isGlassEffect: boolean) {
+    settings.value.glassEffect = isGlassEffect;
+  }
+
+  /**
+   * Set glass blur strength
+   *
+   * @param blur blur strength in px (0-30)
+   */
+  function setGlassBlur(blur: number) {
+    settings.value.glassBlur = blur;
+  }
+
+  /**
+   * Set glass opacity
+   *
+   * @param opacity opacity in percent (0-100)
+   */
+  function setGlassOpacity(opacity: number) {
+    settings.value.glassOpacity = opacity;
   }
 
   /** Toggle theme scheme */
@@ -186,12 +222,63 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
       { immediate: true }
     );
 
+    // watch glass effect mode, toggle css class on html element and inject css vars
+    watch(
+      [glassEffectMode, glassBlur, glassOpacity],
+      ([enabled, blur, opacity]) => {
+        const htmlClass = 'glass-effect';
+        const root = document.documentElement;
+        // 读取主题色 CSS 变量，生成完整的 rgba 颜色直接注入
+        // 透明度语义：数值越高越透明，alpha = (100 - opacity) / 100
+        // alphaStrong 用于弹窗/抽屉等需要更不透明的容器（比主背景不透明度高 8%）
+        // alphaWeak 用于布局背景等可以更透明的容器（比主背景透明度高 12%）
+        const containerBg = getComputedStyle(root).getPropertyValue('--container-bg-color').trim();
+        const layoutBg = getComputedStyle(root).getPropertyValue('--layout-bg-color').trim();
+        const alpha = Math.max(0, Math.min(1, (100 - opacity) / 100));
+        const alphaStrong = Math.max(0, Math.min(1, (100 - opacity + 8) / 100));
+        const alphaWeak = Math.max(0, Math.min(1, (100 - opacity - 12) / 100));
+        if (containerBg) {
+          root.style.setProperty('--glass-bg', `rgb(${containerBg} / ${alpha})`);
+          root.style.setProperty('--glass-bg-strong', `rgb(${containerBg} / ${alphaStrong})`);
+          root.style.setProperty('--glass-bg-weak', `rgb(${containerBg} / ${alphaWeak})`);
+        }
+        if (layoutBg) {
+          root.style.setProperty('--glass-layout-bg', `rgb(${layoutBg} / ${alphaWeak})`);
+        }
+        root.style.setProperty('--glass-blur', `${blur}px`);
+        if (enabled) {
+          root.classList.add(htmlClass);
+        } else {
+          root.classList.remove(htmlClass);
+        }
+      },
+      { immediate: true }
+    );
+
     // themeColors change, update css vars and storage theme color
     watch(
       themeColors,
       val => {
         setupThemeVarsToGlobal();
         localStg.set('themeColor', val.primary);
+        // 主题色变化后需要重新计算 glass 变量（因为依赖 container-bg-color）
+        nextTick(() => {
+          const root = document.documentElement;
+          const containerBg = getComputedStyle(root).getPropertyValue('--container-bg-color').trim();
+          const layoutBg = getComputedStyle(root).getPropertyValue('--layout-bg-color').trim();
+          const opacity = settings.value.glassOpacity;
+          const alpha = Math.max(0, Math.min(1, (100 - opacity) / 100));
+          const alphaStrong = Math.max(0, Math.min(1, (100 - opacity + 8) / 100));
+          const alphaWeak = Math.max(0, Math.min(1, (100 - opacity - 12) / 100));
+          if (containerBg) {
+            root.style.setProperty('--glass-bg', `rgb(${containerBg} / ${alpha})`);
+            root.style.setProperty('--glass-bg-strong', `rgb(${containerBg} / ${alphaStrong})`);
+            root.style.setProperty('--glass-bg-weak', `rgb(${containerBg} / ${alphaWeak})`);
+          }
+          if (layoutBg) {
+            root.style.setProperty('--glass-layout-bg', `rgb(${layoutBg} / ${alphaWeak})`);
+          }
+        });
       },
       { immediate: true }
     );
@@ -210,6 +297,9 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     settingsJson,
     setGrayscale,
     setColourWeakness,
+    setGlassEffect,
+    setGlassBlur,
+    setGlassOpacity,
     resetStore,
     setThemeScheme,
     toggleThemeScheme,
