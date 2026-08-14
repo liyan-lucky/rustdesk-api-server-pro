@@ -2,28 +2,634 @@
 
 Base locale: `en-US`
 
-## de-DE
+## zh-CN
 
-- Base keys: 472
-- Fallback keys: 74 (15.68%)
-- Translated keys: 398
+- Base keys: 716
+- Fallback keys: 2 (0.28%)
+- Translated keys: 714
 
 **Top Modules To Translate**
-- `page`: 43
-- `dataMap`: 19
-- `system`: 5
+- `page`: 2
+
+**Top 2 Fallback Keys**
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+
+## ja-JP
+
+- Base keys: 716
+- Fallback keys: 448 (62.57%)
+- Translated keys: 268
+
+**Top Modules To Translate**
+- `api`: 191
+- `dataMap`: 125
+- `page`: 109
+- `icon`: 10
+- `request`: 6
+- `dropdown`: 5
+- `datatable`: 1
+- `route`: 1
+
+**Top 80 Fallback Keys**
+- `request.logout`
+- `request.logoutMsg`
+- `request.logoutWithModal`
+- `request.logoutWithModalMsg`
+- `request.refreshToken`
+- `request.tokenExpired`
+- `route.iframe-page`
+- `page.login.common.continueWith`
+- `page.home.userCount`
+- `page.home.deviceCount`
+- `page.home.onlineCount`
+- `page.home.visitsCount`
+- `page.home.operatingSystem`
+- `page.home.oneWeek`
+- `page.home.changeLogs`
+- `page.home.cardDetail.viewHint`
+- `page.home.cardDetail.recentUsers`
+- `page.home.cardDetail.recentDevices`
+- `page.home.cardDetail.recentVisits`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.user.list.searchPlaceholder`
+- `page.user.list.require2FACode`
+- `page.user.sessions.kill`
+- `page.user.sessions.confirmKill`
+- `page.user.audit.logsSearchPlaceholder`
+- `page.user.devices.logsSearchPlaceholder`
+- `page.system.mailTemplate.addMailTemplate`
+- `page.system.mailTemplate.editMailTemplate`
+- `page.system.mailTemplate.inputName`
+- `page.system.mailTemplate.inputSubject`
+- `page.system.mailTemplate.inputContents`
+- `page.system.mailTemplate.selectType`
+- `page.system.mailLog.info`
+- `page.myDevices.title`
+- `page.myDevices.welcome`
+- `page.myDevices.status`
+- `page.myDevices.online`
+- `page.myDevices.offline`
+- `page.myDevices.conns`
+- `page.myDevices.lastSync`
+- `page.myDevices.logout`
+- `page.workspace.scopeTitle`
+- `page.workspace.scopeTip`
+- `page.workspace.myDevices`
+- `page.workspace.activeSessions`
+- `page.workspace.addressBooks`
+- `page.workspace.securityEvents`
+- `page.workspace.currentSession`
+- `page.workspace.revokeConfirm`
+- `page.workspace.revoke`
+- `page.workspace.accountRole`
+- `page.workspace.adminRole`
+- `page.workspace.userRole`
+- `page.workspace.permissionScope`
+- `page.workspace.userScope`
+- `page.workspace.active`
+- `page.oauth.configTitle`
+- `page.oauth.bindingsTitle`
+- `page.oauth.addProvider`
+- `page.oauth.editProvider`
+- `page.oauth.providerName`
+- `page.oauth.displayName`
+- `page.oauth.clientId`
+- `page.oauth.clientSecret`
+- `page.oauth.secretPlaceholder`
+- `page.oauth.appleSecretHint`
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+- `page.oauth.privateKey`
+- `page.oauth.redirectUrl`
+- `page.oauth.scopes`
+- `page.oauth.accountRole`
+- `page.oauth.allowedDomains`
+- `page.oauth.bindByEmail`
+- `page.oauth.autoCreateAdmin`
+- `page.oauth.autoCreateUser`
+- `page.oauth.testConfig`
+- `page.oauth.testSuccess`
+- `page.oauth.copyCallback`
+
+## ko-KR
+
+- Base keys: 716
+- Fallback keys: 448 (62.57%)
+- Translated keys: 268
+
+**Top Modules To Translate**
+- `api`: 191
+- `dataMap`: 125
+- `page`: 109
+- `icon`: 10
+- `request`: 6
+- `dropdown`: 5
+- `datatable`: 1
+- `route`: 1
+
+**Top 80 Fallback Keys**
+- `request.logout`
+- `request.logoutMsg`
+- `request.logoutWithModal`
+- `request.logoutWithModalMsg`
+- `request.refreshToken`
+- `request.tokenExpired`
+- `route.iframe-page`
+- `page.login.common.continueWith`
+- `page.home.userCount`
+- `page.home.deviceCount`
+- `page.home.onlineCount`
+- `page.home.visitsCount`
+- `page.home.operatingSystem`
+- `page.home.oneWeek`
+- `page.home.changeLogs`
+- `page.home.cardDetail.viewHint`
+- `page.home.cardDetail.recentUsers`
+- `page.home.cardDetail.recentDevices`
+- `page.home.cardDetail.recentVisits`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.user.list.searchPlaceholder`
+- `page.user.list.require2FACode`
+- `page.user.sessions.kill`
+- `page.user.sessions.confirmKill`
+- `page.user.audit.logsSearchPlaceholder`
+- `page.user.devices.logsSearchPlaceholder`
+- `page.system.mailTemplate.addMailTemplate`
+- `page.system.mailTemplate.editMailTemplate`
+- `page.system.mailTemplate.inputName`
+- `page.system.mailTemplate.inputSubject`
+- `page.system.mailTemplate.inputContents`
+- `page.system.mailTemplate.selectType`
+- `page.system.mailLog.info`
+- `page.myDevices.title`
+- `page.myDevices.welcome`
+- `page.myDevices.status`
+- `page.myDevices.online`
+- `page.myDevices.offline`
+- `page.myDevices.conns`
+- `page.myDevices.lastSync`
+- `page.myDevices.logout`
+- `page.workspace.scopeTitle`
+- `page.workspace.scopeTip`
+- `page.workspace.myDevices`
+- `page.workspace.activeSessions`
+- `page.workspace.addressBooks`
+- `page.workspace.securityEvents`
+- `page.workspace.currentSession`
+- `page.workspace.revokeConfirm`
+- `page.workspace.revoke`
+- `page.workspace.accountRole`
+- `page.workspace.adminRole`
+- `page.workspace.userRole`
+- `page.workspace.permissionScope`
+- `page.workspace.userScope`
+- `page.workspace.active`
+- `page.oauth.configTitle`
+- `page.oauth.bindingsTitle`
+- `page.oauth.addProvider`
+- `page.oauth.editProvider`
+- `page.oauth.providerName`
+- `page.oauth.displayName`
+- `page.oauth.clientId`
+- `page.oauth.clientSecret`
+- `page.oauth.secretPlaceholder`
+- `page.oauth.appleSecretHint`
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+- `page.oauth.privateKey`
+- `page.oauth.redirectUrl`
+- `page.oauth.scopes`
+- `page.oauth.accountRole`
+- `page.oauth.allowedDomains`
+- `page.oauth.bindByEmail`
+- `page.oauth.autoCreateAdmin`
+- `page.oauth.autoCreateUser`
+- `page.oauth.testConfig`
+- `page.oauth.testSuccess`
+- `page.oauth.copyCallback`
+
+## fr-FR
+
+- Base keys: 716
+- Fallback keys: 47 (6.56%)
+- Translated keys: 669
+
+**Top Modules To Translate**
+- `page`: 22
+- `dataMap`: 18
+- `route`: 4
+- `common`: 1
+- `system`: 1
+- `theme`: 1
+
+**Top 47 Fallback Keys**
+- `system.title`
+- `common.index`
+- `theme.tab.mode.chrome`
+- `route.iframe-page`
+- `route.audit`
+- `route.user_sessions`
+- `route.my-devices`
+- `page.login.common.continueWith`
+- `page.login.passkey.credentialName`
+- `page.login.passkey.createdAt`
+- `page.login.passkey.lastUsedAt`
+- `page.login.passkey.enterName`
+- `page.login.passkey.namePlaceholder`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.cacheTtlHint`
+- `page.home.serverConfig.source`
+- `page.home.serverConfig.ageSeconds`
+- `page.home.serverConfig.sourceType.config`
+- `page.home.serverConfig.sourceHint.config`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.myDevices.title`
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+- `page.oauth.privateKey`
+- `page.about.errCode`
+- `page.about.errMessage`
+- `page.about.errModule`
+- `page.about.errDescription`
+- `page.about.errSolution`
+- `dataMap.user.statusLabel.normal`
+- `dataMap.user.loginVerifyLabel.tfaCheck`
+- `dataMap.device.rustdesk_id`
+- `dataMap.audit.type`
+- `dataMap.audit.rustdesk_id`
+- `dataMap.audit.ip`
+- `dataMap.audit.uuid`
+- `dataMap.mailTemplate.type`
+- `dataMap.mailLog.uuid`
+- `dataMap.ab.rustdesk_id`
+- `dataMap.ab.alias`
+- `dataMap.ab.hash`
+- `dataMap.ab.guid`
+- `dataMap.ab.note`
+- `dataMap.errorLog.message`
+- `dataMap.errorLog.module`
+- `dataMap.containerLog.source`
+- `dataMap.containerLog.message`
+
+## de-DE
+
+- Base keys: 716
+- Fallback keys: 51 (7.12%)
+- Translated keys: 665
+
+**Top Modules To Translate**
+- `page`: 23
+- `dataMap`: 20
 - `theme`: 4
 - `route`: 2
 - `common`: 1
+- `system`: 1
 
-**Top 10 Fallback Keys**
+**Top 51 Fallback Keys**
 - `system.title`
-- `system.updateTitle`
-- `system.updateContent`
-- `system.updateConfirm`
-- `system.updateCancel`
 - `common.index`
 - `theme.themeColor.info`
 - `theme.scrollMode.wrapper`
 - `theme.tab.mode.chrome`
 - `theme.tab.mode.button`
+- `route.iframe-page`
+- `route.audit`
+- `page.login.common.continueWith`
+- `page.login.passkey.credentialName`
+- `page.login.passkey.createdAt`
+- `page.login.passkey.lastUsedAt`
+- `page.login.passkey.enterName`
+- `page.login.passkey.namePlaceholder`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.cacheTtlHint`
+- `page.home.serverConfig.ageSeconds`
+- `page.home.serverConfig.sourceType.remote`
+- `page.home.serverConfig.sourceType.config`
+- `page.home.serverConfig.sourceHint.config`
+- `page.home.serverConfig.connectivity.checkSourceType.remote`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.myDevices.status`
+- `page.myDevices.online`
+- `page.myDevices.offline`
+- `page.workspace.adminRole`
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+- `page.oauth.privateKey`
+- `page.oauth.adminRole`
+- `page.about.errCode`
+- `dataMap.user.status`
+- `dataMap.user.statusLabel.normal`
+- `dataMap.user.loginVerifyLabel.tfaCheck`
+- `dataMap.device.os`
+- `dataMap.device.rustdesk_id`
+- `dataMap.audit.rustdesk_id`
+- `dataMap.audit.ip`
+- `dataMap.audit.uuid`
+- `dataMap.mailTemplate.name`
+- `dataMap.mailLog.uuid`
+- `dataMap.mailLog.status`
+- `dataMap.ab.rustdesk_id`
+- `dataMap.ab.hostname`
+- `dataMap.ab.alias`
+- `dataMap.ab.hash`
+- `dataMap.ab.guid`
+- `dataMap.ab.tagName`
+- `dataMap.token.is_admin`
+- `dataMap.oauth.name`
+- `dataMap.containerLog.status_code`
+
+## es-ES
+
+- Base keys: 716
+- Fallback keys: 453 (63.27%)
+- Translated keys: 263
+
+**Top Modules To Translate**
+- `api`: 191
+- `dataMap`: 125
+- `page`: 110
+- `icon`: 10
+- `request`: 6
+- `dropdown`: 5
+- `common`: 2
+- `theme`: 2
+
+**Top 80 Fallback Keys**
+- `common.error`
+- `common.yesOrNo.no`
+- `request.logout`
+- `request.logoutMsg`
+- `request.logoutWithModal`
+- `request.logoutWithModalMsg`
+- `request.refreshToken`
+- `request.tokenExpired`
+- `theme.themeColor.error`
+- `theme.tab.mode.chrome`
+- `route.iframe-page`
+- `page.login.common.continueWith`
+- `page.home.userCount`
+- `page.home.deviceCount`
+- `page.home.onlineCount`
+- `page.home.visitsCount`
+- `page.home.operatingSystem`
+- `page.home.oneWeek`
+- `page.home.changeLogs`
+- `page.home.cardDetail.viewHint`
+- `page.home.cardDetail.recentUsers`
+- `page.home.cardDetail.recentDevices`
+- `page.home.cardDetail.recentVisits`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.qrPayload`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.user.list.searchPlaceholder`
+- `page.user.list.require2FACode`
+- `page.user.sessions.kill`
+- `page.user.sessions.confirmKill`
+- `page.user.audit.logsSearchPlaceholder`
+- `page.user.devices.logsSearchPlaceholder`
+- `page.system.mailTemplate.addMailTemplate`
+- `page.system.mailTemplate.editMailTemplate`
+- `page.system.mailTemplate.inputName`
+- `page.system.mailTemplate.inputSubject`
+- `page.system.mailTemplate.inputContents`
+- `page.system.mailTemplate.selectType`
+- `page.system.mailLog.info`
+- `page.myDevices.title`
+- `page.myDevices.welcome`
+- `page.myDevices.status`
+- `page.myDevices.online`
+- `page.myDevices.offline`
+- `page.myDevices.conns`
+- `page.myDevices.lastSync`
+- `page.myDevices.logout`
+- `page.workspace.scopeTitle`
+- `page.workspace.scopeTip`
+- `page.workspace.myDevices`
+- `page.workspace.activeSessions`
+- `page.workspace.addressBooks`
+- `page.workspace.securityEvents`
+- `page.workspace.currentSession`
+- `page.workspace.revokeConfirm`
+- `page.workspace.revoke`
+- `page.workspace.accountRole`
+- `page.workspace.adminRole`
+- `page.workspace.userRole`
+- `page.workspace.permissionScope`
+- `page.workspace.userScope`
+- `page.workspace.active`
+- `page.oauth.configTitle`
+- `page.oauth.bindingsTitle`
+- `page.oauth.addProvider`
+- `page.oauth.editProvider`
+- `page.oauth.providerName`
+- `page.oauth.displayName`
+- `page.oauth.clientId`
+- `page.oauth.clientSecret`
+- `page.oauth.secretPlaceholder`
+- `page.oauth.appleSecretHint`
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+- `page.oauth.privateKey`
+- `page.oauth.redirectUrl`
+- `page.oauth.scopes`
+- `page.oauth.accountRole`
+- `page.oauth.allowedDomains`
+- `page.oauth.bindByEmail`
+
+## ru-RU
+
+- Base keys: 716
+- Fallback keys: 450 (62.85%)
+- Translated keys: 266
+
+**Top Modules To Translate**
+- `api`: 191
+- `dataMap`: 125
+- `page`: 110
+- `icon`: 10
+- `request`: 6
+- `dropdown`: 5
+- `datatable`: 1
+- `route`: 1
+
+**Top 80 Fallback Keys**
+- `request.logout`
+- `request.logoutMsg`
+- `request.logoutWithModal`
+- `request.logoutWithModalMsg`
+- `request.refreshToken`
+- `request.tokenExpired`
+- `theme.tab.mode.chrome`
+- `route.iframe-page`
+- `page.login.common.continueWith`
+- `page.home.userCount`
+- `page.home.deviceCount`
+- `page.home.onlineCount`
+- `page.home.visitsCount`
+- `page.home.operatingSystem`
+- `page.home.oneWeek`
+- `page.home.changeLogs`
+- `page.home.cardDetail.viewHint`
+- `page.home.cardDetail.recentUsers`
+- `page.home.cardDetail.recentDevices`
+- `page.home.cardDetail.recentVisits`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.qrPayload`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.user.list.searchPlaceholder`
+- `page.user.list.require2FACode`
+- `page.user.sessions.kill`
+- `page.user.sessions.confirmKill`
+- `page.user.audit.logsSearchPlaceholder`
+- `page.user.devices.logsSearchPlaceholder`
+- `page.system.mailTemplate.addMailTemplate`
+- `page.system.mailTemplate.editMailTemplate`
+- `page.system.mailTemplate.inputName`
+- `page.system.mailTemplate.inputSubject`
+- `page.system.mailTemplate.inputContents`
+- `page.system.mailTemplate.selectType`
+- `page.system.mailLog.info`
+- `page.myDevices.title`
+- `page.myDevices.welcome`
+- `page.myDevices.status`
+- `page.myDevices.online`
+- `page.myDevices.offline`
+- `page.myDevices.conns`
+- `page.myDevices.lastSync`
+- `page.myDevices.logout`
+- `page.workspace.scopeTitle`
+- `page.workspace.scopeTip`
+- `page.workspace.myDevices`
+- `page.workspace.activeSessions`
+- `page.workspace.addressBooks`
+- `page.workspace.securityEvents`
+- `page.workspace.currentSession`
+- `page.workspace.revokeConfirm`
+- `page.workspace.revoke`
+- `page.workspace.accountRole`
+- `page.workspace.adminRole`
+- `page.workspace.userRole`
+- `page.workspace.permissionScope`
+- `page.workspace.userScope`
+- `page.workspace.active`
+- `page.oauth.configTitle`
+- `page.oauth.bindingsTitle`
+- `page.oauth.addProvider`
+- `page.oauth.editProvider`
+- `page.oauth.providerName`
+- `page.oauth.displayName`
+- `page.oauth.clientId`
+- `page.oauth.clientSecret`
+- `page.oauth.secretPlaceholder`
+- `page.oauth.appleSecretHint`
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+- `page.oauth.privateKey`
+- `page.oauth.redirectUrl`
+- `page.oauth.scopes`
+- `page.oauth.accountRole`
+- `page.oauth.allowedDomains`
+- `page.oauth.bindByEmail`
+- `page.oauth.autoCreateAdmin`
+- `page.oauth.autoCreateUser`
+- `page.oauth.testConfig`
+
+## it-IT
+
+- Base keys: 716
+- Fallback keys: 226 (31.56%)
+- Translated keys: 490
+
+**Top Modules To Translate**
+- `api`: 171
+- `dataMap`: 27
+- `page`: 20
+- `common`: 3
+- `route`: 3
+- `system`: 1
+- `theme`: 1
+
+**Top 80 Fallback Keys**
+- `system.title`
+- `common.clear`
+- `common.confirmClear`
+- `common.yesOrNo.no`
+- `theme.tab.mode.chrome`
+- `route.iframe-page`
+- `route.home`
+- `route.audit`
+- `page.login.common.continueWith`
+- `page.login.passkey.credentialName`
+- `page.login.passkey.createdAt`
+- `page.login.passkey.lastUsedAt`
+- `page.login.passkey.enterName`
+- `page.login.passkey.namePlaceholder`
+- `page.home.serverConfig.key`
+- `page.home.serverConfig.cacheTtlHint`
+- `page.home.serverConfig.ageSeconds`
+- `page.home.serverConfig.sourceType.config`
+- `page.home.serverConfig.sourceHint.config`
+- `page.home.serverConfig.connectivity.checkSourceType.cache`
+- `page.myDevices.online`
+- `page.myDevices.offline`
+- `page.oauth.clientId`
+- `page.oauth.clientSecret`
+- `page.oauth.appleSecretHint`
+- `page.oauth.teamId`
+- `page.oauth.keyId`
+- `page.oauth.privateKey`
+- `dataMap.user.password`
+- `dataMap.user.email`
+- `dataMap.user.loginVerifyLabel.tfaCheck`
+- `dataMap.device.rustdesk_id`
+- `dataMap.audit.rustdesk_id`
+- `dataMap.audit.ip`
+- `dataMap.audit.uuid`
+- `dataMap.audit.peer_id`
+- `dataMap.mailLog.uuid`
+- `dataMap.ab.rustdesk_id`
+- `dataMap.ab.hostname`
+- `dataMap.ab.alias`
+- `dataMap.ab.hash`
+- `dataMap.ab.guid`
+- `dataMap.oauth.provider`
+- `dataMap.oauth.email`
+- `dataMap.loginLog.userAgent`
+- `dataMap.errorLog.code`
+- `dataMap.errorLog.message`
+- `dataMap.errorLog.module`
+- `dataMap.errorLog.path`
+- `dataMap.errorLog.method`
+- `dataMap.errorLog.user_name`
+- `dataMap.errorLog.client_ip`
+- `dataMap.errorLog.user_agent`
+- `dataMap.errorLog.created_at`
+- `dataMap.containerLog.user_agent`
+- `api.AdminRequired`
+- `api.TokenRequired`
+- `api.IdRequired`
+- `api.Unauthorized`
+- `api.ProviderNotFound`
+- `api.ProviderDisabled`
+- `api.MissingCodeOrState`
+- `api.StateInvalidOrExpired`
+- `api.FailedToGenerateState`
+- `api.FailedToGenerateTicket`
+- `api.TicketRequired`
+- `api.TicketInvalidOrExpired`
+- `api.OauthTicketUserNotAvailable`
+- `api.OauthIssuerRequired`
+- `api.OauthMetadataMissingRequiredEndpoints`
+- `api.OauthTokenResponseMissingToken`
+- `api.OauthUserinfoSubjectMismatch`
+- `api.OauthSubjectClaimMissing`
+- `api.VerifiedGithubEmailRequired`
+- `api.VerifiedOauthEmailRequired`
+- `api.EmailDomainNotAllowed`
+- `api.QqOpenidResponseInvalid`
+- `api.OauthIssuerRequiredForIdToken`
+- `api.OauthJwksUriMissingForIdToken`
+- `api.InvalidIdToken`
