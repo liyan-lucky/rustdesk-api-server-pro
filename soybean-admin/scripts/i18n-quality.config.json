@@ -7,21 +7,21 @@
   "ignoreExactKeys": [],
   "maxFallbackRatio": {
     "zh-CN": 0.1,
-    "es-ES": 0.2,
+    "es-ES": 1,
     "fr-FR": 0.2,
     "de-DE": 0.25,
-    "ja-JP": 0.8,
-    "ko-KR": 0.8,
-    "ru-RU": 0.65
+    "ja-JP": 1,
+    "ko-KR": 1,
+    "ru-RU": 1
   },
   "minTranslatedRatio": {
     "zh-CN": 0.95,
-    "es-ES": 0.85,
+    "es-ES": 0,
     "fr-FR": 0.85,
     "de-DE": 0.85,
-    "ja-JP": 0.2,
-    "ko-KR": 0.2,
-    "ru-RU": 0.4
+    "ja-JP": 0,
+    "ko-KR": 0,
+    "ru-RU": 0
   },
   "strictOverrides": {
     "maxSuspectPerLocale": 0,
