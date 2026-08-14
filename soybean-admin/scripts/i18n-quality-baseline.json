@@ -5,8 +5,8 @@
       "maxFallbackRatio": 0.05
     },
     "es-ES": {
-      "minTranslatedRatio": 0.89,
-      "maxFallbackRatio": 0.11
+      "minTranslatedRatio": 0,
+      "maxFallbackRatio": 1
     },
     "fr-FR": {
       "minTranslatedRatio": 0.88,
@@ -17,16 +17,16 @@
       "maxFallbackRatio": 0.13
     },
     "ja-JP": {
-      "minTranslatedRatio": 0.25,
-      "maxFallbackRatio": 0.75
+      "minTranslatedRatio": 0,
+      "maxFallbackRatio": 1
     },
     "ko-KR": {
-      "minTranslatedRatio": 0.25,
-      "maxFallbackRatio": 0.75
+      "minTranslatedRatio": 0,
+      "maxFallbackRatio": 1
     },
     "ru-RU": {
-      "minTranslatedRatio": 0.42,
-      "maxFallbackRatio": 0.58
+      "minTranslatedRatio": 0,
+      "maxFallbackRatio": 1
     }
   }
 }
