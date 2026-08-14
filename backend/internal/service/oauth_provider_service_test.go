@@ -57,6 +57,31 @@ func TestOAuthProviderService_ConfirmOAuthBindingRequiresTargetPassword(t *testi
 	}
 }
 
+func TestOAuthProviderServiceTokenResponsePreservesProviderError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"error":"bad_verification_code","error_description":"The code passed is incorrect or expired.\nretry"}`))
+	}))
+	defer server.Close()
+
+	service := NewOAuthProviderService(&config.ServerConfig{}, nil)
+	req, err := http.NewRequest(http.MethodPost, server.URL, nil)
+	if err != nil {
+		t.Fatalf("create token request: %v", err)
+	}
+	_, err = service.doTokenRequest(req)
+	if err == nil {
+		t.Fatal("expected provider token error")
+	}
+	message := err.Error()
+	if !strings.HasPrefix(message, "ERR-2012:") || !strings.Contains(message, "provider_error=bad_verification_code") {
+		t.Fatalf("provider error was not preserved: %s", message)
+	}
+	if strings.ContainsAny(message, "\r\n") {
+		t.Fatalf("provider error contains a log-breaking newline: %q", message)
+	}
+}
+
 func TestOAuthProviderService_ListEnabledProviders(t *testing.T) {
 	cfg := &config.ServerConfig{
 		OIDC: &config.OIDCConfig{

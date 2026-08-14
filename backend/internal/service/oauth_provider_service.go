@@ -47,11 +47,13 @@ type oauthMetadata struct {
 }
 
 type oauthTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	OpenID      string `json:"openid"`
-	IDToken     string `json:"id_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
+	AccessToken      string `json:"access_token"`
+	OpenID           string `json:"openid"`
+	IDToken          string `json:"id_token"`
+	TokenType        string `json:"token_type"`
+	ExpiresIn        int    `json:"expires_in"`
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
 }
 
 type OAuthUserClaims struct {
@@ -502,10 +504,35 @@ func (s *OAuthProviderService) doTokenRequest(req *http.Request) (*oauthTokenRes
 	if err = json.Unmarshal(body, &tokenResp); err != nil {
 		return nil, err
 	}
+	if tokenResp.Error != "" {
+		return nil, errcode.Errorf(
+			errcode.ERR2012.Code,
+			"%s: provider_error=%s description=%s",
+			errcode.ERR2012.Message,
+			sanitizeOAuthProviderError(tokenResp.Error),
+			sanitizeOAuthProviderError(tokenResp.ErrorDescription),
+		)
+	}
 	if tokenResp.AccessToken == "" && tokenResp.IDToken == "" {
 		return nil, errcode.New(errcode.ERR2012.Code, errcode.ERR2012.Message)
 	}
 	return &tokenResp, nil
+}
+
+func sanitizeOAuthProviderError(value string) string {
+	value = strings.TrimSpace(value)
+	if len(value) > 240 {
+		value = value[:240]
+	}
+	return strings.Map(func(r rune) rune {
+		if r == '\n' || r == '\r' || r == '\t' {
+			return ' '
+		}
+		if r < 0x20 || r == 0x7f {
+			return -1
+		}
+		return r
+	}, value)
 }
 
 func (s *OAuthProviderService) fetchUserClaims(provider config.OAuthProviderConfig, tokenResp *oauthTokenResponse) (*OAuthUserClaims, error) {
