@@ -1928,9 +1928,6 @@ func (s *OAuthProviderService) ConsumeUnifiedCallback(providerName, code, state 
 	ticketTTL := s.ticketTTL(provider)
 
 	if stored.PollToken != "" {
-		if user.IsAdmin {
-			return stored.PollToken, "", stored.RedirectTo, errcode.New(errcode.ERR2203.Code, errcode.ERR2203.Message)
-		}
 		if err = s.setTicket(newTicket, oauthTicketEntry{
 			Provider:   provider.Name,
 			UserID:     user.Id,

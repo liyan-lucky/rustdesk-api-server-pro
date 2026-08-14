@@ -88,6 +88,71 @@ func TestOAuthProviderService_WebauthAdminReturnsOfficialClientResult(t *testing
 	}
 }
 
+func TestOAuthProviderService_GithubAdminReturnsClientScopedToken(t *testing.T) {
+	provider := newMockGitHubOAuthProvider(t)
+	defer provider.Close()
+
+	engine, err := db.NewEngine(&config.DbConfig{Driver: "sqlite", Dsn: ":memory:", TimeZone: "Asia/Shanghai", ShowSql: false})
+	if err != nil {
+		t.Fatalf("new engine: %v", err)
+	}
+	if err = engine.Sync(new(model.User), new(model.AuthToken), new(model.OAuthAccount), new(model.OAuthLoginSession)); err != nil {
+		t.Fatalf("sync schema: %v", err)
+	}
+	admin := &model.User{Username: "admin", Name: "Admin", IsAdmin: true, Status: 1}
+	if _, err = engine.Insert(admin); err != nil {
+		t.Fatalf("insert admin: %v", err)
+	}
+	account := &model.OAuthAccount{UserId: admin.Id, Provider: "github", Subject: "10001", Status: 1, IsAdmin: true}
+	if _, err = engine.Insert(account); err != nil {
+		t.Fatalf("insert oauth account: %v", err)
+	}
+
+	cfg := &config.ServerConfig{SignKey: "test-sign-key", OAuth: &config.OAuthConfig{Providers: []config.OAuthProviderConfig{{
+		Type: "github", Name: "github", Enabled: true, ClientID: "client", ClientSecret: "secret",
+		AuthorizationEndpoint: provider.URL + "/login/oauth/authorize",
+		TokenEndpoint:         provider.URL + "/login/oauth/access_token", UserinfoEndpoint: provider.URL + "/user",
+		BindByEmail: true, AccountRole: "user",
+	}}}}
+	svc := NewOAuthProviderService(cfg, engine)
+	authURL, expectedPollToken, enabled, err := svc.BuildClientAuthURL(
+		"github", "http://localhost:12345", "rustdesk-admin-id", "admin-uuid", "Windows", "client", "AdminPC",
+	)
+	if err != nil || !enabled {
+		t.Fatalf("build client auth URL: enabled=%v err=%v", enabled, err)
+	}
+	parsed, err := url.Parse(authURL)
+	if err != nil {
+		t.Fatalf("parse auth URL: %v", err)
+	}
+	pollToken, _, _, err := svc.ConsumeUnifiedCallback("github", "github-code", parsed.Query().Get("state"))
+	if err != nil || pollToken != expectedPollToken {
+		t.Fatalf("consume admin callback: poll=%q expected=%q err=%v", pollToken, expectedPollToken, err)
+	}
+
+	result, err := svc.ConsumePollAndExchange(pollToken)
+	if err != nil {
+		t.Fatalf("exchange client-scoped token: %v", err)
+	}
+	var body struct {
+		AccessToken string `json:"access_token"`
+		User        struct {
+			IsAdmin bool `json:"is_admin"`
+		} `json:"user"`
+	}
+	if err = json.Unmarshal([]byte(result), &body); err != nil {
+		t.Fatalf("decode client result: %v", err)
+	}
+	if body.AccessToken == "" || body.User.IsAdmin {
+		t.Fatalf("admin OAuth login must return a non-admin client token: %s", result)
+	}
+	var token model.AuthToken
+	has, err := engine.Where("user_id = ? and rustdesk_id = ? and is_admin = 0", admin.Id, "rustdesk-admin-id").Get(&token)
+	if err != nil || !has {
+		t.Fatalf("client-scoped token not persisted: has=%v err=%v", has, err)
+	}
+}
+
 func TestOAuthProviderService_ListClientProviders(t *testing.T) {
 	cfg := &config.ServerConfig{
 		OAuth: &config.OAuthConfig{
