@@ -12,7 +12,7 @@ const local: App.I18n.Schema = {
   },
   common: {
     ...enUs.common,
-    action: 'Action',
+    action: 'Opération',
     add: 'Ajouter',
     addSuccess: 'Ajout réussi',
     backToHome: 'Retour à l’accueil',
