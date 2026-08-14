@@ -251,8 +251,7 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
         } else {
           root.classList.remove(htmlClass);
         }
-      },
-      { immediate: true }
+      }
     );
 
     // themeColors change, update css vars and storage theme color
@@ -267,6 +266,8 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
           const containerBg = getComputedStyle(root).getPropertyValue('--container-bg-color').trim();
           const layoutBg = getComputedStyle(root).getPropertyValue('--layout-bg-color').trim();
           const opacity = settings.value.glassOpacity;
+          const blur = settings.value.glassBlur;
+          const enabled = settings.value.glassEffect;
           const alpha = Math.max(0, Math.min(1, (100 - opacity) / 100));
           const alphaStrong = Math.max(0, Math.min(1, (100 - opacity + 8) / 100));
           const alphaWeak = Math.max(0, Math.min(1, (100 - opacity - 12) / 100));
@@ -277,6 +278,13 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
           }
           if (layoutBg) {
             root.style.setProperty('--glass-layout-bg', `rgb(${layoutBg} / ${alphaWeak})`);
+          }
+          root.style.setProperty('--glass-blur', `${blur}px`);
+          const htmlClass = 'glass-effect';
+          if (enabled) {
+            root.classList.add(htmlClass);
+          } else {
+            root.classList.remove(htmlClass);
           }
         });
       },
