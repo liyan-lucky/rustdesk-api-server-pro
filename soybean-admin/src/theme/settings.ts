@@ -4,9 +4,9 @@ export const themeSettings: App.Theme.ThemeSetting = {
   grayscale: false,
   colourWeakness: false,
   recommendColor: false,
-  glassEffect: false,
-  glassBlur: 14,
-  glassOpacity: 12,
+  glassEffect: true,
+  glassBlur: 5,
+  glassOpacity: 80,
   themeColor: '#646cff',
   otherColor: {
     info: '#2080f0',

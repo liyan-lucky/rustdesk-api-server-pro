@@ -13,7 +13,7 @@ function readMode(): WebBackgroundMode {
 
 const backgroundMode = ref<WebBackgroundMode>(readMode());
 const uploadedBackground = ref(localStorage.getItem(UPLOAD_KEY) || '');
-const globalBackgroundEnabled = ref(localStorage.getItem(GLOBAL_KEY) === 'true');
+const globalBackgroundEnabled = ref(localStorage.getItem(GLOBAL_KEY) !== 'false');
 const backgroundUrl = computed(() => {
   if (backgroundMode.value === 'bing') return '/api/background/bing';
   if (backgroundMode.value === 'upload' && uploadedBackground.value) return uploadedBackground.value;

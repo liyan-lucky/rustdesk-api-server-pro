@@ -47,6 +47,15 @@ export default defineConfig(configEnv => {
       sourcemap: viteEnv.VITE_SOURCE_MAP === 'Y',
       commonjsOptions: {
         ignoreTryCatch: false
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'echarts-vendor': ['echarts/core', 'echarts/charts', 'echarts/components', 'echarts/features', 'echarts/renderers'],
+            'naive-ui-vendor': ['naive-ui'],
+            'vue-vendor': ['vue', 'vue-router', 'pinia']
+          }
+        }
       }
     }
   };

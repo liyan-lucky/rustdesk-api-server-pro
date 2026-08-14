@@ -1,7 +1,7 @@
 import { computed, effectScope, nextTick, onScopeDispose, ref, toRefs, watch } from 'vue';
 import type { Ref } from 'vue';
 import { defineStore } from 'pinia';
-import { useEventListener, usePreferredColorScheme } from '@vueuse/core';
+import { usePreferredColorScheme } from '@vueuse/core';
 import { getPaletteColorByNumber } from '@sa/color';
 import { SetupStoreId } from '@/enum';
 import { localStg } from '@/utils/storage';
@@ -191,17 +191,17 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   /** Cache theme settings */
   function cacheThemeSettings() {
-    const isProd = import.meta.env.PROD;
-
-    if (!isProd) return;
-
     localStg.set('themeSettings', settings.value);
   }
 
-  // cache theme settings when page is closed or refreshed
-  useEventListener(window, 'beforeunload', () => {
-    cacheThemeSettings();
-  });
+  // 主题配置变化时即时写入 localStorage，确保关闭浏览器后配置不丢失
+  watch(
+    settings,
+    () => {
+      cacheThemeSettings();
+    },
+    { deep: true }
+  );
 
   // watch store
   scope.run(() => {

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 import { useAppStore } from '@/store/modules/app';
 import HeaderBanner from './modules/header-banner.vue';
 import CardData from './modules/card-data.vue';
-import LineChart from './modules/line-chart.vue';
-import PieChart from './modules/pie-chart.vue';
-import ChangeLogs from './modules/change-logs.vue';
+
+const LineChart = defineAsyncComponent(() => import('./modules/line-chart.vue'));
+const PieChart = defineAsyncComponent(() => import('./modules/pie-chart.vue'));
+const ChangeLogs = defineAsyncComponent(() => import('./modules/change-logs.vue'));
 
 const appStore = useAppStore();
 
