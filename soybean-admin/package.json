@@ -117,7 +117,7 @@
     "eslint-plugin-vue": "9.27.0",
     "json5": "2.2.3",
     "lint-staged": "17.3.0",
-    "sass": "1.77.8",
+    "sass": "1.102.0",
     "simple-git-hooks": "2.11.1",
     "tsx": "4.17.0",
     "typescript": "5.5.4",
