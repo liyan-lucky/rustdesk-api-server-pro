@@ -282,7 +282,7 @@ onMounted(() => {
       <NDivider v-if="!oauthBindingTicket && oauthProviders.length > 0" class="!mt-0 !mb-0">
         {{ $t('page.login.common.thirdPartyLogin') }}
       </NDivider>
-      <div v-if="!oauthBindingTicket" class="grid grid-cols-2 gap-8px">
+      <div v-if="!oauthBindingTicket" class="grid grid-cols-2 gap-8px lt-sm:grid-cols-1">
         <NButton
           v-for="provider in oauthProviders"
           :key="provider.name"
