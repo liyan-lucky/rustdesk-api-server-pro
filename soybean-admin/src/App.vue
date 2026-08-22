@@ -72,12 +72,14 @@ const watermarkProps = computed<WatermarkProps>(() => {
 /* 覆盖布局容器 */
 html.glass-effect .bg-container {
   background-color: var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   backdrop-filter: blur(var(--glass-blur));
   box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
 }
 
 html.glass-effect .bg-layout {
   background-color: var(--glass-layout-bg) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   backdrop-filter: blur(var(--glass-blur));
 }
 
@@ -186,6 +188,7 @@ html.glass-effect .n-menu,
 html.glass-effect .n-layout-sider,
 html.glass-effect .n-layout-header {
   background-color: var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   backdrop-filter: blur(var(--glass-blur));
 }
 

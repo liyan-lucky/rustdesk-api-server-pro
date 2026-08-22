@@ -118,6 +118,7 @@ function getSiderCollapsedWidth() {
     :sider-visible="siderVisible"
     :sider-width="siderWidth"
     :sider-collapsed-width="siderCollapsedWidth"
+    sider-class="desktop-sider-surface"
     mobile-sider-class="mobile-sider-surface"
     :footer-visible="themeStore.footer.visible"
     :footer-height="themeStore.footer.height"
@@ -147,6 +148,7 @@ function getSiderCollapsedWidth() {
   @include scrollbar();
 }
 
+html.glass-effect .desktop-sider-surface,
 html.glass-effect .mobile-sider-surface {
   background-color: transparent !important;
 }
