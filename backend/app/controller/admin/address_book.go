@@ -9,6 +9,7 @@ import (
 	"rustdesk-api-server-pro/internal/repository"
 	v2service "rustdesk-api-server-pro/internal/service"
 	"rustdesk-api-server-pro/util"
+	"strconv"
 	"strings"
 
 	"github.com/kataras/iris/v12"
@@ -258,15 +259,9 @@ func (c *AddressBookController) HandleAbList() mvc.Result {
 	if user == nil {
 		return c.Error(nil, errUnauthorized.Error())
 	}
-	list := make([]model.AddressBook, 0)
-	if user.IsAdmin {
-		if err := c.Db.Find(&list); err != nil {
-			return c.dbError(err)
-		}
-	} else {
-		if err := c.Db.Where("user_id = ?", user.Id).Find(&list); err != nil {
-			return c.dbError(err)
-		}
+	list, err := findManageableAddressBooks(c.Db, user)
+	if err != nil {
+		return c.dbError(err)
 	}
 	records := make([]iris.Map, 0, len(list))
 	for _, ab := range list {
@@ -292,6 +287,17 @@ func (c *AddressBookController) HandleAbList() mvc.Result {
 		})
 	}
 	return c.Success(records, "ok")
+}
+
+// findManageableAddressBooks 返回当前用户可写的通讯簿，供联系人和标签新增表单共同使用。
+func findManageableAddressBooks(engine *xorm.Engine, user *model.User) ([]model.AddressBook, error) {
+	list := make([]model.AddressBook, 0)
+	if user.IsAdmin {
+		return list, engine.Find(&list)
+	}
+	userID := strconv.Itoa(user.Id)
+	err := engine.Where("user_id = ? OR (shared = 1 AND (rule >= 2 OR EXISTS (SELECT 1 FROM address_book_rule abr WHERE abr.ab_guid = address_book.guid AND abr.rule >= 2 AND (abr.target_type = 'everyone' OR (abr.target_type = 'user' AND abr.target_guid = ?) OR (abr.target_type = 'user_group' AND abr.target_guid IN (SELECT group_guid FROM user_group_member WHERE user_id = ?))))))", user.Id, userID, user.Id).Find(&list)
+	return list, err
 }
 
 func (c *AddressBookController) HandleAbTagAdd() mvc.Result {

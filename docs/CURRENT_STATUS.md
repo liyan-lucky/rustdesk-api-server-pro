@@ -38,6 +38,7 @@ RustDesk API Server Pro 是兼容 RustDesk 客户端 API 的第三方服务端�
 - 回调失败统一传递 `ERR-22xx`，前端仍兼容旧版符号参数。
 - Provider 配置以数据库中的 `oauth.providers` 为准；GitHub、QQ、Google、Microsoft、Gitee、GitLab、WeChat、Apple 已具备协议适配。真实可用性仍取决于 Provider 配置、账户绑定规则和部署环境外网连通性。
 - Web 后台回调固定进入公开登录页消费 ticket，原目标独立放入安全 `redirect`；已有会话不会跳过新的第三方 ticket。
+- 最近会话同步的 peer 新增已幂等化，重复上传不会产生重复联系人或清空标签等用户字段；标签/联系人新增时的通讯簿选择列表已包含普通用户具备写权限的共享通讯簿。
 - 第三方身份只有存在有效绑定记录时才直接登录；首次登录或解除绑定后必须进入确认页，用户可验证目标本地账户密码后“绑定并登录”，或在 Provider 允许时明确选择“创建普通用户并登录”。管理员不能被自动创建或在客户端流程中绑定。
 
 ### Passkey

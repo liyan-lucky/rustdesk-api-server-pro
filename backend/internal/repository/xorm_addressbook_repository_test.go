@@ -69,6 +69,46 @@ func TestPrivateAddressBookIsNotReadableByAnotherUser(t *testing.T) {
 	}
 }
 
+func TestAddAddressBookPeerIsIdempotentForRecentSessionSync(t *testing.T) {
+	engine, err := xorm.NewEngine("sqlite", ":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer engine.Close()
+	if err = engine.Sync(new(model.AddressBook), new(model.Peer)); err != nil {
+		t.Fatal(err)
+	}
+	ab := model.AddressBook{UserId: 1, Guid: "personal", Name: model.PersonalAddressBookName}
+	if _, err = engine.Insert(&ab); err != nil {
+		t.Fatal(err)
+	}
+	repo := NewXormAddressBookRepository(engine)
+	if err = repo.AddAddressBookPeer(core.AddressBookPeerCreateCommand{
+		UserID: 1, AbID: ab.Id, RustdeskID: "10001", Username: "old-user", Hostname: "old-host", Tags: []string{"keep"}, Alias: "mine", Note: "memo",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err = repo.AddAddressBookPeer(core.AddressBookPeerCreateCommand{
+		UserID: 1, AbID: ab.Id, RustdeskID: "10001", Username: "new-user", Hostname: "new-host", Platform: "Windows", Tags: []string{},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	count, err := engine.Where("user_id = ? and ab_id = ? and rustdesk_id = ?", 1, ab.Id, "10001").Count(new(model.Peer))
+	if err != nil || count != 1 {
+		t.Fatalf("peer count=%d err=%v", count, err)
+	}
+	var peer model.Peer
+	if _, err = engine.Where("user_id = ? and ab_id = ? and rustdesk_id = ?", 1, ab.Id, "10001").Get(&peer); err != nil {
+		t.Fatal(err)
+	}
+	if peer.Username != "new-user" || peer.Hostname != "new-host" || peer.Platform != "Windows" {
+		t.Fatalf("device fields not merged: %+v", peer)
+	}
+	if peer.Tags != `["keep"]` || peer.Alias != "mine" || peer.Note != "memo" {
+		t.Fatalf("user fields were overwritten: %+v", peer)
+	}
+}
+
 func TestSharedAddressBookUserRuleLimitsAccess(t *testing.T) {
 	engine, err := xorm.NewEngine("sqlite", ":memory:")
 	if err != nil {

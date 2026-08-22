@@ -352,6 +352,30 @@ func (r *XormAddressBookRepository) CountAddressBookPeers(userID, abID int) (int
 }
 
 func (r *XormAddressBookRepository) AddAddressBookPeer(cmd core.AddressBookPeerCreateCommand) error {
+	var existing model.Peer
+	has, err := r.DB.Where("user_id = ? and ab_id = ? and rustdesk_id = ?", cmd.UserID, cmd.AbID, cmd.RustdeskID).Get(&existing)
+	if err != nil {
+		return err
+	}
+	if has {
+		// 最近会话会重复上传同一设备。重复新增只合并设备描述，不覆盖用户维护的标签、别名、备注和密码。
+		update := core.AddressBookPeerUpdateCommand{UserID: cmd.UserID, AbID: cmd.AbID, RustdeskID: cmd.RustdeskID}
+		if cmd.Hash != "" {
+			update.Hash = &cmd.Hash
+		}
+		if cmd.Username != "" {
+			update.Username = &cmd.Username
+		}
+		if cmd.Hostname != "" {
+			update.Hostname = &cmd.Hostname
+		}
+		if cmd.Platform != "" {
+			update.Platform = &cmd.Platform
+		}
+		_, err = r.UpdateAddressBookPeer(update)
+		return err
+	}
+
 	peerTags, err := json.Marshal(cmd.Tags)
 	if err != nil {
 		return err
