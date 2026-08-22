@@ -540,7 +540,7 @@ jobsConfig:
 
 影响：
 
-- 客户端需要持续上报 `/api/heartbeat` 才会保持在线。
+- 客户端需要持续上报 `/api/heartbeat` 才会保持在线。与官方服务端一致，最后心跳超过 30 秒即标记离线；设备检查任务默认每秒运行一次，可通过 `jobsConfig.deviceCheckJob.duration` 和 `offlineAfterSeconds` 调整。
 - `/api/heartbeat` 的响应 `modified_at` 当前回显客户端请求值；在未真正分配策略前，不返回服务端当前时间，避免客户端误以为策略持续变化。
 - 如果任务周期或心跳间隔配置不合理，设备可能频繁显示离线。
 

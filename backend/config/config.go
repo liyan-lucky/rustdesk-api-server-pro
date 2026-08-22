@@ -72,7 +72,8 @@ type SmtpConfig struct {
 }
 
 type DeviceCheckJob struct {
-	Duration int `yaml:"duration"`
+	Duration            int `yaml:"duration"`
+	OfflineAfterSeconds int `yaml:"offlineAfterSeconds"`
 }
 
 type JobsConfig struct {
@@ -159,7 +160,8 @@ func GetDefaultServerConfig() *ServerConfig {
 		SignKey: util.RandomString(32),
 		JobsConfig: &JobsConfig{
 			DeviceCheckJob: &DeviceCheckJob{
-				Duration: 30,
+				Duration:            1,
+				OfflineAfterSeconds: 30,
 			},
 		},
 		OIDC: &OIDCConfig{

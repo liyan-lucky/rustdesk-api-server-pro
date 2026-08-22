@@ -23,7 +23,8 @@ smtpConfig:
 
 jobsConfig:
   deviceCheckJob:
-    duration: 30
+    duration: 1
+    offlineAfterSeconds: 30
 
 oidc:
   enabled: false
