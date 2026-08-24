@@ -82,7 +82,7 @@
     "nprogress": "0.2.0",
     "pinia": "2.2.1",
     "qrcode": "^1.5.4",
-    "tailwind-merge": "2.5.2",
+    "tailwind-merge": "3.6.0",
     "vue": "3.4.37",
     "vue-draggable-plus": "0.5.3",
     "vue-i18n": "9.13.1",
