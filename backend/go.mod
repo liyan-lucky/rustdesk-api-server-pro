@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/beevik/guid v1.0.0
 	github.com/go-co-op/gocron/v2 v2.11.0
-	github.com/go-sql-driver/mysql v1.7.1
+	github.com/go-sql-driver/mysql v1.10.1
 	github.com/go-webauthn/webauthn v0.17.4
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-module/carbon/v2 v2.3.1
@@ -23,6 +23,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/fxamacker/cbor/v2 v2.9.2 // indirect
 	github.com/go-test/deep v1.1.1 // indirect
