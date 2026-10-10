@@ -1,0 +1,12 @@
+{
+  "source_repo": "rustdesk/rustdesk",
+  "latest": {
+    "tag": "1.5.0",
+    "name": "1.5.0",
+    "published_at": "2026-09-30T16:11:03Z",
+    "html_url": "https://github.com/rustdesk/rustdesk/releases/tag/1.5.0"
+  },
+  "current_version": "1.4.9",
+  "needs_update": true,
+  "checked_at": "2026-10-10T09:58:31Z"
+}
