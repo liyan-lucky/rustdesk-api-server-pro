@@ -16,8 +16,8 @@ import (
 )
 
 const CompatClientName = "rustdesk"
-const CompatClientVersion = "1.4.9"
-const CompatClientReleaseDate = "2026-07-06"
+const CompatClientVersion = "1.5.1"
+const CompatClientReleaseDate = "2026-11-01"
 const CompatTargetStatus = "compatibility-layer"
 
 var CompatServerVersion = "latest"
